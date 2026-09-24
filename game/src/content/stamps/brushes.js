@@ -134,17 +134,27 @@ function paintForest(brush, cells, opts) {
   }
   const out = [];
   for (const [ax, { top, bottom }] of byCol) {
+    let hasBelow = false; // se recorre de abajo arriba: ¿hay un árbol dibujado justo debajo de este?
     for (let ay = bottom - th + 1; ay + th - 1 >= top; ay -= pyp) {
+      // Un árbol cuya copa empieza por encima del borde del bosque (dentro del mapa) no se dibuja: solo se
+      // verían sus filas de tronco con césped detrás de las puntas de la primera fila de copas ("árboles
+      // cortados"). Si la copa sale por el borde superior del mapa sí se dibuja (el bosque continúa fuera).
+      if (ay < top && ay >= 0) continue;
       // por defecto un mismo tipo de árbol por columna (las copas apiladas encajan); mix: 'tree' varía por árbol
       const h = f.mix === 'tree' ? cellHash(ax, ay, opts.seed) : cellHash(ax, 0, opts.seed);
       const tree = f.trees[Math.floor(h * f.trees.length)];
       for (let dy = 0; dy < th; dy++) {
+        // Si otro árbol queda debajo, sus puntas de copa tapan el tronco de este: en esas filas se pinta
+        // follaje (las filas bajas de la copa) en vez del tronco con césped, para que el bosque sea continuo.
+        const trunkRow = dy >= crownRows;
+        const srcRow = trunkRow && hasBelow ? Math.max(0, crownRows - (th - dy)) : dy;
         for (let dx = 0; dx < tw; dx++) {
           const x = ax + dx; const y = ay + dy;
           if (!inside(x, y)) continue;
-          out.push({ x, y, layer: dy < crownRows ? layer : trunkLayer, id: tileId(tree[0] + dx, tree[1] + dy) });
+          out.push({ x, y, layer: trunkRow ? trunkLayer : layer, id: tileId(tree[0] + dx, tree[1] + srcRow) });
         }
       }
+      hasBelow = true;
     }
   }
   return out;
