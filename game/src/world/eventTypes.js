@@ -32,7 +32,8 @@ const EXPANDERS = {
     const text = d.text ?? '…';
     return {
       ...d, solid: d.solid ?? true, trigger: 'action', noOver: true,
-      script: d.script || (async (ctx) => { await ctx.say(text, { skin: 'sign' }); }),
+      // 'sign' no existe en Graphics/Windowskins de Añil (404): marco de cartel real, sustituible con d.skin.
+      script: d.script || (async (ctx) => { await ctx.say(text, { skin: d.skin ?? 'signskin' }); }),
     };
   },
 
@@ -186,6 +187,8 @@ const EXPANDERS = {
   },
 
   // ---- Zygarde: Célula en el suelo (brillo verde hexagonal). La colocación real está PENDIENTE (D10).
+  // `text` puede ser una función (state) => texto (p. ej. con el recuento) y `onFound` un guion posterior
+  // (p. ej. la reacción del Core).
   zygardeCell(d) {
     if (!d.cell) throw new Error(`zygardeCell ${d.id}: falta "cell"`);
     return {
@@ -199,7 +202,9 @@ const EXPANDERS = {
           ctx.state.addCell(d.cell);
           ctx.se('Mining item get');
           ctx.requestRefresh();
-          await ctx.say(d.text ?? T.cellFound);
+          const text = typeof d.text === 'function' ? d.text(ctx.state) : (d.text ?? T.cellFound);
+          await ctx.say(text);
+          if (typeof d.onFound === 'function') await d.onFound(ctx);
         },
       }],
     };

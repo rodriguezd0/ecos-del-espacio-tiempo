@@ -46,10 +46,14 @@ export class ScreenFx {
   /** Transición animada t: 0→1 (termina en negro); se mantiene hasta clearTransition(). */
   playTransition(name, frames = 50, opts = {}) {
     return new Promise((resolve) => {
+      this.trans?.tw?.resolve?.(); // la transición sustituida no deja su promesa pendiente
       this.trans = { name, t: 0, opts, tw: tween(0, 1, frames, resolve) };
     });
   }
-  clearTransition() { this.trans = null; }
+  clearTransition() {
+    this.trans?.tw?.resolve?.();
+    this.trans = null;
+  }
 
   get busy() { return Boolean(this.fadeTween || this.trans?.tw || this.flash); }
 

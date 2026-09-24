@@ -9,24 +9,24 @@ provisional · ✅ implementado y probado en juego · ⛔ bloqueado por decisió
 |---|---|---|
 | Servidor de desarrollo + aviso de actualización | ✅ | `npm run serve` → http://localhost:8080 |
 | Pipeline de datos Añil → JSON (especies, movimientos, habilidades, objetos, tipos, tilesets) | ✅ | `npm run data` |
-| Render Three.js pixel-perfect, escalado entero | 🟨 | |
-| Tilemap RMXP (3 capas, autotiles animados, prioridades) | ⬜ | |
-| Movimiento en rejilla, correr, colisiones, terrain tags, salientes | ⬜ | |
-| Eventos/NPC, disparadores, rutas de movimiento, condiciones | ⬜ | |
-| Guiones async (ctx), cinemáticas, cámara | ⬜ | |
-| Warps, puertas, conexiones entre mapas | ⬜ | |
-| Pokémon acompañante (seguidor) | ⬜ | |
-| Encuentros: modo clásico y visible (seleccionable) | ⬜ | Biblia §15 |
-| Ciclo día/noche (reloj de juego, descansar) + estados de crisis del cielo | ⬜ | Biblia §14, §12 |
-| Clima, niebla, oscuridad con luces | ⬜ | |
-| UI: mensajes, elecciones, menú de pausa | ⬜ | |
-| Equipo, datos (resumen), mochila, Pokédex, opciones, guardar/cargar | ⬜ | |
-| Tienda, Centro Pokémon, PC de almacenamiento | ⬜ | |
-| Mapa de Axis / Vuelo (Complete) | ⬜ | |
-| Combate: motor (daño, tipos, estados, efectos, habilidades, objetos, IA) | ⬜ | Portado de Essentials 21.1 |
-| Combate: escena estilo BW2 (sprites animados, cajas, menús, animaciones) | ⬜ | |
-| Captura, experiencia, subir nivel, aprender movimientos, evolución | ⬜ | |
-| Megaevolución (Mega Aro, piedras) | ⬜ | Biblia §15 |
+| Render Three.js pixel-perfect, escalado entero | ✅ | Fundación (24-09) |
+| Tilemap RMXP (3 capas, autotiles animados, prioridades) | ✅ | |
+| Movimiento en rejilla, correr, colisiones, terrain tags, salientes | ✅ | |
+| Eventos/NPC, disparadores, rutas de movimiento, condiciones | ✅ | |
+| Guiones async (ctx), cinemáticas, cámara | ✅ | |
+| Warps, puertas, conexiones entre mapas | ✅ | Animación de puertas pendiente |
+| Pokémon acompañante (seguidor) | ✅ | Cadena con el Core: fase 2 |
+| Encuentros: modo clásico y visible (seleccionable) | ✅ | Biblia §15 |
+| Ciclo día/noche (reloj de juego, descansar) + estados de crisis del cielo | 🟨 | Reloj y efectos aurora/luna/grietas hechos; "descansar" pendiente |
+| Clima, niebla, oscuridad con luces | ✅ | |
+| UI: mensajes, elecciones, menú de pausa | ✅ | Estilo telepático del Core incluido |
+| Equipo, datos (resumen), mochila, Pokédex, opciones, guardar/cargar | ✅ | |
+| Tienda, Centro Pokémon, PC de almacenamiento | 🟨 | Tienda y PC hechos; Centro Pokémon (evento de cura) con el contenido |
+| Mapa de Axis / Vuelo (Complete) | 🟨 | Estructura hecha; datos del atlas pendientes (X02) |
+| Combate: motor (daño, tipos, estados, efectos, habilidades, objetos, IA) | ✅ | 463/463 códigos de función, 327/328 habilidades |
+| Combate: escena estilo BW2 (sprites animados, cajas, menús, animaciones) | 🟨 | Fase 2 en curso |
+| Captura, experiencia, subir nivel, aprender movimientos, evolución | 🟨 | Motor ✅; presentación en fase 2 |
+| Megaevolución (Mega Aro, piedras) | 🟨 | Motor ✅; obtención en campaña pendiente |
 | Alpha (raros, tamaño) y shiny | ⬜ | ⛔ tasas D29 (provisional ~3% Alpha) |
 | Condiciones de captura legendaria comunicadas en UI | ⬜ | Biblia §15 |
 | Zygarde: Core compañero de campo (fuera del equipo) | ⬜ | |
@@ -37,8 +37,8 @@ provisional · ✅ implementado y probado en juego · ⛔ bloqueado por decisió
 | Salto de Convergencia (10% → Columna Lanza) | ⬜ | |
 | Arca de Zygarde (gestión de formas, sin coerción) | ⬜ | |
 | Registro de pistas de Tablillas (2–3 abiertas) | ⬜ | ⛔ D11 |
-| Guardado local (3 ranuras) + exportar/importar | ⬜ | |
-| Sonido: BGM con bucles, SE, ME, gritos | ⬜ | |
+| Guardado local (3 ranuras) + exportar/importar | ✅ | |
+| Sonido: BGM con bucles, SE, ME, gritos | ✅ | 82/110 BGM con puntos de bucle; señal del Core procesada |
 | Cordón Unión (evolución por intercambio en solitario) | ⬜ | Biblia §15 |
 | Cooperativo / intercambio / PvP | ⬜ | Opcional; nunca requisito (biblia §15) |
 

@@ -46,6 +46,9 @@ export class WorldView {
     for (const id of [...this.views.keys()]) this.removeMap(id);
     for (const s of this.sprites.values()) s.dispose();
     this.sprites.clear();
+    // Los brillos del mapa anterior se retiran ya (si no, se veían 10 fotogramas en el mapa nuevo).
+    for (const g of this.glows.values()) g.handle.remove(1);
+    this.glows.clear();
     this.emotes.clear();
     this.fieldAnims.clear();
   }
@@ -92,9 +95,10 @@ export class WorldView {
     const p = world.player;
     seen.add(p.uid);
     this.spriteFor(p).sync(p, 0, 0, { visible: true });
-    const f = world.follower;
-    seen.add(f.uid);
-    this.spriteFor(f).sync(f, 0, 0, { visible: f.visible && !p.surfing });
+    for (const f of world.followers || [world.follower]) {
+      seen.add(f.uid);
+      this.spriteFor(f).sync(f, 0, 0, { visible: f.visible && !p.surfing });
+    }
     for (const [uid, s] of this.sprites) {
       if (!seen.has(uid)) { s.dispose(); this.sprites.delete(uid); }
     }
@@ -111,10 +115,13 @@ export class WorldView {
     }
     if (!cur || cur.kind !== glow) {
       cur?.handle.remove(10);
-      this.glows.set(ev.uid, { kind: glow, handle: effects.add(glow, { x: ev.x, y: ev.y }) });
+      // page.glow: nombre de efecto o { name, absolute?, ...opciones } (absolute: geometría en coords de mapa)
+      const { name, absolute = false, ...opts } = typeof glow === 'string' ? { name: glow } : glow;
+      this.glows.set(ev.uid, { kind: glow, absolute, handle: effects.add(name, { x: ev.x, y: ev.y, ...opts, event: ev }) });
     }
-    const h = this.glows.get(ev.uid).handle;
-    h.object.position.set(ev.realX + 16 + ox, ev.realY + 16 + oy, 0);
+    const g = this.glows.get(ev.uid);
+    if (g.absolute) g.handle.object.position.set(ox, oy, 0);
+    else g.handle.object.position.set(ev.realX + 16 + ox, ev.realY + 16 + oy, 0);
   }
 
   update() {

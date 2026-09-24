@@ -6,8 +6,6 @@ import { message, confirm } from './common.js';
 import { teachMoves, evolvePartyMember } from './progression.js';
 import { ui } from '../api.js';
 
-const REPEL_VAR = 'repelSteps';
-
 /**
  * Usa el objeto. Devuelve { returnToWorld: true } si el mundo debe encargarse (Cuerda Huida, objetos clave…).
  */
@@ -19,8 +17,8 @@ export async function useBagItem(itemId) {
   if (itemId === 'TOWNMAP') { await ui.openRegionMap({}); return {}; }
   if (kind === 'world') return { returnToWorld: true };
   if (kind === 'repel') {
-    if (s.var(REPEL_VAR, 0) > 0) { await message('Aún tiene efecto el repelente anterior.'); return {}; }
-    s.setVar(REPEL_VAR, repelSteps(itemId));
+    // El mundo descuenta los pasos (world/world.js) y avisa al agotarse (world/fieldActions.js).
+    if (!s.startRepel(itemId, repelSteps(itemId))) { await message('Aún tiene efecto el repelente anterior.'); return {}; }
     s.removeItem(itemId, 1);
     await message(`Has usado ${item.name}. Los Pokémon salvajes débiles no se acercarán durante un tiempo.`);
     return {};

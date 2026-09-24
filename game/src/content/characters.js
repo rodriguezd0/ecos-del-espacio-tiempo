@@ -14,6 +14,10 @@
 //   const r = frameRect(ch, 2, pattern);          // dirección RMXP (2/4/6/8) y patrón 0..3
 //   ch.variants?.run → id de la hoja de correr; ch.battle?.back / ch.battle?.front → sprites de combate.
 //   Charsets de Añil sin registrar: getCharacter('anil:chaval1') (frame = ancho/4 × alto/4).
+//   Clases genéricas de entrenador con arte de Añil (content/anilClasses.js):
+//     getCharacter('anil:bichero') → charset; getBattleSprite('anil:bichero') → Trainers/CAZABICHOS.png.
+//   Sprites de combate: getBattleSprite('gael_front' | 'anil:<alias>' | 'anil:<ARCHIVO de Graphics/Trainers>').
+import { ANIL_CLASSES } from './anilClasses.js';
 
 export const DIR_ROW = Object.freeze({ 2: 0, 4: 1, 6: 2, 8: 3 });
 
@@ -31,23 +35,23 @@ const battleFront = (file, extra) => base('battle_front', file, { frameW: BATTLE
 export const CHARACTERS = Object.freeze({
   protagonista_m: charset('protagonista_m.png', {
     name: 'Protagonista (masculino)',
-    note: 'Castaño cobrizo sin gorra, chaqueta azul petróleo cerrada, camiseta clara, pantalón y calzado oscuros, tirador verde #B9FF66, sin mochila (biblia §13.1).',
+    note: 'Castaño cobrizo sin gorra, chaqueta azul petróleo cerrada, camiseta clara, pantalón y calzado oscuros, tirador verde #B9FF66 (biblia §13.1) y mochila arena (D06).',
     variants: { run: 'protagonista_m_run' },
     battle: { back: 'protagonista_m_back' },
   }),
   protagonista_m_run: charset('protagonista_m_run.png', {
     name: 'Protagonista (masculino) — correr', variantOf: 'protagonista_m',
-    note: 'Ciclo de carrera (0/2 paso cruzado, 1/3 zancada).',
+    note: 'Ciclo de carrera (0/2 paso cruzado, 1/3 zancada), con mochila.',
   }),
   protagonista_f: charset('protagonista_f.png', {
     name: 'Protagonista (femenina)',
-    note: 'Azul marino casi nocturno y acento verde (biblia §13.2). Melena, chaqueta clara y pantalón corto con mallas: PROPUESTA pendiente de D30.',
+    note: 'Azul marino casi nocturno y acento verde (biblia §13.2), mochila teja (D06). Melena, chaqueta clara y pantalón corto con mallas: PROPUESTA pendiente de D30.',
     variants: { run: 'protagonista_f_run' },
     battle: { back: 'protagonista_f_back' },
   }),
   protagonista_f_run: charset('protagonista_f_run.png', {
     name: 'Protagonista (femenina) — correr', variantOf: 'protagonista_f',
-    note: 'Ciclo de carrera (0/2 paso cruzado, 1/3 zancada).',
+    note: 'Ciclo de carrera (0/2 paso cruzado, 1/3 zancada), con mochila.',
   }),
   gael: charset('gael.png', {
     name: 'Gael (rival)',
@@ -66,6 +70,27 @@ export const CHARACTERS = Object.freeze({
   vecino: charset('vecino.png', { name: 'Vecino del pueblo', note: 'NPC genérico: chaqueta ocre y vaqueros.' }),
   vecina: charset('vecina.png', { name: 'Vecina del pueblo', note: 'NPC genérica: rebeca coral, falda larga, moño.' }),
   anciano: charset('anciano.png', { name: 'Anciano del pueblo', note: 'NPC genérico: pelo cano, rebeca marrón.' }),
+  madre: charset('madre.png', {
+    name: 'Madre del protagonista',
+    note: 'D01: adulta cálida con ropa de casa: jersey color miel, delantal crema, coleta baja castaña, zapatillas de casa.',
+  }),
+  ayudante: charset('ayudante.png', {
+    name: 'Ayudante del laboratorio',
+    note: 'NPC genérico (PROPUESTA): joven con melena corta negra y horquilla, bata clara sobre jersey coral.',
+  }),
+  guardiana: charset('guardiana.png', {
+    name: 'Guardiana del Umbral',
+    note: 'D07: veterana escéptica (~60 años), pelo cano con moño, chaqueta de campo oliva, pañuelo teja, botas altas. Nombre pendiente.',
+    battle: { front: 'guardiana_front' },
+  }),
+  nino: charset('nino.png', {
+    name: 'Niño del pueblo',
+    note: 'NPC genérico infantil: camiseta celeste, pantalón corto caqui. (El charset de Añil sigue en "anil:nino".)',
+  }),
+  nina: charset('nina.png', {
+    name: 'Niña del pueblo',
+    note: 'NPC genérica infantil: vestido amarillo, coletas. (El charset de Añil sigue en "anil:nina".)',
+  }),
   zygarde_core: charset('zygarde_core.png', {
     name: 'Zygarde — Core (acompañante)',
     note: 'Forma pequeña de núcleo: cuerpo gelatinoso verde, dos antenas, placa hexagonal y núcleo luminoso. Rebote blando al andar.',
@@ -86,23 +111,57 @@ export const CHARACTERS = Object.freeze({
     name: 'Profesor — combate, frontal',
     note: 'Propuesta neutral: abrigo claro abierto, jersey pizarra; nada que revele su pasado (D03).',
   }),
+  guardiana_front: battleFront('guardiana_front.png', {
+    name: 'Guardiana del Umbral — combate, frontal',
+    note: 'Brazos cruzados (escéptica, sin hostilidad), correa de zurrón cruzada, botas altas (D07).',
+  }),
   zygarde_celula: charset('zygarde_celula.png', {
     name: 'Célula de Zygarde',
     note: 'Gota verde flotante con destellos; las 4 filas son iguales (sirve con cualquier dirección y con "animación en parada").',
   }),
 });
 
-/** Entrada del registro o null. Acepta 'anil:<archivo>' para charsets originales de Añil. */
+/** Hoja original de Añil (tamaño de frame deducido de la imagen). */
+function anilSheet(kind, dir, name, extra = {}) {
+  const grid = kind === 'charset' ? { cols: 4, rows: 4 } : { cols: 1, rows: 1 };
+  return {
+    kind, name, file: `/anil/Graphics/${dir}/${encodeURIComponent(name)}.png`,
+    frameW: null, frameH: null, ...grid, provisional: false, note: 'Original de Añil (referencia).', ...extra,
+  };
+}
+
+/**
+ * Entrada del registro o null. Acepta 'anil:<alias de clase>' (content/anilClasses.js) y
+ * 'anil:<archivo>' para charsets originales de Añil.
+ */
 export function getCharacter(id) {
   if (typeof id !== 'string' || !id) return null;
   if (id.startsWith('anil:')) {
     const name = id.slice(5);
-    return {
-      kind: 'charset', name, file: `/anil/Graphics/Characters/${encodeURIComponent(name)}.png`,
-      frameW: null, frameH: null, cols: 4, rows: 4, provisional: false, note: 'Charset original de Añil (referencia).',
-    };
+    const cls = Object.hasOwn(ANIL_CLASSES, name) ? ANIL_CLASSES[name] : null;
+    if (!cls) return anilSheet('charset', 'Characters', name);
+    return anilSheet('charset', 'Characters', cls.charset, {
+      alias: name, trainerClass: cls.trainerClass, gender: cls.gender,
+      battle: { front: `anil:${cls.front}` },
+      note: `Clase genérica "${cls.trainerClass}" con arte original de Añil.`,
+    });
   }
-  return CHARACTERS[id] || null;
+  return Object.hasOwn(CHARACTERS, id) ? CHARACTERS[id] : null;
+}
+
+/**
+ * Sprite de combate: id registrado de tipo battle_front/battle_back, 'anil:<alias de clase>' o
+ * 'anil:<ARCHIVO>' de Graphics/Trainers de Añil (frame único cuadrado). null si no aplica.
+ */
+export function getBattleSprite(id) {
+  if (typeof id !== 'string' || !id) return null;
+  if (id.startsWith('anil:')) {
+    const name = id.slice(5);
+    const front = Object.hasOwn(ANIL_CLASSES, name) ? ANIL_CLASSES[name].front : name;
+    return anilSheet('battle_front', 'Trainers', front);
+  }
+  const entry = Object.hasOwn(CHARACTERS, id) ? CHARACTERS[id] : null;
+  return entry && entry.kind !== 'charset' ? entry : null;
 }
 
 /**

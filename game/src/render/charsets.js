@@ -35,7 +35,12 @@ export async function charsetUrls(key) {
     return urls;
   }
   if (key.startsWith('asset:')) return [`assets/${key.slice(6)}`];
-  if (key.startsWith('anil:')) return [a.anil(`Graphics/Characters/${key.slice(5)}.png`)];
+  if (key.startsWith('anil:')) {
+    // Alias de clase de entrenador ('anil:bichero' → cazabichos.png, content/anilClasses.js).
+    const alias = (await registry())(key);
+    const direct = a.anil(`Graphics/Characters/${key.slice(5)}.png`);
+    return alias?.alias && alias.file ? [alias.file, direct] : [direct];
+  }
   const get = await registry();
   const entry = get(key);
   if (entry?.file) return [entry.file];

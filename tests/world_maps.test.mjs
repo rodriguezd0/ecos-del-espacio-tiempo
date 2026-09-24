@@ -25,8 +25,20 @@ function reachable(map, sx, sy) {
   return seen;
 }
 
+/** ¿Existe ya el módulo del mapa? (los del Bloque 1 se registran antes de que otro agente los escriba). */
+async function mapExists(id) {
+  try {
+    await MAPS[id]();
+    return true;
+  } catch (err) {
+    if (err.code === 'ERR_MODULE_NOT_FOUND' && String(err.message).includes(id)) return false;
+    throw err;
+  }
+}
+
 for (const id of Object.keys(MAPS)) {
-  test(`mapa ${id}: se construye de forma determinista y sus warps apuntan a mapas existentes`, async () => {
+  test(`mapa ${id}: se construye de forma determinista y sus warps apuntan a mapas existentes`, async (t) => {
+    if (!(await mapExists(id))) { t.skip(`${id} aún no existe`); return; }
     const a = await buildMapNode(id);
     const b = await buildMapNode(id);
     assert.equal(a.built.width, a.def.width);

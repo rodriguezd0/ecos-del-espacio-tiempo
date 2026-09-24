@@ -13,6 +13,7 @@ const DEV_ROUTES = {
   battle: () => import('./battle/scene/devBattle.js'),
   sprites: () => import('./dev/spriteViewer.js'),
   boot: () => import('./dev/bootCheck.js'),
+  prologue: () => import('./content/cutscenes/prologueRoute.js'), // ?scene=prologue[&shot=…][&full=1]
 };
 
 async function loadDatabase() {

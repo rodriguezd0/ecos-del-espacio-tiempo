@@ -25,6 +25,7 @@ export function createContext(scene, event = null) {
     if (target === undefined || target === null || target === 'this') return event;
     if (target === 'player') return world.player;
     if (target === 'follower') return world.follower;
+    if (target === 'core') return world.core; // Core de Zygarde que acompaña al jugador (D06)
     if (typeof target === 'object') return target;
     const ev = world.events.find((e) => e.id === target);
     if (!ev) throw new Error(`ctx: personaje "${target}" no existe en ${world.map?.id}`);
@@ -129,7 +130,9 @@ export function createContext(scene, event = null) {
     async giveItem(id, n = 1, { found = false, silent = false } = {}) {
       const item = db.items?.[id];
       if (!item) console.warn(`ctx.giveItem: objeto desconocido "${id}"`);
-      state.addItem(id, n);
+      // Los objetos clave no se acumulan (GameState.addKeyItem).
+      if (item && (item.pocket === 8 || (item.flags || []).includes('KeyItem'))) state.addKeyItem(id);
+      else state.addItem(id, n);
       if (silent) return;
       const name = item?.name || id;
       audio?.playME?.('Item get');
@@ -149,6 +152,10 @@ export function createContext(scene, event = null) {
       return pkmn;
     },
     heal() { state.setParty(state.party.map((p) => healed(db, p))); },
+    /** Fija el punto de cura (derrota y Cuerda Huida). Por defecto, la casilla actual del jugador en este mapa. */
+    setHealPoint(x = world.player.x, y = world.player.y, dir = 2, mapId = world.map?.id) {
+      state.setHealPoint(mapId, x, y, dir);
+    },
     bgm: (name, opts) => audio?.playBGM?.(name, opts),
     se: (name, opts) => audio?.playSE?.(name, opts),
     me: (name, opts) => audio?.playME?.(name, opts),

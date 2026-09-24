@@ -4,78 +4,82 @@
 
 // Protagonista masculino: castaño cobrizo; puntas superiores hacia atrás/derecha y flequillo en
 // dos mechones que caen hacia su derecha dejando ver la frente. Sin gorra.
+// 2.ª pasada: cabeza 2 filas más baja y 2 px más estrecha (proporción BW ≈ Cheren: cabeza 15 filas,
+// cara 7), contorno de pelo irregular (puntas, patillas, mechones de nuca) y mechones con dirección
+// para que no se lea como un casco.
 export const PROTA_M = {
   down: [
     '..................', // 0
-    '..........kk......', // 1
-    '.....kk..kHhk.....', // 2
-    '....kHhkkhHhhk....', // 3
-    '...kHhhhhhhhhhhk..', // 4
-    '..kHHhhhhhhhhhhmk.', // 5
-    '.kHHhhhhhhhhhhhmk.', // 6
-    '.kHhhhhhhhhhhhmmk.', // 7
-    '.khhhhhmhhhhhmhmk.', // 8
-    '.kmhhhmhhhhhmhhmk.', // 9
-    '.kmhhmhhhhhmhhhnk.', // 10
-    'osnmmhhhhmhhhhmnso', // 11
-    'osnmhhmSshhmSsmnso', // 12
-    '.okmmSSssmSSssmko.', // 13
-    '..krswesSSsewsrk..', // 14
-    '..krssesSSsessrk..', // 15
+    '..................', // 1
+    '..........kk.k....', // 2
+    '......kk.kHhkHk...', // 3
+    '.....kHhkHhhhhhk..', // 4
+    '....kHhhhHhhhhhhk.', // 5
+    '...kHHhhhhHhhhhmk.', // 6
+    '..kHhhhhhhhhhhhmk.', // 7
+    '.kHhhhhhhhhhhhmmk.', // 8
+    '.khhhhmhhhhhmhhmk.', // 9
+    '.khhhmShhhhmShhnk.', // 10
+    '.kmhmSSshhmSSshnk.', // 11
+    '.kmmSSSsSmSSSSmnk.', // 12
+    '.kmSSeeSSSSeeSsmk.', // 13
+    '.osSSweSSSSewSsso.', // 14
+    '..osSssSSSSssSso..', // 15
     '...krssssssssrk...', // 16
     '.....kkrrrrkk.....', // 17
   ],
   left: [
     '..................', // 0
-    '...........kk.....', // 1
-    '......kk..kHhk....', // 2
-    '.....kHhkkhHhhk...', // 3
-    '....kHhhhhhhhhhhk.', // 4
-    '...kHHhhhhhhhhhhk.', // 5
-    '..kHHhhhhhhhhhhmk.', // 6
-    '.kHhhhhhhhhhhhhmmk', // 7
-    '.khhhhmhhhhhmhhmnk', // 8
-    'khhhhmhhhhhmhhhmnk', // 9
-    'kmhhmhhhhhmhhhmmnk', // 10
-    'kmmSSmhhmhhhmhmnnk', // 11
-    '.kSSSsmhmoohhmnnk.', // 12
-    'kSSewsssmsromnnk..', // 13
-    'kSsessssmoommnk...', // 14
+    '..................', // 1
+    '...........kk.....', // 2
+    '.......kk.kHhk.k..', // 3
+    '......kHhkHhhhkHk.', // 4
+    '.....kHhhHhhhhhhk.', // 5
+    '....kHHhhhHhhhhmk.', // 6
+    '...kHhhhhhhhhhhmk.', // 7
+    '..kHhhhhhhhhhmmmk.', // 8
+    '.kHhhhmhhhhhmhmnk.', // 9
+    'khhhhmShhhmhhmmnk.', // 10
+    'kmhhmSSmhhhhhmnnk.', // 11
+    '.kmSSSSsmhoohmnk..', // 12
+    'kSSeesssmsromnk...', // 13
+    'kSSewsssmoommk....', // 14
     '.kssssssrmnnk.....', // 15
     '..krssssrnkk......', // 16
     '...kkrrrkk........', // 17
   ],
   up: [
     '..................', // 0
-    '..........kk......', // 1
-    '.....kk..kHhk.....', // 2
-    '....kHhkkhHhhk....', // 3
-    '...kHhhhhhhhhhhk..', // 4
-    '..kHHhhhhhhhhhhmk.', // 5
-    '.kHHhhhhhhhhhhhmk.', // 6
-    '.kHhhhhhhhhhhhmmk.', // 7
-    '.khhhhhmhhhhhhmmk.', // 8
-    '.kmhhhhhmhhhhmhmk.', // 9
-    '.kmhmhhhhmhhmhhnk.', // 10
-    'osnmhmhhhmhmhhmnso', // 11
-    'osnmmhmhhmhhmhmnso', // 12
-    '.oknmmhmmhmmhmnko.', // 13
-    '..knmmnmmmnmmnnk..', // 14
-    '...knnknnnnknnk...', // 15
-    '....kk.krrk.kk....', // 16
+    '..................', // 1
+    '..........kk.k....', // 2
+    '......kk.kHhkHk...', // 3
+    '.....kHhkHhhhhhk..', // 4
+    '....kHhhhHhhhhhhk.', // 5
+    '...kHHhhhhHhhhhmk.', // 6
+    '..kHhhhhmhhhhhhmk.', // 7
+    '.kHhhhhmhhhhmhmmk.', // 8
+    '.khhhhmhhhhmhhhmk.', // 9
+    '.kmhhmhhhhmhhhmnk.', // 10
+    '.kmhhmhhmhhhmhmnk.', // 11
+    '.knmhhmhhmhhmhnnk.', // 12
+    'oknmmhmmhmmhmmnnko', // 13
+    '.oknmnmmnmmnmnnko.', // 14
+    '..knnknnnnknnnk...', // 15
+    '...kk.krrk.kkk....', // 16
     '.......kkkk.......', // 17
   ],
 };
 
 // Protagonista femenina: azul marino casi nocturno (biblia §13.2). Peinado PROVISIONAL (D30):
-// melena por los hombros con raya y flequillo ladeado; sin gorra ni coletas.
+// melena por los hombros con raya y flequillo ladeado; sin gorra ni coletas. 2.ª pasada: coronilla
+// 1 fila más baja para igualar la altura de cabeza del masculino.
 export const PROTA_F = {
   down: [
     '..................', // 0
     '..................', // 1
-    '......kkkkkk......', // 2
-    '....kkhhhhhhkk....', // 3
-    '...khhhhhhhhhhk...', // 4
+    '..................', // 2
+    '.....kkkkkkkk.....', // 3
+    '...kkhhhhhhhhkk...', // 4
     '..khHHHhhHHHhhmk..', // 5
     '.khHhhHHHhhHHhhmk.', // 6
     '.khhhhhhhhhhhhmmk.', // 7
@@ -95,9 +99,9 @@ export const PROTA_F = {
   left: [
     '..................', // 0
     '..................', // 1
-    '.......kkkkk......', // 2
-    '.....kkhhhhhkk....', // 3
-    '....khhhhhhhhhk...', // 4
+    '..................', // 2
+    '......kkkkkkk.....', // 3
+    '....kkhhhhhhhkk...', // 4
     '...khHHHhhHHHhhk..', // 5
     '..khHhhHHHhhHHhmk.', // 6
     '.khhhhhhhhhhhhhmk.', // 7
@@ -117,9 +121,9 @@ export const PROTA_F = {
   up: [
     '..................', // 0
     '..................', // 1
-    '......kkkkkk......', // 2
-    '....kkhhhhhhkk....', // 3
-    '...khhhhhhhhhhk...', // 4
+    '..................', // 2
+    '.....kkkkkkkk.....', // 3
+    '...kkhhhhhhhhkk...', // 4
     '..khHHHhhHHHhhmk..', // 5
     '.khHhhHHHhhHHhhmk.', // 6
     '.khhhhhhhhhhhhmmk.', // 7

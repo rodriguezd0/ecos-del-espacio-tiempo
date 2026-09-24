@@ -42,7 +42,12 @@ export class SceneManager {
     const idx = this.stack.findIndex((e) => e.scene === scene);
     if (idx < 0) return;
     const [entry] = this.stack.splice(idx, 1);
-    entry.scene.exit();
+    try {
+      entry.scene.exit();
+    } catch (err) {
+      // Un fallo al liberar recursos no debe dejar colgado a quien espera el resultado.
+      console.error('Error al salir de la escena', err);
+    }
     this.engine.input.flush();
     entry.resolve(result);
   }
@@ -51,7 +56,11 @@ export class SceneManager {
   async replace(scene, params) {
     const old = this.stack.splice(0);
     for (const e of old.reverse()) {
-      e.scene.exit();
+      try {
+        e.scene.exit();
+      } catch (err) {
+        console.error('Error al salir de la escena', err);
+      }
       e.resolve(undefined);
     }
     return this.push(scene, params);

@@ -106,7 +106,7 @@ export class MapBuilder {
     if (brush.erase) return { kind: 'id', def: { id: 0 } };
     if (brush.autotile !== undefined) return { kind: brush.patterns?.length ? 'autofixed' : 'autotile', def: brush };
     for (const k of ['tile', 'pattern', 'grid', 'nine', 'line']) if (brush[k] !== undefined) return { kind: k, def: brush };
-    if (brush.forest || brush.cliff || brush.terrace) return { kind: 'delegate', def: brush };
+    if (brush.forest || brush.cliff || brush.terrace || brush.room || brush.cave) return { kind: 'delegate', def: brush };
     throw new Error(`MapBuilder: pincel no reconocido ${JSON.stringify(brush)}`);
   }
 

@@ -3,8 +3,8 @@
 // warps, cruce de conexiones y encuentros. La escena (MapScene) aporta los "hooks" asíncronos.
 import { MapEvent, normalizeEventDef } from './mapEvent.js';
 import { Player } from './player.js';
-import { Follower } from './follower.js';
-import { EncounterSystem } from './encounters.js';
+import { Follower, followChain, turnChainTowardsLeaders } from './follower.js';
+import { EncounterSystem, allowEncounter } from './encounters.js';
 import { dx, dy } from './gameMap.js';
 import { canSurfFreely, TERRAIN_NONE } from './terrain.js';
 import { expandEventDef } from './eventTypes.js';
@@ -30,9 +30,14 @@ export class World {
     this.scriptBusyFn = () => false;
     this.player = new Player(this, {});
     this.follower = new Follower(this, {});
+    // Compañero de campo (Core de Zygarde, D06): va entre el jugador y el Pokémon acompañante.
+    this.core = new Follower(this, { id: 'core', kind: 'core' });
     this.encounters = new EncounterSystem({}, rng);
     this.time = 0;
   }
+
+  /** Cadena de seguidores en orden (jugador → Core → Pokémon). */
+  get followers() { return [this.core, this.follower]; }
 
   get map() { return this.current?.map || null; }
   get events() { return this.current?.events || []; }
@@ -65,7 +70,7 @@ export class World {
     this.current = entry;
     this.neighbors = [];
     this.player.map = entry.map;
-    this.follower.map = entry.map;
+    for (const f of this.followers) f.map = entry.map;
     this.encounters = new EncounterSystem(entry.def.encounters || {}, this.rng);
     this.bridge = 0;
   }
@@ -132,11 +137,11 @@ export class World {
     const prev = this.current;
     for (const e of this.allEntries) e.offset = { x: e.offset.x + ox, y: e.offset.y + oy };
     player.shiftBy(ox, oy);
-    this.follower.shiftBy(ox, oy);
+    for (const f of this.followers) f.shiftBy(ox, oy);
     this.neighbors = [prev, ...this.neighbors.filter((n) => n !== next)];
     this.current = next;
     player.map = next.map;
-    this.follower.map = next.map;
+    for (const f of this.followers) f.map = next.map;
     this.encounters = new EncounterSystem(next.def.encounters || {}, this.rng);
     this.hooks.mapChanged?.(next, prev, { ox, oy });
   }
@@ -149,7 +154,7 @@ export class World {
     const wasBusy = player.busy();
     player.update(dt);
     if (!wasBusy && player.busy() && !player.bumping) this.followLeader();
-    this.follower.update(dt);
+    for (const f of this.followers) f.update(dt);
     for (const ev of this.events) {
       if (ev.erased) continue;
       ev.update(dt);
@@ -158,9 +163,7 @@ export class World {
   }
 
   followLeader() {
-    const f = this.follower;
-    if (f.hidden) return;
-    f.follow(this.player);
+    followChain(this.player, this.followers);
   }
 
   refreshEvents() {
@@ -210,7 +213,7 @@ export class World {
 
   onPlayerStep() {
     const p = this.player;
-    this.follower.turnTowardsLeader(p);
+    turnChainTowardsLeaders(p, this.followers);
     if (p.moveRouteForcing || this.scriptBusy()) return;
     let triggered = this.checkTrainersFromDistance();
     triggered = this.checkHere(['touch', 'eventTouch']) || triggered;
@@ -219,17 +222,34 @@ export class World {
     const tag = p.terrainTag();
     if (tag.ice && p.canMoveInDirection(p.direction)) { p.iceSliding = true; p.straighten(); p.walkAnime = false; } else p.stopIce();
     this.hooks.stepTaken?.(p);
-    if (!triggered) this.tryEncounter();
+    const repelActive = this.countRepelStep(tag);
+    if (!triggered) this.tryEncounter({ repelActive });
   }
 
-  tryEncounter() {
+  /**
+   * Repelente (Essentials :repel_counter): descuenta un paso salvo sobre hielo y avisa al agotarse
+   * (hook repelExpired). Devuelve si estaba activo al dar el paso (cuenta para el encuentro de este paso).
+   */
+  countRepelStep(tag = this.player.terrainTag()) {
+    const st = this.state;
+    if (!st || typeof st.stepRepel !== 'function' || !(st.repelSteps > 0)) return false;
+    if (!tag.ice && st.stepRepel()) this.hooks.repelExpired?.();
+    return true;
+  }
+
+  /** Encuentro aleatorio en la posición del jugador. opts.repelActive: filtra salvajes débiles. */
+  tryEncounter({ repelActive = (this.state?.repelSteps || 0) > 0 } = {}) {
     if (this.hooks.encountersEnabled && !this.hooks.encountersEnabled()) return false;
     if (!this.state?.party?.some((pk) => pk.hp > 0)) return false;
     const p = this.player;
     const type = this.encounters.encounterType({ terrain: p.terrainTag(), surfing: p.surfing, hour: this.state.hour });
-    if (!type || !this.encounters.triggered(type)) return false;
+    if (!type || !this.encounters.triggered(type, { repel: repelActive })) return false;
     const enc = this.encounters.choose(type);
-    if (!enc) return false;
+    const lead = this.state.leadPokemon?.() || this.state.party.find((pk) => !pk.egg);
+    if (!allowEncounter(enc, { repelActive, leadLevel: lead?.level || 0 })) {
+      this.encounters.chanceAccumulator = 0;
+      return false;
+    }
     this.hooks.encounter?.(enc);
     return true;
   }
@@ -307,8 +327,8 @@ export class World {
     }
     const fx = p.x + dx(p.direction);
     const fy = p.y + dy(p.direction);
-    const f = this.follower;
-    if (f.visible && f.x === fx && f.y === fy && !f.busy()) {
+    const f = this.followers.find((c) => c.visible && c.x === fx && c.y === fy && !c.busy());
+    if (f) {
       this.hooks.followerTalk?.(f);
       return true;
     }

@@ -1,7 +1,8 @@
 // Construye los sprites PROVISIONALES de personajes de Axis (D30) desde tools/pixel_chars/.
-// Uso: node tools/pixel_build.mjs [id ...] [--preview]
+// Uso: node tools/pixel_build.mjs [id ...] [--preview] [--lineup] [--out=<carpeta>]
 //   Escribe game/assets/characters/<id>.png (frames 64×64, nativo 32×32 ×2) y, con --preview,
-//   vistas ampliadas en tools/cache/pixel/<id>.png para revisión.
+//   vistas ampliadas en tools/cache/pixel/<id>.png para revisión. Con --out, los PNG van a otra
+//   carpeta (p. ej. tools/cache/pixel/draft) para iterar sin tocar el juego en marcha.
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Img, preview, strayPixels } from './pixel.mjs';
@@ -9,7 +10,8 @@ import { buildHumanSheet, exportSheet, NATIVE, SCALE } from './pixel_chars/assem
 import { CHARACTERS } from './pixel_chars/roster.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const OUT_DIR = path.join(ROOT, 'game', 'assets', 'characters');
+const outFlag = process.argv.find((a) => a.startsWith('--out='));
+const OUT_DIR = outFlag ? path.resolve(ROOT, outFlag.slice(6)) : path.join(ROOT, 'game', 'assets', 'characters');
 const PREVIEW_DIR = path.join(ROOT, 'tools', 'cache', 'pixel');
 
 function buildOne(spec) {

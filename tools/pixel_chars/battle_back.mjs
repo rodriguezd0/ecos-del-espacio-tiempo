@@ -81,6 +81,7 @@ const CONFIGS = {
     strands: [[33, 22, 29, 36], [39, 27, 37, 42], [45, 24, 47, 38], [51, 28, 54, 34], [28, 32, 27, 38]],
     jacket: { light: '#3E8E96', base: '#256870', shadow: '#194A52', line: '#0E3036' },
     collar: { light: '#56A8B0', base: '#3E8E96', shadow: '#256870', line: '#0E3036' },
+    bag: { light: '#E2C890', base: '#BC9A5E', shadow: '#8A6A3A', line: '#5A4222' }, // mochila (D06)
     ears: true,
   },
   protagonista_f: {
@@ -90,9 +91,33 @@ const CONFIGS = {
     band: true,
     jacket: { light: '#F6F4EE', base: '#DCD8CC', shadow: '#A9A496', line: '#6C685E' },
     collar: { light: '#FFFFFF', base: '#F6F4EE', shadow: '#DCD8CC', line: '#6C685E' },
+    bag: { light: '#EA8A6C', base: '#C45C42', shadow: '#8E3C2C', line: '#5A221A' }, // mochila (D06)
     ears: false,
   },
 };
+
+const BUCKLE = ['kkk', 'kWk', 'kWk', 'kkk'];
+
+/**
+ * Mochila vista de espaldas (D06): correas que suben por encima de los hombros, asa, cuerpo con
+ * solapa y hebilla central, y bolsillo inferior; se sale del marco por abajo como el torso.
+ */
+function drawBackpack(img, tones, [lx, ly]) {
+  const P = (pts) => poly(W, H, pts.map(([x, y]) => [x + lx, y + ly]));
+  const straps = capsule(W, H, 31 + lx, 62 + ly, 25 + lx, 52 + ly, 2.4)
+    .union(capsule(W, H, 49 + lx, 62 + ly, 55 + lx, 52 + ly, 2.4));
+  paint(img, straps, tones, { lightW: 1, shadowW: 1 });
+  const handle = ellipse(W, H, 40 + lx, 58 + ly, 5, 4).minus(ellipse(W, H, 40 + lx, 58.5 + ly, 2.6, 2.2));
+  paint(img, handle, tones, { lightW: 0, shadowW: 0 });
+  const body = P([[30, 59], [50, 59], [54, 64], [56, 80], [24, 80], [26, 64]]);
+  paint(img, body, tones, { lightW: 2, shadowW: 3 });
+  const flap = P([[30, 59], [50, 59], [53, 64], [53, 69], [40, 71], [27, 69], [27, 64]]).and(body);
+  paint(img, flap, tones, { lightW: 2, shadowW: 2 });
+  const pocket = P([[31, 73], [49, 73], [50, 80], [30, 80]]);
+  paint(img, pocket, tones, { lightW: 1, shadowW: 2 });
+  lineIn(img, pocket, 31, 76, 49, 76, tones.shadow);
+  stamp(img, BUCKLE, { k: tones.line, W: '#D8D8E0' }, 39 + lx, 67 + ly);
+}
 
 function drawFrame(cfg, pose) {
   const img = new Img(W, H);
@@ -114,6 +139,7 @@ function drawFrame(cfg, pose) {
     paint(img, ellipse(W, H, 22 + lx, 33 + ly, 3, 4), SKIN, { lightW: 1, shadowW: 1 });
     paint(img, ellipse(W, H, 58 + lx, 33 + ly, 3, 4), SKIN, { lightW: 1, shadowW: 1 });
   }
+  if (cfg.bag) drawBackpack(img, cfg.bag, pose.lean);
   if (arm && !behind) paint(img, arm, cfg.jacket); // bajo el pelo (la melena cubre el hombro)
   const hair = cfg.hairMask(pose.lean);
   paint(img, hair, cfg.hair, { lightW: 3, shadowW: 4 });

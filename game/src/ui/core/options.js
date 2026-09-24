@@ -26,9 +26,9 @@ export function currentOptions() {
 
 /** Cambia una opción (inmutable: sustituye el objeto de opciones) y aplica sus efectos. */
 export function setOption(key, value) {
-  const next = { ...currentOptions(), [key]: value };
+  let next = { ...currentOptions(), [key]: value };
   if (engine.state) {
-    engine.state.data.options = next;
+    next = engine.state.setOption(key, value);
   } else {
     globalOptions = next;
     try {

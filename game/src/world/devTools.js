@@ -1,10 +1,13 @@
 // Herramientas de desarrollo del mapa (solo con ?debug o parámetros de URL):
 //   ?time=HH[:MM]  ?weather=rain[:7]  ?mode=visible|classic  ?zygarde=all|ram,climb…  ?dark=1
-//   ?through=1  ?fx=aurora,moon,cracks  ?follower=0
+//   ?through=1  ?fx=aurora,moon,cracks  ?follower=0  ?flags=a,b  ?vars=k:v  ?core=1
+//   ?party=none | ?party=TURTWIG:5,BIDOOF:3
 // Teclas (con ?debug): T +1 h · Y clima siguiente · U oscuridad · G atravesar muros · N modo encuentros
 //   B efectos de crisis · J probar transición de combate · K encuentro salvaje ahora · L luz de linterna
 import { WEATHER_TYPES } from '../render/weather.js';
 import { TRANSITION_NAMES } from '../render/transitionShaders.js';
+import { engine } from '../core/engine.js';
+import { createPokemon } from '../battle/core/pokemon.js';
 
 const ZYGARDE_KEYS = ['run', 'ram', 'terrain', 'climb', 'swim', 'detect', 'dive', 'fly', 'rebuild'];
 
@@ -14,17 +17,42 @@ export function applyDevParams(scene, params) {
     const [h, m = 0] = String(params.time).split(':').map(Number);
     if (Number.isFinite(h)) state.data.clock.minutes = ((h * 60 + m) % 1440 + 1440) % 1440;
   }
-  if (params.mode === 'visible' || params.mode === 'classic') state.options.encounterMode = params.mode;
+  if (params.mode === 'visible' || params.mode === 'classic') state.setOption('encounterMode', params.mode);
   if (params.zygarde) {
     const keys = params.zygarde === 'all' ? ZYGARDE_KEYS : String(params.zygarde).split(',');
     for (const k of keys) state.setZygardeAbility(k.trim(), true);
   }
-  if (params.follower === '0') state.options.followerEnabled = false;
+  if (params.follower === '0') state.setOption('followerEnabled', false);
   if (params.through === '1') scene.world.debugThrough = true;
   if (params.noenc === '1') scene.noEncounters = true;
+  // ?flags=a,b  ?vars=clave:valor,…  ?core=1 (el Core de Zygarde acompaña al jugador)
+  if (params.flags) for (const k of String(params.flags).split(',')) if (k.trim()) state.setFlag(k.trim());
+  if (params.vars) {
+    for (const kv of String(params.vars).split(',')) {
+      const [k, v = '1'] = kv.split(':');
+      if (k.trim()) state.setVar(k.trim(), Number.isFinite(Number(v)) ? Number(v) : v);
+    }
+  }
+  if (params.core === '1' && !state.data.zygarde.form) state.data.zygarde.form = 'core';
+  if (params.party) applyDevParty(state, String(params.party));
   scene.devWeather = params.weather ? String(params.weather).split(':') : null;
   scene.devDark = params.dark === '1';
   scene.devFx = params.fx ? String(params.fx).split(',') : [];
+}
+
+/** ?party=none (equipo vacío) o ?party=TURTWIG:5,BIDOOF:3 (sustituye el equipo de prueba). */
+function applyDevParty(state, spec) {
+  if (spec === 'none' || spec === '0') { state.setParty([]); return; }
+  const list = [];
+  for (const item of spec.split(',')) {
+    const [species, lv = '5'] = item.trim().toUpperCase().split(':');
+    try {
+      list.push(createPokemon(engine.data, species, Number(lv) || 5, { ot: { name: state.player.name, id: state.player.id } }));
+    } catch (err) {
+      console.warn(`?party: no se pudo crear ${species}`, err);
+    }
+  }
+  if (list.length) state.setParty(list);
 }
 
 /** Efectos de demostración (?fx=aurora,moon,cracks o tecla B). */
@@ -52,7 +80,7 @@ export function installDevKeys(scene) {
       case 'KeyY': weatherIdx = (weatherIdx + 1) % WEATHER_TYPES.length; scene.weather.set(WEATHER_TYPES[weatherIdx], 6); break;
       case 'KeyU': scene.devDark = !scene.devDark; break;
       case 'KeyG': scene.world.debugThrough = !scene.world.debugThrough; break;
-      case 'KeyN': st.options.encounterMode = st.options.encounterMode === 'visible' ? 'classic' : 'visible'; break;
+      case 'KeyN': st.setOption('encounterMode', st.options.encounterMode === 'visible' ? 'classic' : 'visible'); break;
       case 'KeyB':
         if (demo) { demo.forEach((h) => h.remove(30)); demo = null; } else demo = spawnDemoFx(scene);
         break;

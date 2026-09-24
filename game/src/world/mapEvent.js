@@ -126,6 +126,12 @@ export class MapEvent extends Character {
   }
 
   applyMove(move) {
+    // Como RMXP, cambiar de página cancela la ruta forzada; se liberan sus esperas (ctx.move) para que el
+    // guion que la esperaba no se quede colgado.
+    if (this.moveRouteForcing) {
+      this.originalMoveRoute = null;
+      for (const resolve of this.routeWaiters.splice(0)) resolve();
+    }
     this.moveRoute = null;
     this.moveRouteIndex = 0;
     this.moveRouteForcing = false;

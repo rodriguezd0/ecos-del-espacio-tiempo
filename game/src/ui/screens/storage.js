@@ -32,21 +32,21 @@ class StorageScene extends ScreenScene {
     this.heldFrom = null;
     this.busy = false;
     const s = engine.state;
-    const all = [...s.party, ...s.data.boxes.flat().filter(Boolean)];
+    const all = [...s.party, ...s.boxes.flat().filter(Boolean)];
     const gfx = ['bg', 'overlay_main', 'overlay_party', 'overlay_lv', ...HAND, `box_${this.wallpaper(0)}`].map(G);
     await Promise.all([preload([...gfx, ...COMMON_GFX]), preloadPokemon(all), preloadDialogGfx()]);
   }
 
   get st() { return engine.state; }
-  get boxes() { return this.st.data.boxes; }
+  get boxes() { return this.st.boxes; }
   get party() { return this.st.party; }
 
   wallpaper(b) { return this.st.var(`ui.boxBg.${b}`, b % 16); }
-  boxName(b) { return this.st.data.boxNames?.[b] || `Caja ${b + 1}`; }
+  boxName(b) { return this.st.boxName(b); }
 
+  /** Aplica el resultado de una operación de storageLogic mediante la API de GameState. */
   commit({ party, boxes }) {
-    if (party) this.st.setParty(party);
-    if (boxes) this.st.data.boxes = boxes; // GameState no expone API de cajas: se sustituye el array completo
+    this.st.applyStorage({ party, boxes });
   }
 
   /** Pokémon bajo el cursor. */
@@ -186,11 +186,10 @@ class StorageScene extends ScreenScene {
     if (cmd === 'Mover') this.pick(where, i);
     else if (cmd === 'Datos') await ui.openSummary(p, { party: [p] });
     else if (cmd === 'Retirar') {
-      this.commit(S.withdrawToParty(this.party, this.boxes, this.box, i));
+      this.st.withdrawPokemon(this.box, i);
       await message(`${name} se ha unido a tu equipo.`);
     } else if (cmd === 'Depositar') {
-      const r = S.depositFromParty(this.party, this.boxes, i, this.box);
-      this.commit(r);
+      const r = this.st.depositPokemon(i, this.box);
       await message(`${name} se ha guardado en ${this.boxName(r.box)}.`);
       this.partySel = Math.min(this.partySel, Math.max(0, this.party.length - 1));
     } else if (cmd === 'Objeto') await this.itemMenu(where, i, p, name);
@@ -199,7 +198,7 @@ class StorageScene extends ScreenScene {
 
   setAt(where, i, p) {
     if (where === 'party') this.st.setPartyMember(i, p);
-    else this.commit({ boxes: S.placeInBox(this.boxes, this.box, i, p).boxes });
+    else this.st.setBoxPokemon(this.box, i, p);
   }
 
   async itemMenu(where, i, p, name) {
@@ -223,8 +222,7 @@ class StorageScene extends ScreenScene {
   async release(where, i, name) {
     if (where === 'party' && !S.canRemoveFromParty(this.party, i)) { await message('¡Es tu último Pokémon!'); return; }
     if (!(await confirm(`¿Seguro que quieres liberar a ${name}?`))) return;
-    if (where === 'party') this.commit({ party: S.releaseFromParty(this.party, i) });
-    else this.commit({ boxes: S.releaseFromBox(this.boxes, this.box, i) });
+    this.st.releasePokemon(where === 'party' ? { party: i } : { box: this.box, slot: i });
     await message(`Has liberado a ${name}.`);
     await message(`¡Adiós, ${name}!`);
   }
@@ -233,11 +231,7 @@ class StorageScene extends ScreenScene {
     const c = await showCommands(['Cambiar nombre', 'Fondo', 'Cancelar']);
     if (c === 0) {
       const name = await ui.textEntry({ title: `Nombre de la caja`, initial: this.boxName(this.box), maxLength: 12 });
-      if (name) {
-        const names = [...(this.st.data.boxNames || [])];
-        names[this.box] = name;
-        this.st.data.boxNames = names;
-      }
+      if (name && name.trim()) this.st.renameBox(this.box, name);
     } else if (c === 1) {
       const next = (this.wallpaper(this.box) + 1) % WALLPAPERS;
       this.st.setVar(`ui.boxBg.${this.box}`, next);

@@ -106,7 +106,10 @@ export function drawShiny(g, x, y) {
   blit(g, GFX.shiny, x, y);
 }
 
-/** Icono de objeto (48×48). Las MT/MO usan el disco del tipo de su movimiento. */
+/**
+ * Icono de objeto (48×48). Las MT/MO usan el disco del tipo de su movimiento. Si el objeto define
+ * `icon` (objetos propios de Axis, data/items_axis.json) se usa ese archivo de Graphics/Items.
+ */
 export function itemIconUrl(itemId) {
   if (!itemId) return null;
   const item = engine.data?.items?.[itemId];
@@ -114,15 +117,27 @@ export function itemIconUrl(itemId) {
     const type = engine.data.moves?.[item.move]?.type || 'NORMAL';
     return anil(`Graphics/Items/machine_${type}.png`);
   }
-  return anil(`Graphics/Items/${itemId}.png`);
+  return anil(`Graphics/Items/${item?.icon || itemId}.png`);
 }
 
 const ITEM_FALLBACK = anil('Graphics/Items/000.png');
+
+/** URLs a probar en orden: icono declarado (Añil), icono propio en assets/items, el del id y el genérico. */
+export function itemIconCandidates(itemId) {
+  const item = engine.data?.items?.[itemId];
+  const list = [itemIconUrl(itemId)];
+  if (item?.icon) list.push(`assets/items/${item.icon}.png`, anil(`Graphics/Items/${itemId}.png`));
+  list.push(ITEM_FALLBACK);
+  return [...new Set(list.filter(Boolean))];
+}
+
 /** Dibuja el icono de un objeto (o el genérico 000 si no existe su gráfico). */
 export function drawItemIcon(g, itemId, x, y) {
-  const url = itemIconUrl(itemId);
-  if (!url) return;
-  if (!blit(g, url, x, y) && failed(url)) blit(g, ITEM_FALLBACK, x, y);
+  if (!itemId) return;
+  for (const url of itemIconCandidates(itemId)) {
+    if (blit(g, url, x, y)) return;
+    if (!failed(url)) return; // aún cargando
+  }
 }
 
 /** Rectángulo de relleno sólido (atajo). */

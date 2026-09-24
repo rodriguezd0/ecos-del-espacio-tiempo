@@ -38,13 +38,20 @@ export async function tryRawTexture(url) {
   }
 }
 
-/** Textura repetible (niebla, clima en mosaico). */
-export async function loadRepeatTexture(url) {
-  const img = await engine.assets.image(url);
-  const tex = rawTexture(img);
-  tex.wrapS = THREE.RepeatWrapping;
-  tex.wrapT = THREE.RepeatWrapping;
-  return tex;
+/** Textura repetible (niebla, clima en mosaico), cacheada por URL (antes se creaba una textura nueva en cada mapa). */
+export function loadRepeatTexture(url) {
+  const key = `repeat:${url}`;
+  if (!cache.has(key)) {
+    const p = engine.assets.image(url).then((img) => {
+      const tex = rawTexture(img);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      return tex;
+    });
+    p.catch(() => cache.delete(key));
+    cache.set(key, p);
+  }
+  return cache.get(key);
 }
 
 /** Canvas 2D auxiliar (en navegador). */

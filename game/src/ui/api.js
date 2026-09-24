@@ -28,6 +28,7 @@ const load = {
   trainerCard: () => import('./screens/trainerCard.js'),
   zygarde: () => import('./screens/zygarde.js'),
   regionMap: () => import('./screens/regionMap.js'),
+  clues: () => import('./screens/clues.js'),
 };
 
 /** Abre una pantalla (módulo con `open(...)`); sin DOM devuelve `fallback`. */
@@ -143,6 +144,10 @@ export const ui = {
   /** Mapa de la región (atlas PENDIENTE X02). opts: { fly: true } → id del punto de vuelo o null. */
   async openRegionMap(opts = {}) {
     return open('regionMap', null, opts);
+  },
+  /** Libreta de pistas (pistas anotadas con GameState.addClue). */
+  async openClues(opts = {}) {
+    return open('clues', undefined, opts);
   },
   /** Cartel de nombre de zona al entrar en un mapa. */
   showLocation(name) {

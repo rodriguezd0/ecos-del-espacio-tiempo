@@ -1,7 +1,7 @@
 // Inicio de combates desde el mapa: destellos + transición (estilo pbBattleAnimation de Essentials),
 // llamada a battle() de battle/api.js, aplicación del resultado y derrota (volver al último punto de cura).
 import { engine } from '../core/engine.js';
-import { battle } from '../battle/api.js';
+import { battle, battleBGM } from '../battle/api.js';
 import { createPokemon, healed } from '../battle/core/pokemon.js';
 import { ui } from '../ui/api.js';
 import { isNightHour } from '../render/dayNight.js';
@@ -61,7 +61,7 @@ export async function runBattle(scene, config = {}) {
     environment: terrain.battleEnvironment || null,
     weather: scene.weather.type !== 'none' ? scene.weather.type : null,
     time: isNightHour(state.hour) ? 'night' : 'day',
-    bgm: config.bgm || (isTrainer ? 'Entrenador' : 'Salvaje'),
+    bgm: config.bgm || battleBGM({ ...config, type: isTrainer ? 'trainer' : config.type }) || (isTrainer ? 'Entrenador' : 'Salvaje'),
     ...config,
     type: isTrainer ? 'trainer' : (config.type || 'wild'),
     player: { name: state.player.name, gender: state.player.gender, id: state.player.id, party: state.party, bag: state.data.bag },
@@ -92,7 +92,9 @@ export async function runBattle(scene, config = {}) {
   scene.fx.fadeColor = [0, 0, 0];
   scene.refreshFollower();
   await scene.fx.fadeIn(24);
-  if (result.outcome === 'lose' && !config.canLose) await whiteout(scene);
+  // canLose puede venir de la petición, de sus reglas o del entrenador (battle/scene lo resuelve y lo devuelve).
+  const canLose = Boolean(config.canLose || config.rules?.canLose || result.canLose);
+  if (result.outcome === 'lose' && !canLose) await whiteout(scene);
   return result;
 }
 

@@ -7,7 +7,7 @@ import { ellipse, poly, capsule, rect, paint, silhouette, stamp, lineIn } from '
 export const FRONT_SIZE = 80;
 const W = FRONT_SIZE;
 const H = FRONT_SIZE;
-const FACE = { cx: 40, cy: 18, rx: 8, ry: 9, eyeY: 17 };
+export const FACE = { cx: 40, cy: 18, rx: 8, ry: 9, eyeY: 17 };
 
 const P = (pts) => poly(W, H, pts);
 const everywhere = () => rect(W, H, 0, 0, W, H);
@@ -26,7 +26,7 @@ function drawFace(img, { iris, pupil, brow, mouth, lash }) {
 }
 
 /** Cabeza: orejas + cara. */
-function drawHead(img, skin) {
+export function drawHead(img, skin) {
   const { cx, cy, rx, ry } = FACE;
   paint(img, ellipse(W, H, cx - rx - 0.5, cy + 1, 2, 3).union(ellipse(W, H, cx + rx + 0.5, cy + 1, 2, 3)), skin, { lightW: 0, shadowW: 1 });
   paint(img, ellipse(W, H, cx, cy, rx, ry), skin, { lightW: 2, shadowW: 3 });

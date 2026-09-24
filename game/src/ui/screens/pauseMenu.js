@@ -36,7 +36,7 @@ export function pauseEntries(state) {
   const d = state.data;
   const z = d.zygarde || {};
   const list = [];
-  if (d.dex?.obtained) list.push({ key: 'pokedex', label: 'Pokédex' });
+  if (state.hasPokedex ? state.hasPokedex() : d.dex?.obtained) list.push({ key: 'pokedex', label: 'Pokédex' });
   if (d.party.length) list.push({ key: 'party', label: 'Pokémon' });
   list.push({ key: 'bag', label: 'Mochila' });
   if ((z.cells || []).length || (z.cores || []).length || z.form || state.flag('zygarde_menu')) {

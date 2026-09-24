@@ -87,7 +87,8 @@ class Engine {
     try {
       this.scenes.update(STEP);
       if (this.audio && this.audio.update) this.audio.update(STEP);
-      if (this.state) this.state.playTimeFrames = (this.state.playTimeFrames || 0) + 1;
+      // Tiempo de juego en el guardado (antes se sumaba en el objeto GameState y nunca se guardaba).
+      if (this.state?.tickPlayTime) this.state.tickPlayTime(1);
     } catch (err) {
       this.reportError(err);
     }

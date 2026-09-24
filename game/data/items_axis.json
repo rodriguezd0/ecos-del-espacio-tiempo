@@ -19,5 +19,55 @@
     "id": "POKEDEXAXIS", "name": "Pokédex", "namePlural": "Pokédex", "pocket": 8, "price": 0,
     "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"], "icon": "OVALCHARM",
     "description": "Enciclopedia electrónica del Prof. Alerce. Registra Pokémon y lecturas del terreno."
+  },
+  "GLYPHKEY": {
+    "id": "GLYPHKEY", "name": "Clave Glífica", "namePlural": "Claves Glíficas", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "ODDKEYSTONE",
+    "description": "Disco de piedra del Archivo Hondo. Permite leer directamente la escritura Unown de los Pilares."
+  },
+  "KNOWLEDGETHREAD": {
+    "id": "KNOWLEDGETHREAD", "name": "Hebra del Saber", "namePlural": "Hebras del Saber", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "YELLOWSHARD",
+    "description": "Hebra de luz amarilla recibida en el Ala del Saber. Uno de los tres componentes de la Cadena Roja."
+  },
+  "EMOTIONTHREAD": {
+    "id": "EMOTIONTHREAD", "name": "Hebra del Sentir", "namePlural": "Hebras del Sentir", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "PINKNECTAR",
+    "description": "Hebra de luz rosada recibida en el Ala del Sentir. Uno de los tres componentes de la Cadena Roja."
+  },
+  "WILLTHREAD": {
+    "id": "WILLTHREAD", "name": "Hebra del Querer", "namePlural": "Hebras del Querer", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "REDSHARD",
+    "description": "Hebra de luz azul recibida en el Ala del Querer. Uno de los tres componentes de la Cadena Roja."
+  },
+  "REDCHAIN": {
+    "id": "REDCHAIN", "name": "Cadena Roja", "namePlural": "Cadenas Rojas", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "HEARTSCALE",
+    "description": "Cadena tejida con el saber, el sentir y el querer. Puede sujetar lo que el tiempo y el espacio no retienen."
+  },
+  "ALERCEKEY": {
+    "id": "ALERCEKEY", "name": "Llave del fondo", "namePlural": "Llaves del fondo", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "ODDKEYSTONE",
+    "description": "Llave del cuarto cerrado del laboratorio del Prof. Alerce."
+  },
+  "DREAMCATCHER": {
+    "id": "DREAMCATCHER", "name": "Atrapasueños", "namePlural": "Atrapasueños", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "PUREINCENSE",
+    "description": "Colgado junto a la cama, aleja las pesadillas y deja paso a los sueños serenos."
+  },
+  "MAGMASTONE": {
+    "id": "MAGMASTONE", "name": "Piedra Magma", "namePlural": "Piedras Magma", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "HEATROCK",
+    "description": "Piedra que late con el calor del corazón de un volcán."
+  },
+  "CRUCIBLESTONE": {
+    "id": "CRUCIBLESTONE", "name": "Piedra Crisol", "namePlural": "Piedras Crisol", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "FIRESTONE",
+    "description": "Piedra antigua que se quiebra al invocar a uno de los dos ideales."
+  },
+  "ANCIENTGEAR": {
+    "id": "ANCIENTGEAR", "name": "Engranaje antiguo", "namePlural": "Engranajes antiguos", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "METALCOAT",
+    "description": "Pieza de una máquina de otra época. Parece encajar con otras iguales."
   }
 }

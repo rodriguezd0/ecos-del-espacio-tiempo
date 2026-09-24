@@ -110,7 +110,7 @@ export default class TitleScene extends Scene {
       return;
     }
     const state = GameState.create({ name: '', gender: 'M' });
-    state.data.options = { ...state.data.options, ...globalOptionsForNewGame() };
+    state.setOptions(globalOptionsForNewGame());
     engine.state = state;
     await this.startWorld({});
   }

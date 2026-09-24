@@ -61,7 +61,8 @@ function speciesFields(f) {
   if (f.WildItemCommon) set('wildItemCommon', list(f.WildItemCommon));
   if (f.WildItemUncommon) set('wildItemUncommon', list(f.WildItemUncommon));
   if (f.WildItemRare) set('wildItemRare', list(f.WildItemRare));
-  if (f.Evolutions) set('evolutions', tuples(list(f.Evolutions), 3).map(([t, m, p]) => [t, m, p === '' ? null : p]));
+  // Las evoluciones sin parámetro (Happiness, Trade…) dejan campos vacíos: no filtrar vacíos o se desalinea la terna.
+  if (f.Evolutions) set('evolutions', tuples(String(f.Evolutions).split(',').map((s) => s.trim()), 3).map(([t, m, p]) => [t, m, p === '' || p === undefined ? null : p]));
   if (f.MegaStone) set('megaStone', f.MegaStone);
   if (f.MegaMove) set('megaMove', f.MegaMove);
   if (f.MegaMessage) set('megaMessage', int(f.MegaMessage));

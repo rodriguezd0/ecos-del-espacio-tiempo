@@ -33,6 +33,18 @@ export function dayPeriod(hour) {
   return 'Night';
 }
 
+/**
+ * allow_encounter? de Essentials: con repelente activo, los salvajes de nivel inferior al del primer
+ * Pokémon del equipo (REPEL_COUNTS_FAINTED_POKEMON: cuenta aunque esté debilitado) no aparecen.
+ * @param {{ level: number }} enc
+ * @param {{ repelActive?: boolean, leadLevel?: number }} opts
+ */
+export function allowEncounter(enc, { repelActive = false, leadLevel = 0 } = {}) {
+  if (!enc) return false;
+  if (repelActive && leadLevel > 0 && enc.level < leadLevel) return false;
+  return true;
+}
+
 export class EncounterSystem {
   /**
    * @param {object} tables definición `encounters` del mapa: { grass:[...], grassNight:[...], cave, water, stepChance:{} }

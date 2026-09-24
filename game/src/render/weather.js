@@ -83,8 +83,7 @@ export class WeatherLayer {
     if (!def) throw new Error(`Clima desconocido "${type}" (usa ${WEATHER_TYPES.join(', ')})`);
     this.type = type;
     this.power = Math.max(0, Math.min(9, power));
-    for (const p of this.particles) p.mesh.removeFromParent();
-    this.particles = [];
+    this.disposeParticles();
     const count = def.particles ? Math.round((this.power / 9) * MAX_SPRITES) : 0;
     const texs = def.particles ? await Promise.all(def.particles.map((n) => this.texture(n))) : [];
     if (this.type !== type) return;
@@ -179,9 +178,21 @@ export class WeatherLayer {
     renderer.render(this.scene, this.camera);
   }
 
+  /** Quita y libera las partículas actuales (geometría y material de cada una). */
+  disposeParticles() {
+    for (const p of this.particles) {
+      p.mesh.removeFromParent();
+      p.mesh.geometry.dispose();
+      p.mesh.material.dispose();
+    }
+    this.particles = [];
+  }
+
   dispose() {
-    for (const p of this.particles) { p.mesh.geometry.dispose(); p.mesh.material.dispose(); }
-    this.fogMesh.material.dispose();
-    this.tileMesh.material.dispose();
+    this.disposeParticles();
+    for (const m of [this.fogMesh, this.tileMesh]) {
+      m.geometry.dispose();
+      m.material.dispose();
+    }
   }
 }

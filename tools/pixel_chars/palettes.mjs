@@ -21,6 +21,8 @@ export const PALETTES = {
     T: '#EEF2EE', t: '#B8C4C0',
     P: '#383C52', p: '#262838', Q: '#383C52', q: '#262838',
     B: '#2E2C36', b: '#1C1A22', W: '#6C6A7A',
+    // Mochila (D06): arena cálida, contrasta con el azul petróleo y no compite con el cobrizo.
+    A: '#E2C890', a: '#BC9A5E', D: '#8A6A3A', z: '#5A4222',
   },
   // Protagonista femenina (biblia §13.2): azul marino profundo con lectura azul; comparte el acento
   // verde. PROPUESTA PROVISIONAL (D30): chaqueta corta clara (blanco hueso) cerrada, cuello interior
@@ -34,6 +36,8 @@ export const PALETTES = {
     T: '#2A3052', t: '#1C2038',
     P: '#343850', p: '#22253A', Q: '#24242E', q: '#17171F',
     B: '#3A3446', b: '#231E2A', W: '#6C6A7A',
+    // Mochila (D06): teja, legible sobre la chaqueta clara y bajo la melena azul noche.
+    A: '#EA8A6C', a: '#C45C42', D: '#8E3C2C', z: '#5A221A',
   },
   // Gael (§13.3, paleta histórica del autor a ratificar): rubio, chaqueta bordó, ropa inferior gris,
   // botas azul oscuro, ojos claros. Sin acento verde (tirador metálico).
@@ -94,6 +98,63 @@ export const PALETTES = {
     C: '#4A5680', c: '#323C60', x: '#1E2440',
     P: '#4A5680', p: '#323C60', Q: '#3A3040', q: '#261E2C',
     B: '#7A2E34', b: '#4E1A20', W: '#9A5058',
+  },
+  // Madre (D01): jersey de punto color miel, delantal crema, pantalón pardo y zapatillas de casa.
+  madre: {
+    k: '#1E1614',
+    H: '#B07A52', h: '#84563A', m: '#603C28', n: '#3E2618',
+    ...SKIN_LIGHT,
+    L: '#F2C872', J: '#D8A448', j: '#A87830', d: '#6E4C1C',
+    G: '#D8A448',
+    T: '#FFF4DC', t: '#D8C8A8',
+    C: '#FBF6EA', c: '#DDD2BC', x: '#A89C84',
+    P: '#6A5A50', p: '#4A3E36', Q: '#6A5A50', q: '#4A3E36',
+    B: '#C86A5A', b: '#8A4638', W: '#E09080',
+  },
+  // Ayudante del laboratorio (PROPUESTA): bata blanca azulada, jersey coral, pelo negro y horquilla.
+  ayudante: {
+    k: '#161620',
+    H: '#646A8A', h: '#3A3C52', m: '#26283A', n: '#15161F',
+    U: '#F4C84A',
+    ...SKIN_LIGHT,
+    L: '#FAFCFE', J: '#DDE4EC', j: '#AEB8C6', d: '#78849A',
+    C: '#DDE4EC', c: '#AEB8C6', x: '#78849A',
+    G: '#DDE4EC',
+    T: '#E88870', t: '#B85A48',
+    P: '#4A5268', p: '#343A4C', Q: '#4A5268', q: '#343A4C',
+    B: '#3A3040', b: '#241E2A', W: '#5A5068',
+  },
+  // Guardiana del Umbral (D07): chaqueta de campo oliva, pañuelo teja al cuello, pantalón de trabajo
+  // pardo y botas altas; pelo cano. Colores sobrios de exploración de ruinas.
+  guardiana: {
+    k: '#1A1612',
+    H: '#E4E4EA', h: '#AEAEBA', m: '#80808E', n: '#52525F',
+    ...SKIN_MID,
+    L: '#A09A68', J: '#7A7442', j: '#56522C', d: '#36341A',
+    G: '#C8A850',
+    T: '#B0503A', t: '#80342A',
+    P: '#5A4A3A', p: '#3E3228', Q: '#3E2E22', q: '#2A1E16',
+    B: '#3E2E22', b: '#241A12', W: '#5E4C3E',
+  },
+  // Niño del pueblo: camiseta celeste, pantalón corto caqui, zapatillas rojas.
+  nino: {
+    k: '#1C1614',
+    H: '#9A6A44', h: '#6E4A2E', m: '#4E321E', n: '#321E10',
+    ...SKIN_LIGHT,
+    L: '#8CC8F0', J: '#5CA0D8', j: '#3C76AC', d: '#244C78',
+    P: '#C8A870', p: '#9C7C4C', Q: '#FCE0C4', q: '#F2BC8E',
+    B: '#E04848', b: '#A02C2C',
+  },
+  // Niña del pueblo: vestido amarillo girasol, coletas con gomas rosas, sandalias rosas.
+  nina: {
+    k: '#1E1414',
+    H: '#D88E58', h: '#AC6434', m: '#7C4222', n: '#4E2814',
+    U: '#F06890',
+    ...SKIN_LIGHT,
+    L: '#FFE680', J: '#F4C040', j: '#C8901C', d: '#8A5E10',
+    C: '#F4C040', c: '#C8901C', x: '#8A5E10',
+    P: '#F4C040', p: '#C8901C', Q: '#FCE0C4', q: '#F2BC8E',
+    B: '#E86880', b: '#A83C50',
   },
   // Anciano genérico: rebeca marrón, pantalón beige, pelo cano.
   anciano: {

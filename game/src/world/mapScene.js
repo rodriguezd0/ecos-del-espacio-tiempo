@@ -13,6 +13,9 @@ import { World } from './world.js';
 import { VisibleEncounters } from './visibleEncounters.js';
 import { runBattle, runWildBattle } from './battleFlow.js';
 import { followerTalk, swimHook } from './fieldScripts.js';
+import { runFieldAction, repelWoreOff } from './fieldActions.js';
+import { placeChainBehind } from './follower.js';
+import { coreSpriteKey, coreTalk } from '../content/companion.js';
 import { applyDevParams, installDevKeys, drawDebug, spawnDemoFx } from './devTools.js';
 import { loadTilesetResources } from '../render/tileAtlas.js';
 import { WorldView } from '../render/worldView.js';
@@ -91,11 +94,12 @@ export default class MapScene extends Scene {
       warp: (w) => { this.pendingWarp = w; },
       encounter: (enc) => { this.pendingEncounter = enc; },
       encountersEnabled: () => !this.noEncounters && this.state.options.encounterMode !== 'visible',
-      followerTalk: (f) => this.runScript((ctx) => followerTalk(ctx, f), null, 'seguidor'),
+      followerTalk: (f) => this.runScript((ctx) => (f.talk ? f.talk(ctx, f) : followerTalk(ctx, f)), null, 'seguidor'),
       fieldHook: (kind) => { if (kind === 'swim') this.runScript(swimHook, null, 'nadar'); },
       fieldAnim: (kind, ch, x, y) => this.playFieldAnim(kind, ch, x, y),
       mapChanged: (next, prev, off) => this.onConnectionCrossed(next, prev, off),
       stepTaken: (p) => this.state.setPosition(this.world.map.id, p.x, p.y, p.direction),
+      repelExpired: () => this.runScript(repelWoreOff, null, 'repelente'),
     };
   }
 
@@ -143,7 +147,7 @@ export default class MapScene extends Scene {
       p.setMovementType('surfing');
     }
     this.refreshFollower();
-    this.world.follower.placeBehind(p);
+    placeChainBehind(p, this.world.followers);
     this.camera.setBounds(def.width, def.height, openSides(def));
     this.camera.follow(p);
     this.camera.snapToTarget();
@@ -195,24 +199,32 @@ export default class MapScene extends Scene {
   }
 
   async applyEnvironment(def) {
-    if (def.bgm && def.bgm !== this.currentBgm) {
-      this.currentBgm = def.bgm;
-      engine.audio?.playBGM?.(def.bgm, { fadeOutPrevious: 20 });
-    }
+    // Siempre se pide la música del mapa (audio no reinicia la misma pista): si una escena cambió la
+    // música con ctx.bgm(), al entrar en otro mapa con la misma BGM que el anterior vuelve a sonar la del mapa.
+    if (def.bgm) engine.audio?.playBGM?.(def.bgm, { fadeOutPrevious: 20 });
     const w = this.devWeather || (def.weather ? [def.weather.type || def.weather, def.weather.power ?? 5] : ['none', 0]);
     if (w[0] !== this.weather.type) await this.weather.set(w[0], Number(w[1] ?? 5)).catch((e) => console.warn(e.message));
     await this.weather.setMapFog(def.fog || null);
     this.darkness = def.dark ? { amount: def.dark.amount ?? 0.94, radius: def.dark.radius ?? PLAYER_LIGHT } : null;
   }
 
-  /** Actualiza el Pokémon acompañante según el equipo y las opciones. */
+  /**
+   * Actualiza la cadena de seguidores: el Pokémon acompañante (equipo y opciones) y el Core de Zygarde
+   * (state.data.zygarde.form, D06; un mapa puede ocultarlo con `noCore: true`).
+   */
   refreshFollower() {
-    const f = this.world.follower;
+    const w = this.world;
+    const f = w.follower;
     const lead = this.state.party.find((pk) => pk.hp > 0 && !pk.egg) || null;
-    const allowed = this.state.options.followerEnabled !== false && this.world.current?.def?.noFollower !== true;
-    const before = f.pokemon;
+    const allowed = this.state.options.followerEnabled !== false && w.current?.def?.noFollower !== true;
+    const hadPokemon = !f.hidden;
     f.setPokemon(allowed ? lead : null);
-    if (!before && f.pokemon && this.world.map) f.placeBehind(this.world.player);
+    const core = w.core;
+    const hadCore = !core.hidden;
+    core.setGraphic(w.current?.def?.noCore === true ? '' : coreSpriteKey(this.state.data.zygarde?.form));
+    core.talk = coreTalk;
+    const appeared = (!hadPokemon && !f.hidden) || (!hadCore && !core.hidden);
+    if (appeared && w.map) placeChainBehind(w.player, w.followers);
   }
 
   // ------------------------------------------------------------ guiones y acciones
@@ -221,6 +233,9 @@ export default class MapScene extends Scene {
     ctx.onFinish = () => {
       if (event && event.page?.lock !== false) event.unlock();
       this.world.requestRefresh();
+      // Como en RMXP, al acabar los guiones bloqueantes se cierra una caja dejada abierta con keepOpen
+      // (si no, quedaría encima del mapa sin nadie que la cierre).
+      if (blocking && !this.runner.busy && !this.menuOpen) ui.closeMessage();
     };
     return this.runner.run(fn, ctx, { blocking, name });
   }
@@ -286,16 +301,21 @@ export default class MapScene extends Scene {
 
   async openPauseMenu() {
     this.menuOpen = true;
+    const p = this.world.player;
+    // La posición guardada debe ser la actual aunque el último movimiento fuera de un guion (ctx.move).
+    this.state.setPosition(this.world.map.id, p.x, p.y, p.direction);
+    let action = null;
     try {
-      const action = await ui.openPauseMenu({ state: this.state });
-      if (action?.type === 'quit') await this.transfer(this.world.map.id, this.world.player.x, this.world.player.y, this.world.player.direction);
-      else if (action) console.info('Acción del menú aún sin uso en el mapa:', action);
+      action = await ui.openPauseMenu({ state: this.state });
     } catch (err) {
       console.error('Menú de pausa', err);
+      engine.reportError(err);
     } finally {
       this.menuOpen = false;
       this.refreshFollower();
     }
+    // Objetos de uso en el mundo y movimientos de campo (world/fieldActions.js).
+    if (action) this.runScript((ctx) => runFieldAction(ctx, action), null, `menú:${action.type}`);
   }
 
   // ------------------------------------------------------------ bucle
@@ -335,6 +355,29 @@ export default class MapScene extends Scene {
     this.weather.update(dt, this.camera.x - camX, this.camera.y - camY);
   }
 
+  /**
+   * Con una UI transparente encima (mensajes, elecciones, menú de pausa) el mapa sigue vivo sin input:
+   * esperas de guion (ctx.wait/until), rutas, fundidos, efectos y clima avanzan. Sin esto, un guion que
+   * dejara un mensaje abierto (keepOpen) y luego esperara se quedaba colgado para siempre.
+   */
+  updateWhilePaused(dt) {
+    if (!this.ready) return;
+    this.time += dt;
+    this.runner.tick();
+    this.fx.update();
+    this.effects.update(dt);
+    this.worldView.update();
+    const camX = this.camera.x; const camY = this.camera.y;
+    this.world.inputLocked += 1;
+    try {
+      this.world.update(dt);
+    } finally {
+      this.world.inputLocked -= 1;
+    }
+    this.camera.update();
+    this.weather.update(dt, this.camera.x - camX, this.camera.y - camY);
+  }
+
   doWarp(w) {
     this.runScript(async (ctx) => { await ctx.warp(w.to, w.tx, w.ty, w.dir ?? this.world.player.direction, { door: Boolean(w.door) }); }, null, `warp→${w.to}`);
   }
@@ -353,6 +396,9 @@ export default class MapScene extends Scene {
     const p = this.world.player;
     const radius = (this.darkness?.radius ?? PLAYER_LIGHT) * (this.devFlashlight ? 2.4 : 1);
     const out = [{ x: p.realX + 16 - cx, y: p.realY + 8 - cy, radius }];
+    // El Core ilumina un radio de 2 casillas a su alrededor (docs/CAMPANA.md §2.7).
+    const core = this.world.core;
+    if (core?.visible) out.push({ x: core.realX + 16 - cx, y: core.realY + 16 - cy, radius: 80 + Math.sin(this.time * 3) * 4, intensity: 0.9 });
     for (const e of this.world.allEntries) {
       const ox = e.offset.x * 32 - cx; const oy = e.offset.y * 32 - cy;
       for (const t of e.torches || []) out.push({ x: t.x * 32 + 16 + ox, y: t.y * 32 + 16 + oy, radius: 56 + Math.sin(this.time * 9 + t.x) * 3 });
@@ -372,7 +418,8 @@ export default class MapScene extends Scene {
     this.effects.setCamera(this.camera.renderX, this.camera.renderY);
     const def = this.world.current.def;
     const day = def.outdoor && def.dayNight !== false ? dayNightTone(this.state.data.clock.minutes) : [0, 0, 0, 0];
-    this.fx.apply(day, this.weather.tone());
+    // def.tone: tono propio del mapa [r, g, b, gris] (p. ej. la penumbra verde del Laberinto).
+    this.fx.apply(day, this.weather.tone(), def.tone || [0, 0, 0, 0]);
     const dark = this.darkness || (this.devDark ? { amount: 0.94 } : null);
     this.compositor.setDarkness(dark ? dark.amount : 0, dark ? this.lights() : []);
     this.compositor.render(

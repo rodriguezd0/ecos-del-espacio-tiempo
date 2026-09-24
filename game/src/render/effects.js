@@ -1,6 +1,7 @@
 // Efectos visuales reutilizables (sin contenido narrativo):
 //  - Mundo (siguen a la cámara, aditivos tras el tono): 'zygardeCell' (brillo verde hexagonal),
-//    'cracks' (grietas luminosas), 'zygardeRebuild' (hexágonos verdes que ascienden).
+//    'cracks' (grietas luminosas), 'zygardeRebuild' (hexágonos verdes que ascienden),
+//    'softLight' (luz ambiental radial que respira), 'visionCone' (haz de linterna de un personaje).
 //  - Cielo/pantalla: 'aurora' (cortinas de aurora), 'moon' (luna grande con halo).
 // API: const h = fx.add(nombre, opciones); h.remove(fotogramasDeFundido)
 import * as THREE from 'three';
@@ -46,6 +47,30 @@ void main() {
   float d = hexDist(p);
   float a = smoothstep(1.0, 0.8, d) * smoothstep(0.55, 0.75, d) + smoothstep(0.6, 0.0, d) * 0.35;
   gl_FragColor = vec4(uColor * a * uAlpha, 1.0);
+}`,
+  // Luz ambiental suave (radial, por bandas y pixelada a 2 px) que "respira" lentamente.
+  light: `${COMMON}
+uniform float uSteps; uniform float uPulse; uniform float uIntensity;
+void main() {
+  vec2 q = (floor(vUv * uSteps) + 0.5) / uSteps;
+  float d = length((q - 0.5) * 2.0);
+  float breath = 1.0 - uPulse * (0.5 + 0.5 * sin(uTime * 1.3));
+  float a = smoothstep(1.0, 0.0, d);
+  a = floor(a * a * 7.0 + 0.5) / 7.0;
+  gl_FragColor = vec4(uColor * a * uAlpha * uIntensity * breath, 1.0);
+}`,
+  // Haz de linterna: sale del personaje (x = 0) y se ensancha un poco hacia el final (x = 1).
+  beam: `${COMMON}
+uniform vec2 uSize;
+void main() {
+  vec2 uv = (floor(vUv * uSize / 2.0) + 0.5) * 2.0 / uSize;
+  float across = abs(uv.y - 0.5) * 2.0;
+  float halfW = 0.55 + 0.45 * uv.x;
+  float edge = smoothstep(halfW, halfW - 0.3, across);
+  float fade = smoothstep(1.0, 0.7, uv.x) * smoothstep(0.0, 0.12, uv.x);
+  float flicker = 0.9 + 0.1 * sin(uTime * 11.0) * sin(uTime * 7.3);
+  float a = floor(edge * fade * flicker * 5.0 + 0.5) / 5.0;
+  gl_FragColor = vec4(uColor * a * uAlpha * 0.6, 1.0);
 }`,
   aurora: `${COMMON}
 uniform float uCamX;
@@ -124,6 +149,8 @@ export class EffectsLayer {
       zygardeRebuild: () => this.makeRebuild(opts),
       aurora: () => this.makeSky(FRAGS.aurora, { uCamX: { value: 0 } }, colorOf(opts.color, new THREE.Color(0.2, 1, 0.6)), THREE.AdditiveBlending),
       moon: () => this.makeSky(FRAGS.moon, { uMoon: { value: new THREE.Vector3(opts.x ?? 400, opts.y ?? 80, opts.radius ?? 56) } }, colorOf(opts.color, new THREE.Color(1, 0.96, 0.85)), THREE.NormalBlending),
+      softLight: () => this.makeLight(opts),
+      visionCone: () => this.makeBeam(opts),
     }[name];
     if (!make) throw new Error(`Efecto desconocido "${name}"`);
     const obj = make();
@@ -145,6 +172,52 @@ export class EffectsLayer {
     mesh.frustumCulled = false;
     this.worldRoot.add(mesh);
     return mesh;
+  }
+
+  /** Luz ambiental: opts { x, y (casillas), radius (px, 96), color [r,g,b], intensity (0.5), pulse (0..1, 0.25) } */
+  makeLight(opts) {
+    const size = (opts.radius ?? 96) * 2;
+    const mat = shaderMat(FRAGS.light, {
+      uSteps: { value: size / 2 }, uPulse: { value: opts.pulse ?? 0.25 }, uIntensity: { value: opts.intensity ?? 0.5 },
+    });
+    mat.uniforms.uColor.value = colorOf(opts.color, new THREE.Color(0.45, 1, 0.5));
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), mat);
+    mesh.scale.set(size, size, 1);
+    mesh.position.set((opts.x ?? 0) * 32 + 16, (opts.y ?? 0) * 32 + 16, 0);
+    mesh.frustumCulled = false;
+    this.worldRoot.add(mesh);
+    return mesh;
+  }
+
+  /**
+   * Haz de linterna / cono de visión que sigue a un personaje (se usa como page.glow de un evento).
+   * opts: { event (lo pone WorldView), reach(ev) → casillas visibles | número, width (px, 30), color }
+   * El grupo se coloca en el centro del personaje; el haz apunta según su dirección.
+   */
+  makeBeam(opts) {
+    const group = new THREE.Group();
+    const width = opts.width ?? 30;
+    const mat = shaderMat(FRAGS.beam, { uSize: { value: new THREE.Vector2(32, width) } });
+    mat.uniforms.uColor.value = colorOf(opts.color, new THREE.Color(1, 0.92, 0.6));
+    const geo = new THREE.PlaneGeometry(1, 1);
+    geo.translate(0.5, 0, 0);
+    const mesh = new THREE.Mesh(geo, mat);
+    mesh.frustumCulled = false;
+    mesh.position.x = 6;
+    group.add(mesh);
+    const ANGLE = { 6: 0, 2: Math.PI / 2, 4: Math.PI, 8: -Math.PI / 2 };
+    group.userData.update = () => {
+      const ev = opts.event;
+      if (!ev) return;
+      const reach = typeof opts.reach === 'function' ? opts.reach(ev) : (opts.reach ?? 4);
+      const len = reach > 0 ? reach * 32 + 16 - 6 : 0;
+      mesh.visible = len > 0 && !ev.erased;
+      mesh.scale.set(Math.max(1, len), width, 1);
+      mat.uniforms.uSize.value.set(Math.max(1, len), width);
+      group.rotation.z = ANGLE[ev.direction] ?? 0;
+    };
+    this.worldRoot.add(group);
+    return group;
   }
 
   makeSky(frag, extra, color, blending) {

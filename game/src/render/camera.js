@@ -23,6 +23,7 @@ export class Camera {
 
   follow(target) {
     this.target = target;
+    this.pan?.resolve?.(); // un paneo interrumpido no deja colgado a quien lo esperaba
     this.pan = null;
   }
 
