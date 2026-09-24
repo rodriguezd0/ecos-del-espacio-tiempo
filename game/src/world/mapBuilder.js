@@ -91,7 +91,7 @@ export class MapBuilder {
    * una pieza totalmente opaca (p. ej. el suelo bajo una alfombra) y coloca el tile encima. Conserva el orden
    * de dibujo y las marcas de autotile de cada tile movido.
    */
-  setStacked(layer, x, y, id, name = 'stamp') {
+  setStacked(layer, x, y, id, name = 'stamp', { quiet = false } = {}) {
     checkLayer(layer);
     if (!this.inBounds(x, y)) return this;
     const i = x + y * this.width;
@@ -109,7 +109,7 @@ export class MapBuilder {
       if (pile[k].slot < 0 && isOpaque(pile[k].id)) { pile = pile.slice(k); break; }
     }
     if (pile.length >= LAYERS) {
-      this.warnOnce(`MapBuilder: no hay capa libre para apilar "${name}" en (${x},${y}); se sustituye el tile`);
+      if (!quiet) this.warnOnce(`MapBuilder: no hay capa libre para apilar "${name}" en (${x},${y}); se sustituye el tile`);
       return this.set(layer, x, y, id);
     }
     pile.push({ id, slot: -1 });
@@ -341,7 +341,10 @@ export class MapBuilder {
     if (!grids) return null;
     // Los objetos que van encima de un mueble (stamp con `stack: true`, p. ej. una taza sobre la mesa) se
     // apilan sobre lo que ya hay en vez de sustituirlo. El resto sustituye (puertas sobre muros, etc.).
-    const stack = opts.layer === undefined && Boolean(opts.stack ?? def.stack);
+    // `stack: 'soft'` (árboles sueltos) apila si puede y, si no queda capa, sustituye sin avisar (lo de siempre).
+    const stackMode = opts.stack ?? def.stack;
+    const stack = opts.layer === undefined && Boolean(stackMode);
+    const quiet = stackMode === 'soft';
     for (let l = 0; l < LAYERS; l++) {
       const g = grids.layers[l];
       if (!g) continue;
@@ -350,7 +353,7 @@ export class MapBuilder {
         for (let i = 0; i < grids.w; i++) {
           const id = g[i + j * grids.w];
           if (!id) continue;
-          if (stack) this.setStacked(dst, x + i, y + j, id, name);
+          if (stack) this.setStacked(dst, x + i, y + j, id, name, { quiet });
           else this.set(dst, x + i, y + j, id);
         }
       }
