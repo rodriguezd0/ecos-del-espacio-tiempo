@@ -4,10 +4,11 @@
 import { MapEvent, normalizeEventDef } from './mapEvent.js';
 import { Player } from './player.js';
 import { Follower, followChain, turnChainTowardsLeaders } from './follower.js';
-import { EncounterSystem, allowEncounter } from './encounters.js';
+import { EncounterSystem, allowEncounter, buildZoneEncounters, zoneEncountersAt } from './encounters.js';
 import { dx, dy } from './gameMap.js';
-import { canSurfFreely, TERRAIN_NONE } from './terrain.js';
+import { TERRAIN_NONE } from './terrain.js';
 import { expandEventDef } from './eventTypes.js';
+import { canOfferSwim } from './waterAccess.js';
 
 export class World {
   /**
@@ -33,7 +34,13 @@ export class World {
     // Compañero de campo (Core de Zygarde, D06): va entre el jugador y el Pokémon acompañante.
     this.core = new Follower(this, { id: 'core', kind: 'core' });
     this.encounters = new EncounterSystem({}, rng);
+    this.zoneEncounters = []; // tablas por zona del mapa (def.encounterZones), ver encountersAt
     this.time = 0;
+  }
+
+  /** Tablas de encuentros en la casilla (x, y) del mapa actual: la de su zona (def.encounterZones) o la del mapa. */
+  encountersAt(x, y) {
+    return zoneEncountersAt(this.zoneEncounters, x, y) || this.encounters;
   }
 
   /** Cadena de seguidores en orden (jugador → Core → Pokémon). */
@@ -72,6 +79,7 @@ export class World {
     this.player.map = entry.map;
     for (const f of this.followers) f.map = entry.map;
     this.encounters = new EncounterSystem(entry.def.encounters || {}, this.rng);
+    this.zoneEncounters = buildZoneEncounters(entry.def, this.rng);
     this.bridge = 0;
   }
 
@@ -143,6 +151,7 @@ export class World {
     player.map = next.map;
     for (const f of this.followers) f.map = next.map;
     this.encounters = new EncounterSystem(next.def.encounters || {}, this.rng);
+    this.zoneEncounters = buildZoneEncounters(next.def, this.rng);
     this.hooks.mapChanged?.(next, prev, { ox, oy });
   }
 
@@ -242,12 +251,13 @@ export class World {
     if (this.hooks.encountersEnabled && !this.hooks.encountersEnabled()) return false;
     if (!this.state?.party?.some((pk) => pk.hp > 0)) return false;
     const p = this.player;
-    const type = this.encounters.encounterType({ terrain: p.terrainTag(), surfing: p.surfing, hour: this.state.hour });
-    if (!type || !this.encounters.triggered(type, { repel: repelActive })) return false;
-    const enc = this.encounters.choose(type);
+    const sys = this.encountersAt(p.x, p.y);
+    const type = sys.encounterType({ terrain: p.terrainTag(), surfing: p.surfing, hour: this.state.hour });
+    if (!type || !sys.triggered(type, { repel: repelActive })) return false;
+    const enc = sys.choose(type);
     const lead = this.state.leadPokemon?.() || this.state.party.find((pk) => !pk.egg);
     if (!allowEncounter(enc, { repelActive, leadLevel: lead?.level || 0 })) {
-      this.encounters.chanceAccumulator = 0;
+      sys.chanceAccumulator = 0;
       return false;
     }
     this.hooks.encounter?.(enc);
@@ -338,8 +348,8 @@ export class World {
       this.hooks.followerTalk?.(f);
       return true;
     }
-    const facing = this.terrainAt(p, fx, fy);
-    if (!p.surfing && canSurfFreely(facing) && this.map.valid(fx, fy)) {
+    // Agua delante: nunca desde un puente ni hacia el agua bajo un tablero (world/waterAccess.js).
+    if (canOfferSwim(this)) {
       this.hooks.fieldHook?.('swim', { x: fx, y: fy });
       return true;
     }

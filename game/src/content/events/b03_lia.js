@@ -1,6 +1,7 @@
 // Lía entrega el Repartir Exp (EXPSHARE) de parte de Alerce en el Centro Pokémon de Villa Zaguán (docs/CAMPANA.md
-// B03 punto 2; POKEDEX_DISTRIBUCION §7.1 «Repartir Exp desde B03 (desactivable)»). El Repartir Exp de los datos
-// de Añil es un objeto equipable: lo lleva un Pokémon y se «desactiva» quitándoselo (ver README de b03).
+// B03 punto 2; POKEDEX_DISTRIBUCION §7.1 «Repartir Exp desde B03 (desactivable)»). Es el Repartir Exp moderno
+// (gen 6+, objeto clave de items_axis.json): activado desde la Mochila, los Pokémon del equipo que no combaten
+// reciben el 50 % de la experiencia (ui/logic/expShare.js; ver README de b03).
 // Aparece tras el P1 y espera hasta que se recoge (CAMPANA §2.6). zaguan_centro (B02) añade liaCentroEvents().
 import { F, SPEAKER, SPRITE, say } from './b03_common.js';
 
@@ -13,8 +14,8 @@ export async function liaGift(ctx) {
   await say(ctx, L, 'El profesor Alerce me ha pedido que te trajera esto. Dice que el camino hasta Caudal es largo.');
   await ctx.giveItem('EXPSHARE');
   ctx.setFlag(F.lia);
-  await say(ctx, L, 'Es un Repartir Exp. El Pokémon que lo lleve equipado se queda con parte de la experiencia de cada combate, aunque no salga a luchar.');
-  await say(ctx, L, 'Si prefieres que no reparta, basta con quitárselo desde el equipo. Tú decides.');
+  await say(ctx, L, 'Es un Repartir Exp. Mientras esté activado, los Pokémon de tu equipo que no salgan a luchar se quedan con la mitad de la experiencia de cada combate.');
+  await say(ctx, L, 'Si prefieres que no reparta, puedes desactivarlo desde la Mochila. Tú decides.');
   await say(ctx, L, 'Gael pasó por aquí hace un rato. No quiso esperar a que le diera nada. Iba hacia el sur, hacia Caudal.');
   await say(ctx, L, 'Yo vuelvo al laboratorio. ¡Suerte!');
   const lia = ctx.world?.events?.find((e) => e.id === 'lia');

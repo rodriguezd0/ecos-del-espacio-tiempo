@@ -73,6 +73,8 @@ export default {
   battleback: 'Acantilado',
   start: { x: SPOTS.entry.x, y: SPOTS.entry.y, dir: 8 },
   stamps: { estrado: { tiles: DAIS } },
+  // B11: bajando por el borde sur de la explanada (pulsar abajo) se vuelve a la senda del campamento del Monte.
+  warps: [16, 17, 18].map((x) => ({ x, y: H - 1, dirTrigger: 2, to: 'campamento_monte', tx: 10, ty: 1, dir: 2 })),
 
   build(b) {
     b.fill(null, 'cesped');

@@ -4,6 +4,7 @@ import { ROOM_BRUSHES, houseExit, exitArrows, examineRect } from './common.js';
 import { momEvent } from '../../events/b01_town_home.js';
 import { TOWN_DOORS, INTERIOR_ENTRIES } from './villa_alba_layout.js';
 import { STAIRS_ARRIVAL as UPSTAIRS_ARRIVAL } from './casa_prota_2f.js';
+import { b11HomeEvents } from '../../events/b11_home.js'; // B11: Mamá entrega el huevo de Togepi
 
 const ENTRY = INTERIOR_ENTRIES.casa_prota_1f;
 const DOOR_X = ENTRY.x;
@@ -63,5 +64,6 @@ export default {
     ...examineRect('vitrina', 5, 5, 2, 1, 'La vitrina guarda la vajilla buena, la de las visitas.'),
     ...examineRect('tele', 7, 4, 2, 1, 'En la tele dan el tiempo: cielo despejado sobre el bosque.'),
     ...examineRect('sofa', 12, 6, 2, 5, 'Un sofá cómodo. Aún conserva la forma de alguien que se ha sentado mucho rato.'),
+    ...b11HomeEvents(),
   ],
 };

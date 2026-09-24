@@ -14,6 +14,7 @@ import {
 } from '../logic/bagLogic.js';
 import { drawHelpWindow, showCommands, message, confirm, chooseNumber } from './common.js';
 import { useBagItem } from './bagUse.js';
+import { expShareLabel } from '../logic/expShare.js';
 import { giveItemTo } from './progression.js';
 import { ui } from '../api.js';
 
@@ -206,7 +207,7 @@ class BagScene extends ScreenScene {
         drawText(g, 'CERRAR MOCHILA', 200, y + 16, { color: C.bagText, shadow: C.bagShadow });
         continue;
       }
-      const qty = showsQuantity(e.item) ? `x${String(e.qty).padStart(3, ' ')}` : '';
+      const qty = showsQuantity(e.item) ? `x${String(e.qty).padStart(3, ' ')}` : expShareLabel(this.state, e.id) || '';
       const qtyW = qty ? textWidth(qty) + 16 : 0;
       drawText(g, cropText(e.item.name, 250 - qtyW), 200, y + 16, { color: C.bagText, shadow: C.bagShadow });
       if (qty) drawText(g, qty, 450, y + 16, { color: C.bagText, shadow: C.bagShadow, align: 'right' });

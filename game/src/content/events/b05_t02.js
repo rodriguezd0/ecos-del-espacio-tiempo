@@ -5,6 +5,7 @@
 // pierde, se vuelve a la puerta del molino) y Darío, que deja el Consorcio y avisa del Parque Eólico.
 import { F, V, SPEAKER, SPRITE, say, core, zygardeEmote, byGender } from './b05_common.js';
 import { GEAR_NAMES, SENSE_NAMES, SOCKET_SIZES, evaluateGears } from './b05_gears.js';
+import { bossBattle } from '../common/bossBattle.js';
 
 export const MILL_ID = 'molino_diezmo';
 
@@ -146,20 +147,18 @@ async function techsArrive(ctx) {
   await fightTechs(ctx);
 }
 
-/** Combates contra los técnicos (nv 18–20). Derrota: de vuelta a la puerta del molino, curado. */
+/**
+ * Combates contra los técnicos (nv 18–20), combate de guion (content/common/bossBattle.js): sin pérdida de dinero ni
+ * punto de cura. Derrota: de vuelta a la puerta del molino, curado (TABLILLAS T02, reintento).
+ */
 async function fightTechs(ctx) {
   for (const [i, id] of [[0, 't02_tecnico_a'], [1, 't02_tecnica_b']]) {
     if (Number(ctx.var(`b05_t02_tec_${i}`, 0)) === 1) continue;
-    const out = await ctx.battle({ trainer: id, canLose: true });
-    if (out === 'lose' || out === 'forfeit') {
-      await ctx.fade('out', 20);
-      ctx.heal();
-      ctx.setVar('b05_t02_reintento', 1);
-      await ctx.warp(MILL_ID, MILL.door.x, MILL.door.y, 8, { fade: false });
-      await ctx.fade('in', 20);
-      await ctx.say('Has vuelto a la puerta del molino. Los técnicos siguen junto a la muela.');
-      return false;
-    }
+    const out = await bossBattle(ctx, { trainer: id }, { map: MILL_ID, x: MILL.door.x, y: MILL.door.y, dir: 8 }, {
+      onLose: (c) => c.setVar('b05_t02_reintento', 1),
+      loseText: 'Has vuelto a la puerta del molino. Los técnicos siguen junto a la muela.',
+    });
+    if (out !== 'win') return false;
     ctx.setVar(`b05_t02_tec_${i}`, 1);
   }
   ctx.setVar('b05_t02_reintento', 0);
@@ -284,7 +283,10 @@ function peopleEvents() {
   });
   return [
     {
+      // Antes del P2 Anselmo está en la calle, frente al molino (B03, b03_caudal_npcs.js: da la pista T02); con el río
+      // en su cauce entra al Diezmo y se queda (la calle lo oculta desde `b05_t02_anselmo`).
       id: 'anselmo', x: a.x, y: a.y, name: S.anselmo, sprite: SPRITE.anselmo, dir: a.dir, move: 'look',
+      when: (s) => Boolean(s?.flag(F.p2)),
       script: async (ctx) => {
         if (ctx.flag(F.t02Done)) { await say(ctx, S.anselmo, 'Oye cómo muele. Setenta años y aún me emociona.'); return; }
         if (running(ctx.state)) { await say(ctx, S.anselmo, 'Ese eje… Llévatelo tú, sea lo que sea. Aquí solo trae visitas raras.'); return; }

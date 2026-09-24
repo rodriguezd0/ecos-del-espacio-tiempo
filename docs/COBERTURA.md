@@ -45,6 +45,8 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | Secuencia «Pilar restaurado» (Fragmento, verso, efecto local) | ✅ | `ctx.story.restorePillar` |
 | Kit de Pilar con tinte por Pilar | ✅ | Arte provisional |
 | Cordón Unión (evolución por intercambio en solitario) | 🟨 | Objeto en Añil; venta en Lúmina (B09) |
+| Huevos y eclosión | ✅ | `world/eggs.js` (B11: huevo de Togepi) |
+| Guardería y crianza (Phione, Lazo Destino, movimientos huevo) | ✅ | `world/daycare.js` + `daycareEvent`; guardería de Lúmina abierta tras T06 (X29) |
 | Validador de contenido y E2E por bloque | ✅ | `tools/validate_content.mjs`, `tools/e2e_*.mjs` |
 | Cooperativo / intercambio / PvP | ⬜ | Opcional; nunca requisito (biblia §15) |
 
@@ -60,7 +62,7 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | B06 | P3 Impulso: Ruta 5, Meseta, Parque Eólico (N2), Abril | 🟨 oleada B |
 | B07–B08 | Ruta 6, Cantería (Mega Aro) / P4 Masa: Estrato, Mina, Dunas, Fermín | ⬜ |
 | B09–B10 | Lúmina, museo, Reserva, Marisma, Nexo, Caleta / P5 Memoria: Mnemos, Olvido | ⬜ |
-| B11–B12 | Neblino, Monte, regreso a casa / P6 Invertido (Mundo Distorsión, N3) | ⬜ |
+| B11–B12 | Neblino, Monte, regreso a casa / P6 Invertido (Mundo Distorsión, N3) | 🟨 B11 hecho (E2E `tools/e2e_b11.mjs`); B12 ⬜ |
 | B13–B14 | Talasa (N4, combate con Alerce), Lumbre, Tizón / P7 Ecos (Bramaluna Alfa) | ⬜ |
 | B15–B16 | Norte, Villa Boreal (N5, Gael) / P8 Alma (Uxie, Mesprit, Azelf, Cadena Roja, Completa) | ⬜ |
 | B17–B18 | Axis en eclipse / P9 Convergencia (Dialga/Palkia) | ⬜ |
@@ -113,7 +115,7 @@ esté registrado hay un aviso neutro; al crearlo y ejecutar `node tools/gen_regi
 
 | Estado | Enlace | Bloque | Qué falta |
 |---|---|---|---|
-| ⬜ | Ruta 1 → **Ruta 10** (cruce oeste, tramo bajo; C007) | B11 | Crear `ruta_10` con su salida este en y 20–21 y conexión `east` a `ruta_1` con offset 4. Hasta entonces: «El camino del oeste está cortado por un desprendimiento.» |
+| ✅ | Ruta 1 → **Ruta 10** (cruce oeste, tramo bajo; C007) | B11 | Crear `ruta_10` con su salida este en y 20–21 y conexión `east` a `ruta_1` con offset 4. Hasta entonces: «El camino del oeste está cortado por un desprendimiento.» |
 | 🟨 | Ruta 1 → **Villa Zaguán** (salida sur) | B02 | Crear `villa_zaguan` con su camino norte en x 18–21 y conexión `north` a `ruta_1` con offset 5. |
-| ⬜ | Ruta 1 → **Cerro del Alba** (cornisa, Trepar) | B11/postgame | Conexión este y pared de Trepar (CAMPANA §1.4); sin preparar en B01. |
+| ✅ | Ruta 1 → **Cerro del Alba** (cornisa, Trepar) | B11/postgame | Hecho en B11: raíces en el mirador (24,7) → `cerro_alba` (C054); Ho-Oh en el brasero queda para el postgame. |
 | ⬜ | Monte del Portal: C050, C051 y C076 | B11/B12 | `montana_portal` es aún el mapa del prólogo; al ampliarlo (50×70) colocar sus células (lo avisa `node tools/validate_content.mjs`). |

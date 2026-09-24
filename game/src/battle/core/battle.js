@@ -10,6 +10,7 @@ import { ItemEffects } from './items/registry.js';
 import { createStruggle } from './moves/registry.js';
 import { WEATHER_NAMES } from './constants.js';
 import { BattleAI } from './ai/battleAI.js';
+import { contractArticles } from '../../shared/spanish.js';
 
 const WEATHER_START = {
   Sun: '¡El sol pega fuerte!',
@@ -27,9 +28,12 @@ const TERRAIN_START = {
   Psychic: '¡El terreno de combate se ha vuelto muy extraño!',
 };
 
-/** Corrige contracciones del castellano en mensajes generados ("de el" → "del", "a el" → "al"). */
+/**
+ * Corrige contracciones del castellano en mensajes generados ("de el" → "del", "a el" → "al", también con el
+ * artículo de pbThis() en mayúscula: "de El Nacli rival" → "del Nacli rival"). Ver shared/spanish.js.
+ */
 export function fixSpanish(text) {
-  return String(text).replace(/\bde el\b/g, 'del').replace(/\ba el\b/g, 'al').replace(/\bA el\b/g, 'Al');
+  return contractArticles(text);
 }
 
 export class Battle {

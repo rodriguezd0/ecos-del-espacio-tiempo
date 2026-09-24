@@ -3,6 +3,7 @@
 import { engine } from '../../core/engine.js';
 import { ui } from '../../ui/api.js';
 import { syncBag } from './results.js';
+import { contractArticles } from '../../shared/spanish.js';
 import { Autopilot } from './autopilot.js';
 import { playMoveAnimation } from './fx/moveAnims.js';
 import { playCommonAnimation, statusAnimation, statAnimation } from './fx/commonAnims.js';
@@ -30,8 +31,9 @@ export class SceneBattleUI {
   get db() { return engine.data; }
 
   // ---------------------------------------------------------------- mensajes
-  async message(text, opts = {}) {
+  async message(raw, opts = {}) {
     const s = this.scene;
+    const text = contractArticles(raw); // también los textos propios de la escena (runner.js…), no solo pbDisplay
     if (this.battle && this.battle.decision > 0) s.message.battleEnd = true;
     if (s.message.lingeringBrief && s.message.lingering < BRIEF_LINGER) {
       await s.tasks.until(() => !s.message.lingeringBrief || s.message.lingering >= BRIEF_LINGER, BRIEF_LINGER);
@@ -42,7 +44,8 @@ export class SceneBattleUI {
   }
 
   /** Pregunta Sí/No con la caja de elección de ui/ sobre la barra del combate. */
-  async confirm(text) {
+  async confirm(raw) {
+    const text = contractArticles(raw);
     const s = this.scene;
     if (this.auto) {
       await s.message.show(text, 'normal');

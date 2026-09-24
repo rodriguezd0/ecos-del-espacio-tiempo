@@ -91,7 +91,8 @@ cada noche sobre el campanario (destello, trueno y sprite).
 ## Entrenadores y objetos
 
 `content/trainers/b05.js`: Pescador Tomás, Excursionista Nuria, Montañero Hugo, Ornitólogo Samuel, Joven Dani (19–22) y
-los técnicos del Consorcio (18–20, `canLose`). Objetos: Superpoción, 2 Super Ball, Repelente, Revivir, Cura Total,
+los técnicos del Consorcio (18–20, combate de guion con `bossBattle`: sin cobrar; al perder, curado en la puerta del
+molino). Objetos: Superpoción, 2 Super Ball, Repelente, Revivir, Cura Total,
 Miel ×2 (una oculta), Éter oculto, **Heracrossita** (hueco del árbol del rincón), **Raichuita X** (Sixto).
 
 ## Pruebas rápidas
@@ -108,8 +109,8 @@ Miel ×2 (una oculta), Éter oculto, **Heracrossita** (hueco del árbol del rinc
 
 ## Coordinación con otros bloques
 
-- **B03** (Caudal): **pendiente de B03** — el Anselmo del exterior (`b03_caudal_npcs.js`) sigue en la calle aunque el
-  Anselmo del bloque 5 esté dentro del molino; se sugiere ocultarlo con `!flag('b05_t02_anselmo') || flag('b05_t02_tablilla')`.
+- **B03** (Caudal): un solo Anselmo — el de la calle (`b03_caudal_npcs.js`, pista T02) está hasta que el jugador lo
+  encuentra dentro del molino (`!b05_t02_anselmo`); el del molino aparece con `p2_restored` y se queda (T02 y después).
   Su noria del Diezmo gira al revés tras P2 hasta la Tabla Linfa: el molino del B05 lo muestra igual (canal alto y corona).
 - **B04** (ya existe): da la segunda pista de T02 (inscripción junto al verso II) y abre T03 (inscripción del P2 y el
   apunte de Leandro sobre Sixto). El bloque 5 las vuelve a abrir por descubrimiento directo sin pisar el paso ya dado.

@@ -3,8 +3,9 @@
 //   - Resuelve entrenadores por id (content/trainers) → rival del motor + datos de presentación.
 //   - Traduce el clima del mapa ('rain', 'snow'…) al del motor ('Rain', 'Hail'…).
 //   - Elige el fondo de combate de Añil (Graphics/Battlebacks/<nombre>_bg.png) por mapa/entorno.
-//   - Rellena los datos del jugador desde GameState (dinero, Pokédex, Mega Aro, PC lleno).
+//   - Rellena los datos del jugador desde GameState (dinero, Pokédex, Mega Aro, Repartir Exp, PC lleno).
 import { createPokemon } from '../core/pokemon.js';
+import { isExpShareOn } from '../../ui/logic/expShare.js';
 
 const ENGINE_WEATHERS = ['None', 'Sun', 'Rain', 'Sandstorm', 'Hail', 'HarshSun', 'HeavyRain', 'StrongWinds'];
 const ENGINE_TERRAINS = ['None', 'Electric', 'Grassy', 'Misty', 'Psychic'];
@@ -193,6 +194,8 @@ export function buildBattleConfig(request = {}, { db, state = null, getTrainer =
       hasPokedex: state?.hasPokedex ? state.hasPokedex() : true,
       megaRing: p.megaRing ?? MEGA_KEY_ITEMS.some((k) => (bag[k] || 0) > 0),
       badges: p.badges || 0,
+      // Repartir Exp moderno (objeto clave activable desde la Mochila): 50 % a los que no combaten.
+      expAll: p.expAll ?? isExpShareOn(state),
     },
     opponent,
     rules: {

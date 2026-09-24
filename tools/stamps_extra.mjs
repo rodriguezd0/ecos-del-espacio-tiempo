@@ -10,7 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PNG } from 'pngjs';
-import { EXTRA_LAYOUTS, extraTiles, validateLayout, terrainPatchCells } from '../game/src/content/stamps/extraTiles.js';
+import { EXTRA_LAYOUTS, EXTRA_PIECES, extraTiles, validateLayout, terrainPatchCells } from '../game/src/content/stamps/extraTiles.js';
 import { regularTileAtlasPos, FIRST_REGULAR_TILE } from '../game/src/shared/autotile.js';
 import { drawKitPiece, hasKitArt } from './stamps_extra_art.mjs';
 import { drawTerrain, hasTerrainArt } from './stamps_extra_terrain.mjs';
@@ -22,15 +22,29 @@ const ATLAS_DIR = path.join(ROOT, 'game', 'assets', 'tilesets');
 const DB_FILE = path.join(ROOT, 'game', 'data', 'tilesets.json');
 const SHEET_DIR = path.join(ROOT, 'tools', 'cache', 'stamps', 'extra');
 
+/** Calco de w×h tiles de una imagen ORIGINAL de Añil (`copy` de la pieza), ya a 32 px/tile. */
+function copiedArt(piece, name) {
+  const { image, src: [col, row] } = piece.copy;
+  const png = originalTileset(image);
+  const w = piece.w * T; const h = piece.h * T;
+  const x0 = col * T; const y0 = row * T;
+  if (col < 0 || col + piece.w > 8 || y0 + h > png.height) throw new Error(`Pieza "${name}": copy fuera de ${image}`);
+  const data = Buffer.alloc(w * h * 4);
+  for (let j = 0; j < h; j++) png.data.copy(data, j * w * 4, ((y0 + j) * png.width + x0) * 4, ((y0 + j) * png.width + x0 + w) * 4);
+  return { w, h, data };
+}
+
 const artCache = new Map();
-/** Arte a 32 px/tile (nativo ×2) de una pieza. */
+/** Arte a 32 px/tile (nativo ×2, o calco directo de otra imagen de Añil) de una pieza. */
 export function pieceArt(name) {
   if (!artCache.has(name)) {
+    const piece = EXTRA_PIECES[name];
     let img;
-    if (hasKitArt(name)) img = drawKitPiece(name);
-    else if (hasTerrainArt(name)) img = drawTerrain(name);
-    else throw new Error(`Pieza "${name}" sin arte (stamps_extra_art / stamps_extra_terrain)`);
-    artCache.set(name, img.scale(2));
+    if (piece?.copy) img = copiedArt(piece, name);
+    else if (hasKitArt(name)) img = drawKitPiece(name).scale(2);
+    else if (hasTerrainArt(name)) img = drawTerrain(name).scale(2);
+    else throw new Error(`Pieza "${name}" sin arte (copy, stamps_extra_art / stamps_extra_terrain)`);
+    artCache.set(name, img);
   }
   return artCache.get(name);
 }

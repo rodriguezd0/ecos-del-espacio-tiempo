@@ -129,7 +129,8 @@ export default {
     paintCamp(b);
   },
 
-  warps: [20, 21, 22].map((x) => ({
+  // Solo el peldaño central de la escalinata (x = 21) es pisable: las barandillas (20 y 22) no activan nada.
+  warps: [21].map((x) => ({
     x, y: A.height - 1, dirTrigger: 2, to: 'meseta_impulso', tx: MESETA.ringArrival.x, ty: MESETA.ringArrival.y, dir: 2,
   })),
 

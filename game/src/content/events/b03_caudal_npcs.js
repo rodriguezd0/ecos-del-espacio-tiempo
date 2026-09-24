@@ -2,6 +2,7 @@
 // pescador del Mercado fluvial regala la Caña Vieja (OLDROD, X17), el puesto del mercado (Miel y bayas), el tutor
 // y los vecinos que cuentan el problema del río (CAMPANA B03: «inundaciones de día y canales secos de noche»).
 import { F, SPEAKER, SPRITE, say, core, when } from './b03_common.js';
+import { F as F5 } from './b05_common.js';
 import { SPOTS } from '../maps/b03/caudal_layout.js';
 import { clerkEvent } from '../services/shop.js';
 import { moveTutorEvent } from '../services/moveTeaching.js';
@@ -151,9 +152,16 @@ export function marketEvents() {
   ];
 }
 
+/**
+ * Anselmo en la calle, frente a su molino: da la pista T02 (B03) hasta que el jugador lo encuentra DENTRO del Diezmo
+ * (B05, `b05_t02_anselmo`: escena de entrada del molino tras P2). Desde ahí vive en el molino (T02 y «Oye cómo muele»,
+ * content/events/b05_t02.js), así que no hay dos Anselmo a la vez.
+ */
+export const ANSELMO_IN_MILL = F5.t02Met;
+
 export function anselmoEvent() {
   return {
     id: 'anselmo', x: SPOTS.anselmo.x, y: SPOTS.anselmo.y, sprite: SPRITE.anselmo, dir: SPOTS.anselmo.dir,
-    move: 'still', trigger: 'action', when: when({}), script: anselmoTalk,
+    move: 'still', trigger: 'action', when: when({ none: [ANSELMO_IN_MILL] }), script: anselmoTalk,
   };
 }

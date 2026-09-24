@@ -110,7 +110,7 @@ function paintSouth(b) {
   // patio de Casilda: una columna quebrada que guarda «porque estaba ahí» y su buzón
   b.stamp('pilar_columna_quebrada', 2, 23);
   b.stamp('buzon_rojo', 9, 22);
-  // prado al pie de los huertos: matas, setas y piedras del linde del pinar (tronco_caido_h está vacío en Exterior1)
+  // prado al pie de los huertos: matas, setas y piedras del linde del pinar
   for (const [s, x, y] of [['arbustos', 32, 29], ['setas', 36, 31], ['roca_gris', 35, 29], ['tocon', 31, 31], ['guijarros', 34, 31]]) {
     b.stamp(s, x, y);
   }

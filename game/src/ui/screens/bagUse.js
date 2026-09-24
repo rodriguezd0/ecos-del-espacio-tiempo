@@ -2,6 +2,7 @@
 import { engine } from '../../core/engine.js';
 import { displayName } from '../../battle/core/pokemon.js';
 import { fieldUseKind, useItemOnPokemon, repelSteps, machineAnnotation, withMove } from '../logic/fieldItems.js';
+import { EXP_SHARE_ITEM, toggleExpShare, expShareMessage } from '../logic/expShare.js';
 import { message, confirm } from './common.js';
 import { teachMoves, evolvePartyMember } from './progression.js';
 import { ui } from '../api.js';
@@ -15,6 +16,7 @@ export async function useBagItem(itemId) {
   const item = db.items[itemId];
   const kind = fieldUseKind(item);
   if (itemId === 'TOWNMAP') { await ui.openRegionMap({}); return {}; }
+  if (itemId === EXP_SHARE_ITEM) { await message(expShareMessage(toggleExpShare(s), item?.name)); return {}; }
   if (kind === 'world') return { returnToWorld: true };
   if (kind === 'repel') {
     // El mundo descuenta los pasos (world/world.js) y avisa al agotarse (world/fieldActions.js).

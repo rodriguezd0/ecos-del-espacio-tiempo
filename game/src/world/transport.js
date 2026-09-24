@@ -22,9 +22,9 @@ export const TRAIN = Object.freeze({
   stops: Object.freeze([
     stop('caudal', 'Ciudad Caudal', 'ciudad_caudal', { x: 57, y: 44, dir: 2 }), // B03: delante de la estación (caudal_layout.js TRAIN_ARRIVAL)
     stop('brontia', 'Villa Brontia', 'villa_brontia', { x: 28, y: 34, dir: 2 }), // B05: delante de la estación (villa_brontia_layout.js TRAIN_ARRIVAL)
-    stop('estrato', 'Ciudad Estrato', 'ciudad_estrato'),
-    stop('lumina', 'Ciudad Lúmina', 'ciudad_lumina'),
-    stop('nexo', 'Ciudad Nexo', 'ciudad_nexo'),
+    stop('estrato', 'Ciudad Estrato', 'ciudad_estrato', { x: 8, y: 10, dir: 2 }), // B08: delante de la estación (b08/layout.js ESTRATO.trainArrival)
+    stop('lumina', 'Ciudad Lúmina', 'ciudad_lumina', { x: 61, y: 29, dir: 2 }), // B09a: delante de la estación (lumina_layout.js SPOTS.trainArrival)
+    stop('nexo', 'Ciudad Nexo', 'ciudad_nexo', { x: 8, y: 13, dir: 2 }), // B09b: delante de la estación (nexo_layout.js TRAIN_ARRIVAL)
   ]),
   routes: null, // todas las estaciones se comunican entre sí
 });
@@ -35,8 +35,8 @@ export const FERRY = Object.freeze({
   unlockFlag: FERRY_UNLOCK_FLAG,
   needsVisit: false,
   stops: Object.freeze([
-    stop('nexo', 'Ciudad Nexo', 'ciudad_nexo'),
-    stop('caleta', 'Caleta Sonda', 'caleta_sonda'),
+    stop('nexo', 'Ciudad Nexo', 'ciudad_nexo', { x: 26, y: 40, dir: 2 }), // B09b: embarcadero (nexo_layout.js FERRY_ARRIVAL)
+    stop('caleta', 'Caleta Sonda', 'caleta_sonda', { x: 10, y: 26, dir: 2 }), // B09b: embarcadero (caleta_layout.js FERRY_ARRIVAL)
     stop('boreal', 'Villa Boreal', 'villa_boreal'),
   ]),
   routes: Object.freeze([['nexo', 'caleta'], ['nexo', 'boreal']]),

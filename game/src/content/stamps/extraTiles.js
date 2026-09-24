@@ -18,6 +18,8 @@
 //               así la pieza tapa al personaje que pasa por detrás (render/tilemapView.js: z = y·32 + k·32 + 33)
 //   tag         filas de dígitos del terrain tag (3 = arena…); por defecto 0
 //   desc, tags  metadatos de la biblioteca (docs/stamps.md)
+//   copy        { image, src: [col, fila] }: en vez de arte propio, calca w×h tiles de otra imagen ORIGINAL de Añil
+//               (piezas que un tileset hermano sí tiene, p. ej. los troncos caídos de ExteriorBosqueCeleste en Exterior1)
 // EXTRA_LAYOUTS[imagen] = { row: primera fila libre, rows: filas libres, pieces: { nombre: [col, fila] } }.
 
 const P = (w, h, props) => ({ w, h, kind: 'stamp', layer: 2, ...props });
@@ -59,6 +61,11 @@ export const EXTRA_PIECES = {
   nieve_honda: nine({ desc: 'Nieve honda con huellas hundidas (Terreno complicado)' }),
   ceniza_honda: nine({ tag: ['33333', '33333', '333  '], desc: 'Ceniza profunda con huellas (Terreno complicado en las Dunas de Ceniza)' }),
   ceniza: { w: 2, h: 2, kind: 'pattern', layer: 0, pass: ['..', '..'], tag: ['33', '33'], desc: 'Suelo de ceniza gris con ondas de viento (mosaico 2×2)' },
+
+  // ─── Calcos de otra imagen de Añil (`copy`: esquina [col, fila] en la imagen original; mismo w×h) ───────────
+  // Exterior1 no trae troncos caídos (sus filas 198–200 están vacías): se copian los de ExteriorBosqueCeleste.
+  tronco_caido_h: P(3, 1, { pass: ['xxx'], copy: { image: 'ExteriorBosqueCeleste', src: [4, 198] }, tags: ['decoracion'], desc: 'Tronco caído horizontal (3×1)' }),
+  tronco_caido_v: P(1, 3, { pass: ['x', 'x', 'x'], copy: { image: 'ExteriorBosqueCeleste', src: [7, 198] }, tags: ['decoracion'], desc: 'Tronco caído vertical (1×3)' }),
 };
 
 // Posiciones [col, fila] relativas a la primera fila libre de cada imagen (filas vacías en Añil).
@@ -87,7 +94,7 @@ export const EXTRA_LAYOUTS = {
   InteriorTorre: { row: 593, rows: 32, pieces: KIT },
   InteriorLiga: { row: 593, rows: 32, pieces: KIT },
   ExteriorBosqueCeleste: { row: 699, rows: 15, pieces: EXTERIOR_KIT },
-  Exterior1: { row: 718, rows: 12, pieces: { ...EXTERIOR_KIT, nieve_honda: [0, 9] } },
+  Exterior1: { row: 718, rows: 12, pieces: { ...EXTERIOR_KIT, nieve_honda: [0, 9], tronco_caido_h: [2, 7], tronco_caido_v: [5, 8] } },
   Exterior2: {
     row: 641, rows: 6,
     pieces: { grava: [0, 0], pilar_zocalo: [5, 0], pilar_zocalo_gastado: [6, 0], pilar_zocalo_vivo: [7, 0], barro: [0, 3] },

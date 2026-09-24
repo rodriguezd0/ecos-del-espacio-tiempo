@@ -1,5 +1,6 @@
 // Entrenadores del Bloque 2 — Pilar del Umbral (docs/CAMPANA.md B02; POKEDEX_DISTRIBUCION §7.1: entrenadores nv 6–9,
 // Casilda 11–12). Formato en content/trainers/index.js. Sprites de combate: arte de campaña (Casilda) o clases de Añil.
+// `money` = base por clase de docs/BALANCE.md (content/trainerMoney.js).
 
 export default {
   // ─── Ruinas del Dintel ───────────────────────────────────────────────────────────────────────
@@ -11,7 +12,7 @@ export default {
     party: [{ species: 'ZUBAT', level: 6 }, { species: 'MACHOP', level: 7 }],
     items: [],
     ai: 16,
-    money: 20,
+    money: 32,
     intro: '¡Alto! Vengo a entrenar aquí porque nadie molesta. Y ahora molestas tú. ¡Combate!',
     loseText: 'Vale, vale. Molestas, pero combates bien.',
     winText: '¡Ja! Las ruinas me dan suerte.',
@@ -37,7 +38,7 @@ export default {
     party: [{ species: 'ZUBAT', level: 8 }, { species: 'ONIX', level: 9 }],
     items: [],
     ai: 32,
-    money: 40,
+    money: 48,
     intro: 'Cuidado con tocar las piedras de las alcobas: son un yacimiento. ¡Y yo soy la que lo estudia!',
     loseText: 'Anotado: el yacimiento tiene visita.',
     winText: 'La paciencia es la primera herramienta de una arqueóloga.',
@@ -57,7 +58,7 @@ export default {
     ],
     items: ['POTION'],
     ai: 48,
-    money: 60,
+    money: 100, // Guardianes de los Pilares (docs/BALANCE.md)
     bgm: 'CombateLider',
     // El reto lo dice la escena (content/events/b02_ruinas_camara.js).
     loseText: '…Está bien. Sabes lo que haces.',

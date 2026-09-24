@@ -151,7 +151,9 @@ function validateBaked(def, name, sdef, baked, png) {
   const warnings = [];
   const ts = tilesetInfo(def.tileset);
   const max = ts.passages.length;
-  if (!baked.layers.some(Boolean)) throw new Error(`stamp "${name}" vacío`);
+  // Vacío también si todas sus celdas caen en tiles transparentes de ESTA imagen (p. ej. un src heredado de un
+  // tileset hermano que aquí no tiene esa pieza): el horneado quedaría en ceros y el stamp no pintaría nada.
+  if (!baked.layers.some((g) => g && g.some(Boolean))) throw new Error(`stamp "${name}" vacío (sin tiles en ${def.image})`);
   for (const grid of baked.layers) {
     if (!grid) continue;
     for (const id of grid) {

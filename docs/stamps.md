@@ -154,8 +154,11 @@ Nada de esto es canon: los stamps son piezas gráficas; la distribución de cada
   el horneado avisa de cuántos tiles difieren y cada recorte se revisó dibujado con el tileset destino.
 - **Overlay**: `npm run data` regenera atlas y `tilesets.json` desde Añil y vuelve a aplicar el overlay
   (`tools/stamps_extra.mjs`). Para añadir una pieza: define su forma en `EXTRA_PIECES`, su arte en
-  `tools/stamps_extra_art.mjs` o `_terrain.mjs`, su hueco en `EXTRA_LAYOUTS`, y ejecuta
+  `tools/stamps_extra_art.mjs` o `_terrain.mjs` (o `copy: { image, src }` para calcarla de otra imagen de Añil,
+  como los troncos caídos de ExteriorBosqueCeleste en Exterior1), su hueco en `EXTRA_LAYOUTS`, y ejecuta
   `node tools/stamps_extra.mjs && node tools/stamps_bake.mjs`.
+- **Bibliotecas derivadas** (`derive.js`): un `src` heredado apunta a las mismas casillas de la otra imagen; si allí
+  están vacías, el horneado falla con «stamp vacío» (hay que excluirlo o darle tiles propios).
 - **Correcciones de terrain** (`TERRAIN_PATCHES` en `extraTiles.js`, las aplica la misma herramienta): la orilla y la
   playa de ExteriorSafari (6) pasan a ser agua navegable como en Exterior1 (en Añil bloqueaban sin tag de agua).
 - **Mar decorativo**: `mar` (9) y `luna_panorama` (3) no tienen terrain de agua; para agua navegable usa `agua`.
@@ -357,8 +360,6 @@ revisa la hoja con `preview_stamps --only=<nombre>` y ejecuta los tests.
 | `lupinos` | 3×2 | 2 |  | flor | Lupinos lila altos |
 | `arbustos` | 2×2 | 2 |  | decoracion | Matas de arbusto oscuro |
 | `boquete` | 4×3 | 1 |  | cueva, vestigio | Boquete oscuro rodeado de rocas (entrada a cueva/ruina) |
-| `tronco_caido_h` | 3×1 | 2 |  | decoracion | Tronco caído horizontal (3×1) |
-| `tronco_caido_v` | 1×3 | 2 |  | decoracion | Tronco caído vertical (1×3) |
 | `entrada_mina` | 3×4 | 2 | 1,2 | cueva, entrada | Entrada de mina con marco de madera y raíles |
 | `barrera_obras` | 2×1 | 2 |  | mobiliario | Barrera de obras amarilla y negra |
 | `farola_azul` | 1×4 | 2 |  | mobiliario, luz | Farola azul moderna |
@@ -396,7 +397,7 @@ revisa la hoja con `preview_stamps --only=<nombre>` y ejecuta los tests.
 | `seto_largo` | 10×2 | 1 |  | seto | Seto florido largo (10×2) |
 | `roca_grande` | 2×2 | 2 |  | roca | Roca marrón grande (2×2) |
 | `roca_peque` | 1×1 | 2 |  | roca | Roca marrón pequeña |
-| `tocon_gigante` | 3×2 | 2 |  | decoracion | Tocón gigante (3×2) |
+| `tocon_gigante` | 3×2 | 2 |  | decoracion | Tocón gigante marrón con raíces (3×2; la fila de arriba tapa al personaje) |
 | `laboratorio_rojo` | 9×16 | 2 | 2,11 | edificio, laboratorio | Laboratorio de cúpula roja con anexo y buzón (Pueblo Paleta; en este tileset sin molino) |
 | `pino_nevado` | 2×6 | 2 |  | nieve, arbol | Pino nevado alto (2×6) |
 | `pino_nevado_peque` | 2×4 | 2 |  | nieve, arbol | Pino nevado (2×4) |
@@ -448,6 +449,8 @@ revisa la hoja con `preview_stamps --only=<nombre>` y ejecuta los tests.
 | `pilar_glifo` | 1×1 | 2 |  | pilar, suelo | Glifo Unown grabado en el suelo |
 | `pilar_glifo_2` | 1×1 | 2 |  | pilar, suelo | Glifo Unown grabado en el suelo (variante) |
 | `pilar_losa_eco` | 2×2 | 2 |  | pilar, eco, suelo | Losa de eco: anillos concéntricos grabados (2×2, pisable) |
+| `tronco_caido_h` | 3×1 | 2 |  | decoracion | Tronco caído horizontal (3×1) |
+| `tronco_caido_v` | 1×3 | 2 |  | decoracion | Tronco caído vertical (1×3) |
 
 | Brush | Tipo | Capa | Descripción |
 |---|---|---|---|

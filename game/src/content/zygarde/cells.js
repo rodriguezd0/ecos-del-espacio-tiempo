@@ -122,9 +122,9 @@ add('ecos', 1, 'arrecife_eco', 'Pilar de los Ecos (capa presente)', 'G', [
   'Capa presente (las caracolas siguen funcionando tras P7)', 'Capa presente', 'Capa presente',
 ], { required: true });
 add('garganta', 5, 'pozo_albo', 'Pozo del Albo', 'G', ['Fondo del pozo']); // mapa submarino propio (B04)
-add('caleta', 2, 'caleta_sonda', 'Caleta Sonda', 'G', ['Bosque de algas']);
+add('caleta', 2, 'caleta_algas', 'Caleta Sonda', 'G', ['Bosque de algas']); // mapa submarino propio (B09b)
 add('talasa', 3, 'estacion_talasa', 'Estación Talasa', 'G', ['Pilotes']);
-add('reserva', 3, 'ruta_14_reserva', 'Reserva del Delta', 'G', ['Fondo de la laguna']);
+add('reserva', 3, 'reserva_fondo', 'Reserva del Delta', 'G', ['Fondo de la laguna']); // mapa submarino propio (B09a)
 
 // ---- Etapa H: tras P7 (12)
 add('ruta_11', 1, 'ruta_11', 'Ruta 11', 'H', ['Nieve de la vertiente', 'Nieve de la vertiente']);

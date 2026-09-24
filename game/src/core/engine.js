@@ -3,9 +3,9 @@ import * as THREE from 'three';
 import { Input } from './input.js';
 import { Assets } from './assets.js';
 import { SceneManager } from './scenes.js';
+import { SCREEN_W, SCREEN_H } from './screen.js';
 
-export const SCREEN_W = 512;
-export const SCREEN_H = 384;
+export { SCREEN_W, SCREEN_H };
 export const FPS = 60;
 const STEP = 1 / FPS;
 const MAX_STEPS_PER_FRAME = 5;

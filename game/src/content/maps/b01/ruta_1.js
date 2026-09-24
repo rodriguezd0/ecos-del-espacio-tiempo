@@ -7,6 +7,7 @@
 import { ruta1Events } from '../../events/b01_north_ruta1.js';
 import { RUTA_1 } from '../../encounters/b01.js';
 import { linkIfReady, mapRegistered } from './pending_links.js';
+import { cerroAccessEvents } from '../../events/b11_cerro.js'; // B11: raíces del mirador → Cerro del Alba (Trepar)
 
 const W = 30;
 const H = 60;
@@ -156,9 +157,12 @@ export default {
     ...[linkIfReady('villa_zaguan'), linkIfReady('ruta_10')].filter(Boolean),
   ],
 
-  events: ruta1Events({
-    southRow: H - 1, pathX0: 13, pathX1: 16,
-    zaguanOpen: HAS_ZAGUAN, westOpen: HAS_RUTA_10,
-    westCrossing: WEST_CROSSING, lookout: LOOKOUT, survey: SURVEY,
-  }),
+  events: [
+    ...ruta1Events({
+      southRow: H - 1, pathX0: 13, pathX1: 16,
+      zaguanOpen: HAS_ZAGUAN, westOpen: HAS_RUTA_10,
+      westCrossing: WEST_CROSSING, lookout: LOOKOUT, survey: SURVEY,
+    }),
+    ...(mapRegistered('cerro_alba') ? cerroAccessEvents() : []),
+  ],
 };

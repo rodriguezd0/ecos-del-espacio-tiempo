@@ -18,7 +18,7 @@ export default {
     party: (state) => [{ species: gaelStarterSpecies(state), level: STARTER_LEVEL }],
     items: [],
     ai: 16, // IA básica (guion §4.7)
-    money: 0,
+    money: 60, // Gael (rival), docs/BALANCE.md
     bgm: 'battle_rival',
     // El reto ("…combate conmigo.") lo dice la escena del laboratorio (content/events/b01_town_return.js).
     loseText: '…Vale. No ha sido suerte. Todavía no sé qué ha sido, pero suerte no.',

@@ -64,8 +64,8 @@ Arte propio PROVISIONAL de `node tools/b04_assets.mjs` → `assets/objects/b04_n
 queda abierta; pescador y montañera cambian de frase; el Pilar queda con la corriente en marcha y música propia.
 **B03** (molinos de Caudal, charcos del Barrio bajo) y **B05** (vado de la Ruta 4) leen `p2_restored` en sus mapas.
 
-**Reintentos sin pérdida (§2.6):** técnicos y entrenadores con la derrota normal (Centro Pokémon); Leandro con
-`canLose` y cura; la Escalera no tiene fallo: la palanca de reinicio lo devuelve todo al estado inicial y, si el agua
+**Reintentos sin pérdida (§2.6):** técnicos y entrenadores con la derrota normal (Centro Pokémon); Leandro es combate
+de guion (`bossBattle` de `content/common/bossBattle.js`: sin cobrar, cura en la isla y se le vuelve a hablar); la Escalera no tiene fallo: la palanca de reinicio lo devuelve todo al estado inicial y, si el agua
 sube con el jugador en un fondo, sale por la escalera más cercana. El puente del núcleo no vuelve a bajar tras el P2.
 Tras el P2 la palanca de reinicio pasa a «mantenimiento» (se puede repetir el puzle; nada se pierde).
 

@@ -236,6 +236,9 @@ Sprites: ids de `content/characters.js` (arte propio: `protagonista_m/_f`, `gael
 Cada zona exporta `{ id: def }`: `{ name, class, sprite, overworld, party: [{species, level, moves?, ability?, item?,
 nature?, form?, shiny?, ivs?, evs?}] | (state) => [...], items, ai: 0–100, money, bgm, victoryME, intro, loseText,
 winText, format, canLose }`. `getTrainer(id, state)`. Uso: `ctx.battle({ trainer: 'gael_1' })`.
+`money` (base del premio) sale de la tabla de `docs/BALANCE.md` según la clase (`content/trainerMoney.js`; fuera de
+`content/trainers/` porque todo `*.js` de esa carpeta se registra como entrenadores); `moneyKind`/`moneyException` para
+clases que no están en la tabla. Lo comprueba `tests/trainer_money.test.mjs`.
 
 ## 6. Guiones (`src/script`)
 
@@ -275,6 +278,23 @@ ctx.bgm(nombre, opts) ctx.se(nombre) ctx.me(nombre) ctx.cry(especie, forma)
 ```
 Para cualquier otra cosa del estado: `ctx.state.<API §3>` (p. ej. `ctx.state.obtainPokedex()`, `ctx.state.addClue(id, texto)`).
 
+### Combates de guion (`content/common/bossBattle.js`)
+Guardianes, jefes, Genesis y Gael (CAMPANA §2.6, `docs/BALANCE.md`): perder **no** es derrota general. Módulo puro:
+```js
+import { bossBattle } from '../common/bossBattle.js';
+const r = await bossBattle(ctx, { trainer: 'leandro' }, { x, y, dir = 8, map = mapa actual } | null,
+  { loseText: 'Otra vez.' | [...], speaker: 'Leandro', onLose: (ctx) => ctx.setVar('intentos', 1), warp: { fade } });
+// r: 'win' | 'caught' (superado) | 'run' (huida de un salvaje) | 'lose' (ya curado y en la casilla de reintento)
+bossBattleRequest(request)   // la petición con canLose (arriba y en rules) + rules.noMoneyLoss, sin modificar la entrada
+```
+Fuerza `canLose` (el motor solo dice «¡No te quedan Pokémon!» y «¡Has perdido contra …!»: sin «¡Estás fuera de
+combate!» ni vuelta al punto de cura) y `rules.noMoneyLoss` (sin «Has pagado…»). Al perder (o si el combate falla):
+`ctx.heal()` → `onLose(ctx)` (estado del reintento) → warp a `retry` (sin `retry`, fundido y se queda en su casilla:
+«se le vuelve a hablar») → `loseText`. **Nunca toca `state.healPoint`.** Los combates de Gael que siguen la historia
+aunque se pierda (B1–B5) pasan `canLose` + `noMoneyLoss` a `ctx.battle` y curan con su propia frase.
+`scriptedBattle(ctx, request, retry)` (B06, reexportado por `events/b06_common.js`) es el mismo helper. Tests:
+`tests/boss_battle.test.mjs` (incluye el motor real: `moneyChange` 0 y sin aviso de derrota).
+
 ### Acciones de campo (`world/fieldActions.js`)
 El menú de pausa devuelve `{ type: 'useItem', item }` | `{ type: 'fieldMove', move, partyIndex }` y MapScene lo
 ejecuta como guion con `runFieldAction(ctx, action)`: **Cuerda Huida** (`ESCAPEROPE`) → confirma y lleva a
@@ -284,6 +304,12 @@ Dulce Aroma (encuentro si hay tabla), Destello (amplía la luz en mapas `dark`),
 Otros → «Aquí no se puede usar.». Añadir un objeto: `registerFieldItem('ID', async (ctx, id) => bool)`.
 **Repelente**: `state.startRepel` al usarlo; `World` descuenta un paso por paso (no en hielo), bloquea salvajes de
 nivel < al del primer Pokémon y al agotarse avisa y ofrece usar otro (`repelWoreOff`).
+**Nadar y agua** (`world/waterAccess.js`, puro): A mirando al agua ofrece nadar (`swimHook`) solo si `canOfferSwim(world)`:
+agua navegable que no se pisa y sin tile Bridge encima (el agua bajo un tablero no cuenta), casilla actual que deja
+salir hacia ella (Essentials) y nunca desde un puente (`world.bridge` > 0, tile con tag Bridge o pasarela sin tag:
+`isOnBridge`, franja de ≤ 5 casillas entre agua cuyos dos extremos llegan a tierra; un embarcadero con la punta en el
+agua sí deja nadar). La aparición (`nearestFreeSpot(map, x, y, { canSwim })`, warps y `?x=&y=`) solo acepta agua con
+la capacidad `swim`: sin Nadar se busca tierra y el jugador nunca aparece nadando.
 
 ## 6b. Historia transversal (propietario: story)
 
@@ -396,6 +422,16 @@ animateMove, animateCommon, animateDamage, animateHP, animateStatus, animateStat
 throwBall, expGain, levelUp, changeForm, refresh, end`. `HeadlessBattleUI({ script, confirm, learnMove })` para tests.
 Presentación BW2 en `battle/scene/` (propietario: battle-scene). Aplicación del resultado: `battle/scene/results.js`.
 
+**Textos del combate**: todos los `pbDisplay*`/`pbDisplayConfirm` pasan por `fixSpanish` = `shared/spanish.js#contractArticles`
+(«de/a + el|El» → «del/al»: «Los PS del Nacli rival», «No afecta al Pidove salvaje»; no toca «él» ni tildes/eñes
+vecinas); la escena lo aplica también a sus propios textos (`sceneUI.message/confirm`). Test: `tests/spanish_text.test.mjs`.
+**Repartir Exp** (moderno, gen 6+): `EXPSHARE` es objeto clave (`items_axis.json`). `ui/logic/expShare.js` (puro):
+`hasExpShare(state)`, `isExpShareOn(state)` (lo tiene y no existe el flag `exp_share_off`: al recibirlo queda activado),
+`toggleExpShare(state)` → bool, `expShareMessage(on)`, `expShareLabel(state, id)` ('ON'|'OFF' en la lista de la Mochila).
+«Usar» en la Mochila lo activa/desactiva (`ui/screens/bagUse.js`); `battle/scene/setup.js` rellena `player.expAll` y el
+motor (`battleExp.js`) da a los Pokémon capaces que no participan el 50 % de la experiencia, con un único aviso «¡Tus otros
+Pokémon también ganaron puntos de experiencia!». Test: `tests/battle_exp_share.test.mjs`.
+
 ## 7b. Interfaz (`src/ui`)
 
 Todo a través de `import { ui } from '../ui/api.js'` (en Node sin DOM es un stub que resuelve al instante):
@@ -445,6 +481,13 @@ oscuridad con luces) → efectos luminosos → pasada final (destello, fundido, 
 - **Transiciones** (`ctx.transition`, quedan en negro hasta `scene.fx.clearTransition()`): `fade snakeSquares
   diagonalBubbleTL diagonalBubbleBR risingSplash bars spinBall mosaic zoomIn shrinkingPieces iris`.
 - Emociones: `! ? … ♪ ♥`. Día/noche: `render/dayNight.js` (reloj de juego, 1 min por segundo real, provisional TEC-06).
+- **Costuras entre mapas conectados** (`world/seams.js`, puro): la cámara no se limita por los lados con conexión, así
+  que junto a un vecino de otro tamaño o desplazado quedaban casillas sin mapa (franjas negras). `planSeams(entries)`
+  rellena cada casilla vacía que la cámara puede enseñar (`cameraReach`: margen 9×7 por los lados abiertos) repitiendo
+  el borde (periodo 2) del mapa cargado más cercano (empate por id: no cambia al cruzar); `WorldView.syncSeams` lo
+  rehace al cambiar el mapa actual, los vecinos o sus desplazamientos y `TilemapView.setSeamFill` lo dibuja en una
+  malla bajo el suelo de todos los mapas (`SEAM_ORDER`). Solo decorado (no se pisa); mapas sin conexiones, sin relleno.
+  Test: `tests/world_seams.test.mjs` (ninguna casilla visible vacía en los mapas conectados de B01–B06).
 - Recursos: tilesets y texturas cacheadas globalmente; al cambiar de mapa se liberan geometrías/materiales de
   tilemaps, sprites, partículas de clima y efectos (verificado con `tools/perf_map.mjs`: 0 fugas en 20 warps).
   Rendimiento medido (mapa 120×120 con 40 NPC, headless): lógica ≈0,1 ms/frame, dibujo ≈0,6 ms/frame (CPU).
@@ -675,12 +718,23 @@ Pruebas:
 ### 10.4 Validación de contenido y recorrido E2E
 - `node tools/validate_content.mjs [--quiet] [--json]` (sale con 1 si hay errores; API `validateContent()` →
   `{ report, stats, files }`, comprobaciones en `tools/validate_content_lib.mjs`): cada mapa construye y crea sus eventos;
-  warps (destino registrado, llegada dentro y transitable); conexiones (destino, vuelta simétrica, algún paso por el
-  borde); eventos (ids, coordenadas, objetos, entrenadores, gráficos en disco); encuentros (species.json, pesos,
+  warps (destino registrado; el de ORIGEN se puede activar como en `world/world.js` —sin `dirTrigger`, alguna casilla
+  vecina pisable desde la que pisarlo o empujarlo (puertas sobre muros); con `dirTrigger` 2/4/6/8, su casilla pisable—;
+  la LLEGADA está dentro, pintada (una casilla sin tiles es el vacío), transitable con la altura de puente a 0 —si no,
+  se aparece nadando o en otra casilla— y no encerrada: algún paso, warp vecino o borde con conexión); conexiones
+  (destino, vuelta simétrica, algún paso por el borde y cada llegada al vecino pintada y no encerrada); llegadas de
+  tren/ferri (`world/transport.js`), `start` y `flyPoint` con las mismas reglas. Avisos: evento sólido que tapa una
+  llegada en todo momento de la historia (se evalúa con la partida nueva y con todos los flags/self switches), warp
+  inalcanzable a pie/nadando desde las entradas conocidas del mapa y `dirTrigger` que corta un paso transitable al que
+  se llega por otro lado (`reachableFrom`/`entrySeeds`: sobreaproximan —ignoran eventos, cuentan Nadar y puentes, los
+  warps normales son sumideros— y siembran desde `start`, `flyPoint`, llegadas, conexiones, tren/ferri, `ctx.warp`
+  literales y las vecinas de cada evento, para no dar falsos positivos). Además: eventos (ids, coordenadas, objetos,
+  entrenadores, gráficos en disco); encuentros (species.json, pesos,
   niveles); entrenadores (equipos formables también dinámicos, especies, movimientos, objetos, sprite); guiones
   (giveItem/addKeyItem y entrenadores por id); células (claves, `content/zygarde/cells.js`, `B01_CELLS`; las pendientes
   de otros bloques salen como nota); flags leídos por `when()` en `maps/b01` que ningún guion pone (`EXTERNAL_FLAGS`
-  documenta los que pone otro bloque). Lo ejecuta `tests/content_validate.test.mjs`.
+  documenta los que pone otro bloque). Lo ejecutan `tests/content_validate.test.mjs` y (warps y conexiones con mapas
+  sintéticos) `tests/validate_warps.test.mjs`.
 - `node tools/e2e_b01.mjs [--base=…] [--prologue] [--headed]`: el Bloque 1 completo con teclas reales (título →
   prólogo saltado o acelerado → «¿Quién eres?» → casa → laboratorio → señal → sigilo → Core → Gael → Pokédex → C001 →
   regalo de Mamá → Ruta 1 → cartel del Umbral), piloto automático en los combates (`installBattle` + `auto`),
@@ -772,6 +826,53 @@ Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset
   choca o da la vuelta devuelve al jugador a la casilla de partida.
 - Arte propio: `node tools/b06_assets.mjs` (ráfagas, veleta, esfera del Colector, aerogenerador, campana, hoguera).
 - Combates de guion que se pueden perder sin pérdida (§2.6 de CAMPANA): `scriptedBattle(ctx, request, { x, y, dir })`
-  de `content/events/b06_common.js` (`canLose` + `noMoneyLoss`; al perder cura y devuelve a la casilla de reintento sin
-  tocar `state.healPoint`). Alcanzabilidad a pie de los mapas del bloque: `tests/b06_reach.test.mjs`.
+  reexportado por `content/events/b06_common.js` desde el helper común `content/common/bossBattle.js` (§6, «Combates de
+  guion»: `canLose` + `noMoneyLoss`; al perder cura y devuelve a la casilla de reintento sin tocar `state.healPoint`).
+  Alcanzabilidad a pie de los mapas del bloque: `tests/b06_reach.test.mjs`.
 - Recorrido: `node tools/e2e_b06.mjs [--from=anillo|galerias|sala] [--no-retry]` (ayudantes en `tools/e2e_b06_page.mjs`).
+
+## 14. Bloque 7: Ruta 6 y la Cantería Solano (propietario: b07; detalle en `content/maps/b07/README.md`)
+
+- **Rescate estratigráfico** (reutilizable): reglas puras en `content/events/b07_strata_logic.js` —salas ASCII
+  (`parseRoom`), `canBreak`/`supported` («una roca sostiene a las vecinas en cruz de una capa más alta»), solucionador
+  `solveRoom` y `deadEnds` para tests— y salas en `content/events/b07_strata_rooms.js`. Eventos en
+  `content/events/b07_galerias.js`: una roca por evento (hoja `asset:objects/b07_estratos.png`, fila = capa) cuya
+  máscara de rotas vive en la var `b07_sala_<n>`; romper en mal orden → derrumbe, la sala vuelve a 0 y el jugador a
+  su entrada. `resetRoomIfUnsolved(state, n)` al bajar a una sala.
+- **Mega Aro**: `giveMegaRing(ctx)` de `content/events/b07_megaring.js` (objeto clave `MEGARING` con la presentación
+  de `content/story/storyFx.js#openObtain`); `battle/scene/setup.js` ya lee el aro de la mochila (tecla E en combate).
+- **Rutas de escena** (reutilizable): `stageRoute(ctx, ev, x, y)` / `terrainPath(map, …)` de
+  `content/events/b07_path.js` llevan a un personaje de escena por el suelo (BFS sobre `gameMap.passable`, esquivando
+  a la gente) en vez de la ruta en L que atraviesa acantilados.
+- Arte propio: `node tools/b07_assets.mjs [--preview]`. Pruebas: `tests/b07_{strata,reach,content,staging}.test.mjs`.
+  Recorrido: `node tools/e2e_b07.mjs [--from=canteria|galerias|herreria] [--no-retry]` (ayudantes en
+  `tools/e2e_b07_page.mjs`: el piloto megaevoluciona en cuanto puede).
+
+## 15. Bloque 11: Neblino, Ruta 10, el Monte y el regreso a casa (propietario: b11; detalle en `content/maps/b11/README.md`)
+
+- **Huevos** (reutilizable, `world/eggs.js`): `createEgg(db, species, { ot, metMap, steps })` → Pokémon con
+  `egg: true` y `eggSteps`; `addEggToParty(state, egg)` (sin registro en la Pokédex; `false` si el equipo está lleno);
+  `stepPartyEggs` (puro). `mapScene.js#stepTaken` llama a `eggStep(scene)`, que descuenta un paso y lanza la escena de
+  eclosión (`hatchEgg`: registro, grito, ME, mote opcional). Tests: `tests/b11_eggs.test.mjs`.
+- **Guardería y crianza** (transversal, `world/daycare.js` + `content/services/daycare.js`): port de DayCare/EggGenerator
+  de Essentials 21.1 con la configuración de Añil (gen 9: sin EXP al caminar, movimientos huevo compartidos entre dos de
+  la misma especie, sin herencia de MT, bebé sin incienso). Puro: `depositPokemon/withdrawPokemon/compatibility/
+  stepDaycare/generateEgg/collectEgg` (Lazo Destino, Piedra Eterna, objetos recios, Poké Ball de la familia,
+  descendencia alternativa: Manaphy + Ditto → Phione). Estado en `state.daycare` (`setDaycare`); `mapScene.js#stepTaken`
+  llama a `daycareStep(scene)` (cada 256 pasos, 20/50/70 % u 40/80/88 % con `OVALCHARM`). En un mapa:
+  `daycareEvent({ x, y })` (encargada: dejar, recoger pagando `(niveles+1)×100`, «¿cómo están?» y entrega del Huevo;
+  si el equipo está lleno, el Huevo espera). Tests: `tests/daycare*.test.mjs`.
+- **Zonas de encuentros** (aditivo, `world/encounters.js`): un mapa puede declarar
+  `encounterZones: [{ x0, y0, x1, y1, encounters }]`; `world.encountersAt(x, y)` elige la tabla de la zona (o la del
+  mapa), y los encuentros visibles (`visibleEncounters.js#tablesAt`) usan la tabla de la casilla donde aparecen.
+- **Sigilo con reloj** (T10): la dirección de cada centinela es función del fotograma (`b11_t10.js#sentinelDir`), lo
+  que permite probar en `tests/b11_reach.test.mjs` que el paso es resoluble y planificarlo en el E2E.
+- Combates de guion salvajes (Alfas): `wildBossBattle` de `content/events/b11_common.js` es el helper común
+  `bossBattle` (§6: captura = superado, huida = nada que recuperar, derrota = curado y a la casilla de reintento con
+  `loseText`). Arte propio: `node tools/b11_assets.mjs`.
+- Detalles de mapa sin romper otras piezas (`content/maps/b11/paint.js`): `safeStamp`/`decorate` solo colocan un
+  stamp sobre suelo despejado (sin sustituir árboles, troncos, caminos, orillas, hierba alta ni otras piezas) y fuera
+  de las casillas reservadas; `fillGaps` rellena con piezas de 2×2 los huecos cortos que deja `forestFill`, que admite
+  `maxRun` para partir las franjas largas de bosque en trozos de alturas variadas.
+- Recorrido: `node tools/e2e_b11.mjs [--from=neblino|ruta10|villa|campamento|t09|cerro] [--only=<tramo>] [--no-retry]`
+  (ayudantes en `tools/e2e_b11_page.mjs`).

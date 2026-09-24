@@ -7,6 +7,7 @@ import { pilarTone } from '../stamps/pilar.js';
 import { setCycleHandler } from './b04_pilar_puzzle.js';
 import { CYCLE_FLAG } from './b04_hydraulics.js';
 import { F, SPEAKER, SPRITE, SAY_CORE, kid } from './b04_common.js';
+import { bossBattle } from '../common/bossBattle.js';
 
 const L = { speaker: SPEAKER.leandro };
 const BLUE = [72, 136, 232];
@@ -81,7 +82,13 @@ export async function leandroBattle(ctx) {
   } else {
     await ctx.say('¿Otra vez? Bien. Así se aprende a llevar un río.', L);
   }
-  const outcome = await ctx.battle({ trainer: 'leandro', canLose: true });
+  // Combate de guion (content/common/bossBattle.js): sin pérdida de dinero ni punto de cura; al perder se cura sin
+  // moverse de la isla («Reintento: se le vuelve a hablar», CAMPANA B04).
+  const outcome = await bossBattle(ctx, { trainer: 'leandro' }, null, {
+    onLose: (c) => c.setVar('b04_leandro_intentos', c.var('b04_leandro_intentos', 0) + 1),
+    loseText: [CORE_TEXT.lose, CORE_TEXT.wait],
+    speaker: SPEAKER.leandro,
+  });
   if (outcome === 'win') {
     ctx.setFlag(F.leandroBeaten);
     await ctx.say(CORE_TEXT.win, L);
@@ -89,12 +96,6 @@ export async function leandroBattle(ctx) {
     if (ev) await ctx.move(ev, ['down', 'turn_left'], { through: false });
     return true;
   }
-  ctx.setVar('b04_leandro_intentos', ctx.var('b04_leandro_intentos', 0) + 1);
-  await ctx.fade('out', 16);
-  ctx.heal();
-  await ctx.fade('in', 16);
-  await ctx.say(CORE_TEXT.lose, L);
-  await ctx.say(CORE_TEXT.wait, L);
   return false;
 }
 

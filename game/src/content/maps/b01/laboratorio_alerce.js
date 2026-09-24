@@ -5,6 +5,7 @@ import { exitArrows, examineRect } from './common.js';
 import { TOWN_DOORS } from './villa_alba_layout.js';
 import { LAB, labNpcEvents, labChoiceEvents } from '../../events/b01_town_lab.js';
 import { labReturnEvents } from '../../events/b01_town_return.js';
+import { b11LabEvents } from '../../events/b11_home.js'; // B11: Gael se enfrenta a Alerce
 
 const DOOR_X = LAB.entry.x;
 const MAT_Y = LAB.entry.y;
@@ -58,6 +59,7 @@ export default {
     ...labNpcEvents(),
     ...labChoiceEvents(),
     ...labReturnEvents(),
+    ...b11LabEvents(),
     ...examineRect('pizarras', 8, 3, 4, 1, 'Gráficas de los temblores de las últimas noches. Los picos no siguen ningún patrón conocido.'),
     ...examineRect('estanterias', 14, 6, 4, 1, 'Informes de campo sobre el bosque de Villa Alba, ordenados por fechas.'),
     ...examineRect('estanterias_o', 2, 12, 4, 1, 'Libros de geología y de ecología. Hay marcadores en casi todos.'),

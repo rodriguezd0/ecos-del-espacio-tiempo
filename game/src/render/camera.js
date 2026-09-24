@@ -1,6 +1,6 @@
 // Cámara del mapa: sigue al jugador (centrado como Essentials), respeta los límites del mapa salvo en
 // los lados con conexión, paneos suaves para escenas y temblor de pantalla.
-import { SCREEN_W, SCREEN_H } from '../core/engine.js';
+import { SCREEN_W, SCREEN_H } from '../core/screen.js';
 
 const TILE = 32;
 const easeInOut = (t) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);

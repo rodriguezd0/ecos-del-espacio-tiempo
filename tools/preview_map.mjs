@@ -29,6 +29,11 @@ function spriteFile(name) {
     const f = path.join(CHAR_DIR, dir, `${species}${form && form !== '0' ? `_${form}` : ''}.png`);
     return fs.existsSync(f) ? f : null;
   }
+  // Arte propio de objetos (hojas 4×4 de game/assets/…): 'asset:objects/x.png' (aditivo B10).
+  if (name.startsWith('asset:')) {
+    const f = path.join(ROOT, 'game', 'assets', name.slice(6));
+    return fs.existsSync(f) ? f : null;
+  }
   const clean = name.replace(/^anil:/, '');
   const candidates = [path.join(CHAR_DIR, `${clean}.png`), path.join(ROOT, 'game', 'assets', 'characters', `${clean}.png`)];
   return candidates.find((f) => fs.existsSync(f)) || null;
@@ -41,8 +46,9 @@ if (!flag('no-events')) {
     const ev = normalizeEventDef(expandEventDef(raw, def), i);
     const page = ev.pages[0];
     const file = spriteFile(page.sprite);
-    if (file) sprites.push({ file, x: ev.x, y: ev.y, fy: ({ 2: 0, 4: 1, 6: 2, 8: 3 })[page.dir || 2] || 0 });
+    if (file) sprites.push({ file, x: ev.x, y: ev.y, fx: page.pattern || 0, fy: ({ 2: 0, 4: 1, 6: 2, 8: 3 })[page.dir || 2] || 0 });
   });
+  sprites.sort((a, b) => a.y - b.y); // como en el juego: los de más abajo tapan a los de arriba
 }
 const png = renderMap({ tilesetId: def.tileset, width: built.width, height: built.height, layers: built.layers, sprites, grid: flag('grid') });
 

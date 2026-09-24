@@ -99,19 +99,12 @@ export function gaelAllyParty(state) {
 }
 
 /**
- * Combate de guion que se puede perder sin pérdida (CAMPANA §2.6; mismo criterio que los Guardianes de B02–B04): sin
- * «fuera de combate», sin perder dinero y sin tocar el punto de cura del jugador. Al perder, el equipo se cura y el
- * jugador vuelve a `retry` ({ x, y, dir } en este mapa) para reintentarlo. → 'win' | 'lose'
+ * Combate de guion que se puede perder sin pérdida (CAMPANA §2.6): `scriptedBattle(ctx, request, retry)` → 'win' |
+ * 'lose'. Vive en el helper común `content/common/bossBattle.js` (docs/ARCHITECTURE.md §6, «Combates de guion»); se
+ * reexporta aquí por
+ * compatibilidad con los guiones y tests del bloque.
  */
-export async function scriptedBattle(ctx, request, retry) {
-  const rules = { ...(request.rules || {}), canLose: true, noMoneyLoss: true };
-  const outcome = await ctx.battle({ ...request, canLose: true, rules });
-  if (outcome === 'win') return 'win';
-  ctx.heal();
-  const mapId = ctx.map?.id;
-  if (mapId && retry) await ctx.warp(mapId, retry.x, retry.y, retry.dir ?? 8);
-  return 'lose';
-}
+export { scriptedBattle } from '../common/bossBattle.js';
 
 /** Condición de página a partir de flags: all / none. */
 export function when({ all = [], none = [], test = null } = {}) {

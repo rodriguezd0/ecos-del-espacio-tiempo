@@ -286,6 +286,10 @@ export class GameState {
     if (!this.hasFlyPoint(id)) this.data.flyPoints = [...this.data.flyPoints, id];
   }
 
+  // ---- guardería (world/daycare.js; null hasta el primer depósito) ----
+  get daycare() { return this.data.daycare || null; }
+  setDaycare(dc) { this.data.daycare = dc || null; }
+
   // ---- reloj de juego ----
   get hour() { return Math.floor(this.data.clock.minutes / 60) % 24; }
   advanceMinutes(m) { this.data.clock.minutes = (this.data.clock.minutes + m) % (24 * 60); }

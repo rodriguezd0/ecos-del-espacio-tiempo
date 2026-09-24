@@ -66,7 +66,7 @@ plaza y rosetón (29–33, 20–23) para la escena de B04 (`events/b04_caudal.js
 | T01: Mirta regala la Semilla Milagro | (11,13) | `b03_t01_tablilla` | `b03_t01_semilla` |
 | Lía: Repartir Exp | `zaguan_centro` (4,7) | `p1_restored` y sin `b03_lia_repartir` | `b03_lia_repartir` |
 | Gael B2 + llamada de Alerce | boca norte de Caudal (y 1, x 28–35: Gael llama y el jugador baja al puente, (31,8)) o extremos del puente dorado (29–33, 9 ó 14) | sin `b03_gael_b2` | `b03_gael_b2` (salida), `b03_gael_b2_ganado`, `b03_llamada_alerce` |
-| Anselmo: pista T02 | Caudal (16,38) | — | `b03_anselmo_t02`, `openClue('T02')` |
+| Anselmo: pista T02 | Caudal (16,38) | hasta verlo dentro del molino (sin `b05_t02_anselmo`, B05) | `b03_anselmo_t02`, `openClue('T02')` |
 | Caña Vieja | pescador del embarcadero (37,41) | — | `b03_cana_vieja`, `OLDROD` |
 | Gyaradosita (POKEDEX §7.7) | el mismo pescador | Caña Vieja dada y Nadar de Zygarde | `b03_gyaradosita`, `GYARADOSITE` |
 | Leandro | `caudal_esclusas` (7,5) | antes / después de `p2_restored` | `b03_leandro_visto` |
@@ -88,8 +88,9 @@ arco T01 en las mismas casillas); `maps/b02/zaguan_centro.js` añade `...liaCent
 
 ## Decisiones y notas
 
-- **Repartir Exp:** en los datos de Añil `EXPSHARE` es equipable (bolsillo 1). «Desactivable» = quitárselo al Pokémon;
-  el Repartir Exp general de gen. 6 necesitaría tocar `battle/scene/setup.js` (`player.expAll`): pendiente.
+- **Repartir Exp:** es el moderno de gen. 6+: `items_axis.json` convierte `EXPSHARE` en objeto clave (en Añil era
+  equipable, bolsillo 1). Se activa/desactiva desde la Mochila (flag `exp_share_off`, `ui/logic/expShare.js`); activado,
+  `battle/scene/setup.js` pone `player.expAll` y los no participantes reciben el 50 % de la experiencia.
 - **La célula de Gael:** «Se me escapó de las manos… hacia ti» se escenifica con el brillo que sale de su mano hacia el
   jugador y cae en la Esclusa mayor, donde el registro sitúa C014.
 - Bajo puentes, pasarelas y embarcaderos (también el del estanque de la Ruta 2) la capa 0 no es agua (como en la Ciudad

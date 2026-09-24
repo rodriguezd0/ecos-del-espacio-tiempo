@@ -124,6 +124,7 @@ Gael, postgame y DLC), `docs/TABLILLAS.md` (T01–T15, museo, Crónica, Libreta)
 | X26 | Círculo del Jardín | Evento opcional nocturno en Villa Alba tras P8 (Reconstrucción y Clefairy) | B01 (cartel del pueblo y el anciano de las piedras) |
 | X27 | Objetos nuevos | `REDCHAIN`, `KNOWLEDGETHREAD`, `EMOTIONTHREAD`, `WILLTHREAD`, `GLYPHKEY`, `ALERCEKEY`, `DREAMCATCHER`, `MAGMASTONE`, `CRUCIBLESTONE`, `ANCIENTGEAR` → añadir a `items_axis.json` | Biblia §6.8 (nombres de la Cadena Roja abiertos) |
 | X28 | Megapiedras fuera de la lista del autor | `GENGARITEY`, `GARCHOMPITEZ`, `INTELEONITE` y el resto de megapiedras de Añil no listadas no se distribuyen | Biblia §16.5; queda a elección del autor ampliarlas |
+| X29 | Guardería y crianza (DECIDIDO-DEV) | Guardería de Lúmina: abre tras T06 (antes «el patio está lleno»); reglas de crianza de Essentials con la configuración de Añil (gen 9). Una sola encargada entrega también el Huevo | CAMPANA §B24 (Phione con Manaphy y Ditto en la guardería); biblia §12 |
 
 **Nota técnica detectada (propuesta TEC-07):** `tools/extract_data.mjs` descarta los campos vacíos de `Evolutions`, por
 lo que `species.json` pierde o desalinea las evoluciones con parámetro vacío (`Happiness`, `Trade`: Golbat, Buneary,

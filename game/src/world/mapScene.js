@@ -31,6 +31,10 @@ import { createContext } from '../script/context.js';
 import { CrisisSky } from '../content/story/crisisSky.js';
 import { stormWeather } from './rest.js';
 import { ZygardeField } from './zygarde/field.js';
+import { openSides } from './seams.js';
+import { nearestFreeSpot } from './waterAccess.js';
+import { eggStep } from './eggs.js'; // B11: pasos de los huevos del equipo y eclosión
+import { daycareStep } from './daycare.js'; // guardería: contador del huevo de la pareja depositada
 
 export const DEFAULT_MAP = 'dev_test';
 // [PROVISIONAL] Ritmo del reloj de juego: 1 minuto de juego por segundo real (TEC-06; ritmo por decidir).
@@ -107,7 +111,7 @@ export default class MapScene extends Scene {
       fieldHook: (kind) => { if (kind === 'swim') this.runScript(swimHook, null, 'nadar'); },
       fieldAnim: (kind, ch, x, y) => this.playFieldAnim(kind, ch, x, y),
       mapChanged: (next, prev, off) => this.onConnectionCrossed(next, prev, off),
-      stepTaken: (p) => this.state.setPosition(this.world.map.id, p.x, p.y, p.direction),
+      stepTaken: (p) => { this.state.setPosition(this.world.map.id, p.x, p.y, p.direction); eggStep(this); daycareStep(this); },
       repelExpired: () => this.runScript(repelWoreOff, null, 'repelente'),
     };
   }
@@ -138,9 +142,11 @@ export default class MapScene extends Scene {
     this.worldView.addMap(entry);
     const def = entry.def;
     const p = this.world.player;
+    // El agua solo vale como casilla de aparición con Nadar (world/waterAccess.js).
     const spot = nearestFreeSpot(entry.map,
       Number.isInteger(x) ? x : def.start?.x ?? Math.floor(def.width / 2),
-      Number.isInteger(y) ? y : def.start?.y ?? Math.floor(def.height / 2));
+      Number.isInteger(y) ? y : def.start?.y ?? Math.floor(def.height / 2),
+      { canSwim: Boolean(this.state.zygardeAbility?.('swim')) });
     const sx = spot.x;
     const sy = spot.y;
     p.map = entry.map;
@@ -453,32 +459,6 @@ export default class MapScene extends Scene {
   }
 }
 
-/**
- * Casilla libre más cercana (find_nearest_passable_spot de Añil) para no aparecer dentro de un muro.
- * El agua cuenta como válida (se reanuda nadando).
- */
-function nearestFreeSpot(map, x, y) {
-  const ok = (cx, cy) => map.valid(cx, cy)
-    && (map.playerPassable(cx, cy, 0, {}) || map.terrainTagAt(cx, cy).canSurf);
-  if (ok(x, y)) return { x, y };
-  const max = Math.max(map.width, map.height);
-  for (let r = 1; r < max; r++) {
-    for (let dy = -r; dy <= r; dy++) {
-      for (let dx = -r; dx <= r; dx++) {
-        if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue;
-        if (ok(x + dx, y + dy)) return { x: x + dx, y: y + dy };
-      }
-    }
-  }
-  return { x, y };
-}
-
-/** Lados con conexión (la cámara no se limita por ellos). */
-function openSides(def) {
-  const open = {};
-  for (const c of def.connections || []) open[c.dir] = true;
-  return open;
-}
 
 /** Casillas con autotile de antorcha (emiten luz en mapas oscuros). */
 function findTorches(entry) {

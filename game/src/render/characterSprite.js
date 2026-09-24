@@ -141,10 +141,12 @@ export class CharacterSprite {
   sync(ch, ox = 0, oy = 0, { visible = true, shadow = true, tileRes = null } = {}) {
     if (ch.tileId > 0 && tileRes) this.setTile(tileRes, ch.tileId);
     else this.setGraphic(ch.characterName);
-    const ready = Boolean(this.sheet) || (this.tileKey && ch.tileId > 0);
-    const show = visible && ready && !ch.transparent && ch.opacity > 0;
+    // Siempre booleanos: Three.js solo oculta con `visible === false`; un null/'' (evento sin gráfico, `shadow` de
+    // `characterName && …`) dibujaba la malla y la sombra sin posicionar en el origen del mapa (óvalo negro en (0,0)).
+    const ready = Boolean(this.sheet) || Boolean(this.tileKey && ch.tileId > 0);
+    const show = Boolean(visible && ready && !ch.transparent && ch.opacity > 0);
     this.mesh.visible = show;
-    this.shadow.visible = show && shadow && this.shadowReady && !ch.tileId && ch.opacity >= 128;
+    this.shadow.visible = Boolean(show && shadow && this.shadowReady && !ch.tileId && ch.opacity >= 128);
     if (!show) return 0;
     const u = this.material.uniforms;
     if (this.sheet) {

@@ -6,6 +6,7 @@ import { TilemapView } from './tilemapView.js';
 import { CharacterSprite } from './characterSprite.js';
 import { EmoteLayer } from './emotes.js';
 import { FieldAnimLayer } from './fieldAnims.js';
+import { planSeams, seamKey } from '../world/seams.js';
 
 const TILE = 32;
 
@@ -40,6 +41,19 @@ export class WorldView {
     if (!v) return;
     v.dispose();
     this.views.delete(id);
+    this.seamKey = null;
+  }
+
+  /**
+   * Relleno de costuras (world/seams.js): se rehace solo cuando cambian el mapa actual, los vecinos o sus
+   * desplazamientos (cruce de conexión, vecinos recién cargados, warp).
+   */
+  syncSeams(entries) {
+    const key = seamKey(entries);
+    if (key === this.seamKey || entries.some((e) => !this.views.has(e.id))) return;
+    this.seamKey = key;
+    const plan = planSeams(entries);
+    for (const e of entries) this.views.get(e.id).setSeamFill(plan.get(e.id) || []);
   }
 
   clearMaps() {
@@ -75,6 +89,7 @@ export class WorldView {
    */
   sync(world, cam, timeSeconds, effects = null) {
     this.root.position.set(-cam.renderX, cam.renderY, 0);
+    this.syncSeams(world.allEntries);
     const seen = new Set();
     for (const entry of world.allEntries) {
       const view = this.views.get(entry.id);

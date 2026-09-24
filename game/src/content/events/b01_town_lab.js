@@ -3,6 +3,7 @@
 import {
   F, V, STARTERS, STARTER_LEVEL, SPEAKER, SPRITE, AUDIO, when, gaelStarterFor,
 } from './b01_town_common.js';
+import { alerceB11Line } from './b11_home.js'; // B11: tras la escena de Gael
 
 /** Posiciones del laboratorio (mapa laboratorio_alerce). */
 export const LAB = Object.freeze({
@@ -180,7 +181,10 @@ async function gaelTalk(ctx) {
 }
 
 async function alerceTalk(ctx) {
-  if (ctx.flag(F.dex)) {
+  const later = alerceB11Line(ctx.state);
+  if (later) {
+    await say(ctx, SPEAKER.alerce, later);
+  } else if (ctx.flag(F.dex)) {
     await say(ctx, SPEAKER.alerce, 'Las ruinas del Pilar del Umbral están al sur, pasada la Ruta 1. Id con cuidado.');
   } else if (ctx.flag(F.starter)) {
     await say(ctx, SPEAKER.alerce, 'Cuidad de ellos. Y no os alejéis del pueblo todavía: quiero que os familiaricéis primero.');

@@ -1,8 +1,13 @@
 // Validación de TODO el contenido registrado (mapas de content/maps/index.js y entrenadores de
 // content/trainers/index.js), con salida legible agrupada por archivo:
 //   - cada mapa construye (MapBuilder + stamps) y crea sus eventos sin errores en when()
-//   - warps: destino registrado, llegada dentro del mapa y transitable
-//   - conexiones: destino registrado, vuelta simétrica y al menos una casilla del borde que se pueda cruzar
+//   - warps: destino registrado; el de ORIGEN se puede activar (pisarlo o empujarlo desde una vecina pisable, o
+//     estar encima con dirTrigger 2/4/6/8) y la LLEGADA está dentro, pintada, transitable sin puente y no encerrada;
+//     avisos: llegada con evento sólido encima, dirTrigger hacia una casilla transitable, warp inalcanzable a pie
+//     desde las entradas conocidas del mapa (start, flyPoint, llegadas, conexiones, Trepar, tren/ferri)
+//   - conexiones: destino registrado, vuelta simétrica, al menos una casilla del borde que se pueda cruzar y cada
+//     llegada al vecino pintada y no encerrada
+//   - llegadas de tren/ferri (world/transport.js), `start` y `flyPoint` válidas (mismas reglas que un warp)
 //   - eventos: ids únicos, dentro del mapa, objetos (type item) y entrenadores (type trainer) existentes,
 //     gráficos de personaje que existen en disco (aviso)
 //   - encuentros: especies de species.json, pesos y niveles válidos
@@ -20,9 +25,10 @@ import { TRAINERS } from '../game/src/content/trainers/index.js';
 import { World } from '../game/src/world/world.js';
 import { GameState } from '../game/src/core/state.js';
 import { buildMapNode } from './lib/map_node.mjs';
+import { TRAIN, FERRY } from '../game/src/world/transport.js';
 import {
   ROOT, Report, loadDb, mapFile, checkEvents, checkWarps, checkConnections, checkEncounters, checkTrainers,
-  jsFiles, scanScripts, flagsReadByWhen,
+  jsFiles, scanScripts, flagsReadByWhen, arrivalProblem, openSides, entrySeeds, scanScriptWarps, checkWarpReach,
 } from './validate_content_lib.mjs';
 
 const CONTENT = path.join(ROOT, 'game', 'src', 'content');
@@ -33,20 +39,71 @@ export const EXTERNAL_FLAGS = Object.freeze({
   prologue_seen: 'content/newgameRules.js (partida nueva)',
 });
 
-/** Crea el mundo con los eventos (páginas evaluadas con un GameState real) y recoge errores de when(). */
+/** Estado de partida en el que todos los flags y self switches están activos (historia «terminada»). */
+function allSetState() {
+  const base = GameState.create({ name: 'Prueba' });
+  return new Proxy(base, {
+    get(target, key) {
+      if (key === 'flag' || key === 'selfSwitch') return () => true;
+      const v = target[key];
+      return typeof v === 'function' ? v.bind(target) : v;
+    },
+  });
+}
+
+/** Casillas con un evento que tapa el paso (gráfico o sólido, no atravesable) en un mundo ya creado. */
+function solidTiles(world) {
+  const out = new Set();
+  for (const ev of world.events) if (ev.page && !ev.erased && !ev.through && (ev.characterName || ev.solid)) out.add(`${ev.x},${ev.y}`);
+  return out;
+}
+
+/**
+ * Crea el mundo con los eventos (páginas evaluadas con un GameState real) y recoge errores de when().
+ * → Set 'x,y' de las casillas con un evento sólido tanto al empezar la partida como con todos los flags y self switches
+ * activos (evento que siempre está: para avisar de llegadas tapadas sin depender del momento de la historia).
+ */
 function checkMapWorld(report, file, entry) {
   const errors = [];
+  let solids = new Set();
   const original = console.error;
   console.error = (...args) => { errors.push(args.map(String).join(' ')); };
   try {
     const world = new World({ state: GameState.create({ name: 'Prueba' }) });
     world.setCurrent({ ...entry, events: null });
+    solids = solidTiles(world);
   } catch (err) {
     errors.push(err.message);
   } finally {
     console.error = original;
   }
   for (const e of errors) report.error(file, `eventos: ${e.split('\n')[0]}`);
+  if (solids.size) {
+    console.error = () => {}; // los errores de when() ya se han informado arriba
+    try {
+      const late = new World({ state: allSetState() });
+      late.setCurrent({ ...entry, events: null });
+      const always = solidTiles(late);
+      solids = new Set([...solids].filter((k) => always.has(k)));
+    } catch {
+      solids = new Set();
+    } finally {
+      console.error = original;
+    }
+  }
+  return solids;
+}
+
+/** Llegadas de tren y ferri (world/transport.js) a mapas registrados: casilla válida. */
+function checkTransport(report, built) {
+  const stops = [...TRAIN.stops, ...FERRY.stops];
+  for (const s of stops) {
+    if (!s.arrival || !built[s.map]) continue;
+    const { def, entry } = built[s.map];
+    const problem = arrivalProblem(entry.map, s.arrival.x, s.arrival.y, { warps: def.warps || [], open: openSides(def) });
+    if (problem) report.error('game/src/world/transport.js', `parada ${s.id} (${s.map}): ${problem}`);
+  }
+  return stops;
 }
 
 /** Registro global de células (agente zygarde); null si todavía no existe. */
@@ -135,22 +192,38 @@ export async function validateContent() {
     if (!cache.has(id)) cache.set(id, buildMapNode(id).catch((err) => ({ error: err })));
     return cache.get(id).then((r) => (r.error ? null : r));
   };
-  const ctx = { db, maps: MAPS, trainers: TRAINERS, build, cells: [] };
+  const ctx = { db, maps: MAPS, trainers: TRAINERS, build, cells: [], solids: {} };
   const b01Defs = [];
+  const built = {};
+  // 1.ª pasada: cada mapa por separado (construcción, eventos, encuentros).
   for (const id of Object.keys(MAPS)) {
     const file = mapFiles[id];
     await build(id);
     const res = await cache.get(id);
     if (res.error) { report.error(file, `no construye: ${res.error.message}`); continue; }
     const { def, entry, warnings } = res;
+    built[id] = res;
     if (def.id !== id) report.error(file, `id "${def.id}" ≠ registro "${id}"`);
     for (const w of warnings || []) report.warn(file, `construcción: ${w}`);
-    checkMapWorld(report, file, entry);
+    ctx.solids[id] = checkMapWorld(report, file, entry);
     checkEvents(report, file, def, entry.map, ctx);
-    await checkWarps(report, file, def, ctx);
-    await checkConnections(report, file, def, entry, ctx);
     checkEncounters(report, file, def, db);
     if (file.startsWith(B01_DIR)) b01Defs.push(def);
+  }
+  // 2.ª pasada: lo que depende de otros mapas (warps, conexiones, llegadas y alcanzabilidad).
+  const transport = checkTransport(report, built);
+  const scriptWarps = scanScriptWarps(jsFiles(CONTENT));
+  for (const [id, { def, entry }] of Object.entries(built)) {
+    const file = mapFiles[id];
+    for (const key of ['start', 'flyPoint']) {
+      const p = def[key];
+      if (!p || !Number.isInteger(p.x) || !Number.isInteger(p.y)) continue;
+      const problem = arrivalProblem(entry.map, p.x, p.y, { warps: def.warps || [], open: openSides(def) });
+      if (problem) report.error(file, `${key}: ${problem}`);
+    }
+    await checkWarps(report, file, def, entry, ctx);
+    await checkConnections(report, file, def, entry, ctx);
+    checkWarpReach(report, file, def, entry, entrySeeds(id, built, { transport, scriptWarps }));
   }
   const trainerFiles = {};
   for (const f of jsFiles(path.join(CONTENT, 'trainers')).filter((x) => !x.endsWith('index.js'))) {

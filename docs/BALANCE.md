@@ -21,11 +21,31 @@ Campo `money` en `content/trainers/<bloque>.js`:
 | Guardianes de los Pilares (P1–P5) | 100 |
 | Entrenadores de élite del postgame (Bastión Axis) | 120 |
 
+(El motor multiplica por el nivel más alto del equipo rival: `battle/core/battleStart.js#pbGainMoney`; en combates con
+varios rivales suma el premio de cada uno.)
+
+**Clasificación por clase** (`content/trainerMoney.js`: `MONEY_BY_KIND`, `CLASS_KIND`, `moneyKindOf`,
+`checkTrainerMoney`; test `tests/trainer_money.test.mjs`). La fila sale del campo `class` del entrenador (sin tildes ni
+mayúsculas). Clases asimiladas a una fila aunque no aparezcan literalmente: **Marinero/a** → pescadores (24);
+**Ornitólogo/a, Fotógrafo/a** (aficionados de campo) y **Mecánico/a** (oficio, como los mineros) → excursionistas
+(32); **Aspirante** (el Entrenador Guay de Añil) → veteranos (48); **Estudiante** → colegiales (16).
+`money` es siempre explícito en cada entrenador. Si la clase no está en la tabla:
+- `moneyKind: '<fila>'` asigna la fila por el papel del personaje (`jovenes agua campo expertos genesis comandante
+  vertice rival guardian elite`): Leandro («Maestre de Esclusas») → `guardian`, Casia («Directora de Genesis») →
+  `comandante`.
+- `moneyException: 'motivo'` permite un valor fuera de la tabla (motivo obligatorio). Ninguno en B01–B06.
+
+El test exige la regla en B01–B06 (`STRICT_MAX_BLOCK`; subirlo al cerrar cada bloque); en archivos de bloques
+posteriores las incidencias salen como diagnóstico y no rompen `npm test`.
+
 ## Combates de guion (Guardianes, jefes, Gael, Genesis)
 
 - Perder **no** provoca derrota general: sin pérdida de dinero, equipo curado, regreso a la casilla de reintento y sin
   cambiar el punto de cura del jugador (CAMPANA §2.6). Usar el helper común de combates de guion
-  (`content/common/bossBattle.js` si existe; si no, el patrón `scriptedBattle` de `content/events/b06_common.js`).
+  `bossBattle(ctx, request, retry, { loseText, speaker, onLose })` de `content/common/bossBattle.js` (ARCHITECTURE §6,
+  «Combates de guion»; `scriptedBattle` de `content/events/b06_common.js` es el mismo helper).
+- Los técnicos de Genesis que patrullan con visión (tipo de evento `trainer`) son entrenadores normales; los que
+  forman parte de una escena (p. ej. T02 en el molino, el Parque en B06) son combates de guion.
 - Los combates de Gael B2–B5 continúan la historia aunque el jugador pierda (cambia su frase); B6 hay que ganarlo.
 
 ## Otros

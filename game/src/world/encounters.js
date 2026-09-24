@@ -8,13 +8,13 @@ export const DEFAULT_STEP_CHANCE = { grass: 21, cave: 5, water: 2 };
 
 /**
  * Normaliza una entrada de tabla. Formatos admitidos:
- *   [peso, 'ESPECIE', nivelMin, nivelMax?]  (como el PBS de Essentials)
+ *   [peso, 'ESPECIE', nivelMin, nivelMax?, forma?]  (como el PBS de Essentials; forma opcional, p. ej. Wooper de Paldea)
  *   { species, level?, min?, max?, levels?:[min,max], weight?, form? }
  */
 export function normalizeEntry(e) {
   if (Array.isArray(e)) {
-    const [weight, species, min, max] = e;
-    return { weight: Number(weight) || 1, species, min: Number(min), max: Number(max ?? min), form: 0 };
+    const [weight, species, min, max, form] = e;
+    return { weight: Number(weight) || 1, species, min: Number(min), max: Number(max ?? min), form: Number(form) || 0 };
   }
   if (!e || !e.species) throw new Error(`Entrada de encuentro inválida: ${JSON.stringify(e)}`);
   const min = e.min ?? e.levels?.[0] ?? e.level;
@@ -124,4 +124,26 @@ export class EncounterSystem {
     const level = pick.min + Math.floor(this.rng() * (pick.max - pick.min + 1));
     return { species: pick.species, level, form: pick.form, type };
   }
+}
+
+/**
+ * Zonas de encuentro dentro de un mapa (añadido de B11: la Ruta 10 tiene tramo bajo y tramo alto con tablas
+ * distintas). En la definición: `encounterZones: [{ x0, y0, x1, y1, encounters: { grassDay: […], … } }]`
+ * (rectángulo con bordes incluidos). Fuera de las zonas se usan las tablas `encounters` del mapa.
+ * → [{ x0, y0, x1, y1, system }]
+ */
+export function buildZoneEncounters(def, rng = Math.random) {
+  const zones = Array.isArray(def?.encounterZones) ? def.encounterZones : [];
+  return zones.map((z) => {
+    for (const k of ['x0', 'y0', 'x1', 'y1']) {
+      if (!Number.isInteger(z[k])) throw new Error(`encounterZones de ${def.id}: "${k}" debe ser un entero`);
+    }
+    return { x0: z.x0, y0: z.y0, x1: z.x1, y1: z.y1, system: new EncounterSystem(z.encounters || {}, rng) };
+  });
+}
+
+/** Sistema de encuentros de la zona que contiene (x, y), o null. */
+export function zoneEncountersAt(zones, x, y) {
+  for (const z of zones || []) if (x >= z.x0 && x <= z.x1 && y >= z.y0 && y <= z.y1) return z.system;
+  return null;
 }

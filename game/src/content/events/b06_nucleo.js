@@ -146,12 +146,15 @@ async function abrilClimbs(ctx) {
   ]);
 }
 
-/** Abril en la Sala desde que suenan las campanas hasta que se restaura el Pilar. */
+/**
+ * Abril en la Sala desde que suenan las campanas hasta su despedida (`b06_abril_despedida`, justo después de restaurar
+ * el Pilar): así sigue visible mientras lee el verso y se va andando. Después está en Brontia (b05_brontia.js).
+ */
 export function abrilSalaEvent() {
   return {
     id: 'abril_sala', x: ABRIL_SALA.x, y: ABRIL_SALA.y, name: SPEAKER.abril,
     pages: [{
-      when: (s) => Boolean(s) && s.flag(F.abrilSala) && !s.flag(F.restored),
+      when: (s) => Boolean(s) && s.flag(F.abrilSala) && !s.flag(F.abrilAfter),
       sprite: SPRITE.abril, dir: 8, move: 'still', trigger: 'action',
       script: async (ctx) => { await ctx.say('El centro. El pedestal. Tú primero, que a mí no me hace caso.', { speaker: SPEAKER.abril }); },
     }],
@@ -189,11 +192,12 @@ async function abrilFarewell(ctx) {
     'Si el viento del cañón también se ha calmado, en la Ruta 6 ya se podrá pasar. Al sur de Brontia.',
     'Yo me quedo en Brontia una temporada. Por fin pasa algo.',
   ]);
-  ctx.setFlag(F.abrilAfter);
   if (abril) {
     await ctx.move(abril, ['left', 'left', 'down', 'down', 'down', 'down', 'down', 'down'], { through: true, speed: 4.5 });
     ctx.erase(abril);
   }
+  // Después de irse andando: el flag oculta su página de la Sala (cambiar de página cortaría la ruta).
+  ctx.setFlag(F.abrilAfter);
 }
 
 /** Escena del núcleo: Fragmento 3, verso III, efecto local, pista T04 y despedida de Abril. */

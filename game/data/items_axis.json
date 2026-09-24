@@ -99,5 +99,17 @@
     "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"],
     "note": "Nombre de X17 (DECISIONES.md; en Añil «Caña de Pescar»). Resto de campos copiados de items.json.",
     "description": "Una increíble caña de pescar de alta tecnología. Pesca Pokémon salvajes en todo tipo de aguas."
+  },
+  "EXPSHARE": {
+    "id": "EXPSHARE", "name": "Repartir Exp", "namePlural": "Repartir Exp", "pocket": 8, "price": 0,
+    "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"],
+    "note": "Repartir Exp moderno (gen 6+, CAMPANA B03 «desactivable»): objeto clave; se activa/desactiva desde la Mochila (ui/logic/expShare.js). En Añil es equipable (bolsillo 1).",
+    "description": "Los Pokémon del equipo que no combaten reciben la mitad de la Exp. Se activa o desactiva al usarlo."
+  },
+  "SCOLIPITE": {
+    "id": "SCOLIPITE", "name": "Scolipedita", "namePlural": "Scolipeditas", "pocket": 6, "price": 100000, "sellPrice": 50000,
+    "fieldUse": null, "battleUse": null, "flags": ["MegaStone", "Fling_80"],
+    "note": "B09a (T07): en los datos de Añil el nombre singular es «Scolipeditas». Resto de campos copiados de items.json.",
+    "description": "Una de las misteriosas Megapiedras. Permite megaevolucionar a Scolipede en combate."
   }
 }

@@ -14,6 +14,7 @@ const MIN_ENTRIES = {
   ExteriorSafari: 65, ExteriorPrisma: 110, InteriorTorre: 90, InteriorLiga: 90,
 };
 const ANIL_MAPS = new URL('../tools/cache/anil_maps/index.json', import.meta.url);
+const ANIL_TILESETS = new URL('../Pokemon Anil V4.13/Graphics/Tilesets/', import.meta.url);
 
 async function loadAll() {
   const out = [];
@@ -65,7 +66,8 @@ test('stamps: IDs válidos, capas con tamaño w×h, puerta dentro y metadatos', 
       assert.ok(s.w > 0 && s.h > 0, where);
       assert.ok(typeof s.desc === 'string' && s.desc.length > 0, `${where}: desc`);
       assert.equal(s.layers.length, 3, where);
-      assert.ok(s.layers.some(Boolean), `${where}: vacío`);
+      // un horneado con todas las celdas a 0 (src heredado de otra imagen sin esa pieza) también está vacío
+      assert.ok(s.layers.some((g) => g && g.some(Boolean)), `${where}: vacío (todas las celdas a 0)`);
       for (const g of s.layers) {
         if (!g) continue;
         assert.equal(g.length, s.w * s.h, where);
@@ -105,6 +107,34 @@ test('loadStampLibrary carga por ID, usa alias de cueva y falla con claridad', a
   assert.throws(() => ext.brush('no_existe'), /Brush desconocido/);
   await assert.rejects(loadStampLibrary(999), /No hay biblioteca/);
   assert.ok(ext.byTag('edificio').length >= 10);
+});
+
+test('Exterior1: troncos caídos (overlay calcado de Bosque Celeste) y tocón gigante marrón propio', async () => {
+  const lib = await loadStampLibrary(1);
+  const overlayStart = FIRST_REGULAR_TILE + 718 * 8; // EXTRA_LAYOUTS.Exterior1.row
+  for (const [name, w, h] of [['tronco_caido_h', 3, 1], ['tronco_caido_v', 1, 3]]) {
+    const s = lib.stamp(name);
+    assert.deepEqual([s.w, s.h], [w, h], name);
+    assert.equal(s.layers[2].length, w * h, name);
+    for (const t of s.layers[2]) {
+      assert.ok(t >= overlayStart, `${name}: tile ${t} fuera del overlay`);
+      assert.equal(tilesets[1].passages[t], 0x0f, `${name}: tile ${t} debe bloquear`);
+    }
+  }
+  const tocon = lib.stamp('tocon_gigante');
+  assert.deepEqual(tocon.layers[2], [tid(5, 186), tid(6, 186), tid(7, 186), tid(5, 187), tid(6, 187), tid(7, 187)]);
+  assert.match(tocon.desc, /marrón/);
+});
+
+test('el horneado rechaza un src que cae en tiles vacíos de su imagen', { skip: !fs.existsSync(ANIL_TILESETS) && 'sin Añil' }, async () => {
+  const { bakeStamp, originalTileset, sameTile } = await import('../tools/stamps_lib.mjs');
+  const def = (await STAMP_LIBRARIES[1].def()).default;
+  const png = originalTileset('Exterior1');
+  // las filas 198–200 (troncos de Bosque Celeste) están vacías en Exterior1
+  assert.throws(() => bakeStamp(def, 'x', { src: [4, 198, 3, 1], layer: 2 }, png), /vacío/);
+  // el tocón gigante de Exterior1 es su propio arte (marrón), no el turquesa de Bosque Celeste
+  const bc = originalTileset('ExteriorBosqueCeleste');
+  assert.equal(sameTile(png, bc, tid(6, 186)), false);
 });
 
 test('buildStampLibrary detecta horneados obsoletos', async () => {

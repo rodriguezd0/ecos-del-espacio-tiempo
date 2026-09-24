@@ -22,9 +22,14 @@ export class VisibleEncounters {
 
   get enabled() { return this.world.state?.options?.encounterMode === 'visible'; }
 
-  /** Tipo de tabla que usan los visibles en este mapa (grass o cave). */
-  baseType() {
-    const enc = this.world.encounters;
+  /** Tablas en una casilla (zonas del mapa, def.encounterZones; si no, las del mapa). */
+  tablesAt(x, y) {
+    return this.world.encountersAt ? this.world.encountersAt(x, y) : this.world.encounters;
+  }
+
+  /** Tipo de tabla que usan los visibles en este mapa (grass o cave), alrededor de (x, y) si se da. */
+  baseType(x, y) {
+    const enc = Number.isInteger(x) ? this.tablesAt(x, y) : this.world.encounters;
     if (enc.hasBase('grass')) return 'grass';
     if (enc.hasBase('cave')) return 'cave';
     return null;
@@ -56,17 +61,19 @@ export class VisibleEncounters {
   }
 
   trySpawn() {
-    const base = this.baseType();
-    if (!base) return false;
     const p = this.world.player;
+    if (!this.baseType(p.x, p.y) && !this.world.zoneEncounters?.length) return false;
     for (let t = 0; t < 24; t++) {
       const x = p.x + Math.floor((this.rng() * 2 - 1) * MAX_DIST);
       const y = p.y + Math.floor((this.rng() * 2 - 1) * MAX_DIST);
       if (Math.abs(x - p.x) + Math.abs(y - p.y) < MIN_DIST) continue;
-      if (!this.eligible(x, y, base)) continue;
+      // Tablas de la casilla donde aparece (zonas de encuentro del mapa, B11).
+      const tables = this.tablesAt(x, y);
+      const base = this.baseType(x, y);
+      if (!base || !this.eligible(x, y, base)) continue;
       if (this.world.events.some((e) => !e.erased && e.at(x, y))) continue;
-      const type = this.world.encounters.resolveType(base, this.world.state.hour);
-      const enc = this.world.encounters.choose(type);
+      const type = tables.resolveType(base, this.world.state.hour);
+      const enc = tables.choose(type);
       if (!enc) return false;
       enc.shiny = this.rng() < SHINY_CHANCE;
       this.spawn(x, y, enc, base);

@@ -155,8 +155,11 @@ Nada de esto es canon: los stamps son piezas gráficas; la distribución de cada
   el horneado avisa de cuántos tiles difieren y cada recorte se revisó dibujado con el tileset destino.
 - **Overlay**: \`npm run data\` regenera atlas y \`tilesets.json\` desde Añil y vuelve a aplicar el overlay
   (\`tools/stamps_extra.mjs\`). Para añadir una pieza: define su forma en \`EXTRA_PIECES\`, su arte en
-  \`tools/stamps_extra_art.mjs\` o \`_terrain.mjs\`, su hueco en \`EXTRA_LAYOUTS\`, y ejecuta
+  \`tools/stamps_extra_art.mjs\` o \`_terrain.mjs\` (o \`copy: { image, src }\` para calcarla de otra imagen de Añil,
+  como los troncos caídos de ExteriorBosqueCeleste en Exterior1), su hueco en \`EXTRA_LAYOUTS\`, y ejecuta
   \`node tools/stamps_extra.mjs && node tools/stamps_bake.mjs\`.
+- **Bibliotecas derivadas** (\`derive.js\`): un \`src\` heredado apunta a las mismas casillas de la otra imagen; si allí
+  están vacías, el horneado falla con «stamp vacío» (hay que excluirlo o darle tiles propios).
 - **Correcciones de terrain** (\`TERRAIN_PATCHES\` en \`extraTiles.js\`, las aplica la misma herramienta): la orilla y la
   playa de ExteriorSafari (6) pasan a ser agua navegable como en Exterior1 (en Añil bloqueaban sin tag de agua).
 - **Mar decorativo**: \`mar\` (9) y \`luna_panorama\` (3) no tienen terrain de agua; para agua navegable usa \`agua\`.

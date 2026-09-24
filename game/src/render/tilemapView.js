@@ -7,6 +7,8 @@ import { TILE, FIRST_REGULAR_TILE, isAutotile, regularTileAtlasPos } from '../sh
 import { autotileUV } from './tileAtlas.js';
 
 export const GROUND_ORDER = -100000;
+/** Relleno de costuras (world/seams.js): por debajo del suelo de cualquier mapa, que siempre lo tapa. */
+export const SEAM_ORDER = GROUND_ORDER - 100000;
 export const AUTOTILE_FRAME_SECONDS = 0.25; // 5/20 s por fotograma (Essentials)
 
 const VERT = /* glsl */`
@@ -76,10 +78,44 @@ export class TilemapView {
     this.group = new THREE.Group();
     this.material = createTileMaterial(res);
     this.meshes = [];
+    this.seamCells = [];
+    this.seamMesh = null;
     this.offset = { x: 0, y: 0 };
     this.dirty = false;
     this.unsub = map.onTileChange(() => { this.dirty = true; });
     this.rebuild();
+  }
+
+  /**
+   * Relleno de costuras (world/seams.js#planSeams): cells = [{ x, y, sx, sy }] en casillas locales; cada casilla
+   * vacía copia las 3 capas de (sx, sy). Se dibuja en una sola malla bajo el suelo de todos los mapas.
+   */
+  setSeamFill(cells) {
+    this.seamCells = cells || [];
+    this.buildSeamMesh();
+  }
+
+  buildSeamMesh() {
+    if (this.seamMesh) {
+      this.group.remove(this.seamMesh);
+      this.seamMesh.geometry.dispose();
+      this.seamMesh = null;
+    }
+    if (!this.seamCells.length) return;
+    const { map, res } = this;
+    const quads = [];
+    for (let layer = 0; layer < 3; layer++) {
+      for (const c of this.seamCells) {
+        const id = map.data(c.sx, c.sy, layer);
+        if (id < 48) continue;
+        const quad = this.quadFor(id, c.x, c.y, res);
+        if (quad) quads.push(quad);
+      }
+    }
+    if (!quads.length) return;
+    this.seamMesh = this.createMesh(quads);
+    this.seamMesh.renderOrder = SEAM_ORDER;
+    this.group.add(this.seamMesh);
   }
 
   /** Reconstruye la geometría (al cargar o tras cambiar tiles). */
@@ -114,6 +150,7 @@ export class TilemapView {
     this.addMesh(ground, null);
     for (const [z, quads] of [...buckets.entries()].sort((a, b) => a[0] - b[0])) this.addMesh(quads, z);
     this.applyOffset();
+    if (this.seamCells.length) this.buildSeamMesh(); // un tile del borde cambiado también cambia el relleno
     this.dirty = false;
   }
 
@@ -130,6 +167,13 @@ export class TilemapView {
 
   addMesh(quads, z) {
     if (!quads.length) return;
+    const mesh = this.createMesh(quads);
+    mesh.userData.z = z;
+    this.meshes.push(mesh);
+    this.group.add(mesh);
+  }
+
+  createMesh(quads) {
     const n = quads.length;
     const pos = new Float32Array(n * 12);
     const uv = new Float32Array(n * 8);
@@ -153,9 +197,7 @@ export class TilemapView {
     geo.setIndex(new THREE.BufferAttribute(idx, 1));
     const mesh = new THREE.Mesh(geo, this.material);
     mesh.frustumCulled = false;
-    mesh.userData.z = z;
-    this.meshes.push(mesh);
-    this.group.add(mesh);
+    return mesh;
   }
 
   /** Coloca el mapa en (ox, oy) casillas respecto al mapa actual (conexiones). */
@@ -180,6 +222,7 @@ export class TilemapView {
   dispose() {
     this.unsub?.();
     for (const m of this.meshes) m.geometry.dispose();
+    this.seamMesh?.geometry.dispose();
     this.material.dispose();
     this.group.removeFromParent();
   }

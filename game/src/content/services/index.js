@@ -9,6 +9,7 @@ export {
   shopMap, clerkEvent, openMart, shopStock, STOCK_TABLES, SHOP_LAYOUT,
 } from './shop.js';
 export { innkeeperEvent, restSpotEvent, runInn, runRest } from './inn.js';
+export { daycareEvent, runDaycare, DAYCARE_TEXT } from './daycare.js';
 export {
   moveTutorEvent, moveReminderEvent, runMoveTutor, runMoveReminder, relearnableMoves, tutorCanLearn, teachMove,
 } from './moveTeaching.js';

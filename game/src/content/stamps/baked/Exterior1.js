@@ -35,8 +35,6 @@ export default {
     "lupinos": { sig: 'm5rpbn', w: 3, h: 2, layers: [null, null, [672,673,674,680,681,682]] },
     "arbustos": { sig: 'tm5igj', w: 2, h: 2, layers: [null, null, [443,444,451,452]] },
     "boquete": { sig: '1s6xdb5', w: 4, h: 3, layers: [null, [1968,1969,1970,1971,1976,1977,1978,1979,1984,1985,1986,1987], null] },
-    "tronco_caido_h": { sig: 't07lfz', w: 3, h: 1, layers: [null, null, [0,0,0]] },
-    "tronco_caido_v": { sig: 'lydc7s', w: 1, h: 3, layers: [null, null, [0,0,0]] },
     "entrada_mina": { sig: '1uecunq', w: 3, h: 4, layers: [null, null, [2192,2193,2194,2200,2201,2202,2208,2209,2210,2216,0,2218]] },
     "barrera_obras": { sig: 'r9idug', w: 2, h: 1, layers: [null, null, [2203,2204]] },
     "farola_azul": { sig: '1i2noos', w: 1, h: 4, layers: [null, null, [2110,2118,2126,2134]] },
@@ -126,5 +124,7 @@ export default {
     "pilar_glifo": { sig: '1dmwbd5', w: 1, h: 1, layers: [null, null, [6183]] },
     "pilar_glifo_2": { sig: 'ixm94', w: 1, h: 1, layers: [null, null, [6191]] },
     "pilar_losa_eco": { sig: '16n8px1', w: 2, h: 2, layers: [null, null, [6184,6185,6192,6193]] },
+    "tronco_caido_h": { sig: '2dqan1', w: 3, h: 1, layers: [null, null, [6186,6187,6188]] },
+    "tronco_caido_v": { sig: 'f54r2v', w: 1, h: 3, layers: [null, null, [6197,6205,6213]] },
   },
 };
