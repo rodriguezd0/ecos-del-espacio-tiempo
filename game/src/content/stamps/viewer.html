@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo de stamps</title>
+  <link rel="icon" href="data:,">
+  <style>
+    :root {
+      --bg: #14161c; --panel: #1d2029; --card: #232734; --line: #343a4c; --text: #e8e6df; --muted: #9aa0b3;
+      --accent: #f2c14e; --brush: #6fd1ff; --tag: #2e3446; --radius: 6px;
+      --font: "Power Green", ui-monospace, "Cascadia Mono", Consolas, monospace;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 13px/1.4 var(--font); }
+    header {
+      position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
+      padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--line);
+    }
+    header h1 { margin: 0 12px 0 0; font-size: 15px; letter-spacing: .04em; color: var(--accent); }
+    label { color: var(--muted); display: flex; gap: 6px; align-items: center; }
+    select, input[type=search] {
+      background: var(--bg); color: var(--text); border: 1px solid var(--line); border-radius: var(--radius);
+      padding: 5px 8px; font: inherit;
+    }
+    input[type=search] { width: 180px; }
+    select:focus-visible, input:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+    #stats { margin-left: auto; color: var(--muted); }
+    main { display: flex; flex-wrap: wrap; gap: 12px; padding: 16px; align-items: flex-start; }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 8px;
+      max-width: 100%; cursor: copy; transition: border-color .12s, transform .12s;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-1px); }
+    .card.brush { border-left: 3px solid var(--brush); }
+    .card canvas { display: block; image-rendering: pixelated; max-width: 100%; }
+    .name { font-weight: bold; color: var(--accent); }
+    .brush .name { color: var(--brush); }
+    .meta { color: var(--muted); font-size: 12px; margin: 2px 0; }
+    .desc { max-width: 340px; font-size: 12px; margin-top: 4px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+    .tags span { background: var(--tag); border-radius: 3px; padding: 0 5px; font-size: 11px; color: var(--muted); }
+    #toast {
+      position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--accent); color: #111;
+      padding: 6px 12px; border-radius: var(--radius); opacity: 0; transition: opacity .2s; pointer-events: none;
+    }
+    #toast.show { opacity: 1; }
+    .error { color: #ff8a80; padding: 16px; white-space: pre-wrap; }
+    @media (max-width: 600px) { header { gap: 8px; } input[type=search] { width: 120px; } #stats { margin-left: 0; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Stamps de Axis</h1>
+    <label>Tileset <select id="lib"></select></label>
+    <label>Buscar <input id="filter" type="search" placeholder="casa, bosque…"></label>
+    <label>Ver <select id="kind"><option value="all">Todo</option><option value="stamps">Stamps</option><option value="brushes">Brushes</option></select></label>
+    <label>Zoom <select id="zoom"><option value="1">1×</option><option value="2">2×</option></select></label>
+    <span id="stats"></span>
+  </header>
+  <main id="grid"></main>
+  <div id="toast"></div>
+  <script type="module" src="./viewer.js"></script>
+</body>
+</html>

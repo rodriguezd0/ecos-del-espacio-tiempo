@@ -1,0 +1,445 @@
+// Escena del mapa (overworld). Carga la definición (?map=<id>, por defecto dev_test), construye el mapa,
+// gestiona jugador/eventos/seguidor/cámara/warps/conexiones, menú de pausa (START), cartel de zona,
+// combates, clima, día/noche, oscuridad y efectos. Ver docs/ARCHITECTURE.md §3, §5, §6.
+import { engine } from '../core/engine.js';
+import { Scene } from '../core/scenes.js';
+import { GameState } from '../core/state.js';
+import { ui } from '../ui/api.js';
+import { createPokemon } from '../battle/core/pokemon.js';
+import { loadMapDefinition } from '../content/maps/index.js';
+import { buildMap, createEntry, connectionOffset } from './mapLoader.js';
+import { loadBuilderLibrary } from './stampLibrary.js';
+import { World } from './world.js';
+import { VisibleEncounters } from './visibleEncounters.js';
+import { runBattle, runWildBattle } from './battleFlow.js';
+import { followerTalk, swimHook } from './fieldScripts.js';
+import { applyDevParams, installDevKeys, drawDebug, spawnDemoFx } from './devTools.js';
+import { loadTilesetResources } from '../render/tileAtlas.js';
+import { WorldView } from '../render/worldView.js';
+import { Camera } from '../render/camera.js';
+import { Compositor } from '../render/compositor.js';
+import { ScreenFx } from '../render/screenFx.js';
+import { WeatherLayer } from '../render/weather.js';
+import { EffectsLayer } from '../render/effects.js';
+import { dayNightTone } from '../render/dayNight.js';
+import { playerCharsets } from '../render/charsets.js';
+import { ScriptRunner } from '../script/runner.js';
+import { createContext } from '../script/context.js';
+
+export const DEFAULT_MAP = 'dev_test';
+// [PROVISIONAL] Ritmo del reloj de juego: 1 minuto de juego por segundo real (TEC-06; ritmo por decidir).
+export const CLOCK_FRAMES_PER_MINUTE = 60;
+const PLAYER_LIGHT = 72;
+
+export default class MapScene extends Scene {
+  async enter(params = {}) {
+    this.params = params;
+    this.ready = false;
+    this.time = 0;
+    this.frame = 0;
+    this.clockFrames = 0;
+    if (!engine.state) engine.state = createDevState();
+    this.state = engine.state;
+    this.compositor = new Compositor();
+    this.fx = new ScreenFx(this.compositor);
+    this.worldView = new WorldView();
+    this.effects = new EffectsLayer();
+    this.weather = new WeatherLayer({ playSE: (n) => engine.audio?.playSE?.(n), flash: (c, a, f) => this.fx.flashScreen(c, a, f) });
+    this.camera = new Camera();
+    this.runner = new ScriptRunner();
+    this.world = new World({ state: this.state, input: engine.input, hooks: this.worldHooks() });
+    this.world.scriptBusyFn = () => this.runner.busy || this.transferring || this.menuOpen || this.inBattle;
+    this.visible = new VisibleEncounters(this.world, { onBattle: (ctx, enc) => ctx.wildBattle(enc) });
+    applyDevParams(this, params);
+    this.world.player.setCharsets(await playerCharsets(this.state.player.gender));
+    const saved = this.state.player;
+    const resume = !params.map && Boolean(saved.mapId);
+    const id = params.map || saved.mapId || DEFAULT_MAP;
+    let x;
+    let y;
+    if (params.x !== undefined && params.y !== undefined) { x = Number(params.x); y = Number(params.y); } else if (resume) { x = saved.x; y = saved.y; }
+    try {
+      await this.enterMap(id, x, y, Number(params.dir) || (resume ? saved.dir : undefined));
+    } catch (err) {
+      console.error(err);
+      engine.reportError(new Error(`No se pudo cargar el mapa "${id}": ${err.message}`));
+      if (id === DEFAULT_MAP) throw err;
+      await this.enterMap(DEFAULT_MAP);
+    }
+    if (this.devFx.length) spawnDemoFx(this, this.devFx);
+    if (engine.debug) {
+      this.uninstallDevKeys = installDevKeys(this);
+      window.__map = this;
+    }
+    this.ready = true;
+  }
+
+  exit() {
+    this.uninstallDevKeys?.();
+    this.runner.cancelAll();
+    this.worldView.dispose();
+    this.effects.clear();
+    this.weather.dispose();
+    this.compositor.dispose();
+    if (window.__map === this) delete window.__map;
+  }
+
+  // ------------------------------------------------------------ hooks del mundo
+  worldHooks() {
+    return {
+      playSE: (name) => engine.audio?.playSE?.(name),
+      warp: (w) => { this.pendingWarp = w; },
+      encounter: (enc) => { this.pendingEncounter = enc; },
+      encountersEnabled: () => !this.noEncounters && this.state.options.encounterMode !== 'visible',
+      followerTalk: (f) => this.runScript((ctx) => followerTalk(ctx, f), null, 'seguidor'),
+      fieldHook: (kind) => { if (kind === 'swim') this.runScript(swimHook, null, 'nadar'); },
+      fieldAnim: (kind, ch, x, y) => this.playFieldAnim(kind, ch, x, y),
+      mapChanged: (next, prev, off) => this.onConnectionCrossed(next, prev, off),
+      stepTaken: (p) => this.state.setPosition(this.world.map.id, p.x, p.y, p.direction),
+    };
+  }
+
+  // ------------------------------------------------------------ carga de mapas
+  async loadEntry(id) {
+    const def = await loadMapDefinition(id);
+    const res = await loadTilesetResources(def.tileset);
+    const lib = def.library === false ? { library: null, paintBrush: null } : await loadBuilderLibrary(def.tileset);
+    const built = buildMap(def, {
+      library: lib.library || undefined,
+      paintBrush: lib.paintBrush,
+      isEmpty: res.isEmpty,
+      warn: (m) => console.warn(`[${id}] ${m}`),
+    });
+    const entry = createEntry(def, built, res.tileset);
+    entry.res = res;
+    entry.torches = findTorches(entry);
+    return entry;
+  }
+
+  /** Entra en un mapa (warp o inicio): sustituye mapa, coloca jugador/seguidor y cámara. */
+  async enterMap(id, x, y, dir) {
+    const entry = await this.loadEntry(id);
+    this.visible.clear();
+    this.worldView.clearMaps();
+    this.world.setCurrent(entry);
+    this.worldView.addMap(entry);
+    const def = entry.def;
+    const p = this.world.player;
+    const spot = nearestFreeSpot(entry.map,
+      Number.isInteger(x) ? x : def.start?.x ?? Math.floor(def.width / 2),
+      Number.isInteger(y) ? y : def.start?.y ?? Math.floor(def.height / 2));
+    const sx = spot.x;
+    const sy = spot.y;
+    p.map = entry.map;
+    p.surfing = false;
+    p.stopIce();
+    p.setMovementType('walking');
+    p.moveTo(sx, sy);
+    p.direction = dir || def.start?.dir || p.direction || 2;
+    p.straighten();
+    // Si se aparece sobre agua (p. ej. al cargar una partida guardada surfeando), se sigue nadando.
+    if (p.terrainTag().canSurf && !entry.map.playerPassable(sx, sy, 0, {})) {
+      p.surfing = true;
+      p.setMovementType('surfing');
+    }
+    this.refreshFollower();
+    this.world.follower.placeBehind(p);
+    this.camera.setBounds(def.width, def.height, openSides(def));
+    this.camera.follow(p);
+    this.camera.snapToTarget();
+    await this.loadNeighbors(entry);
+    await this.applyEnvironment(def);
+    this.state.setPosition(id, p.x, p.y, p.direction);
+    this.announce(def);
+    this.pendingWarp = null;
+    this.pendingEncounter = null;
+    if (typeof def.onEnter === 'function') this.runScript(def.onEnter, null, `${id}.onEnter`);
+  }
+
+  async loadNeighbors(entry) {
+    const conns = entry.def.connections || [];
+    const keep = [];
+    for (const conn of conns) {
+      keep.push(conn.to);
+      if (this.world.neighbors.some((n) => n.id === conn.to)) continue;
+      try {
+        const other = await this.loadEntry(conn.to);
+        if (this.world.current !== entry) return;
+        other.offset = connectionOffset(conn, entry.def, other.def);
+        this.world.addNeighbor(other);
+        this.worldView.addMap(other);
+      } catch (err) {
+        console.error(`Conexión ${entry.id} → ${conn.to} no disponible`, err);
+      }
+    }
+    for (const n of this.world.neighbors) if (!keep.includes(n.id)) this.worldView.removeMap(n.id);
+    this.world.pruneNeighbors(keep);
+  }
+
+  /** El jugador cruzó a un mapa conectado (sin fundido). */
+  onConnectionCrossed(next, prev, { ox, oy }) {
+    this.camera.x += ox * 32;
+    this.camera.y += oy * 32;
+    this.camera.setBounds(next.def.width, next.def.height, openSides(next.def));
+    this.visible.clear();
+    this.state.setPosition(next.id, this.world.player.x, this.world.player.y, this.world.player.direction);
+    this.applyEnvironment(next.def);
+    this.announce(next.def);
+    this.loadNeighbors(next);
+  }
+
+  announce(def) {
+    if (def.showLocation === false || !def.name || def.name === this.lastLocation) return;
+    this.lastLocation = def.name;
+    ui.showLocation(def.name);
+  }
+
+  async applyEnvironment(def) {
+    if (def.bgm && def.bgm !== this.currentBgm) {
+      this.currentBgm = def.bgm;
+      engine.audio?.playBGM?.(def.bgm, { fadeOutPrevious: 20 });
+    }
+    const w = this.devWeather || (def.weather ? [def.weather.type || def.weather, def.weather.power ?? 5] : ['none', 0]);
+    if (w[0] !== this.weather.type) await this.weather.set(w[0], Number(w[1] ?? 5)).catch((e) => console.warn(e.message));
+    await this.weather.setMapFog(def.fog || null);
+    this.darkness = def.dark ? { amount: def.dark.amount ?? 0.94, radius: def.dark.radius ?? PLAYER_LIGHT } : null;
+  }
+
+  /** Actualiza el Pokémon acompañante según el equipo y las opciones. */
+  refreshFollower() {
+    const f = this.world.follower;
+    const lead = this.state.party.find((pk) => pk.hp > 0 && !pk.egg) || null;
+    const allowed = this.state.options.followerEnabled !== false && this.world.current?.def?.noFollower !== true;
+    const before = f.pokemon;
+    f.setPokemon(allowed ? lead : null);
+    if (!before && f.pokemon && this.world.map) f.placeBehind(this.world.player);
+  }
+
+  // ------------------------------------------------------------ guiones y acciones
+  runScript(fn, event = null, name = 'guion', { blocking = true } = {}) {
+    const ctx = createContext(this, event);
+    ctx.onFinish = () => {
+      if (event && event.page?.lock !== false) event.unlock();
+      this.world.requestRefresh();
+    };
+    return this.runner.run(fn, ctx, { blocking, name });
+  }
+
+  startEvent(ev) {
+    if (!ev.script) return;
+    if (['action', 'touch', 'eventTouch'].includes(ev.trigger) && ev.page?.lock !== false) ev.lock();
+    ev.starting = false;
+    this.runScript(ev.script, ev, `${this.world.map.id}:${ev.id}`);
+  }
+
+  startParallelEvents() {
+    for (const ev of this.world.events) {
+      if (ev.erased || ev.trigger !== 'parallel' || ev.runningParallel || !ev.script) continue;
+      ev.runningParallel = true;
+      const page = ev.page;
+      this.runScript(async (ctx) => {
+        await ev.script(ctx);
+        await this.runner.wait(1);
+      }, ev, `${ev.id} (paralelo)`, { blocking: false }).finally(() => { if (ev.page === page) ev.runningParallel = false; });
+    }
+  }
+
+  emote(ch, kind) {
+    return this.worldView.emotes.show({ headPos: () => this.worldView.headPosOf(ch) }, kind);
+  }
+
+  playFieldAnim(kind, ch, x, y) {
+    const entry = this.world.allEntries.find((e) => e.map === ch.map);
+    const ox = (entry?.offset.x || 0) * 32;
+    const oy = (entry?.offset.y || 0) * 32;
+    const purple = kind === 'grass' && ch.map.data(x, y, 1) === 388;
+    this.worldView.fieldAnims.play(purple ? 'grassPurple' : kind, x * 32 + ox, y * 32 + oy);
+  }
+
+  /** Warp con fundido. opts: { fade = true, door = false, frames = 16 } */
+  async transfer(mapId, x, y, dir = 2, { fade = true, door = false, frames = 16 } = {}) {
+    this.transferring = true;
+    try {
+      if (door) engine.audio?.playSE?.('Door enter');
+      if (fade) await this.fx.fadeOut(frames);
+      await this.enterMap(mapId, x, y, dir);
+      if (door) engine.audio?.playSE?.('Door exit');
+      if (fade) await this.fx.fadeIn(frames);
+    } catch (err) {
+      console.error(`Warp a ${mapId} fallido`, err);
+      engine.reportError(new Error(`No se pudo entrar en el mapa "${mapId}": ${err.message}`));
+      this.fx.fadeIn(1);
+    } finally {
+      this.transferring = false;
+    }
+  }
+
+  startBattle(config) { return runBattle(this, config); }
+  startWildBattle(enc) { return runWildBattle(this, enc); }
+
+  forceEncounter() {
+    const enc = this.world.encounters;
+    const type = enc.encounterType({ terrain: { landWildEncounters: true }, hour: this.state.hour }) || Object.keys(enc.tables)[0];
+    const pick = type ? enc.choose(type) : null;
+    if (pick) this.pendingEncounter = pick;
+  }
+
+  async openPauseMenu() {
+    this.menuOpen = true;
+    try {
+      const action = await ui.openPauseMenu({ state: this.state });
+      if (action?.type === 'quit') await this.transfer(this.world.map.id, this.world.player.x, this.world.player.y, this.world.player.direction);
+      else if (action) console.info('Acción del menú aún sin uso en el mapa:', action);
+    } catch (err) {
+      console.error('Menú de pausa', err);
+    } finally {
+      this.menuOpen = false;
+      this.refreshFollower();
+    }
+  }
+
+  // ------------------------------------------------------------ bucle
+  update(dt) {
+    this.time += dt;
+    this.frame += 1;
+    this.runner.tick();
+    this.fx.update();
+    this.effects.update(dt);
+    this.worldView.update();
+    if (!this.ready) return;
+    const input = engine.input;
+    const p = this.world.player;
+    const idle = !this.world.scriptBusy() && !p.busy();
+    if (idle && input.pressed('START')) { this.openPauseMenu(); return; }
+    if (idle) {
+      const dw = this.world.dirWarp();
+      if (dw) { this.doWarp(dw); return; }
+      if (input.pressed('A')) this.world.actionButton();
+    }
+    const camX = this.camera.x; const camY = this.camera.y;
+    this.world.update(dt);
+    this.visible.update();
+    this.startParallelEvents();
+    if (!this.world.scriptBusy()) {
+      if (this.pendingWarp) { const w = this.pendingWarp; this.pendingWarp = null; this.doWarp(w); } else if (this.pendingEncounter) {
+        const enc = this.pendingEncounter;
+        this.pendingEncounter = null;
+        this.runScript((ctx) => ctx.wildBattle(enc), null, 'encuentro');
+      } else {
+        const ev = this.world.takeStartingEvent();
+        if (ev) this.startEvent(ev);
+      }
+    }
+    this.tickClock();
+    this.camera.update();
+    this.weather.update(dt, this.camera.x - camX, this.camera.y - camY);
+  }
+
+  doWarp(w) {
+    this.runScript(async (ctx) => { await ctx.warp(w.to, w.tx, w.ty, w.dir ?? this.world.player.direction, { door: Boolean(w.door) }); }, null, `warp→${w.to}`);
+  }
+
+  tickClock() {
+    if (this.world.scriptBusy()) return;
+    this.clockFrames += 1;
+    if (this.clockFrames >= CLOCK_FRAMES_PER_MINUTE) {
+      this.clockFrames = 0;
+      this.state.advanceMinutes(1);
+    }
+  }
+
+  lights() {
+    const cx = this.camera.renderX; const cy = this.camera.renderY;
+    const p = this.world.player;
+    const radius = (this.darkness?.radius ?? PLAYER_LIGHT) * (this.devFlashlight ? 2.4 : 1);
+    const out = [{ x: p.realX + 16 - cx, y: p.realY + 8 - cy, radius }];
+    for (const e of this.world.allEntries) {
+      const ox = e.offset.x * 32 - cx; const oy = e.offset.y * 32 - cy;
+      for (const t of e.torches || []) out.push({ x: t.x * 32 + 16 + ox, y: t.y * 32 + 16 + oy, radius: 56 + Math.sin(this.time * 9 + t.x) * 3 });
+      for (const ev of e.events || []) {
+        const l = ev.page?.light;
+        if (!l || ev.erased) continue;
+        out.push({ x: ev.realX + 16 + ox, y: ev.realY + 16 + oy, radius: l.radius ?? 64, intensity: l.intensity ?? 1 });
+      }
+    }
+    return out.filter((l) => l.x > -l.radius && l.y > -l.radius && l.x < 512 + l.radius && l.y < 384 + l.radius);
+  }
+
+  render(renderer) {
+    if (!this.world?.current) return;
+    // Los autotiles se animan con el reloj global (siguen moviéndose con menús abiertos, como en Essentials).
+    this.worldView.sync(this.world, this.camera, engine.frame / 60, this.effects);
+    this.effects.setCamera(this.camera.renderX, this.camera.renderY);
+    const def = this.world.current.def;
+    const day = def.outdoor && def.dayNight !== false ? dayNightTone(this.state.data.clock.minutes) : [0, 0, 0, 0];
+    this.fx.apply(day, this.weather.tone());
+    const dark = this.darkness || (this.devDark ? { amount: 0.94 } : null);
+    this.compositor.setDarkness(dark ? dark.amount : 0, dark ? this.lights() : []);
+    this.compositor.render(
+      renderer,
+      (r) => { this.worldView.render(r); this.weather.render(r); },
+      (r) => { this.effects.renderWorld(r, this.worldView.camera); this.effects.renderSky(r); },
+    );
+  }
+
+  drawUI(g) {
+    if (engine.debug && this.ready) drawDebug(this, g);
+  }
+}
+
+/**
+ * Casilla libre más cercana (find_nearest_passable_spot de Añil) para no aparecer dentro de un muro.
+ * El agua cuenta como válida (se reanuda nadando).
+ */
+function nearestFreeSpot(map, x, y) {
+  const ok = (cx, cy) => map.valid(cx, cy)
+    && (map.playerPassable(cx, cy, 0, {}) || map.terrainTagAt(cx, cy).canSurf);
+  if (ok(x, y)) return { x, y };
+  const max = Math.max(map.width, map.height);
+  for (let r = 1; r < max; r++) {
+    for (let dy = -r; dy <= r; dy++) {
+      for (let dx = -r; dx <= r; dx++) {
+        if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue;
+        if (ok(x + dx, y + dy)) return { x: x + dx, y: y + dy };
+      }
+    }
+  }
+  return { x, y };
+}
+
+/** Lados con conexión (la cámara no se limita por ellos). */
+function openSides(def) {
+  const open = {};
+  for (const c of def.connections || []) open[c.dir] = true;
+  return open;
+}
+
+/** Casillas con autotile de antorcha (emiten luz en mapas oscuros). */
+function findTorches(entry) {
+  const names = entry.res.tileset.autotiles || [];
+  const slots = names.map((n, i) => (n && /antorcha|torch/i.test(n) ? i : -1)).filter((i) => i >= 0);
+  if (!slots.length) return [];
+  const out = [];
+  const m = entry.map;
+  for (let l = 0; l < 3; l++) {
+    for (let y = 0; y < m.height; y++) {
+      for (let x = 0; x < m.width; x++) {
+        const id = m.data(x, y, l);
+        if (id >= 48 && id < 384 && slots.includes(Math.floor(id / 48) - 1)) out.push({ x, y });
+      }
+    }
+  }
+  return out;
+}
+
+/** Partida provisional para probar el mapa sin pasar por el título. */
+function createDevState() {
+  const st = GameState.create({ name: 'Axis', gender: 'M' });
+  try {
+    const db = engine.data;
+    st.addPokemon(createPokemon(db, 'PIKACHU', 8, { ot: { name: 'Axis', id: st.player.id } }));
+  } catch (err) {
+    console.warn('No se pudo crear el equipo de prueba', err);
+  }
+  return st;
+}

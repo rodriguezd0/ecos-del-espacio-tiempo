@@ -150,10 +150,39 @@ export default {
   onEnter: async (ctx) => {}, // opcional
 }
 ```
+### Biblioteca de stamps (`src/content/stamps/<ImagenTileset>.js`)
+```js
+export default {
+  tileset: 7, image: 'ExteriorBosqueCeleste',
+  stamps: {
+    // Rectángulo del tileset ORIGINAL (8 columnas), en tiles. Se copia a `layer` (los tiles 0 se ignoran).
+    casa_roja: { src: [x, y, w, h], layer: 1, door: [dx, dy], desc: 'Casa roja de 2 plantas', tags: ['casa'] },
+    // Recorte probado de un mapa de Añil (capas indicadas, relativo a la esquina del recorte):
+    arbol_doble: { from: { map: 185, x: 10, y: 4, w: 4, h: 6, layers: [0, 1, 2] }, desc: '…' },
+  },
+  brushes: {
+    cesped: { tile: 392 },                 // tile normal (ID RMXP ≥ 384)
+    agua: { autotile: 1 },                 // slot de autotile 0..6 (se resuelve por vecinos)
+    arena: { nine: [x, y] },               // conjunto 3×3 de bordes (esquina sup-izq en tiles del tileset original)
+    hierba_alta: { tile: 400, variants: [401, 402] },
+  },
+};
+```
+Coordenadas `src`/`nine` en tiles de la imagen original de 8 columnas (ID = 384 + y*8 + x).
+
 El MapBuilder (`world/mapBuilder.js`) produce `layers: Uint16Array[3]` deterministas. Los **stamps**
 (edificios, árboles, cercas…) se definen por tileset en `src/content/stamps/<tileset>.js` como rectángulos de
 tiles del tileset original (8 columnas) o recortes probados de mapas de Añil. Herramienta de preview:
 `node tools/preview_map.mjs <id>` → `tools/cache/previews/<id>.png`.
+
+**Uso en tiempo de ejecución** (catálogo y convenciones en `docs/stamps.md`): los recortes `from` no se sirven al
+navegador, así que cada biblioteca se hornea (`node tools/stamps_bake.mjs` → `src/content/stamps/baked/<Imagen>.js`).
+El MapBuilder usa `loadStampLibrary(tilesetId)` / `stampWrites(stamp, x, y)` / `stampDoor` de
+`src/content/stamps/index.js` y `paintBrush(brush, cells, opts)` de `src/content/stamps/brushes.js`, que además de
+`tile`/`autotile`/`nine` admite `pattern`, `grid`, `forest`, `cliff`, `terrace`, `room`, `cave` y `line`. Stamps con
+`tiles: { w, h, layers }` (IDs explícitos) también son válidos. **Ojo**: el autotile `agua` de Añil solo tiene válidos
+sus 4 bloques interiores (los bordes llevan una X roja): el agua de exterior se pinta con el brush `agua` (grid) +
+`orilla`.
 
 ## 6. Escenas de historia (`src/script`)
 Guiones como funciones `async (ctx) => {}`. Mientras un guion con bloqueo corre, el jugador no se mueve.
@@ -179,6 +208,26 @@ await ctx.giveItem(id, n) / ctx.givePokemon(pokemon) / ctx.heal() / ctx.bgm(name
   `evolve(...)` (en overworld, tras el combate). Un `HeadlessBattleUI` para tests elige automáticamente.
   Mecánicas: portadas de Essentials 21.1 (`Pokemon Anil V4.13/Data/Scripts/028_…035_`), generación 9.
 - `battle/scene`: presentación estilo BW2 (sprites animados de tira, cámara, cajas de datos, menús).
+
+## 7b. Interfaz (`src/ui`)
+Capa canvas 2D (`engine.ui.ctx`) con gráficos, fuentes y maquetación de Añil (portada de `048_UI`).
+Todo se usa a través de la fachada `import { ui } from '../ui/api.js'` (importable también en Node: sin DOM
+se comporta como stub). Funciones: `message`, `closeMessage`, `choice`, `confirm`, `number`, `textEntry`,
+`openPauseMenu`, `openParty`, `openBag`, `openSummary`, `openPokedex`, `openShop`, `openStorage`, `openSave`,
+`openLoad`, `openOptions`, `openTrainerCard`, `openZygarde`, `openRegionMap`, `showLocation`, `toast`,
+`learnMove`, `evolve` (firmas y opciones documentadas en `ui/api.js`).
+- Códigos de texto (Essentials; en JS con doble barra): `\n \f \PN \PM \v[k] \c[n] \b \r \. \| \wt[n] \wtnp[n] \^ \se[x]`.
+- Pantallas = escenas apiladas (`ScreenScene` con fundido; diálogos = `UIScene` transparentes).
+  Si una escena de debajo define `updateWhilePaused(dt)`, las UI transparentes la llaman cada frame.
+- `openPauseMenu()` devuelve `null` o una acción para el mundo: `{ type: 'fieldMove', move, partyIndex }` |
+  `{ type: 'useItem', item }`.
+- Avisos no bloqueantes (`toast`, `showLocation`) se dibujan envolviendo `engine.scenes.render` (aditivo).
+- Opciones: `ui/core/options.js` (`currentOptions`, `setOption`); sin partida se guardan en `localStorage`.
+- Componentes reutilizables (p. ej. para `battle/scene`): `ui/core/text.js` (`drawText`, fuentes `FONTS`),
+  `ui/core/windowskin.js` (`drawWindow`), `ui/core/widgets.js` (barras de PS, tipos, estados),
+  `ui/core/pokemonGfx.js` (iconos/sprites animados), `ui/message/messageBox.js` (`MessageBox`).
+- Lógica pura probada en `tests/ui_*.test.mjs`: `ui/core/textCodes.js`, `ui/logic/*.js`.
+- Desarrollo: `?scene=ui` (`ui/dev/uiTest.js`, `&open=<prueba>`, `&frame=<n>`, `&speed=<0..3>`), `?scene=title`.
 
 ## 8. Pokémon (objeto serializable, `battle/core/pokemon.js`)
 ```js

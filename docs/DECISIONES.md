@@ -4,7 +4,12 @@ Fuente de canon: `docs/biblia_axis_v2.txt` (Biblia narrativa v2.0, 24-09-2026). 
 decisiones posteriores del autor con fecha. **Nada marcado PENDIENTE se fija en el juego sin respuesta del autor**;
 mientras tanto se usa un marcador provisional etiquetado (`[PROVISIONAL Dxx]`) o se omite.
 
-Estados: VIGENTE (biblia) · DECIDIDO (autor, fecha) · PREGUNTADO (esperando respuesta) · PENDIENTE · TÉCNICO (decisión de implementación sin impacto narrativo).
+Estados: VIGENTE (biblia) · DECIDIDO (autor, fecha) · DECIDIDO-DEV (tomada por el desarrollo con autonomía
+concedida por el autor; revisable) · PENDIENTE · TÉCNICO (decisión de implementación sin impacto narrativo).
+
+> **24-09-2026 — Autonomía.** Tras responder D01–D08, el autor pidió: "continúa autónomamente, no me preguntes más".
+> Desde entonces, cada decisión abierta se toma en el desarrollo respetando la biblia y las respuestas anteriores, se
+> registra aquí como **DECIDIDO-DEV** con su justificación y queda disponible para que el autor la revise o la cambie.
 
 ## Decisiones técnicas tomadas por el desarrollo (sin impacto de canon)
 
@@ -21,14 +26,16 @@ Estados: VIGENTE (biblia) · DECIDIDO (autor, fecha) · PREGUNTADO (esperando re
 
 | ID | Decisión | Estado | Respuesta / nota |
 |----|----------|--------|------------------|
-| D01 | Nombre y vida cotidiana de ambos protagonistas | PENDIENTE | |
-| D02 | Razón concreta de la elección del Core | PENDIENTE | |
-| D03 | Nombre, especialidad, edad y diseño del profesor | PENDIENTE | |
-| D04 | Motivo inicial de la restricción policial | PENDIENTE | |
-| D05 | Secuencia exacta de iniciales, señal, regreso y primer duelo | PENDIENTE | Dirección vigente: duelo con Gael tras regresar con el Core |
-| D06 | Transporte del Core frente al sprite sin mochila | PENDIENTE | |
-| D07 | Identidad, prueba y equipo del Guardián del Umbral | PENDIENTE | |
-| D08 | Versión del puzzle/Geodude del Umbral | PENDIENTE | |
+| D01 | Nombre y vida cotidiana de ambos protagonistas | DECIDIDO 24-09-2026 | Nombre libre elegido por el jugador (sin nombre canónico). Vive con su **madre** (cura al equipo en casa). |
+| D02 | Razón concreta de la elección del Core | DECIDIDO 24-09-2026 | El protagonista es **el elegido de una profecía** ligada a los Pokémon del tiempo y del espacio: alguien que salvará el espacio-tiempo. **Cambia** la ambigüedad de la biblia §2/§6.1 ("no certificar el elegido"). Se mantiene descartado el sueño/voz explicativa de la beta; la profecía se presenta según la respuesta a D02b. |
+| D02b | Revelación de la profecía | DECIDIDO 24-09-2026 | Se conoce **poco a poco** durante el juego: el Core la insinúa, las inscripciones de los Pilares del equilibrio (también en escritura **Unown**) la van revelando y se confirma en el tramo final. Sin sueño/voz explicativa al inicio. |
+| D03 | Nombre, especialidad, edad y diseño del profesor | DECIDIDO 24-09-2026 | **Profesor Alerce**, unos 45 años, geología y ecología de anomalías; sobrio y cauto. Diseño visual provisional (D30). Pasado ex-Genesis solo por subtexto tardío (VIGENTE). |
+| D04 | Motivo inicial de la restricción policial | DECIDIDO 24-09-2026 | El área norte es **propiedad privada: un laberinto privado**. Adaptación del desarrollo (el autor pidió "la mejor manera"): laberinto de piedra y seto levantado hace generaciones por una familia local sobre vestigios antiguos; los dueños no viven en el pueblo y, tras los temblores recientes, piden a la policía que nadie entre. [Nombre del laberinto/familia: X03] |
+| D05 | Secuencia exacta de iniciales, señal, regreso y primer duelo | DECIDIDO (parcial) 24-09-2026 | Gael elige **después del jugador** el inicial con **ventaja de tipo** (Turtwig→Litten, Litten→Sobble, Sobble→Turtwig). Duelo con Gael tras regresar con el Core (VIGENTE). Entrega de Pokédex/Poké Balls: ver D05b. |
+| D05b | Entrega de Pokédex y Poké Balls | DECIDIDO 24-09-2026 | El Prof. Alerce las entrega a ambos **tras el duelo con Gael**, para registrar Pokémon y anomalías camino del Umbral. |
+| D06 | Transporte del Core frente al sprite sin mochila | DECIDIDO 24-09-2026 | Los protagonistas **llevan mochila** (el autor la prefiere a la bandolera) **y** el Core **los sigue en el mapa** como acompañante de campo (fuera del equipo). Sustituye la exploración de sprites sin mochila (biblia §5/§13.1). |
+| D07 | Identidad, prueba y equipo del Guardián del Umbral | DECIDIDO 24-09-2026 | **Guardiana veterana escéptica**: custodia por tradición familiar, duda de las leyendas hasta que el Pilar reacciona. Equipo Roca/Tierra, nivel ~12. Nombre: pendiente (se propondrá). |
+| D08 | Versión del puzzle/Geodude del Umbral | DECIDIDO 24-09-2026 | Tres **mecanismos con pistas grabadas**; al activarlos se abre una cámara donde un **Geodude estaba atrapado**; agradecido, **rompe la roca** que bloquea el paso. |
 | D09 | Accesos de Corriente y Memoria | PENDIENTE | |
 | D10 | Cifras y ubicación de células/núcleos | PENDIENTE | Umbrales provisionales de la biblia §8 |
 | D11 | Episodios de Tablillas T01–T15 (museo incluido) | PENDIENTE | |
@@ -56,7 +63,8 @@ Estados: VIGENTE (biblia) · DECIDIDO (autor, fecha) · PREGUNTADO (esperando re
 
 | ID | Decisión | Estado | Nota |
 |----|----------|--------|------|
-| X01 | Nombre del pueblo inicial | PENDIENTE | Biblia §5: sin topónimo definitivo |
-| X02 | Atlas de Axis: nombres de rutas y ciudades | PENDIENTE | Biblia §17: nombres antiguos no aceptados |
-| X03 | Nombre del área restringida (¿"Laberinto del Orden"?) | PENDIENTE | Biblia §5 |
+| X01 | Nombre del pueblo inicial | DECIDIDO 24-09-2026 | **Villa Alba** |
+| X02 | Atlas de Axis: nombres de rutas y ciudades | PENDIENTE | Biblia §17: nombres antiguos no aceptados. Se propondrá un atlas al autor. |
+| X03 | Nombre del área restringida | DECIDIDO 24-09-2026 | **Laberinto de la Profundidad** ("porque Zygarde es Z de profundidad"). Laberinto privado (D04). |
+| X05 | Carrera humana | TÉCNICO | El jugador puede correr (RUN) desde el inicio; la carrera de Zygarde 10% es más rápida y funciona como montura (biblia §8 distingue ambas). |
 | X04 | Música del pueblo (dirección: nostálgica) | TÉCNICO provisional | Elegida de la biblioteca de Añil, reemplazable |

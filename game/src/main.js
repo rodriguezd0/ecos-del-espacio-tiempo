@@ -17,10 +17,14 @@ const DEV_ROUTES = {
 
 async function loadDatabase() {
   const a = engine.assets;
-  const [species, moves, abilities, items, types, trainerTypes, tilesets, dex] = await Promise.all([
+  const [species, moves, abilities, baseItems, axisItems, types, trainerTypes, tilesets, dex] = await Promise.all([
     a.json('data/species.json'), a.json('data/moves.json'), a.json('data/abilities.json'), a.json('data/items.json'),
-    a.json('data/types.json'), a.json('data/trainer_types.json'), a.json('data/tilesets.json'), a.json('data/dex_axis.json'),
+    a.json('data/items_axis.json'), a.json('data/types.json'), a.json('data/trainer_types.json'), a.json('data/tilesets.json'),
+    a.json('data/dex_axis.json'),
   ]);
+  // Objetos propios de Axis (Fragmentos Azur, Flauta Azur…) sobre la base de Añil.
+  const { _note, ...axisOnly } = axisItems;
+  const items = { ...baseItems, ...axisOnly };
   return { species, moves, abilities, items, types, trainerTypes, tilesets, dex };
 }
 

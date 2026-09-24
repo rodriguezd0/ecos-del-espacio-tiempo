@@ -1,0 +1,23 @@
+{
+  "_note": "Objetos propios de Axis que no existen en los PBS de Añil. Se fusionan con items.json al cargar (main.js). 'icon' = archivo de /anil/Graphics/Items o game/assets/items sin extensión.",
+  "AZUREFRAGMENT": {
+    "id": "AZUREFRAGMENT", "name": "Fragmento Azur", "namePlural": "Fragmentos Azur", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "BLUESHARD",
+    "description": "Pieza de la Flauta Azur custodiada por un Pilar. Resuena levemente cuando está cerca de otras."
+  },
+  "AZUREFLUTE": {
+    "id": "AZUREFLUTE", "name": "Flauta Azur", "namePlural": "Flautas Azur", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "BLUEFLUTE",
+    "description": "Instrumento reconstruido con los diez Fragmentos Azur. Se dice que su sonido llega hasta el Creador."
+  },
+  "CLUENOTEBOOK": {
+    "id": "CLUENOTEBOOK", "name": "Libreta de pistas", "namePlural": "Libretas de pistas", "pocket": 8, "price": 0,
+    "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"], "icon": "TOWNMAP",
+    "description": "Cuaderno donde se anotan las pistas abiertas sobre las Tablillas y otros misterios de Axis."
+  },
+  "POKEDEXAXIS": {
+    "id": "POKEDEXAXIS", "name": "Pokédex", "namePlural": "Pokédex", "pocket": 8, "price": 0,
+    "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"], "icon": "OVALCHARM",
+    "description": "Enciclopedia electrónica del Prof. Alerce. Registra Pokémon y lecturas del terreno."
+  }
+}
