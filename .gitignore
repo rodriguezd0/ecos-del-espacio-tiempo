@@ -1,0 +1,5 @@
+node_modules/
+.tools/
+Pokemon Anil V4.13/
+tools/cache/
+*.log

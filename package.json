@@ -1,0 +1,21 @@
+{
+  "name": "pokemon-ecos-axis",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pokémon: Ecos del Espacio-Tiempo (región Axis) — fangame 2D pixel art en Three.js",
+  "type": "module",
+  "scripts": {
+    "serve": "node server.mjs",
+    "test": "node --test tests/",
+    "data": "node tools/extract_data.mjs && node tools/extract_tilesets.mjs",
+    "assets": "node tools/copy_assets.mjs",
+    "vendor": "node tools/vendor.mjs"
+  },
+  "dependencies": {
+    "three": "^0.186.0"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.63.0",
+    "pngjs": "^7.0.0"
+  }
+}

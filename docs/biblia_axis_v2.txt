@@ -1,0 +1,2256 @@
+# PAGES: 54
+
+===== PAGE 1 =====
+POKÉMON: ECOS DEL ESPACIO-TIEMPO
+AXIS
+Biblia narrativa
+y de continuidad
+Historia completa · Personajes · Pilares
+Zygarde · Team Genesis · Postgame y DLC
+SÍNTESIS PARA EL DESARROLLO DEL JUEGO BASE
+“Zygarde se reconstruye mientras el protagonista recupera la capacidad de recorrer y
+restaurar Axis.”
+VERSIÓN 2.0 · 24 SEPTIEMBRE 2026
+Corte narrativo y técnico: cierre de las sesiones Codex A y Codex B documentado en esta conversación.
+CONTENIDO INTERNO · SPOILERS COMPLETOS
+Incluye decisiones vigentes, antecedentes, material descartado y vacíos de guion. No inventa respuestas donde la historia todavía no las
+tiene.
+
+===== PAGE 2 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Índice de lectura
+Los capítulos describen el diseño del proyecto; no son títulos definitivos de episodios dentro del juego.
+01 Cómo leer este libro y qué significa cada afirmación 3
+02 La historia completa en una lectura continua 4
+03 Cosmología, pasado de Axis y cadena causal 6
+04 Prólogo: la batalla que el protagonista no vio 8
+05 El pueblo inicial y el primer vínculo 9
+06 Los diez Pilares: orden y capítulos de campaña 11
+07 Las quince Tablillas: historia entre los Pilares 16
+08 Zygarde: personaje, progresión y transformación del mundo 17
+09 Genesis, el profesor y la trayectoria de Gael 20
+10 El desenlace del juego base, paso a paso 22
+11 Postgame y DLC 1: la historia de Gael 24
+12 DLC 2 y búsquedas legendarias: catálogo completo recuperado 26
+13 Dossier completo de personajes 30
+14 Dirección artística, sonido y reglas de representación 34
+15 Sistemas de juego que afectan a la historia 36
+16 Pokédex, formas y alcance del contenido 38
+17 Historia de las versiones: qué fue sustituido y qué no debe perderse 41
+18 Registro de continuidad: decisiones que no se deben invertir 43
+19 Estado real del desarrollo al cierre de las sesiones 45
+20 Decisiones pendientes y condiciones para empezar a escribir eventos 48
+21 Fuentes, trazabilidad y alcance de cada material 51
+22 Hoja de continuidad esencial 53
+Lectura continua: capítulo 02. Detalle de campaña: 04–10. Personajes: 13–14. Contenido legendario: 11–12 y 16. Versiones y
+pendientes: 17–20.
+DOCUMENTO INTERNO · v2.0 | 2 / 54
+
+===== PAGE 3 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+01. Cómo leer este libro y qué significa cada
+afirmación
+El encargo, reinterpretado
+Reconstruir una biblia de historia y continuidad que permita a una persona ajena al proyecto
+comprender la aventura, escribir sus escenas y comenzar a implementarla sin confundir versiones.
+Integrar el argumento del juego base, la cronología del mundo, los diez Pilares, la Flauta Azur, las
+Tablillas, Zygarde, los protagonistas, Gael, el profesor, Genesis, el postgame y los dos DLC. Describir
+completamente los diseños que sí se han definido, conservar los antecedentes que se descartaron y
+señalar las decisiones que siguen abiertas. No completar silenciosamente un nombre, un equipo
+Pokémon, un diálogo, una misión o un desenlace que el autor nunca fijó.
+Este libro es una síntesis de diseño, no una novela nueva ni un guion dialogado terminado. Su
+organización en capítulos es editorial: no supone que el juego vaya a mostrar esas divisiones en pantalla.
+Las escenas confirmadas están desarrolladas con su función, orden y dependencias; donde falta
+contenido, se identifica exactamente el hueco en vez de escribir una escena inventada.
+Estados de continuidad
+VIGENTE significa que el autor lo decidió o lo aceptó y no consta una corrección posterior. DIRECCIÓN
+DE TRABAJO identifica un enfoque adoptado cuya ejecución, cifra o aspecto concreto permanece
+abierto. PENDIENTE significa que las fuentes no permiten cerrar ese punto. ANTECEDENTE conserva
+una versión histórica o una posibilidad que no debe implementarse automáticamente. DESCARTADO
+identifica una decisión sustituida de forma explícita. REPORTADO EN DESARROLLO describe lo que el
+usuario o Codex comunicaron sobre archivos y pruebas, sin convertir ese reporte en una auditoría
+nueva realizada para este libro.
+Una regla narrativa vigente no equivale a una mecánica implementada. Una validación de archivos no
+equivale a una aprobación artística. Una propuesta elegida por Codex no equivale a una elección del
+autor. Esta distinción es especialmente importante para el protagonista masculino, el pueblo inicial y el
+relevo por IA del multijugador.
+Precedencia y límites de la reconstrucción
+La referencia principal son las decisiones del autor en este chat, incluidas sus correcciones. Los
+documentos maestros recuperados sirven para completar contexto, pero varios preceden a cambios
+importantes: todavía dejaban abierto el orden de los Pilares 5 y 6, el nombre del primero o el momento
+de estabilización de Zygarde Completo. Aquí se registra la decisión posterior sin esconder que existió
+una versión anterior.
+Se recuperaron también el historial de Gemini y un resumen antiguo. Se utilizaron para rescatar material
+que no debía desaparecer —por ejemplo, la paleta histórica de Gael y las búsquedas de legendarios—, no
+para reinstalar la etapa en la que el protagonista era el campeón de Sinnoh. No se consultó lore externo
+para rellenar la historia. Los nombres de movimientos, formas y objetos se presentan como contenido
+planeado por el proyecto, no como certificación externa de su disponibilidad oficial o en los plugins.
+El historial incluye tramos que se conservan solo como resúmenes o documentos, no como transcripción
+íntegra de cada mensaje original. Por eso este libro aspira a ser exhaustivo respecto del material
+recuperado y la conversación disponible, pero no atribuye una frase literal o una aprobación a una
+intervención que no pudo localizarse. Los vacíos están reunidos al final.
+Identificadores de fuentes usados dentro del libro
+C: conversación actual de diseño y desarrollo, con las correcciones posteriores a los maestros. M1:
+POKEMON_ECOS_MASTER_CODEX_v1.1.md. M0: ECOS_Documento_Maestro_Codex_v1.md. H: Google-
+Gemini(2).md, historial anterior. R0: Pasted text(53).txt, resumen histórico previo al cierre de motor y
+protagonistas. Las notas al final de cada capítulo indican secciones o rangos de líneas del archivo original
+cuando corresponde. El registro final explica la función y los límites de cada fuente.
+DOCUMENTO INTERNO · v2.0 | 3 / 54
+
+===== PAGE 4 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+02. La historia completa en una lectura continua
+Axis es una región que parece habitable y cotidiana, pero cuyo equilibrio depende de diez estructuras
+antiquísimas. Los Pilares sostienen aspectos fundamentales del mundo; no son diez gimnasios ni diez
+torres iguales. Su origen se pierde en una antigüedad anterior a las construcciones de la época de Hisui.
+Cada uno custodia un fragmento de la Flauta Azur, dividida deliberadamente para que nadie pudiera
+despertar al Creador con solo robar un instrumento.
+La aventura comienza mostrando un conflicto que el futuro protagonista no ha presenciado. En el
+Mundo Distorsión, Giratina derrota a Dialga y Palkia y atraviesa una conexión hacia Axis. Emerge en una
+ruina de montaña, junto a una gran cascada. Una escalera asciende hasta una plataforma con un portal
+horizontal de piedra, semejante a un aljibe abierto hacia otra dimensión. Zygarde detecta la amenaza y
+responde en Forma Completa.
+Su enfrentamiento se prolonga durante dos días y culmina en la tercera noche, según la intención
+temporal del autor. Zygarde consigue expulsar a Giratina de regreso al Mundo Distorsión, pero queda
+gravemente herido y pierde la cohesión de su organismo. Cien células y cinco núcleos se dispersan. El
+equilibrio no queda definitivamente reparado por esa victoria: Axis ha perdido a su principal agente de
+respuesta y la crisis continúa desarrollándose.
+Después empieza la vida jugable de un protagonista original, nativo de Axis. No es Lucas ni Dawn, no
+acaba de ganar la Liga de Sinnoh, no cae desde una fisura y no tiene recuerdos sellados de otro juego.
+Recibe uno de tres iniciales: Turtwig, Litten o Sobble. Gael se presenta como rival, pero el primer
+combate no debe ser el trámite de enfrentarse inmediatamente después de elegir un Pokémon.
+Una señal extraña atrae al protagonista hacia una zona restringida próxima al pueblo. El sonido procede
+del área del laberinto o las ruinas. Un policía entra a investigar y deja una oportunidad para seguirlo. La
+sección de sigilo es breve: el jugador debe evitar ser detectado, y una detección lo devuelve a un punto
+seguro. Allí encuentra un Core de Zygarde debilitado, no la forma 10% ni una criatura que espera
+convenientemente sobre un altar.
+El Core se comunica por telepatía. No pide amistad como una mascota ni explica toda la cosmología de
+una vez. Necesita ayuda para recuperar su capacidad de restaurar el equilibrio. Decide acompañar al
+protagonista, y esa decisión será uno de los hechos que otros personajes interpreten de maneras
+diferentes. El regreso al profesor inicia una investigación; el vínculo también alcanza a Gael, que
+empieza a preguntarse por qué Zygarde ha respondido al otro y no a él.
+El viaje conduce al Pilar del Umbral. La primera prueba es deliberadamente sencilla y muestra el lenguaje
+que sostendrá toda la aventura: ruina antigua, exploración legible, custodios con una responsabilidad
+propia, un núcleo que reacciona y un Fragmento Azur que no se entrega como medalla. Los Pilares
+responden al protagonista y a Zygarde, pero el juego no confirma de inmediato que esa respuesta sea
+una profecía cumplida. Puede ser afinidad, resonancia o algo que ni Zygarde comprende por completo.
+La campaña avanza por Corriente, Impulso, Masa y Memoria. A la vez, se reconstruye Zygarde mediante
+células, núcleos e hitos de sincronización. El 10% permite correr, embestir, atravesar terrenos
+complicados y, más adelante, trepar. El 50% abre navegación acuática, detección de células y buceo. Las
+capacidades transforman la geografía accesible: las barreras son rocas, desniveles, agua y pasos
+incompletos, no puertas que solo muestran una cifra.
+Entre los Pilares hay historia regional. La búsqueda de quince Tablillas de Arceus es parte obligatoria de
+esa historia, no una colección secundaria que se impone al llegar al final. Se desean dos o tres pistas
+abiertas a la vez, con información suficiente para investigar sin recibir coordenadas exactas. Un museo
+forma parte de estos arcos. Sus escenas y puzzles concretos todavía no están escritos, pero su función
+está definida: obligar a conocer Axis como mundo, no recorrer diez mazmorras en fila.
+En esa investigación aparece Team Genesis, una organización científica clandestina que existe desde el
+juego base. Sus integrantes no buscan simplemente riqueza ni actúan como delincuentes torpes.
+Consideran inaceptable que las leyes de la existencia dependan de Pokémon divinos que la humanidad
+nunca eligió. Quieren comprender esos poderes, reproducirlos y finalmente controlarlos. Los Pilares y
+los fragmentos de la Flauta son tanto objeto de investigación como acceso al poder de Arceus.
+DOCUMENTO INTERNO · v2.0 | 4 / 54
+
+===== PAGE 5 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+El profesor conoce demasiado de ese mundo. Internamente está confirmado que fue parte de Genesis o
+del proyecto del que nació su facción. Su pasado se revela tarde y mediante subtexto: un científico lo
+trata como antiguo colega, alude a una traición o reconoce sus métodos. No se presenta con una
+confesión explícita. El protagonista llega a combatir a su lado en un encuentro aún pendiente de
+ubicación y equipo.
+El sexto Pilar, el Invertido, lleva al Mundo Distorsión. Se regresa a la montaña y al portal del prólogo,
+ahora mediante la capacidad de trepar. El lugar no se convierte en otra arena para capturar a Giratina:
+su presencia puede limitarse a una sombra lejana que cruza una vez. La prueba está en el espacio
+imposible. El séptimo, Ecos, introduce una superposición del pasado; Bramaluna Alpha domina ese eco,
+sin ser un Guardián que proteja conscientemente el recinto.
+El octavo, Alma, reúne tres experiencias en un único complejo: conocimiento con Uxie, emoción con
+Mesprit y voluntad con Azelf. De ellas salen los componentes de la Cadena Roja. Al terminar este Pilar
+llega el hito de estabilización de Zygarde Completo, siempre que estén reunidas las células y los núcleos
+necesarios. La región se encuentra en una emergencia manifiesta: auroras, luna anormalmente grande,
+grietas y un ciclo de día y noche alterado. La permanencia del 100% surge de esa crisis, no de un objeto
+que obligue a las células a permanecer unidas.
+Completo permite levantar caminos desde el vacío y utilizar Vuelo clásico a destinos descubiertos. La
+reconstrucción es una de las mecánicas distintivas del juego: donde antes no existía un paso, el terreno
+se eleva y hace posible seguir. Parte de las Tablillas tardías puede aprovechar esa capacidad. El noveno
+Pilar, Convergencia, utiliza la Cadena Roja y reúne el conflicto de tiempo y espacio con Dialga y Palkia.
+La elección entre ambos sigue como dirección de diseño, con obtención posterior del otro para no
+bloquear el completado individual.
+El décimo Pilar es el del Origen. Se entra con nueve fragmentos, no con la Flauta completa, y con las
+quince Tablillas ya reunidas. Después de sus pruebas aparecen Tornadus, Thundurus y Landorus, que
+intentan impedir el despertar de Arceus o el uso del último fragmento. Tras derrotarlos llega el
+enfrentamiento con Gael y una conversación importante. El núcleo del Pilar responde, libera el décimo
+Fragmento y los diez reconstruyen la Flauta Azur.
+Sin embargo, el cielo no vuelve del todo a la normalidad. Los Pilares han sido restaurados, pero Arceus
+continúa dormido. Las acciones del jugador no fueron inútiles: han reparado los anclajes y las funciones
+locales necesarias para que el sistema vuelva a operar. Falta despertar al Creador. Zygarde reactiva o
+detecta una ruta de Convergencia y usa deliberadamente su forma 10% para llevar al protagonista a la
+Columna Lanza. Los Unown ya no cumplen la función de transporte.
+Antes del enfrentamiento final, Zygarde pide voluntariamente ser capturado para combatir junto al
+protagonista. Hasta entonces fue compañero de viaje y de campo, sin consumir una plaza permanente
+del equipo. En la Columna Lanza se toca la Flauta y Arceus despierta. El combate final tiene tres fases,
+en este orden invariable: Tierra, Fantasma y Normal. La captura solo puede habilitarse en la fase final
+bajo la condición que se termine de diseñar. La resolución permite completar las dieciocho Tablillas y
+restablecer el equilibrio de Axis.
+El fracaso de Genesis no borra sus ideas. Su líder inicial huye y Gael termina involucrándose con sus
+restos, hasta asumir su liderazgo o reorganización en el arco posterior. El DLC 1 es la historia de Gael,
+Hoopa Desatado y la culminación de la Megaevolución con Mega Zygarde. Se prefiere una región nueva
+pequeña. No está cerrado el desenlace de Gael en la versión actual: la muerte por suero de
+Celebi/Jirachi pertenece a una versión histórica que se conserva aparte.
+El postgame del juego base y el DLC 2 ofrecen muchas búsquedas de legendarios. Un personaje de
+pistas orienta investigaciones distintas: sueños, clima, ruinas, movimientos, profundidad y anomalías. El
+objetivo no es una sala de portales idénticos. La aventura completa puede jugarse y completarse en
+solitario; el cooperativo agrega exploración y batallas compartidas, no obligaciones para avanzar.
+Base documental: M1 §§13–103; M0, contexto maestro; C, correcciones sobre Pilares 1/6/7/8, Tablillas, museo, Zygarde, final y DLC.
+DOCUMENTO INTERNO · v2.0 | 5 / 54
+
+===== PAGE 6 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+03. Cosmología, pasado de Axis y cadena causal
+Tres sistemas que no deben confundirse
+Los Pilares son anclajes del equilibrio de Axis. Su nombre describe una función metafísica, no una forma
+arquitectónica obligatoria. Cada recinto materializa una parte de ese sistema en ruinas, cuevas,
+montañas, santuarios o espacios imposibles. Zygarde es el agente que detecta y responde al
+desequilibrio, con una existencia distribuida en células y núcleos. Arceus se relaciona con el origen
+profundo del sistema y su restitución completa. No se estableció una ecuación científica literal entre
+ellos ni un organigrama divino detallado.
+La Flauta Azur tampoco es una parte de Zygarde. Sus fragmentos no se transforman en células ni
+sustituyen los núcleos. La campaña coordina varias progresiones distintas: restauración de Pilares,
+reconstrucción de la Flauta, colección de Tablillas y recuperación de Zygarde. Que converjan al final no
+significa que sean el mismo objeto con nombres distintos.
+El tiempo antiguo
+Antes de la campaña ya existían los diez Pilares. La Flauta fue dividida porque había diez custodios
+estructurales adecuados, no al revés. Una pieza quedó asociada a cada Pilar como protección distribuida
+del acceso a Arceus. Reunirlas debía ser excepcional y justificarse por el estado del mundo.
+No está decidido quién ejecutó físicamente la división: Arceus, los primeros custodios, una civilización
+bajo su instrucción o una combinación. Tampoco están definidos la fecha, el nombre de esa civilización,
+su desaparición, la identidad de sus arquitectos o el pacto concreto con los Guardianes. La antigüedad
+anterior a Hisui describe las ruinas; no fija que la aventura transcurra antes de Hisui.
+Las inscripciones pueden conservar relatos parciales, advertencias y distintas interpretaciones. No
+constituyen una voz omnisciente obligatoriamente verdadera. El proyecto permite una historia antigua
+incompleta, pero el equipo debe conocer qué datos son hechos internos y cuáles son creencias de los
+personajes.
+El pasado científico
+La dirección aceptada contempla fenómenos menores estudiados clandestinamente antes del desastre
+abierto: lecturas imposibles, incidentes ecológicos, anomalías localizadas o reacciones de los Pilares.
+Esto hace verosímil la existencia de investigadores, instalaciones y desacuerdos previos sin exigir que se
+construyera una organización completa en pocos días.
+De ese ámbito emerge o se separa la facción que constituye Genesis. El profesor se distancia de ella. La
+bifurcación entre comprender/preservar y reproducir/controlar es una dirección temática aceptada,
+pero todavía no una cronología cerrada de fundadores, financiación, descubrimientos o traiciones
+personales.
+Cronología relativa
+Período Hecho o dirección recuperada Límite de certeza
+Antigüedad remota Existencia de los diez Pilares ySin fechas, constructor ni divisor identificados
+fragmentación protectora de la Flauta
+Generaciones posteriores Custodia humana en parte de losLinajes y reglas institucionales pendientes
+recintos
+Antes del prólogo Investigación clandestina de anomalías;Orden fino y responsabilidades pendientes
+origen ideológico de Genesis; ruptura del
+profesor
+Prólogo Derrota de Dialga/Palkia, irrupción deCausa última de la agresión no fijada
+Giratina, intervención de Zygarde
+DOCUMENTO INTERNO · v2.0 | 6 / 54
+
+===== PAGE 7 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Período Hecho o dirección recuperada Límite de certeza
+Fin del prólogo Giratina devuelto; dispersión celular deTiempo exacto hasta la primera escena
+Zygardejugable abierto
+Campaña temprana Vida local, inicial, señal, Core, profesor,Diálogos y escenas cotidianas por escribir
+Gael, Umbral
+Campaña intermedia Pilares 2–7, investigación regional,Secuencias concretas entre cada par de
+Tablillas y GenesisPilares pendientes
+Campaña tardía Alma, Complete, Convergencia y Origen Ritmo exacto de la crisis y misiones tardías
+por cerrar
+Resolución base Flauta, Columna Lanza, Arceus,Epílogo escénico detallado pendiente
+restauración
+Después Restos de Genesis, Gael, Hoopa y MegaCalendario, mapa de DLC y distribución de
+Zygarde; investigaciones legendariasespecies abiertos
+Por qué reparar Pilares no basta
+La versión vigente resuelve un punto que antes estaba abierto: reparar la infraestructura local no
+despierta por sí solo al Creador. Cada restauración debe producir un efecto real, aunque el conjunto siga
+inestable mientras Arceus duerme. No se debe escribir que los Pilares reparados “no sirvieron para
+nada”.
+Todavía falta concretar cuánto y cómo se perciben esos efectos locales: un cauce que se normaliza, una
+ruta que recupera estabilidad o una anomalía que cesa son posibilidades, no escenas ya confirmadas.
+También queda por precisar cómo aumenta la crisis global mientras algunas funciones se reparan. El
+principio causal está fijado; su implementación capítulo a capítulo no.
+Base documental: M1 §§42–57, 66–69; C, explicación aceptada de la Flauta dividida y Arceus dormido.
+DOCUMENTO INTERNO · v2.0 | 7 / 54
+
+===== PAGE 8 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+04. Prólogo: la batalla que el protagonista no vio
+Secuencia P-01: Mundo Distorsión
+La partida nueva comienza con un acontecimiento, no con el discurso introductorio de un profesor. Se
+muestran Dialga y Palkia frente a Giratina en el Mundo Distorsión. Giratina los vence y abandona ese
+dominio hacia Axis. El orden vigente sitúa la derrota antes de la irrupción en la región.
+No están escritos los movimientos exactos, los encuadres ni el motivo de la pelea. Versiones antiguas
+mencionaban ataques concretos —Distorsión, Corte Vacío, Golpe Umbrío— como recursos de puesta en
+escena. No son un guion técnico aprobado. Tampoco está decidido si Giratina actúa por voluntad
+propia, por una alteración de su hábitat o por otra causa. Genesis no debe aparecer como autor secreto
+del prólogo solo porque sería una explicación conveniente.
+Secuencia P-02: montaña, cascada y portal
+La conexión desemboca en una ruina de montaña. La cascada es grande y forma parte del carácter
+monumental del lugar; su posición definitiva delante o detrás de la acción quedó abierta. La plataforma
+del portal se alcanza subiendo una escalinata. El portal es horizontal, alojado en una cavidad circular de
+piedra semejante a un aljibe, no una puerta vertical estándar.
+La referencia espacial a una stronghold era la relación escalera–plataforma–abertura. No autoriza copiar
+un escenario de Minecraft ni hacer que la escalera descienda. El combate se extiende por una explanada
+de ruinas próxima. El lugar debe ser reconocible al revisitarlo durante el Pilar 6: el prólogo no ocurre en
+una localización desechable sin relación con la aventura.
+Secuencia P-03: intervención de Zygarde
+Zygarde detecta una amenaza extrema y actúa en Forma Completa. La intervención se entiende como
+respuesta al desequilibrio, no como una transformación activada por el protagonista. El jugador todavía
+no existe como interlocutor de esa escena.
+La batalla larga expresa el costo del esfuerzo. El autor la imagina durante dos días y con final en la
+tercera noche. Se representará de forma condensada, mediante cambios de iluminación, momentos del
+enfrentamiento y consecuencias ambientales. La duración de la cinemática no fue cerrada; la propuesta
+histórica de dos o tres minutos no es una restricción vigente confirmada.
+Secuencia P-04: victoria local y pérdida de cohesión
+Zygarde devuelve a Giratina al Mundo Distorsión. No lo captura, no lo mata y no resuelve todo el
+conflicto cósmico. Su propio cuerpo queda exhausto y muy malherido; pierde cohesión y se separa en
+cien células y cinco núcleos. La dispersión puede ser visualmente espectacular sin tratar a Zygarde como
+un cuerpo humano que explota con violencia gráfica.
+Las partes no están obligadas a esconderse exclusivamente dentro de los Pilares. Ese planteo existió,
+pero el autor lo amplió después a todo Axis. El primer Core acaba accesible desde la zona restringida del
+pueblo. No está fijada la distancia recorrida, el tiempo exacto de desplazamiento o la razón precisa de
+ese refugio.
+Información que recibe el jugador y que todavía no recibe el personaje
+El espectador conoce la batalla y el costo que pagó Zygarde. El protagonista puede conocer únicamente
+rumores o efectos locales cuando empieza a jugar. Esta asimetría crea tensión: el jugador reconoce la
+importancia del Core antes de que la comunidad comprenda lo ocurrido.
+La cinemática no debe resolver de antemano el misterio del elegido, la doctrina completa de Genesis, la
+división de la Flauta o el pasado del profesor. Su función es plantear una catástrofe y una deuda de
+reconstrucción, no narrar el libro entero en cinco minutos.
+Base documental: M1 §§13–21; M0, contexto maestro §§3–4; C, corrección de escalera ascendente, cascada grande y protagonista
+nativo.
+DOCUMENTO INTERNO · v2.0 | 8 / 54
+
+===== PAGE 9 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+05. El pueblo inicial y el primer vínculo
+Identidad del asentamiento
+El pueblo inicial no tiene todavía nombre propio definitivo. “Axis - Pueblo inicial” es el nombre técnico
+del mapa importado, no un topónimo narrativo. La dirección propuesta es un asentamiento pequeño de
+piedemonte, rodeado de bosque y vestigios que sus habitantes han naturalizado. El sur conecta con el
+viaje por la región; el norte conduce a la zona restringida donde comienza el misterio del Core.
+El diseño pretende que el protagonista pueda haber crecido allí. No hay una gran institución futurista
+dominando el conjunto ni una ciudad deshabitada construida solo para el jugador. El hogar, el profesor y
+Gael forman parte de una cotidianidad que aún necesita escenas y diálogos propios. La idea de que
+ambos jóvenes se conocen de antes es una dirección útil y fue incorporada al planteo del pueblo; su
+parentesco, amistad exacta o historia de infancia no se escribió.
+Distribución de trabajo y mapa existente
+El mapa 233 mide 46×36 tiles y utiliza el tileset 51. Tiene cinco edificios: casa roja del protagonista al
+sudoeste, casa verde de Gael al noroeste, fachada turquesa compacta del laboratorio al este, vivienda
+roja de NPC al norte y vivienda verde de NPC al sudeste. El centro contiene un foco de jardín/parterre y
+vegetación; existen accesos norte y sur.
+Esta es la distribución del borrador producido y luego importado. Sus senderos, bordes forestales y
+fachada genérica siguen pendientes de aprobación artística. El número de edificios de la propuesta
+inicial —hasta tres o cuatro viviendas secundarias— se redujo en la realización a dos casas NPC. No
+deben describirse ocho edificios como existentes ni rehacerse automáticamente el pueblo para cumplir
+una cifra de un prompt viejo.
+La maqueta reserva áreas para control/pistas y un futuro frente público del laboratorio. No contiene las
+transferencias a interiores, las escenas del Core ni la vida de los habitantes. Que se hayan alcanzado
+cinco puertas en una prueba no significa que esas puertas abran cinco interiores jugables.
+Hogar y presentación del protagonista
+Se conserva la existencia de una casa propia y una vida local. No están fijados nombre, apellido, edad
+exacta, familia, ocupación, habilidades previas o motivo personal para viajar. La madre que curaría
+Pokémon fue una posibilidad práctica del diseño del pueblo, no un personaje ya escrito con identidad y
+biografía.
+La escena inicial no tiene que repetir el viejo “es tarde, acostate, sueña con una voz que te declara
+elegido”. Ese sueño explicativo se descartó. También se descartó despertar como viajero amnésico en
+un santuario tras la Liga de Sinnoh. Debe escribirse una presentación de Axis desde alguien que
+pertenece a ella.
+Profesor e iniciales
+El profesor será original. El jugador elegirá Turtwig, Litten o Sobble; no se sustituyen por popularidad o
+conveniencia artística. No están definidos el diálogo de elección, su razón institucional, la asignación de
+inicial a Gael ni el equipo que cada uno tendrá al salir.
+El laboratorio público debe parecer un lugar local de trabajo: mesas, ordenadores, libros, instrumental o
+maquinaria. La existencia de un ámbito clandestino relacionado con anomalías no obliga a que el pueblo
+vea un gran cartel de “Centro de Investigación de Zygarde”. Una puerta, sótano o instalación remota
+puede ocultar ese pasado, pero la relación espacial definitiva entre ambos laboratorios permanece
+abierta.
+La señal y la sección de sigilo
+Después de la elección, o en su salida equivalente del laboratorio, se oye una señal desde el área
+restringida. El autor elaboró en la beta un grito de Porygon agudizado que le recordó a un Core:
+electrónico, extraño y breve. Es referencia sonora del proyecto, no vocalización oficial acreditada.
+DOCUMENTO INTERNO · v2.0 | 9 / 54
+
+===== PAGE 10 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+El policía bloquea el paso. La repetición del sonido lo lleva a investigar, dejando una oportunidad al
+protagonista. El jugador lo sigue y debe evitar su detección. La beta devolvía al inicio al ser encontrado;
+una persecución efectiva quedó pendiente. La regla deseada es comprensión rápida, castigo moderado y
+regreso a una posición segura, no una secuencia larga de prueba y error.
+La zona debe conocerse visualmente antes del incidente. Así la llamada no crea una localización de la
+nada: cambia el significado de un camino que el jugador ya había visto cerrado. El área de sigilo puede
+ser un mapa separado para mantener compacto el pueblo. El nombre “Laberinto del Orden” aparece en
+antecedentes, pero no consta como topónimo final confirmado para la nueva apertura.
+Encuentro y retorno
+El protagonista encuentra un Core agotado. Se eliminó la casualidad de que estuviera esperando sobre
+un altar. Refugio entre piedra dañada, grieta o cámara derruida son opciones aún no elegidas. La
+telepatía confirma que tiene intención y criterio; no lo transforma en un compañero parlanchín.
+El Core necesita ayuda para reconstruirse y restaurar el equilibrio. Decide acompañar al protagonista,
+pero el motivo exacto de esa elección permanece ambiguo. El policía, al descubrir la situación, debe
+reaccionar con responsabilidad y orientar el regreso al profesor. No queda vigente el trato de ignorar
+una infracción a cambio de un favor.
+La posibilidad de que el núcleo viaje en la mochila pertenece a la historia temprana. Las últimas
+exploraciones del sprite masculino se realizaron sin mochila. Esto es una decisión visual pendiente de
+compatibilizar: no hay autorización para borrar la idea narrativa ni para inventar una mochila invisible o
+un soporte alternativo definitivo.
+Primer combate con Gael y salida hacia el Umbral
+El enfrentamiento inicial con Gael es obligatorio en la intención del autor, pero debe tener un motivo
+propio. El Core ha elegido al protagonista; Gael quiere comprender o poner a prueba qué justifica esa
+elección. El momento adoptado como dirección es después del descubrimiento y regreso al profesor, no
+inmediatamente tras elegir iniciales.
+La investigación posterior debe conducir a una señal, registro o anomalía vinculada al primer Pilar. Se
+obtienen la Pokédex, Poké Balls y una razón para salir al mundo, pero el mecanismo exacto de entrega
+está abierto. No reaparece como enlace obligatorio el paquete de Mankey ni el Snorlax bloqueando la
+ruta con necesidad de Poké Flauta.
+Base documental: M1 §§21–42; C, diseño del pueblo y reportes de importación de Map233. El estado de producción se detalla en el
+capítulo 19.
+DOCUMENTO INTERNO · v2.0 | 10 / 54
+
+===== PAGE 11 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+06. Los diez Pilares: orden y capítulos de campaña
+Orden vigente
+Nº Nombre Custodia o presencia central Función narrativa principal
+1 Pilar del Umbral Guardián humano Introducción, primer Fragmento y
+respuesta del sistema
+2 Pilar de la Corriente Guardián humano Agua, flujo y entorno
+3 Pilar del Impulso Guardián humano Energía, movimiento y velocidad
+4 Pilar de la Masa Guardián humano Peso, geología y estabilidad física
+5 Pilar de la Memoria Guardián humano Vestigios, historia e información del
+mundo
+6 Pilar Invertido Mundo Distorsión; sinRegreso al escenario del prólogo y
+Guardián humanoespacio imposible
+7 Pilar de los Ecos Bramaluna Alpha, entidadSuperposición del pasado y Paradojas
+dominante
+8 Pilar del Alma Uxie, Mesprit y Azelf Conocimiento, emoción, voluntad y
+Cadena Roja
+9 Pilar de laDialga y Palkia Tiempo y espacio; preludio del final
+Convergencia
+10 Pilar del Origen Trío de las Nubes, Gael yDécimo Fragmento, Flauta y acceso a
+núcleo finalArceus
+La división aceptada es cinco Pilares con Guardián humano y cinco sin ese cargo humano. Esto no
+significa cinco combates de gimnasio y cinco capturas legendarias. Bramaluna no protege un santuario;
+Giratina no necesita combatir; el Trío del Lago contiene pruebas diferenciadas. Los nombres
+Corriente/Impulso/Masa/Memoria conservan una definición menos desarrollada que el tramo final.
+Gramática compartida
+Los recintos deben reconocerse como partes de una obra antigua común: piedra erosionada, geometría,
+monolitos, símbolos, canales o marcas de resonancia, cámaras de núcleo y escritura Unown. El
+vocabulario visual exacto no está finalizado. Su arquitectura puede estar absorbida por cuevas y
+vegetación, pero no basta con colocar una piedra central en una sala vacía y declararla templo.
+Los Guardianes cumplen responsabilidades heredadas. Mantienen, estudian, restringen, interpretan o
+veneran el sitio. Sus actitudes deben variar: orgullo, tedio, escepticismo, fascinación o carga familiar son
+ejemplos aceptados. No se han asignado esas actitudes a números concretos ni están definidos sus
+equipos o nombres.
+El Fragmento forma parte del Pilar. La resolución de su prueba, su restauración y la resonancia del
+protagonista con Zygarde permiten liberarlo. Un Guardián puede presenciar algo que no había ocurrido
+en generaciones; no es quien fabrica la recompensa porque perdió un combate.
+6.1. Capítulo del Umbral — Pilar 1
+Entrada y función. Es el primer contacto con la estructura de los Pilares. Se accede sin una habilidad
+especial de Zygarde; el acompañante sigue siendo inicialmente un Core. No puede exigir 10% para
+alcanzar el hito que hace viable esa forma. La llegada debe anunciar importancia sin parecer una zona de
+final de juego.
+DOCUMENTO INTERNO · v2.0 | 11 / 54
+
+===== PAGE 12 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Experiencia fijada. Exploración fácil, legible y con poca frustración. Se conserva la idea de un laberinto
+sencillo y una prueba espacial, no tres plantas repetidas como fórmula obligatoria. Puede haber un
+número moderado de entrenadores y oscuridad limitada, pero no un recorrido a ciegas que esconda la
+solución en casillas arbitrarias.
+Geodude y los mecanismos. La beta contenía tres palancas ocultas detrás de rocas; después de
+activarlas se anunciaba que no habían servido, aparecía un Geodude y el jugador lo empleaba para
+romper obstáculos. La estructura exacta no está aprobada como definitiva. La dirección posterior
+conserva un Pokémon ambiental y una reacción física con lógica: mecanismos con pistas, activación que
+atrae o libera a Geodude y resolución comprensible del bloqueo. No se fija que haya que lanzar
+violentamente al Pokémon ni que tres palancas deban ser siempre inútiles.
+Guardián y Fragmento. Hay custodia humana. Su prueba puede incluir un combate introductorio, pero
+faltan personaje, equipo, motivación y diálogo. La restauración conduce a la liberación del primer
+Fragmento. La escena debe sugerir una respuesta excepcional del Pilar sin certificar que el protagonista
+es el elegido.
+Salida de capítulo. Queda demostrado que las ruinas están activas y que el vínculo con Zygarde importa.
+La dirección de balance vincula el primer 10% a suficientes células y al hito del Pilar 1. No se ha fijado si
+la transformación sucede en la cámara, al salir o en un regreso al profesor.
+Estado de desarrollo. Existen conceptos de acceso exterior, antesala e interior en staging. El interior usa
+Cueva 1 y todavía parece en parte una cueva: falta arquitectura propia de ruina verificada. No hay
+puzzle definitivo ni cámara de Guardián implementados por esos mapas.
+6.2. Capítulo de la Corriente — Pilar 2
+Tema vigente. Agua, flujo, ciclos y movimiento del entorno. El autor confirmó que sí tiene Guardián
+humano. No hay nombre, género, aspecto, equipo ni historia personal del custodio fijados.
+Lugar en la progresión. Pertenece al tramo temprano. El esquema de accesos lo relaciona con movilidad
+inicial/carrera. No debe exigir Nadar de 50% mientras la curva todavía sitúa esa forma bastante
+después. Un tema acuático no implica que el jugador tenga que atravesar un mar: puede existir agua
+dentro de una experiencia terrestre, pero su puzzle concreto sigue pendiente.
+Qué sucede realmente confirmado. El protagonista llega al segundo anclaje, supera una experiencia
+relacionada con su función, restaura el Pilar y obtiene el segundo Fragmento por reacción del núcleo.
+No se ha escrito el incidente regional que abre este capítulo, el procedimiento de restauración o una
+escena concreta de Genesis en él.
+Lo que no se debe heredar. Un resumen antiguo lo trataba como una mazmorra que requiere
+habilidades acuáticas. Ese acceso entra en conflicto con la progresión posterior si se mantiene en el
+número 2. No inventar una transferencia de Zygarde a 50% para justificarlo. Antes de programar, se
+decide el obstáculo real preservando orden y disponibilidad de habilidades.
+6.3. Capítulo del Impulso — Pilar 3
+Tema vigente. Energía, velocidad y movimiento. Viento o tormentas aparecen como direcciones
+ambientales posibles. No se fijó que deba ser un gimnasio Eléctrico/Volador ni una prueba
+exclusivamente de reflejos.
+Acceso y capacidad. Embestida es el requisito propuesto de la progresión: obstáculos identificables,
+como rocas o troncos adecuados, que el 10% ya debe poder romper antes de llegar. El desbloqueo no
+puede quedar detrás del mismo bloqueo que exige la habilidad.
+Custodia y resultado. Tercer Guardián humano, sin identidad definitiva. La resolución de la experiencia
+produce el tercer Fragmento y reafirma que recuperar a Zygarde altera la relación física con Axis. Los
+encargos concretos, la intervención de Gael, la manifestación de Genesis y la prueba interior no se han
+escrito.
+Continuidad. Persecuciones o secciones de desplazamiento rápido fueron ideas, no especificación final.
+Su presencia tendría que conservar la accesibilidad del early game. Tampoco se estableció una carrera
+cronometrada obligatoria ni una penalización por fallar.
+DOCUMENTO INTERNO · v2.0 | 12 / 54
+
+===== PAGE 13 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+6.4. Capítulo de la Masa — Pilar 4
+Tema vigente. Peso, densidad, geología, terreno y estabilidad. Puede integrarse a una elevación o
+montaña, pero la ubicación exacta de Axis permanece abierta.
+Progresión. La dirección actual lo relaciona con el tránsito por terreno complicado del 10%. No debe
+conceder ni exigir tempranamente la Reconstrucción de caminos de Complete. La vieja denominación
+Elevación Telúrica se conserva como antecedente de la idea, no como una capacidad intermedia ya
+autorizada.
+Experiencia pendiente. Hay Guardián humano y cuarto Fragmento. No existe un sistema aprobado de
+balanzas, bloques, ascensores, peso de especies o derrumbes. Esas serían decisiones nuevas. La
+descripción geológica orienta el diseño, pero no lo reemplaza.
+Función de capítulo. Debe diferenciar masa/terreno de la velocidad de Impulso y del agua de Corriente.
+No basta repetir el mismo laberinto cambiando el color de las paredes. El beneficio de restaurar este
+anclaje y el episodio regional correspondiente están pendientes de guion.
+6.5. Capítulo de la Memoria — Pilar 5
+Tema vigente. Persistencia de información, recuerdos del mundo y vestigios del pasado. Es el último de
+los cinco Pilares con Guardián humano. Puede relacionarse con la historia de Axis y con interpretaciones
+de sus habitantes.
+Corrección esencial. Ya no devuelve recuerdos del campeón de Sinnoh: ese protagonista fue
+descartado. No existe una amnesia secreta que justifique automáticamente visiones de Cynthia, la Liga
+o un equipo abandonado. Si el Pilar muestra memoria personal, habrá que escribirla para un
+protagonista nativo.
+Hito histórico. En una versión anterior, el Pilar 5 era el gran momento de reconstrucción de Zygarde y la
+llegada a formas más fuertes. La versión actual sitúa Complete después del Pilar 8. Puede conservar
+importancia de recuperación o revelación, pero no debe conceder 100% temprano por inercia del
+borrador.
+Acceso. La tabla antigua asignaba Trepar a P5 y agua a P6 mientras Memoria/Invertido podían
+intercambiarse. Al fijarse Invertido en P6 con acceso a la montaña por Trepar, la asignación exacta de
+entrada a Memoria necesita ratificación. No está autorizado exigir una habilidad imposible ni mover el
+Pilar 6 para salvar una tabla vieja.
+Resultado. Quinto Fragmento y cierre de la primera mitad de custodia humana. El contenido de la
+revelación, la identidad del Guardián y su relación con Genesis no están definidos.
+6.6. Capítulo del espacio imposible — Pilar Invertido, 6
+Acceso vigente. Se vuelve a la montaña de la gran cascada y al portal horizontal del prólogo. Trepar
+permite alcanzar el lugar. La intención es una conexión excepcional y reconocible, no un Axis lleno de
+entradas equivalentes al Mundo Distorsión.
+Cambio de experiencia. No hay Guardián humano. Las reglas espaciales pueden usar paredes que
+parecen suelo, plataformas, orientaciones alternativas, corrientes o cascadas invertidas y recorridos que
+no respetan la geometría cotidiana. Se trata de representar un espacio imposible dentro del motor 2D,
+no de reabrir el proyecto 3D.
+Giratina. No es un jefe obligatorio de este capítulo. Puede cruzar una vez en el fondo, como una silueta
+o sombra casi negra. No necesita detenerse a hablar ni quedar identificado por un cartel. Su presencia
+debe sentirse como la de una entidad que habita ese dominio, no la de un Pokémon esperando ser
+capturado.
+Regla de capacidades. El primer recorrido debe poder completarse antes de Complete. El Anclaje
+espacial de la forma final, si se conserva, puede habilitar un regreso o zonas adicionales, pero no ser la
+llave inicial obligatoria del sexto Pilar. El modo exacto de cambiar orientación y volver a un punto seguro
+está pendiente.
+DOCUMENTO INTERNO · v2.0 | 13 / 54
+
+===== PAGE 14 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Resultado. Sexto Fragmento. La visita recontextualiza la batalla inicial y acompaña la escalada de
+anomalías. No está fijado que al tocar ese fragmento se active de golpe una noche eterna; la dirección
+posterior prefiere deterioro progresivo.
+6.7. Capítulo del pasado superpuesto — Pilar de los Ecos, 7
+Elección del autor. Se eligió un eco del pasado. La alternativa de un recinto menos antiguo con
+Paradojas del futuro no es la versión actual de este Pilar. El lugar puede volverse progresivamente más
+arcaico y prehistórico, sin necesidad de ser una torre futurista.
+Entidad dominante. El encuentro relevante es Bramaluna Alpha. No recibe el cargo de Guardián, no
+custodia la Flauta por deber y no protege conscientemente los Pilares. Domina un hábitat o eco en el
+que se encuentra. Su condición Alpha es una excepción escénica deliberada, no demostración de que
+todos los Paradoja tengan esa rareza.
+Acceso. Buceo quedó como requisito propuesto en el esquema de progresión. Un acceso submarino
+puede conducir a ruinas con un eco del pasado, pero el terreno real y la secuencia exacta no están
+dibujados. La disponibilidad de 50%, células y sincronización para Buceo debe preceder ese requisito.
+Interacciones. No se ha fijado la capacidad de captura de Bramaluna en su combate, su nivel, equipo
+aliado ni condición de victoria. Tampoco se definió una transformación del mapa entero en cada paso.
+No sumar automáticamente nuevas Paradojas pasadas a la Pokédex más allá de la incorporación
+narrativa requerida por Bramaluna.
+Resultado. Séptimo Fragmento; evidencia de que la crisis altera tiempos y ecosistemas, no solo el clima.
+La repercusión en asentamientos y misiones sigue pendiente.
+6.8. Capítulo de las tres pruebas — Pilar del Alma, 8
+Estructura vigente. Un único Pilar largo, con un centro y tres alas/santuarios o recorridos. Uxie, Mesprit
+y Azelf no consumen tres números de Pilar. La experiencia debe diferenciar conocimiento, emoción y
+voluntad, no repetir tres capturas con distinto sprite.
+Uxie. El núcleo es conocimiento. El historial desarrolló un quiz de sabiduría y observación; el documento
+maestro amplió el campo a memoria y lógica. El número de preguntas, su contenido y el castigo por
+error no están cerrados para esta versión. No convertir preguntas de trivia arbitraria en la única prueba
+posible sin confirmar.
+Mesprit. El núcleo es emoción. Existió una persecución espejo con desplazamiento inverso, recuperada
+en el historial como diseño aceptado entonces. La dirección más reciente deja abiertas interpretación
+emocional, vínculos y empatía. El espejo es un antecedente aprovechable, no una obligación de sustituir
+el capítulo por un minijuego sin contexto.
+Azelf. El núcleo es voluntad. Se rechazaron una prueba de equipo a 1 PS y una transformación en el
+Pokémon del jugador. La batalla sin objetos de mochila fue la alternativa histórica aceptada. La
+aplicación final dentro del nuevo complejo debe ratificarse; no se fijan automáticamente subidas
+extremas de estadísticas o una batalla imposible.
+Cadena Roja. Las tres pruebas aportan componentes para confeccionarla. Pluma de Mesprit, garra de
+Uxie y diente de Azelf fueron nombres utilizados en un borrador antiguo; los maestros posteriores
+dejaron los nombres exactos abiertos. No crear sus objetos definitivos en PBS sin confirmación.
+Hito de Zygarde. Después de finalizar el Pilar 8 se sitúa la estabilización de Complete. Deben haberse
+reunido cien células y cinco núcleos, además de darse la crisis que justifica esa respuesta. No es un
+premio que sustituye la búsqueda. Octavo Fragmento y preparación del tramo final convergen aquí.
+6.9. Capítulo del tiempo y el espacio — Pilar de la Convergencia, 9
+Herramienta previa. Se utiliza la Cadena Roja procedente del Alma. El Pilar reúne a Dialga y Palkia en el
+tramo anterior al desenlace. El diseño trabaja con una elección significativa entre ambos durante la
+campaña y disponibilidad del no elegido posteriormente.
+Lo que sigue abierto. Hay que fijar dónde aparece cada uno, si la captura de uno es obligatoria y en qué
+momento, qué ocurre con la Cadena tras el uso y cómo se presenta la elección. La regla antigua de
+DOCUMENTO INTERNO · v2.0 | 14 / 54
+
+===== PAGE 15 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+asignar automáticamente el opuesto al jugador 2 no se convierte en política de cooperativo vigente sin
+diseño explícito.
+Transporte y escenario. Los Unown dejaron de ser taxis. Un antiguo traslado desde este Pilar a Columna
+Lanza existió, pero el uso confirmado más preciso del Salto de Convergencia está después del Pilar 10.
+No se debe insertar por defecto aquí otra ida y vuelta sin decidir su necesidad.
+Resultado. Noveno Fragmento y profundización del conflicto espacio-temporal. Complete ya puede
+participar en la exploración tardía. El mundo no se normaliza aún. El límite de nivel 100 en P9 procede
+de un resumen viejo y no es una curva de niveles definitiva.
+6.10. Capítulo del último sello — Pilar del Origen, 10
+Condiciones de entrada. Nueve Pilares restaurados, nueve Fragmentos, quince Tablillas, Complete y los
+requisitos narrativos/de campo del tramo final. La Flauta completa no existe todavía. Exigirla en la
+puerta impediría obtener el décimo fragmento y crearía un bloqueo lógico.
+Secuencia vigente. Pruebas finales de exploración o recorrido; Trío de las Nubes; enfrentamiento y
+conversación con Gael; acceso al núcleo; décimo Fragmento; reconstrucción de Flauta; persistencia de
+la crisis; ruta de Convergencia a Columna Lanza; despertar y combate de Arceus. El capítulo 10 de este
+libro desarrolla cada paso.
+Distinción de lugar. El Pilar del Origen no es sinónimo automático de Columna Lanza. Uno custodia el
+último Fragmento; la otra es el destino donde se toca la Flauta restaurada. El traslado de Zygarde une
+ambos momentos.
+Sin repetición artificial. No hay un Guardián humano final esperando dar una medalla. El Trío de las
+Nubes y Gael cumplen papeles concretos dentro de la culminación. Las pruebas previas, curación,
+checkpoints y condiciones de reintento deben diseñarse para que la secuencia larga no castigue con
+repeticiones innecesarias.
+Base documental: M1 §§51–80; M0, «Progresión, Pilares y dependencias»; H, líneas 103259–103416, como antecedentes de las tres
+pruebas; C, fijación de Umbral, Invertido 6, Ecos pasado/Bramaluna Alpha y cinco custodios humanos.
+DOCUMENTO INTERNO · v2.0 | 15 / 54
+
+===== PAGE 16 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+07. Las quince Tablillas: historia entre los Pilares
+Papel dentro de la campaña
+Las Tablillas son obligatorias para alcanzar el desenlace. El jugador necesita quince antes del Pilar 10 y
+completa dieciocho tras resolver el encuentro de Arceus. No deben presentarse como tareas
+secundarias que resultan imprescindibles por sorpresa al final. Su tratamiento vigente es el de arcos de
+la historia principal distribuidos por Axis.
+Se rechazaron tanto la rutina “Pilar–Tabla–Pilar–Tabla” como una búsqueda críptica basada en pulsar
+cada piedra. Se requieren investigación, puzzles y episodios regionales con consecuencias. Las quince
+misiones aún no están escritas: constituyen un bloque narrativo pendiente.
+Información, libertad y pistas
+La dirección aceptada es mantener dos o tres pistas abiertas simultáneamente. Eso permite elegir en
+qué investigación avanzar sin hacer completamente libre el orden de las capacidades. Una inscripción
+puede orientar hacia un fenómeno, lugar o tradición; una conversación puede acotar esa pista; la
+geografía y una habilidad de Zygarde hacen posible llegar.
+Las pistas deben ser interpretables, pero no coordenadas literales. Se busca dificultad moderada:
+entender un patrón, conectar información o resolver una situación, no perderse durante horas. La
+posible libreta o registro de pistas es una solución de interfaz por concretar, no una aplicación ya
+implementada.
+Las inscripciones de los Pilares son una fuente especialmente valorada. Así los recintos no son solo
+lugares que entregan fragmentos: también ayudan a comprender la región. No todas las Tablillas tienen
+que encontrarse dentro de una ruina ni cada inscripción debe contener la respuesta de una misión.
+El museo
+El museo es un arco confirmado; faltan ciudad, nombre, responsable, Tablilla y puzzle. Robo,
+falsificación, infiltración nocturna o exposición clausurada son opciones no aprobadas.
+Conecta conocimiento humano, vestigios de Axis y objetos del Creador mediante una situación jugable,
+no un premio de mostrador. Su curador todavía no está definido ni debe confundirse con el profesor o
+el NPC del DLC 2.
+Quince espacios de contenido, no quince misiones inventadas
+Las quince entradas carecen todavía de objetos, localizaciones y episodios definitivos. Los
+identificadores editoriales T01–T15 organizan ese trabajo; no representan tipos ni un orden lineal. Una
+de ellas incluirá el museo, sin número asignado.
+Cada entrada requerirá: identidad de la pieza, pista inicial, segunda pista, estado del mundo, capacidad
+mínima de Zygarde, problema narrativo, puzzle o confrontación, consecuencia y reintento. Las Tablillas
+que requieran Reconstrucción o Vuelo deben situarse después del hito de Complete al terminar Alma.
+Ninguna obligatoria puede depender de un DLC, de otro jugador o de una captura que solo se habilite
+después de Arceus.
+Las tres que conserva Arceus
+Está fijado que faltan tres al entrar al desenlace y que Arceus las conserva. También están fijadas las
+fases Tierra, Fantasma y Normal. El proyecto todavía no resolvió el encaje exacto entre los tres objetos
+y esos tres estados de combate. No se debe inventar una “Tabla Normal” para hacer coincidir
+automáticamente ambos conjuntos.
+Faltan nombres/IDs y una explicación de la fase Normal; que represente a Arceus sin modificación es
+solo una posibilidad. No se cambian las fases ni se completan objetos mediante lore externo para
+resolver el hueco.
+Base documental: M1 §§67–69; M0, registro O03; C, mensajes «no tenemos que hacer que las tablillas parezcan sidequest», museo, dos
+o tres pistas y Complete al terminar Pilar 8.
+DOCUMENTO INTERNO · v2.0 | 16 / 54
+
+===== PAGE 17 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+08. Zygarde: personaje, progresión y transformación
+del mundo
+Un compañero con voluntad, no una herramienta esclavizada
+Zygarde es uno de los protagonistas narrativos del proyecto. El Core inicial es su presencia personal
+temprana; las formas posteriores no son aliados distintos que sustituyen al personaje. Su objetivo
+constante es restaurar el equilibrio. No acompaña al jugador para aprender a ser simpático ni se vuelve
+una mascota cómica a mitad de la historia.
+La seriedad no significa ausencia de evolución emocional. Puede comunicar más, confiar, mostrar
+preocupación o reconocer la ayuda del protagonista sin abandonar una voz sobria y funcional. El vínculo
+crece a través de acciones compartidas. La captura tardía debe sentirse como consentimiento y
+reconocimiento, no apropiación de un ser debilitado.
+La comunicación es telepática. El uso de esa facultad dentro del fangame es una decisión del autor, no
+una necesidad de demostrar que un Core habla de esa forma en cada continuidad oficial. No se
+asignaron timbre humano, actor de voz o género de personalidad definitivo. La señal electrónica de la
+beta no obliga a escribirlo como robot.
+Qué significa recuperar recuerdos
+La batalla lo dejó disperso e incapaz de sostener funciones que antes poseía. Reunir células, recuperar
+núcleos y sincronizar la red le devuelve capacidad de actuar. “Recordar una mecánica” funciona como
+lenguaje de recuperación; no significa que haya olvidado por distracción cómo nadar o volar.
+El progreso combina masa celular, núcleos activos y resonancia o acontecimientos narrativos. No
+corresponde una habilidad por Pilar de forma rígida. Puede haber habilidades sucesivas dentro de una
+misma forma, capacidades recuperadas entre mazmorras y escenas de sincronización.
+Tres colecciones separadas
+Células: cien en el diseño del proyecto. Aportan reconstrucción y exploración. Cores/núcleos: cinco, de
+mayor peso narrativo y colocación deliberada. Fragmentos Azur: diez partes de otro sistema, ligadas a
+Pilares y a la Flauta. No hay equivalencia “diez Fragmentos = cien células” ni una conversión material
+entre ambos.
+El primer Core ya forma parte del total. Las ubicaciones de los otros cuatro no están cerradas. La idea
+histórica de otro núcleo en una instalación de investigación se conserva como antecedente útil, no
+como autorización para fijar ya su laboratorio, orden de hallazgo o personalidad. No hay cinco nombres
+o voces individualizadas aprobadas.
+Forma 10%: movilidad terrestre que sigue creciendo
+Correr. Primer gran cambio de ritmo: Zygarde hace posible recorrer tierra con mayor velocidad. La
+forma puede seguir al jugador o funcionar como montura, según el sistema de campo que se termine de
+implementar. Debe distinguirse el movimiento de Zygarde de una transformación del cuerpo humano.
+Embestida. Rompe obstáculos apropiados y reconocibles. Rocas frágiles, troncos o muros debilitados
+son ejemplos, no permiso para destruir cualquier elemento del escenario. Una barrera común y una
+embestible deben tener lectura distinta.
+Terreno complicado. Evita o supera limitaciones de barro, arena profunda, nieve o vegetación densa,
+conforme al bioma. El usuario aceptó esta identidad terrestre y la comparó con la sensación de una
+Pokémontura robusta. No es la misma habilidad duplicada en 50%.
+Trepar. Se recupera después de las anteriores del 10%, para que esa forma siga aportando novedades.
+Sirve en paredes, raíces o superficies señaladas. El uso clave ya situado es el ascenso a la montaña del
+portal para el Pilar 6. Animación, entradas y aterrizajes aún no son una especificación de código final.
+DOCUMENTO INTERNO · v2.0 | 17 / 54
+
+===== PAGE 18 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Forma 50%: agua y percepción
+Nadar. Cumple la función de desplazamiento por agua que se esperaba de Surf. La forma serpentiforme
+tiene una identidad distinta del 10%. No se ha decidido que requiera enseñar una MO normal ni
+consumir un movimiento de combate.
+Detección de células. Una señal, pulso, dirección aproximada o revelado cercano debe reducir búsqueda
+ciega. La mejora del detector se asocia a la progresión del 50%; queda por resolver qué ayuda básica
+existe antes. No sería coherente exigir la mayoría de las células sin orientación y presentar el detector
+cuando ya no aporta nada.
+Buceo. Es la tercera capacidad relevante y abre mapas submarinos. El autor pidió algo más interesante
+que la transición clásica de un mapa de superficie a otro azul. La propuesta aceptada como dirección
+incluye protección biológica/campo o burbuja sostenida por Zygarde, corrientes, profundidad, ruinas,
+oscuridad y especies exclusivas. No está definida una nueva forma biológica llamada “Abisal”.
+Manaphy y Phione son especialmente deseados en ese ámbito. Chinchou, Lanturn, Relicanth, Clamperl,
+Huntail, Gorebyss y Dragalge aparecieron como candidatos de fauna, pero no todos figuran en la lista de
+412 especies. No se añaden automáticamente a la Pokédex.
+Forma Completa: después de Alma, no mediante un estabilizador coercitivo
+El hito narrativo actual es terminar el Pilar 8 en un estado crítico de Axis. Las cien células y los cinco
+núcleos deben estar disponibles y reunidos cuando se requiera esa forma. No se usa el Estabilizador Z
+que impedía separarse a las células. El Arca de Zygarde permanece como dispositivo/objeto de gestión
+y cambio de formas, sin esa función de coerción.
+Vuelo. Es viaje rápido clásico a lugares descubiertos, con selección de destino y presentación 2D. Se
+rechazó convertirlo en Ultravuelo tridimensional libre. La disponibilidad de destinos y el transporte
+previo a Complete siguen pendientes de balance.
+Reconstrucción del terreno. La escena distintiva es un hueco que antes no puede atravesarse y un
+camino que emerge mediante Zygarde Completo. Puede alzar plataformas, reconstruir un puente o
+formar una escalera allí donde faltaba soporte. El resultado debe tener colisión real y persistir. Una
+animación de piedras que suben sin habilitar el paso no cumple la intención.
+Los efectos mencionados —polvo, vibración, líneas de resonancia, partículas verdes y patrones
+hexagonales— son recursos visuales propuestos. La zona exacta de cada reconstrucción debe diseñarse;
+no es un editor de terreno libre para que el jugador levante caminos en cualquier parte.
+Anclaje espacial. Quedó como capacidad rara propuesta para fijar una orientación inestable,
+especialmente en áreas imposibles. No equivale a otra versión de “abrir una ruta” ni debe duplicar
+Reconstrucción. Su conservación y alcance definitivo requieren ratificación. Nunca puede ser requisito
+del primer viaje al Mundo Distorsión si Complete llega más tarde.
+Salto de Convergencia: un sistema distinto
+Su uso confirmado está después del Pilar 10: Zygarde adopta 10% y transporta al protagonista hacia
+Columna Lanza mediante un nodo/ruta antigua. No es el Vuelo de Complete ni teletransporte ilimitado
+entre ciudades. La forma 10% sigue siendo útil aunque ya exista la final.
+La red puede vincular lugares excepcionales, pero no hay mapa completo de nodos ni desbloqueos
+fijados. Los efectos de velocidad, espacio estirado y flashes de ruinas son una propuesta de puesta en
+escena. Los Unown pueden seguir como escritura o testigos visuales; no son el mecanismo que lleva al
+jugador.
+Umbrales heredados de trabajo
+Capacidad Referencia numérica discutida Estado
+Primer 10% y carrera Unas 10 células + hito de P1 Provisional
+Embestida Unas 18 células Provisional
+DOCUMENTO INTERNO · v2.0 | 18 / 54
+
+===== PAGE 19 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Capacidad Referencia numérica discutida Estado
+Terreno complicado Unas 25 + otro núcleo Provisional
+Trepar Unas 35 + sincronización/evento Provisional
+Nadar / 50% Unas 50 + núcleos suficientes Provisional
+Detección mejorada Unas 60 Provisional
+Buceo Unas 70 + resonancia Provisional
+Complete 100 células + 5 núcleos + crisis; hito trasDirección vigente; colocación por diseñar
+P8
+Estas cifras no son constantes de producción autorizadas. Su función es documentar cómo se imaginó
+una recuperación gradual. Antes de implementarlas debe existir un grafo de disponibilidad: qué piezas
+pueden obtenerse con cada estado y qué nueva zona abren.
+Reglas para que la aventura no se bloquee
+No puede haber una célula necesaria para Complete detrás de un puente que solo Complete construye.
+No puede exigirse un núcleo para Buceo si ese núcleo está bajo el agua y no existe otra entrada. Ningún
+objeto principal debe perderse por derrotar accidentalmente a un jefe, cambiar de mapa o elegir jugar
+solo.
+La noche alterada tampoco puede impedir para siempre una especie, misión o Tablilla obligatoria. Si
+dormir cambia la franja horaria, hay que distinguir la hora de una crisis del cielo que no se arregla
+acostándose. Tras la restauración de Axis todavía falta decidir cómo conservar el acceso de Complete y
+las habilidades de campo; ese postgame no se resuelve reintroduciendo sin permiso el estabilizador
+descartado.
+Base documental: M1 §§70–80; M0, dependencias y O02/O07/O08; C, progresión de 10%, buceo, Arca, Complete tras P8 y
+reconstrucción de caminos.
+DOCUMENTO INTERNO · v2.0 | 19 / 54
+
+===== PAGE 20 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+09. Genesis, el profesor y la trayectoria de Gael
+Una organización presente desde el principio
+Genesis no aparece por primera vez cuando Gael se vuelve antagonista. Existe durante la campaña y
+tiene un Líder Supremo anterior a él. Ese dirigente busca apropiarse del sistema de Pilares para llegar a
+Arceus; cuando el plan fracasa, abandona Axis y huye a otra región. Nombre, apariencia, Pokémon,
+primera aparición y confrontación final todavía no están definidos.
+La facción está formada por científicos serios, intimidantes y capaces. El autor rechazó criminales bobos
+y uniformes que parezcan simplemente soldados de otro equipo. El peligro procede también de que sus
+argumentos resulten comprensibles: investigan leyes que afectan la vida de todos, pero terminan
+atribuyéndose el derecho exclusivo a gobernarlas.
+Doctrina y plan operativo
+Su razonamiento avanza de entender a reproducir, aprovechar, controlar y decidir. La humanidad,
+sostienen, no debería depender de criaturas que controlan creación, tiempo, espacio o equilibrio sin
+legitimación humana. La conclusión autoritaria no es “la ciencia es mala”, sino que Genesis identifica su
+propia voluntad con el interés de todos.
+Su ruta de campaña es concreta: estudiar Pilares, acceder a sus mecanismos, controlar o reunir
+fragmentos, reconstruir la Flauta, alcanzar a Arceus y apropiarse de su poder. No tiene sentido que
+destruya indiscriminadamente los mismos anclajes e instrumentos que necesita. Sabotaje, ocupación,
+extracción o experimentación pueden aparecer, pero falta determinar actos y consecuencias por
+capítulo.
+El protagonista restaura el sistema para que el mundo recupere equilibrio. Genesis quiere dominarlo
+para decidir cuál debe ser ese equilibrio. Zygarde representa respuesta natural; Arceus, creación;
+Genesis, apropiación humana de ambos. Esa oposición es la base temática aceptada.
+Nombre, emblema y jerarquía
+“Genesis” se relaciona dentro del diseño con origen/creación y con una asociación visual a genes,
+biología y manipulación. La segunda lectura es un juego conceptual del nombre, no una afirmación
+etimológica. El emblema preferido terminó orientado a dos tubos de ensayo cruzados; hubo pruebas
+previas de jeringas que se abandonaron en favor de una identificación científica menos médica/agresiva.
+No existe un archivo final aprobado del logo.
+La jerarquía buscada incluye personal de campo, investigadores, mandos o comandantes y líder. No se
+estableció cuántos comandantes hay ni se les dieron nombres definitivos. El color principal no debe
+apropiarse del verde de Zygarde como si la facción ya fuera su equipo. Carbón, blanco clínico, petróleo y
+acentos violetas/magenta son opciones de trabajo, no paleta final cerrada.
+El profesor: verdad interna y revelación externa
+Su vinculación anterior a Genesis está confirmada para el equipo de desarrollo. El jugador no la recibe al
+conocerlo. La explicación preferida es una investigación clandestina de anomalías y un desacuerdo entre
+conservación y control que acaba en ruptura. El grado de responsabilidad del profesor —qué vio,
+permitió, hizo o intentó detener— todavía debe escribirse.
+La revelación debe ser tardía y sutil. Una alusión a que abandonó a sus colegas, un reproche de traición,
+conocimiento de un protocolo o acceso a información oculta pueden sugerirla. Son recursos de
+escritura, no diálogos finales. No se pone un uniforme con el emblema de Genesis al profesor inicial ni
+un cartel que anticipe el giro.
+El protagonista combatirá junto al profesor. Ese momento puede volver activo un personaje que
+inicialmente orienta e investiga. Faltan ubicación, adversarios, equipo y objetivo. El hecho de que exista
+un sistema co-op no significa que esa pelea de aliado NPC ya esté implementada.
+DOCUMENTO INTERNO · v2.0 | 20 / 54
+
+===== PAGE 21 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Gael: herida, interpretación y elección
+Su conflicto no es simplemente perder un combate y volverse malvado. El punto de partida es la
+desigualdad de respuesta: Zygarde acompaña al protagonista, los Pilares reaccionan y el mundo acaba
+reconociéndolo. Gael quiere saber por qué alguien aparentemente comparable obtiene ese lugar.
+La dirección preferida lo presenta como competente, orgulloso y serio. Un antecedente lo llama
+aprendiz prodigio del profesor. Esa competencia debe mostrarse con actos y logros propios, pero
+todavía no hay escenas concretas suficientes para construir toda su curva. No se debe convertir “rival
+frustrado” en su única personalidad.
+Genesis ofrece una interpretación tentadora: no hay que esperar a que dioses o ruinas decidan quién
+merece poder. La herida emocional y la doctrina se refuerzan. Esta es la razón por la que su
+incorporación posterior puede tener continuidad con el juego base sin revelar que fuera el jefe oculto
+desde la primera escena.
+Etapas de su arco, sin escenas añadidas
+Comienzo: rival local; interés por el vínculo del Core; primer desafío motivado. Campaña: se repite la
+percepción de que la respuesta de Axis favorece al protagonista; falta escribir la alternancia de respeto,
+ayuda, orgullo y distancia. Pilar 10: batalla importante y conversación emocional después del Trío de las
+Nubes. Después de Arceus: el protagonista y Zygarde son referentes de la restauración; Gael queda
+atrás en esa comparación. DLC 1: se integra a los restos de Genesis y toma liderazgo/reorganización;
+Hoopa y la extracción de poder son el nuevo método.
+La curación del equipo por Gael antes del combate del Pilar 10 está documentada en el historial antiguo.
+Es un detalle compatible, pero la secuencia actual no lo ratificó con precisión. Se conserva para decisión,
+no se borra ni se presenta como ya programado.
+La muerte por un suero de Celebi y Jirachi pertenece a una versión previa del postgame. Su existencia
+histórica es indudable; su vigencia en el nuevo DLC no. No debe considerarse canon actual que Gael
+muera, se redima, sea perdonado, desaparezca o vuelva a ser amigo: ninguno de esos finales quedó
+cerrado en la revisión vigente.
+Base documental: M1 §§24–25, 36–50, 93–103; M0, O06 y DLC pendientes; H, líneas 103259–103600 y 106190–106225; C,
+aceptación de ideología y profesor ex-Genesis.
+DOCUMENTO INTERNO · v2.0 | 21 / 54
+
+===== PAGE 22 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+10. El desenlace del juego base, paso a paso
+10.1. Preparación antes del Pilar del Origen
+El jugador debe haber restaurado los primeros nueve Pilares y reunido sus nueve Fragmentos. Debe
+poseer las quince Tablillas exigidas por el arco principal y las capacidades tardías de Zygarde. Complete
+debe estar disponible; todas las células y núcleos obligatorios tienen que haber sido alcanzables sin
+depender de sí mismos.
+No se exige la Flauta Azur completa, porque la última pieza está dentro de este Pilar. No se exige
+terminar un DLC ni jugar con otra persona. Los nombres de las quince Tablillas y el modo exacto de
+comprobar todas las condiciones todavía necesitan un diseño de objetos y estados.
+10.2. Recorrido final y Trío de las Nubes
+El Origen contiene una última experiencia de exploración, recorrido o puzzle. Su arquitectura y
+mecánica no están definidas todavía. Después aparecen Tornadus, Thundurus y Landorus, que buscan
+impedir el despertar de Arceus y/o evitar que se utilice el último fragmento.
+El motivo interno de esa oposición sigue abierto. No debe asumirse que son secuaces de Genesis, que
+están hipnotizados o que saben una verdad secreta no escrita. La intención de bloquear el despertar
+está confirmada; su explicación dramática no.
+El historial prevé derrotarlos y capturarlos más adelante. También describía tres combates sucesivos. La
+disposición final —combates separados, secuencia coordinada y adaptación opcional al co-op— requiere
+ratificación técnica. Nunca se transforma por omisión en una captura trivial en el primer turno.
+10.3. Gael
+Tras el Trío llega el desafío de Gael y una conversación importante. Es el cierre del arco de rivalidad del
+juego base y la preparación de su conflicto posterior, no la escena en la que se presenta Genesis por
+primera vez.
+No hay diálogo final escrito. Tampoco están fijados su equipo, nivel, Mega, inicial o condición de
+curación. El antecedente en el que cura al jugador antes de desafiarlo ayuda a separar rivalidad de
+simple crueldad, pero debe ser aprobado en la secuencia definitiva.
+10.4. Núcleo y décimo Fragmento
+El protagonista alcanza el núcleo verdadero o cámara de resonancia del Pilar. La restauración y la
+respuesta a Zygarde/protagonista liberan la pieza final. No cae de la mochila de Gael ni se entrega como
+medalla de un Guardián.
+Los diez Fragmentos reaccionan y reconstruyen la Flauta. El hecho está cerrado; la animación no. Se
+propusieron unión flotante, reacción automática o intervención ritual, pero nadie fue elegido como
+artesano definitivo. No se debe añadir un viaje obligatorio de herrería al final sin decisión expresa.
+10.5. La falsa sensación de cierre
+Se esperaba que diez Pilares restaurados terminaran la crisis. No ocurre por completo. Permanecen cielo
+anormal, inestabilidad o señales de alerta. Zygarde reconoce que falta Arceus: el sistema reparado
+todavía no vuelve a sincronizarse plenamente mientras el Creador duerme.
+La escena debe hacer comprensible la necesidad de la Flauta, no invalidar todas las horas anteriores. La
+colección de fragmentos protegía el acceso excepcional; no era un adorno sin función. La reparación
+local y el despertar global forman dos pasos distintos.
+10.6. Columna Lanza y Zygarde 10%
+La ruta de Convergencia hacia Columna Lanza se vuelve utilizable. Zygarde adopta deliberadamente
+10% y lleva al protagonista. No hay contradicción en usar una forma menor para una función específica.
+No se sustituye por Unown apareciendo de la nada ni por Vuelo normal del menú.
+DOCUMENTO INTERNO · v2.0 | 22 / 54
+
+===== PAGE 23 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+La secuencia visual puede combinar velocidad, patrones verdes y deformación de espacio. Su duración,
+control del jugador y posibilidad de saltarla están abiertos. Cualquier versión salteable tendrá que dejar
+el mismo estado narrativo que la completa.
+10.7. Captura voluntaria de Zygarde
+Antes de combatir a Arceus, Zygarde pide ser capturado y luchar junto al protagonista. El momento
+preciso —antes del tránsito, al llegar o inmediatamente antes del combate— no se cerró. No debe
+narrarse como si hubiera sido una captura forzada al encontrar al Core.
+Falta decidir el procedimiento si el equipo ya tiene seis Pokémon, la esfera utilizada, el nivel, los
+movimientos y la continuidad de monturas después de entrar al equipo. Un antiguo combate obligatorio
+contra Zygarde alrededor de nivel 90/forma 50% no se mantiene como requisito por defecto. La idea
+actual prioriza la solicitud voluntaria.
+10.8. Despertar y tres fases
+En Columna Lanza el protagonista toca la Flauta Azur restaurada. Arceus despierta y empieza el
+combate culminante. El orden es fijo: Tierra → Fantasma → Normal. Hada fue una fase antigua
+sustituida; no debe reaparecer al buscar código o resúmenes viejos.
+Las fases deben sentirse como cambios de un jefe, no tres encuentros inconexos. El historial proponía
+una única batalla sin regreso al mapa, curación y cambio de tipo entre fases, además de checkpoints
+para evitar repeticiones. El documento actual no fija todos esos detalles: repertorios, recuperación,
+condiciones de derrota, UI y persistencia de checkpoints siguen abiertos.
+La captura no se habilita en las dos primeras fases. En la tercera depende de una condición final por
+diseñar. No están fijados el porcentaje de PS, el turno mínimo, el tratamiento de Master Ball o la
+probabilidad. Debe comunicarse que existe una restricción, no hacer que el jugador desperdicie
+acciones sin explicación.
+El antecedente de Arceus como prueba del protagonista y de la humanidad está documentado. La
+revisión posterior dejó pendiente el motivo narrativo exacto del enfrentamiento. No se introduce
+automáticamente un Arceus maligno, controlado por Genesis o incapaz de reconocer al jugador. Elegir
+la explicación definitiva sigue siendo una de las decisiones de mayor impacto.
+10.9. Resolución y epílogo
+El encuentro permite obtener las tres Tablillas restantes y completar dieciocho. La relación exacta entre
+esos objetos y las fases sigue pendiente, sobre todo para Normal. La resolución y el despertar restauran
+el equilibrio de Axis.
+La captura de Arceus es el objetivo previsto del cierre; la presentación histórica de capturar una parte o
+manifestación del Creador no se ha convertido en una especificación definitiva de lore. Si se debilita, si
+el jugador pierde o si la captura falla durante la última fase, debe existir una solución de reintento que
+preserve el completado, pero sus condiciones no están cerradas.
+El líder original de Genesis huye cuando fracasa su plan. El epílogo debe separar el fin de la emergencia
+del fin de todos los conflictos humanos. Regresar a la casa/habitación y abrir el postgame existía en el
+historial, mientras que lugar de retorno, créditos, reconocimiento público y escena final concreta no se
+ratificaron aún.
+Estado narrativo resultante
+Diez Pilares restaurados. Flauta reunida. Quince Tablillas previas convertidas en dieciocho tras la
+conclusión. Zygarde reconstruido y vinculado voluntariamente al equipo. Axis estabilizada. Genesis
+derrotado en su objetivo principal, pero no extinguido como idea. Gael aún tiene un futuro narrativo.
+Hay contenido legendario y de exploración posterior sin que toda captura se haya agotado durante la
+campaña.
+Base documental: M1 §§57, 66–69, 79 y 102; H, líneas 103259–103600 para detalles históricos; C, secuencia final aceptada, Zygarde
+10% y eliminación de Unown como transporte.
+DOCUMENTO INTERNO · v2.0 | 23 / 54
+
+===== PAGE 24 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+11. Postgame y DLC 1: la historia de Gael
+Separación de contenidos
+Se distinguen tres ámbitos: el postgame del juego base, el DLC narrativo de Gael y el DLC de
+investigaciones legendarias. En una etapa anterior se llamaban “Postgame 1” y “Postgame 2” y uno
+seguía al otro de forma estricta. La revisión actual permite misiones legendarias después de la historia
+principal y más contenido en DLC 2; no fija que todo dependa de terminar el arco de Gael.
+La distribución por versión es una decisión pendiente. No debe desplazarse una Tablilla obligatoria de la
+campaña a un DLC ni exigirse una compra, conexión o descarga futura para cerrar el juego base. Aquí
+“DLC” es la denominación de expansión del proyecto, no un modelo comercial ya establecido.
+Núcleo vigente del DLC 1
+El primer DLC trata las consecuencias humanas de la restauración. Gael se aproxima a los restos de
+Genesis y termina liderándolos o reorganizándolos. La facción mantiene su convicción de que el poder
+debe tomarse y administrarse, en lugar de esperar a que una entidad lo conceda. La obsesión de Gael
+por superar al protagonista se transforma en un programa de control.
+Hoopa Desatado es el legendario central de esta expansión. El uso de sus anillos ofrece una vía para
+capturar, desplazar o concentrar poder; el núcleo temático heredado es la extracción de capacidades
+legendarias. El autor pidió no abarrotar este DLC con nuevos legendarios: el protagonismo de Hoopa
+debe sostener el arco, mientras la caza numerosa queda para postgame base/DLC 2.
+Esta restricción se refiere, como mínimo, a no convertir DLC 1 en otro catálogo de encuentros. No se
+fijó aún si habrá legendarios cautivos fuera de plano, cuáles serían víctimas ni si Zygarde volvería a ser
+secuestrado. No se afirma que “Hoopa es el único legendario que existe en el DLC”, porque Zygarde y
+su Mega son esenciales; se limita la incorporación de otros protagonistas/capturas legendarias.
+Territorio y estructura
+Se prefiere una nueva región menor, no repetir únicamente Axis. Se sugirieron población principal, rutas,
+bosque, montaña, ruinas, instalaciones y mazmorra final, sin ocho gimnasios. Nombre, mapa, clima,
+cultura, conexión de viaje y relación con la región a la que huyó el líder anterior están abiertos.
+La presencia del dirigente fugitivo no está resuelta. No puede asumirse que Gael lo mata, lo traiciona en
+pantalla o recibe el mando voluntariamente. El hecho vigente es que hay un líder antes de él y luego
+Gael alcanza poder dentro de los restos de la organización.
+Megaevolución de Zygarde
+El jugador obtiene el medio para Mega Evolucionar a otros Pokémon durante el juego base,
+suficientemente pronto para que la mecánica importe. La Zygardita queda reservada para DLC 1, cerca
+de su culminación. Mega Zygarde representa la unión de la criatura central y la mecánica de combate
+central del proyecto.
+No está decidido dónde se encuentra la piedra, quién la tenía, por qué existe, cómo se revela, qué
+requisito narrativo habilita su uso o cuál es el equipo de Gael durante la confrontación. No se debe
+completar ese vacío con un laboratorio que sintetiza la piedra, una herencia del profesor o un regalo de
+Arceus sin aprobación.
+Guion por bloques que sí puede sostenerse
+D1-01, consecuencias: el mundo ya fue restaurado; la comparación entre protagonista y Gael sigue
+abierta. D1-02, nueva operación de Genesis: se investiga una amenaza asociada a la reorganización
+científica y a Hoopa. D1-03, avance sobre sus instalaciones o mecanismos: se enfrenta la voluntad de
+apropiarse de poder; la arquitectura y las misiones no están cerradas. D1-04, culminación de Gael:
+confrontación importante y desbloqueo de Mega Zygarde en el tramo final. D1-05, resolución de
+Hoopa y del rival: pendiente de escritura definitiva.
+DOCUMENTO INTERNO · v2.0 | 24 / 54
+
+===== PAGE 25 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Estos bloques organizan lo existente; no equivalen a cinco capítulos ya guionados. No hay un elenco
+completo de jefes, ciudades o misiones de infiltración confirmado para la versión actual.
+Versión histórica extensa: lo que se conserva sin reinstalar
+El relato anterior comenzaba con anillos que secuestraban legendarios, incluido Zygarde. Tres torres-
+laboratorio exteriores clandestinas contenían víctimas. El jugador reunía tarjetas de acceso, llegaba al
+control maestro del tercer laboratorio y liberaba masivamente las celdas. En el caos aparecía Gael como
+responsable, se producía el combate y el rival utilizaba un suero basado en Celebi y Jirachi.
+La energía del tiempo y de los deseos debía permitirle imponer su voluntad o escapar de la derrota. El
+cuerpo humano no soportaba el suero y Gael moría. El autor había pedido una presentación sobria: se
+arrodillaba y caía, sin violencia explícita. Hoopa quedaba libre, desafiaba al jugador y podía ser
+capturado; una Prison Bottle permitía alternar formas. Los legendarios liberados se dispersaban por Axis
+y daban lugar a la segunda etapa de misiones.
+Todo esto está recuperado y no se omite. Sin embargo, suero, muerte, tres laboratorios, tarjetas,
+secuestro de Zygarde, liberación masiva y botella no están revalidados como estructura obligatoria del
+DLC actual. Los maestros posteriores pidieron expresamente no reintroducir el suero automáticamente
+y dejaron abierto el desenlace. Pueden ser recuperados por una decisión futura del autor; no son
+escenas que Codex tenga permiso de implementar por encontrar este capítulo.
+Base documental: M1 §§93–103; M0, DLC pendientes; H, líneas 103259–103600; C, reserva de Mega Zygarde y Hoopa para DLC 1 y
+preferencia por nueva región.
+DOCUMENTO INTERNO · v2.0 | 25 / 54
+
+===== PAGE 26 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+12. DLC 2 y búsquedas legendarias: catálogo completo
+recuperado
+La experiencia deseada
+El autor quiere muchos legendarios y singulares porque disfruta encontrarlos, capturarlos y completar
+colecciones. El límite de diseño no es “hay demasiados legendarios” por sí mismo, sino que cada
+encuentro tenga razón, preparación y dificultad suficiente. La propuesta rechazada es repetir portal,
+combate y captura en salas equivalentes.
+El personaje orientador del DLC 2 cumple una función comparable a Galletano/Snacksworth, pero no es
+ese personaje ni tiene todavía nombre, apariencia o biografía. Ofrece rumores, informes y pistas sobre
+localización, condiciones y fenómenos. El jugador investiga y deduce. No se ha cerrado un sistema de
+recompensas por tareas idénticas ni una entrega de objetos que siempre provoque la aparición directa.
+Se conserva como antecedente un gestor fijo que permite una misión legendaria activa a la vez y
+desbloquea grupos por región de origen. La revisión actual de DLC 2 no ratificó ese límite operativo. Las
+dos o tres pistas simultáneas confirmadas para las Tablillas no resuelven automáticamente esta interfaz
+distinta. Hay que decidir si el DLC conserva un caso activo, varias pistas o un registro de expediciones.
+Cómo leer las fichas siguientes
+Se reúnen aquí las semillas de misiones recuperadas del historial y de los maestros. Algunas fueron
+aceptadas en aquella etapa; otras eran ejemplos. Ninguna localización antigua de Sinnoh se convierte
+automáticamente en una ciudad de Axis. La asignación exacta entre postgame base y DLC 2 sigue
+pendiente para casi todas las especies.
+Las cantidades históricas —tres huidas, cinco preguntas, quinientos pasos— se registran para no perder
+el diseño. No son constantes finales autorizadas cuando el proyecto posterior las dejó pendientes de
+balance. Hoopa y Arceus tienen otra función principal y no deben duplicarse como capturas sin relación
+con sus arcos.
+Aves, clima y grandes ecosistemas
+Articuno, Zapdos y Moltres. Se imaginó un despertar elemental: aves inertes, latentes o en una forma
+semejante a estatua, activadas mediante movimientos de tipos apropiados. El marco posterior añade
+montaña/clima, instalación eléctrica y volcán como experiencias distintas. El autor citó movimientos
+super efectivos, pero las listas concretas que circularon no quedaron verificadas ni cerradas. Antes de
+programar se define qué acción tiene sentido para cada caso, sin copiar una tabla de tipos del resumen
+como si fuera una decisión perfecta.
+Raikou, Entei y Suicune. Búsqueda itinerante inspirada en huidizos: encontrarlos varias veces antes del
+combate. El antecedente específico fue tres huidas y una cuarta aparición combatible. El escenario ya
+no debe presuponer Torre Quemada. Suicune también se vinculó a rastros y lagos en el maestro. Rutas,
+persistencia, señales y número de encuentros quedan por diseñar para evitar perseguir apariciones a
+ciegas.
+Lugia. Una ruta de Buceo conduce a una cámara o cueva submarina. El diseño histórico usa oscuridad y
+destellos periódicos de sus ataques para observar y memorizar el camino. La versión base conserva
+profundidad e investigación; intervalos de cinco o diez segundos, prohibición de Destello y recorrido
+exacto no son parámetros finales. Debe evaluarse accesibilidad visual antes de volver obligatoria una
+navegación casi negra.
+Ho-Oh. Se descartó depender de una Torre Hojalata inexistente en el proyecto. Se propuso un lugar
+elevado y una ofrenda de Ceniza Sagrada que reconstruye el fuego del altar. El monte, objeto
+consumido y relación con el resto de legendarios no están fijados. No inventar una torre equivalente
+solo para repetir el original.
+Kyogre y Groudon. Cuevas o santuarios marino y magmático, con Orbe Azul/Rojo y clima extremo
+como condiciones históricas. El maestro enfatiza Buceo profundo y tormenta para Kyogre, terreno
+DOCUMENTO INTERNO · v2.0 | 26 / 54
+
+===== PAGE 27 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+tectónico y movilidad terrestre para Groudon. Se preserva la diferencia ambiental; qué condiciones se
+acumulan y cuáles sustituyen otras requiere cierre. Sus formas primigenias están en la lista de contenido
+deseado.
+Rayquaza. Una montaña muy alta, no el Sky Pillar copiado. Se registró como requisito tener a Kyogre y
+Groudon en el equipo. La altura y una condición atmosférica son direcciones compatibles. Se rechazó el
+motivo de que deba aparecer en una torre de Hoenn dentro de un mapa que no la contiene. La
+localización de Axis y el requisito definitivo del equipo siguen pendientes.
+Tornadus, Thundurus y Landorus. Sus apariciones posteriores se buscan por fenómenos localizados:
+vientos fuertes, lluvia/tormenta eléctrica y terremotos. Esto se separa del bloqueo obligatorio que
+forman en Pilar 10. No son tres copias de la misma cueva ni capturas confirmadas durante la primera
+confrontación. Falta definir rutas, pistas, duración de fenómenos y reintentos.
+Experimentos, secretos y objetos antiguos
+Mewtwo. La misión histórica más detallada conduce a un laboratorio con tres prototipos fallidos de
+Mewtwo, no tres especies clonadas distintas. Se propusieron extremos de ataque/defensa y un tercer
+perfil anómalo antes del original. Las cifras absurdas de estadísticas y evasión eran ejemplos del
+asistente, no balance final. No asignar automáticamente ese laboratorio a Genesis: su relación con la
+trama científica necesita decidirse.
+Mew. El impostor: un Pokémon aparentemente común se comporta de modo extraño y revela ser Mew.
+Las pistas podrían ser comportamiento o presencia inusual, pero no deben depender únicamente de un
+efecto confundible con shiny. La ruta aleatoria, duración de la transformación y condición exacta de
+revelación no están cerradas. El maestro conserva la idea de hallazgo muy secreto con guía limitada.
+Celebi. Se pidió un santuario semejante al Ilex Shrine y un acercamiento cuidadoso. “Bosque Vetusto” y
+“Encinar” fueron localizaciones heredadas de la etapa Sinnoh/Johto. La función de santuario y sigilo
+puede trasladarse a Axis, pero no existe una localización final ni se aprobó copiar entero un mapa. La
+conexión con el suero de Gael pertenece al DLC antiguo, no a esta misión vigente por defecto.
+Jirachi. Cristal o roca de deseo más un objeto asociado a estrellas/deseos. Circularon “Piedra Deseo” y
+“Trozo Estrella”; ninguno quedó como ID definitivo. Su cometido en una búsqueda no obliga a que se
+explote su poder en DLC 1.
+Magearna. Hallazgo en una tienda de antigüedades o mediante una investigación de maquinaria;
+reparación con piezas/engranajes. Cinco piezas era una propuesta histórica. El NPC reparador, el costo,
+el recorrido y la condición de captura/entrega aún están abiertos.
+Heatran. Se conservó la semilla de zona volcánica y Piedra Magma. “Montaña Dura” era referencia al
+juego previo, no una localidad confirmada de Axis. No hay puzzle completo ni evento de persecución
+definitivo recuperado.
+Ruinas, voluntad y reencuentros
+Regirock, Regice y Registeel. El autor prefirió cuevas selladas próximas a poblaciones temáticas:
+roca/minería, frío y tecnología. Aceptar la investigación hace posible la apertura correspondiente. Se
+rechazaron como solución final los patrones de pasos de cuadrado/cruz/círculo. No usar Pirita,
+Puntanieva o Marina como si fueran ciudades de Axis ya escritas.
+Regigigas. Reunir a los tres Regis es el requisito histórico. La cámara y el procedimiento de activación
+son pendientes. Las versiones con Regieleki y Regidrago pertenecen a listas anteriores a la retirada de
+legendarios de generaciones 8/9, no al inventario de 412 que se conserva.
+Uxie, Mesprit y Azelf. Sabiduría/quiz, persecución espejo y combate sin mochila fueron las pruebas
+históricas. Con el Trío concentrado en Pilar 8, hay que separar participación de campaña y captura
+posterior. No duplicar exactamente las tres pruebas como si el jugador nunca las hubiera superado. No
+se ha fijado si al resolver el Alma se captura a los tres o se obtiene solo su cooperación/componentes.
+Dialga o Palkia no elegido. Se recuperó una idea concreta del autor: llevar al legendario elegido a
+Columna Lanza, situarse frente al lugar del otro, hacer un rugido, sentir un temblor y provocar la
+aparición del que falta. No requiere intercambio con otro jugador. El mecanismo vigente de elección en
+P9 aún debe cerrarse para garantizar esta disponibilidad posterior.
+DOCUMENTO INTERNO · v2.0 | 27 / 54
+
+===== PAGE 28 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Giratina. Exploración del Mundo Distorsión como contenido de captura tardía. La antigua entrada por
+Cueva Retorno se sustituye o reconcilia con la decisión de utilizar el portal de montaña del prólogo; no
+se añaden puertas por toda Axis. La visita de campaña en P6 puede limitarse al cameo. El
+enfrentamiento de captura y sus condiciones no están fijados.
+Sueños, mar y respuestas al jugador
+Darkrai y Cresselia. Dormir sin Atrapasueños puede conducir a pesadilla/Darkrai; el objeto habilita el
+ámbito de Cresselia. Un ajuste histórico exigía capturar primero a Darkrai para adquirirlo. También se
+propusieron 25% de activación al dormir y veinte minutos reales de espera después de debilitar
+accidentalmente al legendario. Los maestros posteriores dejan tasas, cooldowns y bloqueo de captura
+como pendientes: se registran esas cifras, no se reinstalan silenciosamente.
+El autor quiso poder descansar para cambiar entre día y noche, evitando exigir una hora real exacta. La
+propuesta de distinguir “descansar” de “dormir profundamente” quedó como solución posible para no
+activar sueños en toda espera. El sistema también debe distinguir noche ordinaria de Eclipse de
+Convergencia.
+Manaphy. Exploración submarina y hallazgo de un huevo en un punto de interés concreto. El autor
+desea que el mar tenga especies exclusivas y no sea solo un traslado. Un laberinto abisal, canto o ruina
+son posibilidades de diseño, no partes confirmadas del evento del huevo.
+Phione. En el historial se obtiene mediante crianza de Manaphy con Ditto. La lista consolidada de 412
+no incluye Ditto; es una dependencia sin resolver. No se puede prometer esa obtención hasta
+incorporar el requisito o escoger otra vía con autorización.
+Shaymin. Viaje en barco a una isla de flores. Carta de Oak y Paraíso Floral aparecieron en resúmenes del
+juego previo; no están ratificados como objeto y localidad originales. El viaje y el hábitat floral son la
+semilla retenida.
+Meloetta. Escuchar su canto en una ruta y responder usando Canto para atraerla. El autor pidió
+explícitamente esa interacción. Canon se añadió como alternativa en respuestas antiguas, sin
+ratificación equivalente. No fijar un sonido, un puente o un número de ruta a partir de un ejemplo.
+Diancie. Llevar a Carbink y protegerlo de tres Sableye que intentan alimentarse de sus cristales. Diancie
+aparece, agradece y desafía al jugador. Esta idea reemplaza la mutación automática de Carbink. La
+misión es una escolta/protección, no exige un segundo humano. Niveles, condiciones de derrota y
+escena exacta están pendientes.
+Volcanion. Dos mecanismos, uno activado con un movimiento de Agua y otro con uno de Fuego, abren
+un acceso relacionado con vapor. La palabra “simultáneo” en un borrador no debe convertirlo en puzzle
+obligatorio de dos jugadores. El ritmo de activación debe tener solución en solitario. “Forja Fuego” era
+una referencia antigua.
+Marshadow. Revisión nocturna del primer Pilar; una sombra distinta o que se mueve de manera extraña
+revela su presencia. Se eliminó depender de la Vieja Mansión. Es una oportunidad de dar nuevo
+significado a un lugar temprano, pero falta fijar acceso de postgame y condición exacta.
+Zeraora. Se lo encuentra dormido y se lo despierta con una descarga/movimiento concreto. El autor
+escribió “Tormenta Eléctrica”; el asistente antiguo lo sustituyó por Trueno. Este libro no corrige esa
+diferencia silenciosamente: el movimiento exacto es pendiente. Tampoco afirma que sea el de mayor
+potencia oficial.
+Unova, vida y muerte
+Cobalion, Terrakion y Virizion. Se buscaron encuentros en zonas apropiadas de bosque/cueva y una
+relación con justicia. No hay tres episodios completos escritos. Keldeo requiere reunir al trío de
+espadachines en el equipo según la semilla aceptada; el sitio de reunión sigue abierto.
+Reshiram y Zekrom. Un objeto/piedra de invocación se rompe al usarlo y exige elegir a uno; fabricar o
+conseguir otro ejemplar permite obtener al opuesto más tarde. La decisión no puede bloquear la
+Pokédex individual para siempre. “Piedra Dragón” o “Piedra Gris” son nombres de trabajo. Kyurem se
+vincula a poseer ambos; su cueva de Axis y la relación exacta con fusiones no están escritas.
+DOCUMENTO INTERNO · v2.0 | 28 / 54
+
+===== PAGE 29 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Victini. Se pidió un viaje en barco a Isla Libertad. Debe resolverse si el nombre y lugar se conservan
+como visita externa o se adaptan a un enclave propio; no hay mapa aprobado ni duración de travesía.
+Xerneas y Yveltal. El historial contrastó conducta pacífica en un bosque y racha de derrotas de salvajes
+en una cueva. Los ejemplos fueron quinientos pasos sin debilitar y diez victorias. Se conservan como
+antecedente de una respuesta al comportamiento, no balance definitivo ni autorización para obligar a
+una tarea repetitiva larga.
+Cosmog, Necrozma y Ultraentes
+Cosmog. Se descartó rescatarlo en Lago Veraz o animar una copia de la escena de una bolsa atacada por
+Spearow. La semilla posterior es un cráter y un rescate/hallazgo. De él se obtiene una de sus
+evoluciones legendarias. El otro, Solgaleo o Lunala, debe poder conseguirse posteriormente en un lugar
+alto según día/noche, sin imponer exactamente las doce del reloj real.
+Necrozma. El usuario valoró un episodio de pérdida de luz y confronto inspirado en Ultrasol. El historial
+lo ubicaba en postgame y lo vinculaba a la apertura posterior de Ultraespacio. La relación final con el
+Eclipse principal y el DLC 2 está pendiente: no debe repetirse la misma catástrofe sin distinguir origen,
+escala y función.
+Ultraentes. Son uno de los intereses favoritos del autor y deben tener una misión larga de exploración,
+no necesariamente la misión final del juego. Se desean dimensiones/pequeños espacios con reglas
+propias y Solgaleo/Lunala como vínculo de viaje. Siete agujeros era una cifra histórica que no cubre
+automáticamente los once Ultraentes del inventario. Deben definirse distribución, repetición, capturas y
+retorno seguro.
+El maestro diferencia resonancias legendarias, anomalías ultra y ecos temporales. Esta clasificación
+organiza experiencias; no está implementada ni obliga a que todas aparezcan en el mismo DLC. Las
+Paradojas se relacionan especialmente con Ecos, sin ser simplemente otro grupo de legendarios
+estáticos.
+Hoopa, Zygarde y Arceus no son misiones genéricas repetidas
+Hoopa queda concentrado en DLC 1. Perseguir anillos por rutas era una propuesta antigua, sustituida
+como centro por el arco de Gael. Zygarde es el acompañante de toda la campaña; no se añade otra
+misión para obtenerlo ignorando ese vínculo. Arceus se sitúa en la culminación de los diez Pilares y la
+Flauta. Los tres necesitan reglas propias de disponibilidad y reintento, no duplicaciones de un gestor de
+cazas.
+Base documental: H, líneas 94008–95605 y 103259–103600; M1 §§97–101; M0, «Distribución de legendarios»; C, preferencia por
+muchas capturas difíciles y DLC 2 orientado por pistas. Los topónimos antiguos y cifras históricas están deliberadamente separados de
+la versión vigente.
+DOCUMENTO INTERNO · v2.0 | 29 / 54
+
+===== PAGE 30 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+13. Dossier completo de personajes
+Criterio para el elenco
+Las fichas siguientes describen todo lo recuperado de cada personaje: función, vínculo, arco, diseño, voz
+y estado de realización. Un campo vacío de canon se declara pendiente. No se asignan nombres,
+apellidos, edades, parentescos, equipos Pokémon o traumas para que la ficha parezca completa. Los
+personajes de referencia gráfica no pasan a existir dentro de Axis por haberse usado sus sprites.
+13.1. Protagonista masculino
+Identidad narrativa. Joven nativo de Axis, personaje original y opción jugable masculina. No es el
+campeón de Sinnoh ni una reencarnación o viajero temporal conocido. Nombre, apellido, edad exacta y
+familia están abiertos. La condición de protagonista no prueba una selección divina desde el nacimiento.
+Papel en la historia. Es quien encuentra al Core, acepta acompañarlo y realiza el viaje de restauración.
+Su arco observable pasa de habitante local a agente capaz de recorrer, comprender y alterar la región.
+No existe un temperamento dialogado completo: la dirección visual es sobria y aventurera, pero no
+autoriza escribirlo como héroe sarcástico, prodigio de combate o persona muda por defecto.
+Relación con Zygarde. Cooperación que crece en confianza; no dueño del legendario desde el principio.
+La petición de captura al final debe ser un acontecimiento con peso. Falta el hecho concreto por el que
+el Core decide acompañarlo y no a Gael.
+Relación con Gael. Comparación entre jóvenes del entorno del profesor y del pueblo. La historia de
+infancia común y el carácter exacto de su relación están por escribir. No está confirmado que sean
+hermanos, mejores amigos o desconocidos hasta el laboratorio.
+Diseño visual vigente como dirección. Cabello castaño cobrizo, sin gorra en el brief de trabajo más
+reciente; chaqueta azul petróleo/teal oscuro, progresivamente cerrada para mejorar su lectura; pantalón
+y calzado oscuros; camiseta clara reducida; acento verde de Zygarde, cercano a #B9FF66, pequeño y
+situado en la exploración reciente como tirador del cierre. El diseño debe leerse sobre mapas Añil/BW y
+no ser un recolor reconocible de un protagonista existente.
+Cabello y rostro. Se pidió una silueta de pelo con dirección y grupos claros, sin masa de casco que cierre
+la cara. La mirada tiene que resultar legible en la escala de juego, no solo ampliada. No se fijó color
+canónico de ojos, tipo de piel con código definitivo, cicatriz, lunar ni rasgo físico narrativamente
+importante. Los píxeles actuales no son equivalentes a una descripción realista de rostro aprobada.
+Ropa y accesorios. Las últimas propuestas no llevan mochila. La ausencia es de esa exploración de
+sprites, no una solución narrativa del transporte del Core. No hay guantes, insignias, capucha, botas
+específicas o equipo científico definitivo. El acento verde es una decisión artística, no un poder visible ni
+una marca del elegido.
+Escala. El trabajo actual se construye a 32×32 nativos y se entrega a 64×64 mediante ampliación exacta
+2×. Este es el método adoptado después de pruebas fallidas a 64×64; no es una ley para que toda
+anatomía ocupe el mismo rectángulo. Se busca escala coherente entre humanos normales, con
+diferencias justificadas para niños, ancianos o cuerpos excepcionales.
+Estado real al cierre. La carpeta vigente es front_reference_edit_v07. Hay tres candidatas y una
+selección C realizada por Codex, todavía sin aprobación humana. Las pruebas anteriores V01–V06 y las
+cuatro vistas de una versión anterior no constituyen una base final. No existe una caminata aprobada ni
+autorización para producir todo el elenco a partir de C.
+13.2. Protagonista femenina
+Identidad narrativa. Opción jugable original y nativa de Axis. No es Dawn ni la campeona de Sinnoh. No
+se ha escrito una campaña distinta por género, ni se estableció que ambos protagonistas coexistan
+como dos héroes canónicos en el modo individual.
+Diseño confirmado. Cabello azul marino profundo, casi nocturno, conservando lectura azul mediante
+luces y sombras. Comparte la dirección de acento verde Zygarde y lenguaje BW/Añil. La altura corporal
+DOCUMENTO INTERNO · v2.0 | 30 / 54
+
+===== PAGE 31 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+debe sentirse compatible con el estándar humano, sin agrandarla o reducirla arbitrariamente porque sea
+la protagonista femenina.
+Campos pendientes. Nombre, edad, rostro, peinado concreto, ojos, prendas, calzado, ubicación del
+verde, accesorios, equipamiento y retrato de combate. No se confirmó falda, pantalón, vestido, gorra,
+coletas o melena. Las referencias femeninas de BW/Añil sirvieron para estudiar proporciones, no para
+adjudicarle sus diseños.
+Estado gráfico. Se preparó una carpeta de producción y templates, pero no un personaje final aprobado.
+El extenso trabajo sobre el masculino no debe contarse como progreso artístico completo de la
+femenina. Las vistas y animaciones de ambas opciones deberán respetar las mismas reglas de equipo y
+montura que la historia requiera.
+13.3. Gael
+Identidad y rol. Rival llamado Gael, relacionado con el profesor y el entorno inicial. Orgulloso, serio y
+competente como dirección de trabajo. El antecedente de aprendiz prodigio es consistente con su
+conflicto, pero no están fijados edad, apellido, origen familiar, rango formal o especialidad Pokémon.
+Deseo central. Ser reconocido por capacidad propia y dejar de quedar detrás de alguien al que el mundo
+parece responder. Su herida está en la elección: Core, Pilares y reconocimiento público se orientan al
+protagonista. Su respuesta posterior no debe reducirse a rabia por perder una batalla.
+Contradicción. Puede defender el mérito y terminar reclamando poder absoluto; puede criticar que
+dioses elijan y después imponerse él como quien decide. Esa contradicción une su arco emocional con
+Genesis. Falta escribir actos concretos que hagan visible su evolución sin convertirlo en villano evidente
+desde la primera frase.
+Escenas confirmadas o dirigidas. Presentación temprana; primer combate con razón distinta del trámite
+de iniciales; presencia recurrente de rival durante el viaje; desafío y conversación antes de la obtención
+del último Fragmento; posterior involucramiento/liderazgo en Genesis; confrontación importante del
+DLC 1. Equipos, victorias parciales, ayuda al protagonista y diálogos entre esos hitos están abiertos.
+Diseño histórico recuperado. El autor eligió una base de Silver para una beta y pidió que Gael fuera
+rubio. La exploración lo vistió de bordó y gris, con ojos claros/fríos y calzado azul oscuro como
+diferencia respecto del profesor. Este diseño se conserva como antecedente autoral, pero el sprite de
+Silver/recolor no es arte final permitido por la dirección actual de personajes originales.
+Paleta histórica, no paleta final. Pelo: base #E0C870, sombra #A08840, brillo #F8F8C8, contorno
+#604820. Campera: #782030, #481018 y #A03848. Ropa inferior: #404040 y #606060. Se
+propusieron ojos #58A0D8 y se describieron como elegidos en la revisión histórica; las capturas
+originales no se revalidaron aquí. Botas: #203050 y #406090 aparecen como la solución final reportada
+por aquella conversación. Ojos rojos, grises y botas rojas/marrones fueron alternativas, no deben
+mezclarse todas.
+Continuidad visual pendiente. El rubio es un antecedente explícito del autor que merece ratificarse al
+rediseñar; no hay una decisión posterior clara que lo vuelva pelirrojo o moreno. La chaqueta bordó
+puede conservar contraste con el protagonista, pero no se declara uniforme oficial de templos ni de
+Genesis. La expresión seria no obliga a dibujar cejas permanentemente furiosas.
+Final. En la revisión actual su desenlace está abierto. El suero mortal de Celebi/Jirachi se archiva como
+historia anterior. No describirlo como muerto en diálogos del juego base ni escribir su redención por
+ausencia de un final decidido.
+13.4. El profesor de Axis
+Identidad vigente. Profesor original, investigador y figura de orientación. No es Serbal ni está
+confirmado como su antepasado. Los nombres Cedro, Alerce y el papel de Serbal joven circularon en
+antecedentes; ninguno quedó fijado como nombre del nuevo profesor.
+Función pública. Recibe o guía al protagonista, participa en la entrega de iniciales y estudia lo ocurrido
+con el Core. El pueblo conoce un laboratorio local, no necesariamente una instalación clandestina de
+escala mundial. Su especialidad exacta, institución y reputación están pendientes.
+DOCUMENTO INTERNO · v2.0 | 31 / 54
+
+===== PAGE 32 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Verdad interna. Tiene pasado ex-Genesis. Conoce métodos, personas o investigaciones de la
+organización. El autor quiere descubrirlo más adelante y por insinuaciones. Su ruptura implica una
+decisión moral relevante, pero no se han determinado responsabilidad, culpa, investigaciones previas o
+víctimas.
+Comportamiento y voz. Sobriedad, conocimiento y cautela son compatibles con el rol. No está
+aprobado que mienta en cada escena, que manipule al protagonista o que sea un mentor impecable. La
+tensión procede de lo que sabe y no comunica todavía, no de un uniforme de villano oculto tras la bata.
+Relaciones. Profesor de Gael o mentor relevante en antecedentes; guía del protagonista; antiguo colega
+de Genesis. Participará como aliado en combate. No se fijó ningún Pokémon de su equipo ni un
+parentesco con el líder de la organización.
+Diseño. Debe ser propio y no revelar el pasado de inmediato. La beta trabajó un profesor joven
+derivado de Serbal, con ropa y calzado en marrones/grises. Ese esquema no es el diseño actual cerrado.
+Edad, pelo, ojos, bata o camiseta, gafas y accesorios permanecen abiertos.
+13.5. Líder Supremo original de Genesis
+Hecho central. Es una persona distinta de Gael, ya dirige la organización durante el juego base y huye
+de Axis cuando fracasa el plan de dominar el poder de Arceus. No se sabe aún si reaparece en DLC 1.
+Función temática. Representa la versión institucional del control científico: convertir conocimiento en
+autoridad absoluta. No se han escrito un trauma personal, un diagnóstico médico, un parentesco o una
+promesa de salvar a alguien como motivación individual.
+Diseño pendiente. Nombre, edad, género, paleta, uniforme, rostro, emblema concreto y equipo. Doctor
+Helix y Aster Vhal aparecen como nombres propuestos en un resumen antiguo, no como identidades
+confirmadas. No escoger uno por estar impreso en este archivo.
+13.6. Investigadores, reclutas y mandos de Genesis
+Identidad colectiva. Científicos de campo serios y organizados. El diseño puede separar rangos
+mediante equipo, prendas y silueta; no hay un número cerrado de comandantes. El autor rechazó que
+parecieran idiotas o delincuentes genéricos.
+Recursos de diseño mencionados. Uniformidad, instrumentos, laboratorios, experimentación celular y
+emblema de tubos cruzados. Carbón, blanco clínico, petróleo y acentos de contraste son propuestas.
+Los recolores masculinos/femeninos enseñados en el chat se consideran históricos.
+No fijado. Nombres individuales, escuadrones, tipos de combate, Pokémon característicos, sexo del
+mando, lealtades o rivalidades. No se puede describir una jerarquía de tres comandantes con nombres
+inventados ni afirmar que todos los integrantes conocen el plan completo.
+13.7. Los cinco Guardianes humanos
+Los titulares de Umbral, Corriente, Impulso, Masa y Memoria aún no tienen fichas individuales cerradas.
+El cargo se transmite cultural o familiarmente y su significado puede cambiar según la persona. No
+necesariamente reciben un mandato divino demostrable; pueden custodiar una tradición cuya
+explicación se perdió.
+Umbral: debe presentar el lenguaje del sistema sin sobrecargar al jugador. Corriente: existe custodia
+humana, expresamente confirmada. Impulso: custodia de un ámbito de movimiento/energía. Masa:
+custodia ligada a estructura y estabilidad. Memoria: último contacto de la primera mitad con una
+mediación humana entre la comunidad y el Pilar.
+La Guardiana de la beta de P1 tenía texto y combate, pero no se confirmó que su género, sprite, equipo
+y frases deban sobrevivir. Tadeo es un entrenador de beta/pruebas, no su nombre ni el de un Guardián
+definitivo. Los cinco deben diferenciarse, pero este libro no distribuye arbitrariamente orgullo,
+aburrimiento o fe entre ellos.
+DOCUMENTO INTERNO · v2.0 | 32 / 54
+
+===== PAGE 33 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+13.8. Policía o guardia del acceso restringido
+Existe por la sección temprana de sigilo. Bloquea una zona y entra al oír la señal; detectar al
+protagonista activa una consecuencia leve de tutorial. Después del encuentro con el Core debe
+reaccionar de forma razonable y conducir la situación hacia el profesor.
+Nombre, rango, edad, rostro, equipo y continuidad posterior no están fijados. No se aprobó un agente
+corrupto que encubra una infracción a cambio de un favor. También sigue abierto el motivo público
+preciso de la restricción: peligro de ruinas, seguridad, investigación u otro.
+13.9. NPC de investigación legendaria y museo
+El orientador del DLC 2 es una figura propia todavía sin nombre ni diseño. Posee información, informes
+o contactos suficientes para ofrecer pistas; no es Galletano literal. Se debe decidir si es investigador,
+explorador, archivista u otra función antes de escribir su biografía.
+El museo está confirmado como arco de Tablilla, pero no su personal. Curador, director, visitante o
+custodio son roles posibles, no personajes existentes. No se fusionan ambos NPC automáticamente
+para ahorrar arte ni se inventa un vínculo con Genesis sin autorización.
+13.10. Zygarde y los cinco núcleos
+Zygarde: serio, inexpresivo en gran medida, funcional y comprometido con el equilibrio. Core inicial:
+compañía temprana debilitada que decide cooperar, habla telepáticamente y no es forma 10%. Otros
+cuatro Cores: partes necesarias de la reconstrucción, de mayor importancia que las células comunes;
+nombres, voces, roles emocionales y sitios exactos no establecidos.
+No se aprobó que cada núcleo sea una personalidad elemental diferente. La propuesta histórica de
+funciones diferenciadas es material de diseño, no permiso para escribir cinco mascotas. El personaje
+agregado puede recuperar memoria/capacidad sin borrar la individualidad o voluntad implicada en su
+reunión.
+13.11. Entidades y voces con función narrativa
+Dialga y Palkia: derrotados en el prólogo; ligados a Convergencia, Cadena Roja y elección. No son ahora
+los responsables confirmados de secuestrar a un campeón amnésico. Giratina: invade, es repelido y
+habita Distorsión; no fue fijado como villano controlado por Genesis. Uxie/Mesprit/Azelf: tres pruebas
+del Alma; no tres Guardianes humanos. Bramaluna Alpha: dominante del Eco, no custodio sagrado. Trío
+de las Nubes: oposición al despertar en P10, motivación profunda pendiente. Arceus: dormido, destino
+de Flauta y final de tres fases; razón exacta de la prueba aún por ratificar. Hoopa Desatado: centro
+legendario del DLC de Gael; control, libertad y captura final todavía requieren guion actual.
+La voz etérea de la beta anunciaba la flauta y el elegido. Su identidad nunca quedó cerrada. No se debe
+declarar que era Arceus, el primer Guardián, Dialga o Zygarde únicamente por el contenido del texto. En
+la apertura vigente no reemplaza la ambigüedad por una explicación omnisciente.
+Base documental: M1 §§9–12, 24–38, 43–50, 55–69, 93–103; M0, Style Bible; H, líneas 105705–106225; C, briefs y
+rechazos/estado final de sprites V07.
+DOCUMENTO INTERNO · v2.0 | 33 / 54
+
+===== PAGE 34 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+14. Dirección artística, sonido y reglas de
+representación
+Qué estilo se busca
+RPG Maker XP y Essentials 21.1 son el motor elegido. La apariencia es 2D, con escenarios inspirados en
+Añil/Gen 4 y humanos cuyo lenguaje de exploración se acerca a BW. No se reabre la discusión de
+Godot cada vez que una prueba visual falla. Las rocas facetadas del 3D DS y la aspereza de modelos mal
+importados no son el objetivo.
+“Con volumen” significa que el dibujo, las sombras, la composición y las capas sugieren profundidad; no
+que todo deba convertirse a 3D. El Mundo Distorsión necesita una solución de representación 2D
+compatible con la plataforma, no una simulación física completa. Girar un recurso, cambiar la orientación
+jugable o usar transiciones entre zonas son conceptos técnicos que deben verificarse, no capacidades ya
+entregadas.
+Escala humana y originalidad
+Se busca un estándar coherente de altura, cabeza, perspectiva y densidad de píxel. No se declaró que
+cada humano tenga la misma altura física exacta: las excepciones justificadas existen. Tampoco se
+pretende que la originalidad se consiga deformando piernas o cambiando la posición de ojos por no
+parecerse a una referencia.
+Los primeros intentos a 64×64 fueron demasiado estilizados; otras rondas se volvieron cabezonas o
+rígidas. Se pasó a diseño nativo de 32×32, ampliación exacta 2× y edición por Aseprite MCP. El cuerpo
+fue estudiado con referencias y máscaras. Ninguna coincidencia numérica resolvió por sí sola el estilo.
+En el cierre de este chat sigue pendiente aprobar un frontal masculino. El artista/agente escogió una
+candidata C de V07, pero no tiene autorización para fabricar nuevos personajes o caminatas con ella.
+Las cuatro vistas de una versión antigua fueron inicialmente sugeridas como base y después quedaron
+superadas por rechazos. No existe una hoja maestra final aprobada de todo el elenco.
+Estados visuales de Axis
+Inicio: pueblo habitable y tranquilo; los vestigios antiguos forman parte del paisaje. No hay cientos de
+portales ni cielo destruido desde el minuto uno. Intermedio: aparecen señales progresivas y ecos que
+alteran la experiencia. Tardío: auroras, luna demasiado grande, grietas luminosas, movimiento anómalo
+de estrellas, atardecer prolongado y noche alterada. El nombre Eclipse de Convergencia es una
+denominación de trabajo.
+La noche roja o luna de sangre se valoró como posibilidad estética. No se estableció un ciclo exacto ni
+una pantalla permanentemente roja. La variedad busca que el deterioro sea visible sin volver monótonas
+muchas horas de juego.
+Arquitectura y gramática ambiental
+Las ruinas deben parecer antiguas y parcialmente erosionadas, no gimnasios modernos con colores
+nuevos. El primer Pilar es introductorio y legible. Su arquitectura no tiene que competir con las
+estructuras del final. El portal de montaña, en cambio, necesita un carácter singular que permita
+reconocerlo en la visita de campaña.
+Los gráficos actuales limitan parte de la identidad: el laboratorio exterior de 7×8 es una fachada
+turquesa genérica contextualizada por cartel y jardín; la versión grande mide 10×17 incluyendo sombra
+y resultaba demasiado dominante. Cueva 1 permite suelo, paredes y antorchas, pero todavía no aporta
+un lenguaje propio de mampostería e inscripciones. Esas limitaciones se documentan en lugar de llamar
+“templo final” a una cueva vacía.
+DOCUMENTO INTERNO · v2.0 | 34 / 54
+
+===== PAGE 35 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Sonido y música recuperados
+La señal del Core está basada en una prueba del autor: Porygon agudizado, con lectura electrónica. El
+archivo final y las condiciones de uso necesitan revisión. Los diálogos telepáticos deben ser sobrios, no
+una voz chistosa de robot.
+En el historial, el pueblo inicial debía tener música nostálgica: ni excesivamente alegre, ni triste, ni
+inquietante. Ese matiz es un antecedente autoral que conviene conservar al escoger su tema. No existe
+una composición aprobada ni instrumento obligatorio. El prólogo necesita impactos, silencio, cambios de
+tiempo y consecuencias; no se fijaron pistas o una partitura.
+La restauración, el despertar de Pilares, la reunión celular, la Reconstrucción y la Flauta necesitan
+identidades sonoras distinguibles. Todavía no se escribieron leitmotivs individuales para Gael, Genesis,
+el profesor o los diez Pilares. No se deben inventar sus melodías dentro de una síntesis histórica.
+Base documental: M0, Style Bible; M1 §§8–20, 52–53, 77–79; H, mensajes sobre música del pueblo, febrero de 2026; C, evolución del
+pipeline gráfico y rechazos.
+DOCUMENTO INTERNO · v2.0 | 35 / 54
+
+===== PAGE 36 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+15. Sistemas de juego que afectan a la historia
+Estructura de aventura
+No se sigue una Liga de ocho gimnasios como objetivo principal. Los diez Pilares y la restauración son el
+eje. El combate Pokémon, entrenamiento, captura, exploración y evolución siguen formando parte del
+juego; eliminar gimnasios no elimina rivales, entrenadores o episodios de batalla.
+Los límites de nivel por progreso fueron discutidos desde el historial. No existe una tabla definitiva de
+diez límites ni niveles finales de Guardianes. Los ejemplos de Arceus 95/98/100 o tres fases a 100 no
+son balance aprobado. La dificultad y duración total de campaña/DLC aún no se midieron sobre
+contenido final.
+La recuperación de Zygarde funciona como progresión de exploración con regreso a zonas conocidas.
+No se debe castigar al jugador por no llevarlo entre sus seis Pokémon durante la campaña: su rol de
+campo está fuera del equipo hasta el cierre.
+Megaevolución
+Es una mecánica principal, no un premio reservado para la última hora. Se prevén Mega Aro/Brazalete y
+piedras de distintas especies. El punto exacto de obtención está abierto. El inventario deseado
+incorpora Megas anteriores y referencias nuevas mencionadas por el autor, pero la implementación
+local no estaba completa.
+Mega Zygarde no pertenece al juego base. No se confunde su ausencia con la de Complete: 100% se
+estabiliza tras Alma y la Mega se reserva para Gael/DLC 1. Una Mega Dex que registre formas vistas,
+usadas o piedras obtenidas es una dirección propuesta; su interfaz y premios siguen pendientes.
+Rareza y completado
+Los Alpha deben sentirse raros; alrededor de 3% fue un punto de partida, no una constante final. Puede
+haber Alpha aleatorios y fijos de escena, como Bramaluna del Eco. Se desea posibilidad de shiny Alpha y
+registros de colección, sin que el 100% ordinario exija una shiny dex completa.
+El objetivo de Pokédex es cercano a cuatrocientas especies entre contenido base y expansiones. El
+autor disfruta completar, pero no quiere una lista inabarcable de setecientos u ochocientos. La lista
+recuperada tiene 412 nombres, lo que no autoriza reducirla arbitrariamente. Tampoco equivale a un
+roster final de 412 capturables antes de Arceus.
+Encuentros visibles y clásicos
+Debe poder activarse o desactivarse la presencia de Pokémon fuera de la hierba. Se habló de modos
+clásico, visible y mixto; el requisito mínimo es que el jugador pueda escoger la experiencia clásica o
+visible. La coherencia deseada es compartir tablas y no cambiar arbitrariamente la disponibilidad de
+especies.
+Shinies visibles, Alpha de mayor tamaño e indicadores discretos son propuestas a probar. No están
+confirmados como comportamiento actual. La interacción de encuentros visibles con cooperativo,
+rendimiento y progreso individual sigue abierta.
+Capturas legendarias
+Se quieren encuentros más exigentes que lanzar una esfera en turno uno. Las condiciones posibles
+incluyen número de turnos, PS, fase de jefe, estado de una misión o fenómeno ambiental. No se aplican
+todas a todos los legendarios.
+El juego debe comunicar por qué una esfera no puede usarse y cuándo vuelve a ser posible. No se
+aprobó que un intento prohibido consuma un objeto o turno. Master Ball, Bola Rápida, efectos de
+habilidades, derrota accidental, reinicio y persistencia de fase están por resolver. La dureza buscada no
+equivale a prolongar únicamente tiradas de azar.
+DOCUMENTO INTERNO · v2.0 | 36 / 54
+
+===== PAGE 37 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Cooperativo opcional y completado individual
+Dos jugadores pueden explorar juntos o separados y escoger combates cooperativos cuando
+corresponda. El modo compartido no debe obligarlos a luchar siempre de a dos ni necesitarse
+mutuamente para avanzar. La historia y el 100% deben poder completarse sin conexión.
+El Cordón Unión permite resolver evoluciones por intercambio individualmente. Intercambios y PvP son
+funciones deseadas además del co-op. Los puzzles cooperativos pueden aportar secretos, atajos o
+recompensas, pero toda recompensa importante para completar debe tener alternativa individual.
+La decisión de diseño de que una IA sustituya al jugador desconectado no está implementada de forma
+acreditada en la beta actual. Las pruebas detectaron espera sin avance. El capítulo técnico separa
+deseo, código parcial y evidencia observada. No se describe el juego listo como “co-op con IA de relevo
+funcional”.
+Base documental: M1 §§81–101; M0, colecciones y multiplayer; C, aclaraciones de co-op opcional, Linking Cord, Alpha, encuentros y
+baseline.
+DOCUMENTO INTERNO · v2.0 | 37 / 54
+
+===== PAGE 38 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+16. Pokédex, formas y alcance del contenido
+Qué lista está realmente recuperada
+El inventario transcrito del usuario contiene 412 nombres distintos: 336 en el bloque general, 7
+Paradojas, 11 Ultraentes y 58 legendarios/singulares. Es una lista candidata, no la versión definitiva del
+roster ni una distribución cerrada entre campaña y expansiones. El objetivo creativo posterior es
+aproximarse a cuatrocientas especies, con una base que podría rondar 350 y expansiones que
+completen el conjunto. No se fijó una ecuación exacta 350+25+25.
+La lista se preserva sin corregir silenciosamente Drifloom y Clawitzee; las posibles normalizaciones
+Drifloon y Clawitzer deben verificarse como IDs al implementar. Mr. Mime, Mime Jr. y Mr. Rime son
+entradas separadas. Las formas regionales, evoluciones alternativas y condiciones de obtención no se
+deducen automáticamente del nombre.
+El caso Bramaluna obliga a revisar la selección: su aparición Alpha en el Pilar 7 está decidida, pero no
+figura en los siete Paradoja futuros del inventario heredado. La misión histórica de Phione requiere
+Ditto, ausente de la lista. Diancie se vincula a Sableye, también ausente del bloque de especies
+entregado. Mega Latias/Mega Latios se nombran entre las formas aunque Latias y Latios no están en el
+listado de 412. Son pendientes de reconciliación, no errores que se arreglan borrando o añadiendo
+especies sin permiso.
+16.1. Bloque general — 336 entradas, orden preservado
+Turtwig; Grotle; Torterra; Litten; Torracat; Incineroar; Sobble; Drizzile; Inteleon; Starly; Staravia;
+Staraptor; Bidoof; Bibarel; Kricketot; Kricketune; Shinx; Luxio; Luxray; Abra; Kadabra; Alakazam;
+Magikarp; Gyarados.
+Budew; Roselia; Roserade; Zubat; Golbat; Crobat; Geodude; Graveler; Golem; Onix; Steelix; Cranidos;
+Rampardos; Shieldon; Bastiodon; Machop; Machoke; Machamp; Psyduck; Golduck; Burmy; Wormadam;
+Mothim; Wurmple.
+Silcoon; Beautifly; Cascoon; Dustox; Combee; Vespiquen; Pachirisu; Buizel; Floatzel; Cherubi; Cherrim;
+Shellos; Gastrodon; Heracross; Aipom; Ambipom; Drifloom; Drifblim; Buneary; Lopunny; Gastly;
+Haunter; Gengar; Misdreavus.
+Mismagius; Murkrow; Honchkrow; Glameow; Purugly; Goldeen; Seaking; Barboach; Whiscash;
+Chingling; Chimecho; Stunky; Skuntank; Meditite; Medicham; Bronzor; Bronzong; Ponyta; Rapidash;
+Bonsly; Sudowoodo; Mime Jr.; Mr. Mime; Mr. Rime.
+Happiny; Chansey; Blissey; Cleffa; Clefairy; Clefable; Chatot; Pichu; Pikachu; Raichu; Hoothoot;
+Noctowl; Spiritomb; Gible; Gabite; Garchomp; Munchlax; Snorlax; Unown; Riolu; Lucario; Wooper;
+Quagsire; Clodsire.
+Wingull; Pelipper; Girafarig; Farigiraf; Hippopotas; Hippowdon; Azurill; Marill; Azumarill; Skorupi;
+Drapion; Croagunk; Toxicroak; Carnivine; Remoraid; Octillery; Finneon; Lumineon; Tentacool;
+Tentacruel; Feebas; Milotic; Mantyke; Mantine.
+Snover; Abomasnow; Sneasel; Weavile; Rotom; Gligar; Gliscor; Nosepass; Probopass; Ralts; Kirlia;
+Gardevoir; Gallade; Lickitung; Lickilicky; Eevee; Vaporeon; Jolteon; Flareon; Espeon; Umbreon; Leafeon;
+Glaceon; Sylveon.
+Swablu; Altaria; Togepi; Togetic; Togekiss; Houndour; Houndoom; Magnemite; Magneton; Magnezone;
+Tangela; Tangrowth; Yanma; Yanmega; Tropius; Rhyhorn; Rhydon; Rhyperior; Duskull; Dusclops;
+Dusknoir; Porygon; Porygon2; Porygon-Z.
+Scyther; Scizor; Elekid; Electabuzz; Electivire; Magby; Magmar; Magmortar; Smoochum; Jynx; Swinub;
+Piloswine; Mamoswine; Snorunt; Glalie; Froslass; Absol; Lillipup; Herdier; Stoutland; Munna; Musharna;
+Pidove; Tranquill.
+Unfezant; Audino; Timburr; Gurdurr; Conkeldurr; Larvitar; Pupitar; Tyranitar; Venipede; Whirlipede;
+Scolipede; Darumaka; Darmanitan; Sigilyph; Solosis; Duosion; Reuniclus; Emolga; Frillish; Jellicent;
+Elgyem; Beheeyem; Cubchoo; Beartic.
+DOCUMENTO INTERNO · v2.0 | 38 / 54
+
+===== PAGE 39 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Druddigon; Deino; Zweilous; Hydreigon; Larvesta; Volcarona; Fletchling; Fletchinder; Talonflame;
+Pancham; Pangoro; Honedge; Doublade; Aegislash; Swirlix; Slurpuff; Binacle; Barbaracle; Clauncher;
+Clawitzee; Dedenne; Carbink; Goomy; Sliggoo.
+Goodra; Bergmite; Avalugg; Dratini; Dragonair; Dragonite; Noibat; Noivern; Oricorio; Cutiefly;
+Ribombee; Wishiwashi; Mudbray; Mudsdale; Stufful; Bewear; Comfey; Pyukumuku; Togedemaru;
+Mimikyu; Bruxish; Jangmo-o; Hakamo-o; Kommo-o.
+Bagon; Shelgon; Salamence; Nickit; Thievul; Wooloo; Dubwool; Applin; Flapple; Appletun; Dipplin;
+Hydrapple; Sinistea; Polteageist; Hatenna; Hattrem; Hatterene; Corsola; Cursola; Milcery; Alcremie;
+Cyclizar; Dreepy; Drakloak.
+Dragapult; Beldum; Metang; Metagross; Pawmi; Pawmo; Pawmot; Nacli; Naclstack; Garganacl;
+Toedscool; Toedscruel; Tinkatink; Tinkatuff; Tinkaton; Bombirdier; Flamigo; Dondozo; Tatsugiri;
+Frigibax; Arctibax; Baxcalibur; Duraludon; Archaludon.
+16.2. Paradojas · 7 entradas
+Ferrodada; Ferrosaco; Ferropalmas; Ferrocuello; Ferropolilla; Ferropúas; Ferropaladín.
+16.3. Ultraentes · 11 entradas
+Nihilego; Buzzwole; Pheromosa; Xurkitree; Celesteela; Kartana; Guzzlord; Poipole; Naganadel;
+Stakataka; Blacephalon.
+16.4. Legendarios y singulares · 58 entradas
+Articuno; Zapdos; Moltres; Mewtwo; Mew; Raikou; Entei; Suicune; Lugia; Ho-Oh; Celebi; Kyogre;
+Groudon; Rayquaza; Jirachi; Uxie; Mesprit; Azelf; Dialga; Palkia; Giratina; Heatran; Regirock; Regice.
+Registeel; Regigigas; Cresselia; Darkrai; Manaphy; Phione; Shaymin; Arceus; Victini; Cobalion; Terrakion;
+Virizion; Tornadus; Thundurus; Landorus; Reshiram; Zekrom; Kyurem; Keldeo; Meloetta; Xerneas;
+Yveltal; Zygarde; Diancie.
+Hoopa; Volcanion; Cosmog; Cosmoem; Solgaleo; Lunala; Necrozma; Magearna; Marshadow; Zeraora.
+16.5. Megaevoluciones y formas mencionadas
+Se conservan 47 renglones de referencias del usuario. La agrupación original mezcla Megas, formas
+primigenias y una mención conjunta a Mega Zygarde/Completo. No son 47 especies distintas ni 47
+recursos probados. La disponibilidad oficial o de plugins de cada forma no fue verificada para este libro;
+aquí se registra la intención del proyecto.
+Kanto, según la agrupación aportada: Mega Alakazam; Mega Gengar; Mega Gyarados; Mega Mewtwo
+X; Mega Mewtwo Y; Mega Dragonite; Mega Raichu X; Mega Raichu Y; Mega Clefable.
+Johto: Mega Steelix; Mega Scizor; Mega Heracross; Mega Houndoom; Mega Tyranitar.
+Hoenn: Mega Gardevoir; Mega Gallade; Mega Medicham; Mega Altaria; Mega Glalie; Mega Salamence;
+Mega Metagross; Mega Latias; Mega Latios; Mega Absol; Mega Absol Z; Mega Rayquaza; Kyogre
+Primigenio; Groudon Primigenio; Mega Chimecho.
+Sinnoh: Mega Lopunny; Mega Garchomp; Mega Lucario; Mega Lucario Z; Mega Abomasnow; Mega
+Staraptor; Mega Froslass; Mega Heatran; Mega Darkrai.
+Teselia/Unova: Mega Audino; Mega Scolipede.
+Kalos: Mega Diancie; Mega Zygarde —con la aclaración de que Forma Completa no es lo mismo—; Mega
+Barbaracle.
+Alola: Mega Zeraora; Mega Magearna.
+Paldea: Mega Baxcalibur; Mega Tatsugiri.
+La auditoría que comunicó Codex encontró 48 Megas definidas en la beta y no acreditó las nuevas
+referencias Z-A de esta lista. Esa cifra técnica no valida automáticamente todos los nombres planeados.
+Mantener separados especie, forma, dato y gráfico.
+DOCUMENTO INTERNO · v2.0 | 39 / 54
+
+===== PAGE 40 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Exclusiones e incorporaciones por decidir
+El historial retiró Deoxys, Genesect, Código Cero, Silvally, Tapus y legendarios/singulares de
+generaciones 8 y 9. La lista posterior refleja en gran medida esa elección. No significa que se hayan
+prohibido Pokémon normales de esas generaciones: Sobble, Dreepy, Tinkatink o Frigibax forman parte
+del inventario.
+La selección submarina y Bramaluna son necesidades de contenido que deben cruzarse con el total
+deseado. También hay que decidir si todas las formas regionales de líneas como Wooper, Mr. Mime,
+Corsola, Darumaka y otras estarán disponibles. Completar una línea evolutiva no puede exigir una forma
+que nunca aparece en el juego.
+La distribución final necesita una fila por especie: campaña, postgame base o DLC; método de
+captura/obtención; zona; requisito; disponibilidad en ambos modos de encuentros; posibilidad
+individual; evoluciones y variantes. La lista de nombres por sí sola no asegura el 100%.
+Base documental: M0, capítulo 08, líneas 925–1420; C, lista del usuario y auditoría de especies; H, exclusiones del 9 de febrero de
+2026. Los recuentos se comprobaron sobre la transcripción recuperada.
+DOCUMENTO INTERNO · v2.0 | 40 / 54
+
+===== PAGE 41 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+17. Historia de las versiones: qué fue sustituido y qué
+no debe perderse
+Primera idea, separada del proyecto actual
+El autor recordó un concepto inicial en el que podían enfrentarse legendarios de nivel muy bajo porque
+una fuerza misteriosa les había quitado el poder. Esa idea se considera material para otro juego futuro.
+No debe convertirse en la explicación de por qué todos los legendarios de Ecos aparecen débiles desde
+el comienzo.
+Sinnoh, Kanto de base y nombres antiguos
+La beta utilizaba una base FRLG con recursos de Kanto y escenas parecidas a Esmeralda, mientras el
+argumento pasó por Sinnoh antes de Axis. Rift Town, Pueblo Paleta y rutas numeradas de Kanto/Sinnoh
+pertenecen a ese proceso. El hecho de que los laboratorios o mapas fuente tengan nombres conocidos
+no los convierte en localidades canónicas de Axis.
+Se propusieron nombres de asentamientos como Villa Alba, Ciudad Caudal, Villa Brontia, Ciudad
+Estrato, Aldea Mnemos, Ciudad Nexo, Villa Boreal, Ciudad Lúmina, Aldea Glífica y Bastión Axis. No hay
+aceptación definitiva de un atlas con esas ciudades. También aparecieron “Pueblo Pétreo” y “Laberinto
+del Orden” como nombres de trabajo. No se deben dar por oficiales en carteles o metadatos sin decisión
+nueva.
+Los títulos Zygarde Temporal Rift y variantes centradas solo en lo temporal anteceden a Ecos del
+Espacio-Tiempo. El autor corrigió que las anomalías son espaciales y temporales. Una síntesis que
+reduzca todo a viajes en el tiempo omite parte del concepto.
+El protagonista viajero y la memoria sellada
+Durante una etapa se usaron Lucas/Dawn porque el autor no podía producir sus sprites originales. El
+campeón de Sinnoh era convocado o trasladado físicamente a Axis; su equipo quedaba atrás y sus
+recuerdos se sellaban para evitar contradicciones temporales. Había una escena de Liga, tiempo
+congelado, encuentro con un antepasado de Serbal y memoria recuperada en los Pilares.
+Se mencionaron santuario de Convergencia, confeti detenido, explicación directa de Dialga/Palkia y
+nombres como Axel para el héroe. Este arco está descartado por la decisión de personajes originales
+nativos. No hay motivo para introducir una amnesia nueva solo para reutilizar escenas o un Pilar de
+Memoria ya planeado.
+Apertura y recorrido de la beta
+La beta empezaba de noche y pedía dormir. Dialga/Palkia o una voz misteriosa explicaban la crisis y el
+elegido. Después se seguía una presentación semejante a Esmeralda/FRLG: laboratorio, inicial y
+combate inmediato con rival. Al salir se oía un grito desde un laberinto; un policía entraba y el jugador se
+infiltraba. Si era descubierto, regresaba al comienzo.
+El Core esperaba en un espacio semejante a altar. Después del diálogo, el policía ofrecía ignorar la
+infracción si el jugador lo llevaba al profesor. El Core subía a la mochila. Para dar continuidad se añadió
+la misión del paquete: Mankey lo había robado, se lo derrotaba, se recuperaban paquete y Poké Flauta,
+se entregaba al profesor, se obtenían Pokédex/Poké Balls y se despertaba a un Snorlax que bloqueaba
+el camino.
+Esta secuencia se conserva como registro de lo construido. El sueño explicativo, el altar conveniente, el
+trato policial, la copia inmediata del rival, el paquete como enlace obligatorio y el Snorlax fueron
+descartados o mandados a reescritura. La señal, el sigilo, el Core y el regreso al profesor permanecen
+como núcleo de la nueva apertura.
+Primer Pilar antiguo
+La beta era una cueva de tres plantas. La primera contenía laberinto, entrenadores y oscuridad; la
+segunda, tres palancas ocultas detrás de rocas explicadas por un NPC. Activarlas no quitaba el obstáculo
+DOCUMENTO INTERNO · v2.0 | 41 / 54
+
+===== PAGE 42 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+y aparecía Geodude. Después se lo utilizaba para romper el bloqueo. La tercera contenía una Guardiana
+y un combate, tras el cual se obtenía el fragmento.
+El texto hablaba de recuperar el primer eco, de que la luz del Origen estaba fragmentada, de restaurar la
+Flauta y de encontrar diez células. La voz etérea anunciaba el acceso al Creador y la Guardiana
+reaccionaba a ella. No se ha identificado definitivamente esa voz. Los equipos y niveles de la beta no
+son los del nuevo Pilar del Umbral.
+La estructura de tres plantas para cada Pilar se abandonó. También el patrón de diez custodios
+equivalentes a líderes de gimnasio. El nuevo Umbral puede conservar tutorial ambiental y combate
+moderado, pero las palancas, Geodude, niveles, páginas de evento y texto requieren reescritura.
+Cambios en los Pilares y la Flauta
+Raíces fue el nombre temprano del primer Pilar; lo sustituye Umbral. Mundo Distorsión fue primero
+contenido solo de postgame y luego un Pilar; quedó fijado en número 6. El Trío del Lago pasó de tres
+Pilares separados a un complejo largo en número 8. P9 queda asociado a Dialga/Palkia y P10 a Origen.
+Hubo versiones que otorgaban la Flauta entera tras P9, otras que daban el último fragmento antes de
+Origen y otras que exigían la Flauta para entrar al recinto que contenía ese fragmento. La secuencia
+vigente elimina el círculo: se entra con nueve, se obtiene el décimo en el núcleo de P10 y se reconstruye
+la Flauta antes del traslado a Columna Lanza.
+Hada apareció como segunda fase de Arceus; fue reemplazada expresamente por Fantasma. Los Unown
+hacían varios traslados en versiones anteriores, pero el transporte final queda en Zygarde 10%. No
+quedó demostrado que el jugador debiera capturarlos a todos para viajar; no se reinstala esa búsqueda
+por una duda antigua.
+Cambios de Zygarde
+El sistema pasó por MO exclusiva, objeto especial, Cubo/Arca, seguidores, montura y transformaciones
+visuales. Las API y nombres de funciones usados en las respuestas eran a menudo pseudocódigo. No se
+consideran sistemas entregados solo porque se nombraran.
+El Estabilizador Z mantenía Complete y llegó a vincularse a un científico o laboratorio que lo modificaba.
+El autor lo descartó por la sensación de forzar a las células. Complete responde a crisis y reconstrucción,
+mientras el Arca gestiona formas. El 10% conserva Trepar tardío; no vuelve al 50% por una tabla
+antigua. Reconstrucción y Vuelo pertenecen al 100%, no se adelantan a Masa/P4.
+Cambios del postgame
+La historia de tres laboratorios, secuestros, suero, muerte y liberación se conserva en el capítulo 11
+como antecedente completo. La revisión actual adopta DLC Gael, nueva región menor, Hoopa y Mega
+Zygarde, pero deja su cierre abierto. La caza legendaria ya no debe esperar necesariamente a ese arco:
+puede repartirse entre postgame base y DLC 2.
+Las misiones antiguas atadas a ciudades de Sinnoh necesitan adaptación a Axis. Se eliminaron
+Genesect/Deoxys y ciertos grupos; se corrigió que Azelf no debía transformarse en otro Pokémon ni
+exigir un equipo a 1 PS. Celebi vuelve al santuario, Rayquaza a una montaña alta y los Regis a cuevas
+asociadas a poblaciones. El código anterior no tiene prioridad sobre esas correcciones.
+Cambios de arte y motor
+Se exploraron RPG Maker, Godot 2D/2.5D/3D y referencias de otros motores. Un Riolu GLB conservó
+esqueleto de 62 huesos pero no animaciones y tuvo problemas de materiales. Hubo un vertical slice 3D
+con aldea/ruta, batalla simplificada, portal, célula, guardado y placeholders. Todo ello es antecedente
+técnico; no autoriza cambiar el motor actual.
+Los recolores de protagonistas, profesor, Gael y Genesis se reemplazan por diseños propios. Hubo
+generación de imagen, análisis de proporciones y Aseprite MCP a 32×32. Los rechazos posteriores
+prevalecen sobre aprobaciones sugeridas anteriormente.
+Base documental: H, turnos de enero–febrero de 2026; R0; M0, material descartado; M1 §§2, 9, 21, 39–40 y 107–108; C,
+recapitulación de beta y decisiones nuevas.
+DOCUMENTO INTERNO · v2.0 | 42 / 54
+
+===== PAGE 43 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+18. Registro de continuidad: decisiones que no se
+deben invertir
+Tema Versión vigente o estado No hacer por inercia
+Motor RPG Maker XP + Essentials 21.1 Volver a Godot porque un asset salga mal
+Región Axis, atlas pendiente Copiar topónimos/mapas de Sinnoh o Añil
+como canon
+Protagonistas Originales y nativos Campeón de Sinnoh, fisura y amnesia
+Iniciales Turtwig, Litten, Sobble Sustituir por popularidad
+Presentación Cinemática de conflicto antes delProfesor explicando todo como apertura
+comienzo jugableobligatoria
+Zygarde inicial Core debilitado Forma 10% desde el hallazgo
+Personalidad de Zygarde Seria, telepática, evolución sobria Mascota parlanchina o cómica
+Captura de Zygarde Voluntaria y tardía, antes de Arceus Captura forzada al encontrarlo
+P1 Umbral, fácil y sin habilidad requerida Laberinto frustrante o tres pisos como regla
+universal
+Guardianes Humanos en 1–5; no humanos en 6–10 Diez líderes de gimnasio con nueva etiqueta
+Distorsión P6; misma montaña/portal del prólogo Entradas aleatorias por toda Axis o Complete
+obligatorio en primera visita
+Ecos P7, pasado, Bramaluna Alpha dominante Guardián sagrado o torre futurista por
+defecto
+Alma P8, un complejo de tres pruebas Tres números separados para
+Uxie/Mesprit/Azelf
+Complete Hito tras P8, requisitos deEstabilizador coercitivo o desbloqueo
+reconstrucción y crisisautomático sin células
+Tablillas 15 obligatorias como historia; 2–3 pistasSidequests sorpresa, una recompensa por
+abiertasPilar o DLC obligatorio
+Museo Arco confirmado, guion pendiente Inventar curador, robo o tipo de Tablilla como
+hechos
+P9 Convergencia, Dialga/Palkia Llamarlo Origen por un uso aislado antiguo
+P10 Origen; se entra con nueve fragmentos Exigir Flauta completa antes de obtener el
+décimo
+Flauta Diez piezas protectoras de PilaresFragmentos de Zygarde o medallas de
+preexistentesGuardianes
+Traslado final Zygarde 10%, Salto de Convergencia Unown como transporte
+Arceus Dormido; Tierra → Fantasma → Normal Fase Hada o motivo de agresión inventado
+Tres Tablillas finales Objetos exactos pendientes Crear una Tabla Normal supuesta
+DOCUMENTO INTERNO · v2.0 | 43 / 54
+
+===== PAGE 44 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Tema Versión vigente o estado No hacer por inercia
+Genesis Existe desde el juego base, líder previo aRevelar que Gael fundó todo desde el
+Gaelprincipio
+Profesor Ex-Genesis, revelación tardía sutil Confesión inicial o sustituirlo por Serbal
+DLC 1 Gael, Hoopa Desatado, Mega Zygarde Todos los legendarios o suero/muerte
+reincorporados automáticamente
+DLC 2 Investigación por pistas, mucha variedad Portal-arena-captura repetidos
+Cooperativo Opcional, progreso individual, 100% solo Recompensas obligatorias exclusivas de dos
+jugadores
+Relevo IA Deseado, no acreditado en beta activa Anunciarlo como funcional
+Map233 Importado; revisión artística pendiente Equivaler importación a apertura jugable
+terminada
+Protagonista V07 Candidata C del agente, no aprobada Continuar animaciones por una
+autoaprobación
+Este registro no sustituye el detalle del libro. Es una barrera contra la reintroducción accidental de
+contenido: cuando dos documentos difieren, se consulta la decisión concreta y se registra el cambio; no
+se elige la versión más fácil de programar.
+Base documental: C como precedencia principal, contrastado con M0, M1, H y R0.
+DOCUMENTO INTERNO · v2.0 | 44 / 54
+
+===== PAGE 45 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+19. Estado real del desarrollo al cierre de las sesiones
+Alcance de este estado
+Este capítulo recoge reportes aportados por el usuario. No se abrieron sus rutas de Windows desde este
+entorno ni se ejecutó aquí una auditoría de la copia local del juego. Sirve para saber dónde retomar, no
+para convertir cada archivo nombrado en una función verificada personalmente por este libro.
+La beta original fue preservada y se trabajó en laboratorios aislados antes de importar recursos a
+producción. Codex A y B confirmaron el cierre de escrituras y el guardado de checkpoints. No debe
+ejecutarse un rollback para reanudar: la importación del pueblo y los recursos se conserva.
+Mapas, recursos y pueblo
+Codex A es el agente de mapas, tilesets y Map MCP. La infraestructura evolucionó desde el puente
+antiguo axis_map_bridge hasta un MCP que genera recetas, renderiza, valida y edita conjuntos
+completos. La auditoría detectó que el lector Marshal legacy invertía hashes; las correcciones nuevas
+quedaron aisladas y se probaron con fixtures y contraste de runtime.
+Se reportó MCP 0.4.0 con IDs estables de objetos, reservas de puertas, movimiento/retirada reversible,
+regiones y checkpoints. No se debe confundir ese repertorio con un diseñador artístico infalible:
+muchos mapas pasaron pruebas técnicas y fueron rechazados visualmente. Las imágenes de Añil se
+usaron como referencia compositiva, no como layouts finales de Axis.
+Recurso de producción Estado comunicado Precaución
+Tileset 51,Importado desde fuente Añil 7,Arte y uso contextual requieren revisión
+ExteriorBosqueCelesteconfiguración conservada
+Tileset 52, Cueva 1 Importado desde fuente Añil 2 Conserva 17 etiquetas 18 de comportamiento
+especial desconocido
+Tileset 53, Interior Importado desde fuente Añil 4; Interior1Muebles y puertas son gráficos, no
++ boqueteinteracciones
+Map233, Axis - PuebloNuevo mapa de 46×36, tileset 51, cincoArte pendiente; no hay conexiones a
+inicialedificiosáreas/interiores
+Registro del mapa MapInfos, map_metadata.dat yNo sobreescribirlos con copias viejas del
+PBS/map_metadata.txt actualizadoseditor
+El mapa 233 se añadió conservando los 232 anteriores, según el informe. Cinco puertas y ambos
+accesos fueron alcanzados en un runtime aislado, con comprobaciones de paso y render. Ese runtime
+no incluía todos los plugins ni multiplayer. No se acredita una apertura completa de historia por esas
+pruebas.
+La comparación de tablas fuente/destino encontró cero diferencias en pasabilidad, prioridad y terrain
+tags. La mayoría de los tags son cero porque así estaba configurada la fuente; no se debe “completar”
+manualmente cada cero por apariencia. La función desconocida del tag 18 no se inventó.
+El kit de mapeado manual contiene nueve conjuntos exteriores y ocho interiores. Existe una fachada de
+laboratorio grande de 10×17 incluyendo sombra y una compacta de 7×8; se eligió la compacta para el
+pueblo. El interior ofrece mesas, PC, terminales, estanterías, cápsula/máquina y escalón. No hay selector
+de iniciales, cura o sótano programados por el mero gráfico.
+Personajes y Aseprite
+Codex B es el agente de personajes. El MCP de Aseprite llegó a estado READY y permitió editar
+documentos de forma directa. Se construyeron inventario, validadores, análisis de paleta/alineación,
+templates y previews. Su utilidad técnica no implica que el frontal haya alcanzado la calidad BW
+buscada.
+DOCUMENTO INTERNO · v2.0 | 45 / 54
+
+===== PAGE 46 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+El último checkpoint conserva V07: candidatas A/B/C, una selección C del agente y V07-final. El autor
+no las aprobó. El archivo editable y los PNG fueron guardados sin guías/referencias en la exportación y
+con ampliación 2× exacta. No quedan cambios sin guardar según la confirmación de cierre.
+Ruta del trabajo vigente: Codex/output/characters/protagonist_male/front_reference_edit_v07/.
+Archivo principal: protagonist_male.aseprite. PNGs: V07-final_32.png y V07-final_64.png.
+Comparación: comparison_ABC_BW.png. Estos nombres no autorizan usar “final” como estado artístico; es
+el nombre de la selección exportada.
+Multijugador: diseño, evidencia y fallos
+La baseline fue cerrada con limitaciones, no con todo el online reparado. La última confirmación
+preservó los reportes y permitió retirar helpers temporales de laboratorio. No se corrigieron los bugs de
+producción durante esa auditoría.
+Área Resultado reportado Qué no demuestra
+Conexión, visibilidad,PASS en sesiones observadas Robustez de todas las redes/mapas
+movimiento y
+transferencias
+Followers PASS visual en la sesión final Ausencia de todo fallo en otros estados
+Co-op Tadeo PASS, victoria y sincronía reportadas Dos entrenadores NPC distintos o todos los
+combates dobles
+Dos humanos contra dosPASS Relevo por IA de un humano desconectado
+Pokémon IA
+PvP 1v1 e intercambio PARTIAL/UNFINISHED; código/menúsFlujo accesible y persistencia plenamente
+existentesfuncionales
+Desconexión fuera deDesaparición del avatar observada Limpieza integral de todos los estados
+combate
+Desconexión duranteFAIL, espera con render activo No es un congelamiento total del motor
+espera de decisiones co-op
+Takeover por IA FAIL en la ruta activa inspeccionada No prueba que nunca existiera en otra
+versión histórica
+Reconexión Join funciona, combate no se recupera Restauración de turno, RNG y decisiones
+Cierre, guardado yComprobaciones visuales PASS; StorageIntegridad exhaustiva de todo
+reaperturaglobal PARTIALalmacenamiento
+Avatar remoto persistenteObservado antes; no reproducido enNo quedó corregido por no reaparecer
+offlineúltima pasada
+Se registraron casi 280 segundos de espera en el caso de desconexión: el controlador comprobaba
+conexión local mientras el compañero ya había desaparecido. La IA de rivales y la representación de un
+aliado como NPCTrainer no equivalen a takeover. El flag de terminar el co-op al caer cualquier aliado
+evitaba reemplazos que podían desincronizar; es una limitación técnica antigua, no una regla de diseño
+final.
+La auditoría informó riesgos de interpretación insegura de datos remotos, aislamiento de
+sesiones/identificadores y persistencia. Son tareas defensivas pendientes; este libro no contiene
+procedimientos de explotación. El juego no debe anunciarse como online listo para exposición pública
+por haber superado la conexión local de prueba.
+DOCUMENTO INTERNO · v2.0 | 46 / 54
+
+===== PAGE 47 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Datos, plugins y herencia
+La auditoría comunicó Essentials 21.1, Hotfixes 1.0.9 y runtime mkxp-z/Ruby del proyecto; nueve
+plugins con 94 scripts; 1.025 especies base, 396 formas adicionales, Pokédex regional de 412 y 48
+Megas definidas. La lista actual de especies y formas deseadas no está completamente implementada.
+Se localizaron mapas/eventos de beta y transferencias inválidas que no deben convertirse en geografía
+final.
+Plugins reportados: Deluxe Battle Kit, Animated Pokémon System, Batallas multijugador, Delta Speed
+Up, Following Pokémon EX, Generation 9 Pack Scripts, rainfallUtils, v21.1 Hotfixes y Volts(e)on's
+Multiplayer Solution según los nombres aportados. Su presencia no certifica compatibilidad total entre
+sí.
+Dónde retomar
+Checkpoint de A: Codex/docs/map_mcp/CHECKPOINT_CODEX_A.md. Checkpoint de B:
+Codex/docs/characters/CHECKPOINT_CODEX_B.md. Importación del pueblo:
+goal_village_v01/production_map_import_v01/. Reportes multiplayer: Codex/docs/audit/runtime/.
+A debe confirmar qué se desea hacer con Map233 sin reimportarlo a ciegas. B debe abrir las candidatas
+V07 para revisión humana, no continuar una caminata antigua. El diseño narrativo debe dirigirse desde
+esta síntesis y los cambios explícitos que el autor haga después, no desde prompts descartados de una
+sesión larga.
+Base documental: C, reportes de auditoría, importación, pruebas y cierres de Codex A/B. Estado reportado, no una nueva prueba de
+esos binarios.
+DOCUMENTO INTERNO · v2.0 | 47 / 54
+
+===== PAGE 48 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+20. Decisiones pendientes y condiciones para empezar
+a escribir eventos
+Qué está suficientemente cerrado
+La columna vertebral está definida: catástrofe del prólogo, protagonista local, Core, diez Pilares en
+orden, progresión de Zygarde, Tablillas obligatorias, Genesis presente desde el juego base, profesor ex-
+Genesis, final en Columna Lanza y tres fases de Arceus. También está fijada la intención de DLC 1/DLC
+2 y la posibilidad de completar todo individualmente.
+Eso no equivale a que cada capítulo tenga diálogos, misiones y mapas finales. Las principales lagunas
+están en los episodios intermedios, las quince Tablillas, las personas que custodian los primeros cinco
+Pilares, los actos de Genesis durante la campaña y el desenlace nuevo de Gael. No corresponde detener
+toda la producción por ellas, pero sí impedir que se rellenen por accidente al escribir código.
+Registro de decisiones abiertas
+ID Decisión que falta Consecuencia que debe resolver
+D01 Nombre y vida cotidiana de ambosInicio propio sin recurrir a Lucas/Dawn
+protagonistas
+D02 Razón concreta de la elección del Core Relación con protagonista y agravio
+interpretado por Gael
+D03 Nombre, especialidad, edad y diseño delContinuidad de mentor y pasado científico
+profesor
+D04 Motivo inicial de la restricción policial Credibilidad de la entrada al área del Core
+D05 Secuencia exacta de iniciales, señal,Ritmo de la primera hora
+regreso y primer duelo
+D06 Transporte del Core frente al sprite sinCoherencia visual/narrativa
+mochila
+D07 Identidad, prueba y equipo del GuardiánPrimer capítulo realmente implementable
+de Umbral
+D08 Versión del puzzle/Geodude Resolver lo ilógico de la beta sin copiarlo
+intacto
+D09 Accesos de Corriente y Memoria No exigir agua o habilidades aún inaccesibles
+D10 Cifras y ubicación de células/núcleos Disponibilidad completa antes de sus propias
+barreras
+D11 Episodios de Tablillas T01–T15 Historia principal no repetitiva y museo con
+función concreta
+D12 Objetos/IDs de las tres piezas finales Compatibilidad con fases
+Tierra/Fantasma/Normal
+D13 Actos y apariciones de Genesis porAntagonista presente, no solo mencionado
+capítulo
+D14 Nombre, diseño, equipo y fuga del líderCierre del conflicto base y apertura posterior
+original
+DOCUMENTO INTERNO · v2.0 | 48 / 54
+
+===== PAGE 49 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+ID Decisión que falta Consecuencia que debe resolver
+D15 Responsabilidad previa y ruptura delRevelación sutil con contenido moral real
+profesor
+D16 Logros, derrotas y escenas intermediasEvolución creíble antes del DLC
+de Gael
+D17 Mecánicas exactas del Alma Diferenciar sus tres pruebas y confeccionar
+Cadena Roja
+D18 Elección/captura Dialga–Palkia y suDisponibilidad individual posterior sin
+versión co-opduplicación/conflictos
+D19 Causa y ritmo del deterioro global Que reparar Pilares siga teniendo significado
+D20 Motivación del Trío de las Nubes Evitar oposición arbitraria antes del final
+D21 Captura voluntaria de Zygarde y equipoTransición compañero de campo →
+completocombatiente
+D22 Motivo del combate de Arceus Prueba, restauración u otra explicación
+ratificada
+D23 Reglas de fases, captura y reintento final Clímax exigente sin pérdida permanente de
+progreso
+D24 Epílogo y Complete después de la crisis Mundo restaurado con exploración pendiente
+accesible
+D25 Región nueva, episodios y final del DLCNo reinstalar suero/muerte sin aprobación
+de Gael
+D26 Origen/obtención de Zygardita Dar sentido a la culminación de Mega
+Zygarde
+D27 NPC del DLC 2 y sistema de misionesConectar pistas, orden y disponibilidad
+activas
+D28 Distribución de 412 especies y nuevasBramaluna, Ditto, Sableye, Latias/Latios y
+necesidadesfauna submarina
+D29 Tasas Alpha/shiny y condiciones deColección significativa sin frustración
+capturasinnecesaria
+D30 Arte final de protagonistas y resto delNo extender una base todavía rechazada
+elenco
+No todas requieren respuesta simultánea. D01–D08 afectan de forma directa la apertura. D09–D19
+condicionan la campaña intermedia. D20–D24 cierran el final. D25–D29 se pueden terminar más
+adelante sin bloquear el primer pueblo, siempre que no se prometa disponibilidad incompatible.
+Cómo dividir los episodios sin inventarlos
+Para cada capítulo, el guion debe separar estado de entrada, problema, acción del protagonista,
+respuesta de otros personajes, cambio en el mundo, recompensa/progreso y estado de salida. El hecho
+de que un Pilar tenga tema no escribe automáticamente su problema. El hecho de que haya un museo
+no define su misión.
+Los eventos entre Pilares deben conectar al menos una parte de la restauración con la vida de Axis:
+comunidades, historia, investigación, oposición de Genesis o consecuencias del desequilibrio. Esto es la
+DOCUMENTO INTERNO · v2.0 | 49 / 54
+
+===== PAGE 50 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+intención de estructura, no una lista nueva de episodios. Antes de programar una escena, se registra si
+sus detalles fueron elegidos por el autor o siguen como propuesta.
+Primer bloque jugable que puede producirse
+El alcance coherente del primer bloque incluye presentación local, elección de inicial, señal, acceso
+restringido, sigilo breve, Core, regreso, reacción del profesor, primer combate con Gael y motivo para
+dirigirse al Umbral. La inclusión exacta del primer Pilar en una demo depende de cuánto esté escrito; no
+obliga a completar los diez antes de probar el comienzo.
+Map233 aporta solo el exterior inicial. Se requieren interiores, transfers, NPCs, estados de historia,
+guardado y reentrada; el mapa importado no reemplaza ese trabajo. Las escenas deben soportar que el
+jugador explore antes de activar el incidente y que no pueda repetir indefinidamente recompensas o
+dejar el Core en dos sitios.
+El arte provisional puede servir para pruebas internas, pero debe estar etiquetado. No se debe declarar
+que un personaje está diseñado por completo porque exista un PNG técnico o una carpeta con cuatro
+vistas de una versión rechazada.
+Política de continuidad para futuras sesiones
+Una decisión nueva del autor se registra con fecha/identificador y los apartados afectados. Si cambia el
+orden de un Pilar, se revisan habilidades, Tablillas, escenas y pistas asociadas. Si se modifica la
+disponibilidad de Complete, se revisa el grafo de células y el postgame. Si se cambia un final de Gael, se
+revisa qué conoce el jugador y qué misiones dependen de sus consecuencias.
+Los prompts anteriores no son una fuente paralela de canon. Una instrucción técnica como “generar
+antesala” no aprueba el aspecto de la sala resultante; “V07-final” no prueba aprobación artística. Los
+checkpoints describen dónde está el trabajo, no resuelven historia pendiente.
+Base documental: conjunto C/M0/M1/H/R0. Este registro identifica vacíos de las fuentes; no introduce contenido para cubrirlos.
+DOCUMENTO INTERNO · v2.0 | 50 / 54
+
+===== PAGE 51 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+21. Fuentes, trazabilidad y alcance de cada material
+C — Esta conversación
+Es la fuente prioritaria para decisiones posteriores, cambios de rumbo y estado actual. Se utilizaron los
+mensajes del autor, sus aceptación/corrección de propuestas, imágenes y reportes de Codex pegados
+en el chat. Los reportes técnicos se atribuyen como reportados, no como ejecución nueva realizada
+durante la preparación del libro.
+Los intercambios decisivos incluyen: retorno definitivo a RPG Maker; personajes originales; relato
+detallado de la beta; prólogo con escalera ascendente; Genesis científico y profesor ex-Genesis; cinco
+Guardianes humanos; Invertido en el sexto Pilar; Ecos pasado con Bramaluna Alpha; quince Tablillas
+como arcos de historia y museo; Complete al terminar el octavo; secuencia de Flauta/Columna Lanza;
+asignación actual Codex A mapas y B personajes; importación del pueblo 233 y cierre sin escrituras
+pendientes.
+Los múltiples PNG de personajes se interpretaron como versiones de trabajo, no como diseños finales.
+La última confirmación preserva V07 y una candidata C todavía sin aprobación. Los mapas generados
+tuvieron iteraciones y rechazos; el mapa importado conserva revisión artística pendiente.
+M1 — Maestro de continuidad v1.1
+Archivo recuperado: POKEMON_ECOS_MASTER_CODEX_v1.1.md, 3.162 líneas. Aporta definición amplia de
+historia, personajes, final actualizado, progresión, DLC y reglas de trabajo. Se leyó íntegramente. Sus
+secciones sobre el décimo Fragmento, Arceus dormido y transporte de Zygarde fueron especialmente
+relevantes.
+No se lo trató como posterior a todas las decisiones del chat. Algunas tablas conservaban los Pilares 5/6
+flexibles, nombres no cerrados y referencias provisionales. La conversación posterior fija lo que se
+conoce y el libro identifica lo que todavía necesita ratificación.
+M0 — Maestro previo en español
+Archivo recuperado: ECOS_Documento_Maestro_Codex_v1.md, 1.562 líneas, fechado internamente el 19 de
+septiembre de 2026. Incluye síntesis, registro de estados, progresión, Style Bible, beta, flujo técnico,
+inventario de 412 especies y formas, y decisiones abiertas. Se consultó completo; la lista de especies se
+transcribió manteniendo orden y grafías originales.
+Este documento es especialmente útil para no convertir propuestas en hechos: conserva abiertos el
+origen de ciertos objetos, los nombres, el futuro de Gael, las tasas, las escenas y el diseño final. Su
+estado técnico anterior a las auditorías/importaciones quedó actualizado mediante los reportes de la
+conversación.
+H — Historial de Gemini
+Archivo recuperado: Google-Gemini(2).md, 107.878 líneas. Se indexaron sus 1.292 intervenciones para
+localizar las secciones narrativas; no se reejecutó el código que contiene ni se convirtió cada consejo del
+asistente en canon.
+Rangos relevantes: líneas 24.627–24.956 para la historia temprana Sinnoh, pilares y final antiguo;
+94.008–95.605 para preferencias y misiones legendarias; 103.259–103.600 para recapitulación extensa
+del 16 de febrero, suero, muerte, laboratorios y ajustes de sueños; 105.705–106.225 para diseño
+histórico de Gael y jerarquía/objetivo inicial de Genesis; correcciones finales de mayo para reafirmar
+que Genesis existe desde el juego base.
+Este historial usa a veces nombres y premisas ya descartados. Sus afirmaciones del asistente —por
+ejemplo, nombres de profesor, localizaciones, cifras de estadísticas o supuestas verdades oficiales— se
+separan de elecciones explícitas del autor. El libro rescata las misiones como antecedentes,
+manteniendo sus cambios posteriores.
+DOCUMENTO INTERNO · v2.0 | 51 / 54
+
+===== PAGE 52 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+R0 — Resumen integral anterior
+Archivo recuperado: Pasted text(53).txt. Contiene una etapa con Lucas/Dawn, recuerdos sellados,
+antepasado de Serbal, nombres propuestos, Estabilizador Z y motor todavía abierto. Sirve para
+reconstruir el historial, no como autoridad del juego actual.
+Los nombres Cedro, Alerce, Helix y Aster Vhal no quedan aprobados por aparecer allí o en el historial.
+Las ciudades y capítulos propuestos tampoco. Las alternativas 3D/2.5D y los consejos de herramientas
+quedan fuera de la decisión vigente de motor.
+Mapa de procedencia por capítulo
+Capítulo del libro Fuente principal Complemento y cautela
+01–03, encargo, síntesis yC y M1 M0 para estados y contradicciones
+cosmología
+04–05, prólogo y comienzo C, M1 §§13–42 H/R0 solo para versiones anteriores
+06, orden y función deC y M1 H para pruebas antiguas del Alma
+Pilares
+07–08, Tablillas y Zygarde C, M1 §§67–80 M0 para dependencias y números
+provisionales
+09–10, Genesis y final C, M1 H para detalle histórico de curación/prueba
+11, DLC de Gael C, M1 §§93–103 H, suero y laboratorios separados como
+antecedente
+12, investigacionesH y C M1/M0 para distribución vigente y puntos
+legendariasabiertos
+13–14, personajes y arte C, M0/M1 H para Gael antiguo; sin diseño final
+inventado
+15–16, sistemas y Pokédex C, M0 Historial de misiones no equivale a roster final
+17–18, versiones yC/H/R0/M0/M1 Rechazos posteriores prevalecen
+continuidad
+19, desarrollo Reportes en C No auditoría nueva de archivos locales
+20, pendientes Contraste de las fuentes Identificación de huecos, no guion adicional
+Qué no afirma este libro
+No afirma que el juego esté implementado por estar planeado, que las nuevas formas estén soportadas
+por los plugins, que todas las imágenes de referencia puedan publicarse, que el multijugador sea
+seguro/estable ni que los personajes de V07 estén aprobados. Tampoco afirma que existan quince
+misiones de Tablillas o diez Guardianes con biografías terminadas.
+Lo que sí deja reconstruido es el argumento disponible, su secuencia, sus relaciones, sus decisiones
+visuales, su pasado y sus límites. La siguiente expansión de esta biblia debe agregar decisiones del autor,
+no rellenar esos límites con conclusiones automáticas.
+DOCUMENTO INTERNO · v2.0 | 52 / 54
+
+===== PAGE 53 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+22. Hoja de continuidad esencial
+Juego: Pokémon: Ecos del Espacio-Tiempo. Región: Axis. Motor: RPG Maker XP + Essentials 21.1.
+Apariencia: 2D con escenarios Añil/Gen 4 y lenguaje humano BW; originalidad de diseños, no recolores
+como acabado final.
+Inicio: Giratina vence a Dialga/Palkia en Distorsión, emerge por el portal de montaña, Zygarde
+Complete lo repele y se dispersa. Protagonista original local; iniciales Turtwig/Litten/Sobble; señal,
+policía, sigilo, Core, profesor y rivalidad de Gael.
+Orden: Umbral, Corriente, Impulso, Masa, Memoria, Invertido, Ecos, Alma, Convergencia y Origen.
+Primeros cinco con custodia humana. Invertido es Mundo Distorsión y se accede por el portal del
+prólogo. Ecos es pasado y contiene Bramaluna Alpha como dominante, no Guardián. Alma integra al
+Trío del Lago en un único complejo.
+Zygarde: Core serio y telepático; cien células y cinco núcleos; 10% terrestre con Trepar tardío; 50%
+agua/detección/Buceo; Complete tras P8 más requisitos, con Vuelo clásico y Reconstrucción de
+terreno. Arca sí, Estabilizador coercitivo no. Captura voluntaria antes de Arceus.
+Historia entre Pilares: quince Tablillas obligatorias, dos o tres pistas simultáneas, puzzles e
+investigación; museo confirmado, episodios por escribir. No una Tablilla por Pilar como rutina ni
+misiones esenciales en DLC.
+Antagonistas: Genesis científico desde el principio, líder distinto de Gael, objetivo de controlar los
+poderes que gobiernan el mundo. Profesor ex-Genesis, revelación tardía por subtexto y combate aliado.
+Gael herido por la elección/reconocimiento del protagonista, se incorpora a los restos de la facción
+después.
+Final: se entra a Origen con nueve Fragmentos. Trío de las Nubes → Gael y conversación → núcleo →
+décimo Fragmento → Flauta → crisis persiste porque Arceus duerme → Zygarde 10% y Salto de
+Convergencia → Columna Lanza → Flauta/despertar → Tierra, Fantasma, Normal → captura final bajo
+condición → dieciocho Tablillas y restauración. Unown no transportan. Objetos de las tres Tablillas
+finales y reglas precisas del combate aún abiertos.
+Expansiones: DLC 1 de Gael, nueva región menor como dirección, Hoopa Desatado y Mega
+Zygarde/Zygardita tardía. Suero y muerte de Gael son antecedentes no ratificados. DLC 2 con NPC de
+pistas y búsquedas legendarias variadas; parte puede ser postgame base. Todo completable en solitario,
+cooperativo opcional.
+Realización: Map233 y tilesets 51/52/53 importados; mapa aún sin transfers de historia e interiores.
+Multiplayer auditado con fallos de desconexión/relevo y funciones parciales. Protagonista V07
+guardado, candidata C del agente, aprobación humana pendiente. Codex A/B cerrados con checkpoints.
+Regla final de continuidad: una casilla PENDIENTE no es un permiso para inventar; una imagen
+guardada no es un arte aprobado; una prueba técnica no es una escena de historia terminada.
+DOCUMENTO INTERNO · v2.0 | 53 / 54
+
+===== PAGE 54 =====
+ECOS / BIBLIA NARRATIVA DE AXIS
+Glosario de trabajo
+Axis: región original del juego. Pilar: anclaje del equilibrio y su recinto asociado; no necesariamente
+torre. Guardián: custodio humano de uno de los primeros cinco Pilares. Entidad Dominante del Eco:
+denominación funcional de Bramaluna Alpha, que no implica custodia sagrada. Fragmento Azur: una de
+las diez piezas de la Flauta. Flauta Azur: instrumento restaurado que permite llamar/despertar a Arceus.
+Tablilla/Tabla/Placa: denominaciones utilizadas en el proyecto para la colección de quince piezas
+previas y tres finales; normalización de objetos pendiente.
+Core/núcleo: parte consciente y estructural de Zygarde, distinta de una célula común.
+Complete/Completo/100%: Forma Completa de Zygarde; no Mega Zygarde. Arca: objeto de gestión de
+la reconstrucción/cambio de formas; no estabilizador coercitivo. Resonancia: vínculo o respuesta de
+sincronización, todavía no una física formal cerrada. Salto de Convergencia: tránsito excepcional
+mediante Zygarde 10% y nodos/rutas antiguas. Reconstrucción: capacidad de Complete para habilitar
+pasos materialmente ausentes. Modo Abisal: nombre de trabajo del enfoque de Buceo, no forma
+biológica confirmada.
+Alpha: variante rara planeada, también usada como rasgo de un jefe fijo. Shiny: variación de color
+coleccionable. Postgame: contenido posterior al cierre de la historia base. DLC: expansión del proyecto;
+aquí no define monetización. Overworld: representación del personaje/Pokémon durante exploración
+fuera del combate. Front idle: imagen frontal en reposo. Sprite/tileset: gráfico de personaje/conjunto
+de piezas de mapa. Staging/LAB: copia o espacio aislado de pruebas. MCP: interfaz de herramientas
+usada por Codex para operar mapas o Aseprite. PASS técnico: prueba superada de un aspecto concreto;
+no aprobación de historia o arte.
+DOCUMENTO INTERNO · v2.0 | 54 / 54
