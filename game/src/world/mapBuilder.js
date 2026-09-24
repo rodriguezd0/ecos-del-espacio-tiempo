@@ -223,7 +223,7 @@ export class MapBuilder {
       this.warnOnce(`MapBuilder: pincel complejo ${Object.keys(def).join('/')} requiere content/stamps/brushes.js; se omite`);
       return;
     }
-    const writes = this.painter(def, cells, { seed: this.seed, width: this.width, height: this.height });
+    const writes = this.painter(def, cells, { seed: this.seed, width: this.width, height: this.height, tileset: this.tileset });
     for (const w of writes) this.set(layer ?? w.layer, w.x, w.y, w.id);
   }
 
