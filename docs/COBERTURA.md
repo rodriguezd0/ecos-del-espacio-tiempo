@@ -104,3 +104,15 @@ Pendientes de reconciliación: ROARINGMOON, DITTO, SABLEYE, LATIAS/LATIOS, fauna
 | Pokédex, Poké Balls | ⬜ ⛔ D05 (mecanismo de entrega) |
 | Mega Aro + megapiedras | ⬜ |
 | Cordón Unión | ⬜ |
+
+## TODO de integración entre bloques (Bloque 1)
+
+Enlaces que el Bloque 1 deja preparados (`game/src/content/maps/b01/pending_links.js`): mientras el mapa de destino no
+esté registrado hay un aviso neutro; al crearlo y ejecutar `node tools/gen_registries.mjs` la conexión se abre sola.
+
+| Estado | Enlace | Bloque | Qué falta |
+|---|---|---|---|
+| ⬜ | Ruta 1 → **Ruta 10** (cruce oeste, tramo bajo; C007) | B11 | Crear `ruta_10` con su salida este en y 20–21 y conexión `east` a `ruta_1` con offset 4. Hasta entonces: «El camino del oeste está cortado por un desprendimiento.» |
+| ⬜ | Ruta 1 → **Villa Zaguán** (salida sur) | B02 | Crear `villa_zaguan` con su camino norte en x 18–21 y conexión `north` a `ruta_1` con offset 5. Hasta entonces: aviso en la fila sur de la Ruta 1. |
+| ⬜ | Ruta 1 → **Cerro del Alba** (cornisa, Trepar) | B11/postgame | Conexión este y pared de Trepar (CAMPANA §1.4); sin preparar en B01. |
+| ⬜ | Monte del Portal: C050, C051 y C076 | B11/B12 | `montana_portal` es aún el mapa del prólogo; al ampliarlo (50×70) colocar sus células (lo avisa `node tools/validate_content.mjs`). |

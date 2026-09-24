@@ -22,6 +22,10 @@ export const STAMP_LIBRARIES = {
   1: { image: 'Exterior1', def: () => import('./Exterior1.js'), baked: () => import('./baked/Exterior1.js') },
   3: { image: 'Exterior2', def: () => import('./Exterior2.js'), baked: () => import('./baked/Exterior2.js') },
   5: { image: 'Exterior3', def: () => import('./Exterior3.js'), baked: () => import('./baked/Exterior3.js') },
+  6: { image: 'ExteriorSafari', def: () => import('./ExteriorSafari.js'), baked: () => import('./baked/ExteriorSafari.js') },
+  9: { image: 'ExteriorPrisma', def: () => import('./ExteriorPrisma.js'), baked: () => import('./baked/ExteriorPrisma.js') },
+  11: { image: 'InteriorTorre', def: () => import('./InteriorTorre.js'), baked: () => import('./baked/InteriorTorre.js') },
+  8: { image: 'InteriorLiga', def: () => import('./InteriorLiga.js'), baked: () => import('./baked/InteriorLiga.js') },
 };
 
 /** Tilesets que comparten imagen (y por tanto IDs) con una biblioteca existente. */

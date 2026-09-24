@@ -69,5 +69,11 @@
     "id": "ANCIENTGEAR", "name": "Engranaje antiguo", "namePlural": "Engranajes antiguos", "pocket": 8, "price": 0,
     "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "METALCOAT",
     "description": "Pieza de una máquina de otra época. Parece encajar con otras iguales."
+  },
+  "ZYGARDECUBE": {
+    "id": "ZYGARDECUBE", "name": "Arca de Zygarde", "namePlural": "Arcas de Zygarde", "pocket": 8, "price": 0,
+    "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"],
+    "note": "Sustituye a la entrada de Añil (X15): se usa desde la Mochila y abre la pantalla de Zygarde (world/zygarde/field.js).",
+    "description": "Caja hexagonal de los antiguos Custodios. Cuenta las células de Zygarde y le permite cambiar de forma."
   }
 }

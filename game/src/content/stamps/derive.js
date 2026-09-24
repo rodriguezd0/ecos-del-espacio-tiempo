@@ -16,8 +16,10 @@ const omit = (obj, names) => Object.fromEntries(Object.entries(obj).filter(([n])
  *   `add` añade o sustituye entradas (p. ej. descripciones o IDs propios del tileset destino).
  */
 export function deriveLibrary(base, spec) {
+  // Las piezas del overlay (`extra: true`, extraTiles.js) usan filas propias de cada imagen: no se heredan.
+  const own = (entries) => Object.fromEntries(Object.entries(entries).filter(([, v]) => !v.extra));
   const select = (entries, sel = {}) => ({
-    ...(sel.include ? pick(entries, sel.include) : omit(entries, sel.exclude || [])),
+    ...(sel.include ? pick(own(entries), sel.include) : omit(own(entries), sel.exclude || [])),
     ...(sel.add || {}),
   });
   return {

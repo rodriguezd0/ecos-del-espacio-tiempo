@@ -2,7 +2,7 @@
 // Dibuja cada stamp y una demo de cada brush con canvas 2D a partir de los tilesets originales de Añil.
 import { STAMP_LIBRARIES, loadStampLibrary } from './index.js';
 import { paintBrush, brushKind, brushDemo } from './brushes.js';
-import { autotileSourceRects, isAutotile, autotileSlot, FIRST_REGULAR_TILE, TILE } from '../../shared/autotile.js';
+import { autotileSourceRects, isAutotile, autotileSlot, FIRST_REGULAR_TILE, TILE, regularTileAtlasPos } from '../../shared/autotile.js';
 
 const $ = (id) => document.getElementById(id);
 const images = new Map();
@@ -20,7 +20,8 @@ function loadImage(url) {
 }
 
 async function loadGraphics(tilesetInfo) {
-  const tiles = await loadImage(`/anil/Graphics/Tilesets/${tilesetInfo.image}.png`);
+  // Atlas reempaquetado del juego (64 columnas): incluye los tiles propios del overlay (extraTiles.js).
+  const tiles = await loadImage(`/assets/tilesets/${tilesetInfo.image}.png`);
   const autotiles = await Promise.all(tilesetInfo.autotiles.map((name) => (
     name ? loadImage(`/assets/autotiles/${name}.png`).catch(() => null) : null
   )));
@@ -30,8 +31,8 @@ async function loadGraphics(tilesetInfo) {
 function drawTile(g, gfx, id, px, py) {
   if (!id) return;
   if (id >= FIRST_REGULAR_TILE) {
-    const t = id - FIRST_REGULAR_TILE;
-    g.drawImage(gfx.tiles, (t % 8) * TILE, Math.floor(t / 8) * TILE, TILE, TILE, px, py, TILE, TILE);
+    const p = regularTileAtlasPos(id);
+    g.drawImage(gfx.tiles, p.x, p.y, TILE, TILE, px, py, TILE, TILE);
     return;
   }
   if (!isAutotile(id)) return;

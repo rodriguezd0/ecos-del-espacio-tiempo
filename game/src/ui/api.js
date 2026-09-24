@@ -145,7 +145,7 @@ export const ui = {
   async openRegionMap(opts = {}) {
     return open('regionMap', null, opts);
   },
-  /** Libreta de pistas (pistas anotadas con GameState.addClue). */
+  /** Libreta de pistas (content/story). opts: { tab: 'clues'|'prophecy'|'chronicle'|'tablets' } */
   async openClues(opts = {}) {
     return open('clues', undefined, opts);
   },

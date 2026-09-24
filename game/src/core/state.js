@@ -248,6 +248,16 @@ export class GameState {
   solveClue(id) {
     this.data.clues = this.data.clues.map((c) => (c.id === id ? { ...c, solved: true } : c));
   }
+  /**
+   * Sustituye campos de una pista anotada (inmutable). La usa la cola de la Libreta
+   * (content/story/clueLogic.js: status, step, seen, order). Devuelve false si la pista no existe.
+   */
+  updateClue(id, patch = {}) {
+    if (!this.hasClue(id)) return false;
+    const { id: _ignored, ...rest } = patch || {};
+    this.data.clues = this.data.clues.map((c) => (c.id === id ? { ...c, ...rest } : c));
+    return true;
+  }
 
   // ---- progreso de Axis ----
   hasCell(id) { return this.data.zygarde.cells.includes(id); }
@@ -256,8 +266,25 @@ export class GameState {
   addCore(id) { if (!this.hasCore(id)) this.data.zygarde.cores.push(id); }
   zygardeAbility(key) { return Boolean(this.data.zygarde.abilities[key]); }
   setZygardeAbility(key, v = true) { this.data.zygarde.abilities[key] = v; }
+  /** Forma de campo de Zygarde: null (aún no acompaña) | 'core' | '10' | '50' | 'complete' (world/zygarde). */
+  get zygardeForm() { return this.data.zygarde.form || null; }
+  setZygardeForm(form) {
+    const f = form === null || form === undefined ? null : String(form);
+    if (f !== null && !['core', '10', '50', 'complete'].includes(f)) throw new Error(`setZygardeForm: forma desconocida "${form}"`);
+    this.data.zygarde = { ...this.data.zygarde, form: f };
+  }
+  cellCount() { return this.data.zygarde.cells.length; }
   addFragment(id) { if (!this.data.fragments.includes(id)) this.data.fragments.push(id); }
   addTablet(id) { if (!this.data.tablets.includes(id)) this.data.tablets.push(id); }
+
+  // ---- Vuelo (atlas: ui/logic/regionMapData.js) ----
+  /** ¿Destino de Vuelo desbloqueado por guion? (los visitados cuentan solos vía `visited`). */
+  hasFlyPoint(id) { return this.data.flyPoints.includes(id); }
+  /** Desbloquea un destino de Vuelo por id de lugar del atlas (p. ej. 'mesa_vientos'). */
+  unlockFlyPoint(id) {
+    if (!id || typeof id !== 'string') throw new Error('unlockFlyPoint: id de lugar inválido');
+    if (!this.hasFlyPoint(id)) this.data.flyPoints = [...this.data.flyPoints, id];
+  }
 
   // ---- reloj de juego ----
   get hour() { return Math.floor(this.data.clock.minutes / 60) % 24; }

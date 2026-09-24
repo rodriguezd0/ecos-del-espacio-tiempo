@@ -6,6 +6,9 @@
 // sobre el rectángulo de paredes+suelo (3 filas de pared) → stamp de salida centrado en la fila inferior →
 // muebles de pared (capa 2) en las filas de pared y muebles de suelo encima.
 // Los muebles de este tileset son GRÁFICOS: la interacción (PC, TV, estantería…) la ponen los eventos del mapa.
+// Museo, laboratorio grande, estación, grandes almacenes, oficinas e industria: interior1_extras.js.
+import { INTERIOR1_EXTRAS } from './interior1_extras.js';
+
 const WOOD_FRAME = {
   tl: 4195, t: 4201, tr: 4196, l: 4194, r: 4192,
   bl: [4224, 4225], br: [4226, 4227], bl2: [4232, 4233], br2: [4234, 4235], b: 4185,
@@ -82,6 +85,8 @@ export default {
     lab_ordenadores: { from: { map: 29, x: 10, y: 7, w: 5, h: 4, layers: [2] }, solid: true, tags: ['laboratorio', 'pc'], desc: 'Banco de ordenadores del laboratorio (5×4)' },
     lab_zona_maquina: { from: { map: 29, x: 5, y: 5, w: 5, h: 7, layers: [0, 1, 2] }, solid: true, tags: ['laboratorio'], desc: 'Zona elevada con máquina y ordenador (5×7, incluye suelo)' },
     mesa_lab_verde: { src: [5, 74, 3, 2], layer: 1, solid: true, tags: ['laboratorio'], desc: 'Mesa de trabajo verde (3×2)' },
+
+    ...INTERIOR1_EXTRAS.stamps,
   },
 
   brushes: {
@@ -102,5 +107,6 @@ export default {
     alfombra_granate: { nine: [0, 86], layer: 1, desc: 'Alfombra granate con ribete dorado' },
     alfombra_lila: { nine: [3, 154], layer: 1, desc: 'Alfombra lila con puntilla' },
     alfombra_beige: { nine: [3, 151], layer: 1, desc: 'Alfombra beige con estrella' },
+    ...INTERIOR1_EXTRAS.brushes,
   },
 };

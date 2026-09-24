@@ -1,9 +1,12 @@
-// Ruta 1 (B01 §4.8; docs/CAMPANA.md §1.4) — bosque y claros hacia el sur desde Villa Alba: hierba alta,
-// arroyo con puente de troncos, salientes, estanque en el claro del este, 3 entrenadores, objetos, las
-// primeras Células de Zygarde [PROVISIONAL D10] y el cartel del Pilar del Umbral. El límite sur es
-// provisional (bloque 2). Tileset 7. Eventos en content/events/b01_north_ruta1.js.
+// Ruta 1 (B01 §4.8; docs/CAMPANA.md §1.4 y «B01 — ajustes DECIDIDO-DEV») — bosque y claros hacia el sur
+// desde Villa Alba: hierba alta, arroyo con puente de troncos, salientes, estanque en el claro del este,
+// 3 entrenadores, objetos, las primeras Células de Zygarde (§2.3), los topógrafos del Consorcio, el mirador
+// con la cuesta de grava (Correr), el cruce oeste hacia la Ruta 10 (B11) y la salida sur a Villa Zaguán
+// (B02). Los dos enlaces se abren solos cuando exista el mapa (maps/b01/pending_links.js). Tileset 7.
+// Eventos en content/events/b01_north_ruta1.js.
 import { ruta1Events } from '../../events/b01_north_ruta1.js';
 import { RUTA_1 } from '../../encounters/b01.js';
+import { linkIfReady, mapRegistered } from './pending_links.js';
 
 const W = 30;
 const H = 60;
@@ -12,6 +15,15 @@ const H = 60;
 export const ROUTE_ENTRY = Object.freeze({ x0: 13, x1: 16, y: 0 });
 /** Desplazamiento de la conexión con Villa Alba (x del pueblo = x de la ruta + VILLA_OFFSET). */
 export const VILLA_OFFSET = 8;
+/** Cruce oeste hacia la Ruta 10 (tramo bajo): camino de tierra junto al arroyo. */
+export const WEST_CROSSING = Object.freeze({ x0: 0, x1: 12, y0: 16, y1: 17, sign: { x: 12, y: 15 } });
+/** Mirador del nordeste (terraza) y cuesta de grava (necesita Correr). */
+export const LOOKOUT = Object.freeze({ x: 18, y: 6, w: 8, h: 7, ramp: [21, 22], rampY: [10, 12], sign: { x: 20, y: 7 } });
+/** Topógrafos del Consorcio Meridiano con su trípode (junto al cruce oeste). */
+export const SURVEY = Object.freeze({ tripod: { x: 9, y: 15 }, a: { x: 8, y: 15, dir: 6 }, b: { x: 10, y: 15, dir: 4 } });
+
+const HAS_RUTA_10 = mapRegistered('ruta_10');
+const HAS_ZAGUAN = mapRegistered('villa_zaguan');
 
 const t = (col, row) => 384 + row * 8 + col;
 // Puente de troncos vertical (tablones con barandilla, filas 523–529 del tileset original).
@@ -25,11 +37,14 @@ function rect(x, y, w, h) {
 }
 
 function paintForests(b) {
-  // Un trazo por bloque para que los troncos cuadren con la fila inferior de cada uno.
+  const west = WEST_CROSSING;
+  // Un trazo por bloque para que los troncos cuadren con la fila inferior de cada uno. El borde oeste se
+  // abre en el cruce hacia la Ruta 10.
   const blocks = [
-    ['bosque_mixto', 0, 0, 4, H], ['bosque_mixto', 26, 0, 4, H],
+    ['bosque_mixto', 0, 0, 4, west.y0], ['bosque_mixto', 0, west.y1 + 1, 4, H - west.y1 - 1],
+    ['bosque_mixto', 26, 0, 4, H],
     ['bosque', 4, 0, 8, 6], ['bosque_pinos', 18, 0, 8, 6],
-    ['bosque_mixto', 20, 6, 6, 10], ['bosque', 18, 20, 8, 6],
+    ['bosque_mixto', 24, 13, 2, 3], ['bosque', 18, 20, 8, 6],
     ['bosque_pinos', 18, 40, 8, 6], ['bosque_mixto', 22, 46, 4, 14], ['bosque', 4, 50, 4, 10],
   ];
   for (const [brush, x, y, w, h] of blocks) b.paint(brush, rect(x, y, w, h));
@@ -58,6 +73,31 @@ function boulder(b, x, y) {
   BOULDER.forEach((row, j) => row.forEach((id, i) => b.set(2, x + i, y + j, id)));
 }
 
+/** Cruce oeste: camino de tierra junto al arroyo; cortado por un desprendimiento hasta que exista la Ruta 10. */
+function paintWestCrossing(b) {
+  const c = WEST_CROSSING;
+  b.paint('camino_tierra', rect(c.x0, c.y0, c.x1 - c.x0 + 1, c.y1 - c.y0 + 1));
+  b.stamp('cartel_madera', c.sign.x, c.sign.y);
+  if (HAS_RUTA_10) return;
+  // Desprendimiento: rocas que tapan el hueco del bosque.
+  boulder(b, 0, c.y0);
+  boulder(b, 2, c.y0);
+}
+
+/** Mirador del nordeste: terraza con una cuesta de tierra suelta (grava) por la cara sur. */
+function paintLookout(b) {
+  const l = LOOKOUT;
+  b.blob(null, rect(l.x, l.y, l.w, l.h), 'terraza');
+  const [r0, r1] = l.rampY;
+  // La cuesta atraviesa la cara de la terraza y baja hasta el camino (un solo trazo: bordes continuos).
+  const ramp = rect(l.ramp[0], r0, l.ramp.length, r1 - r0 + 2);
+  const spur = rect(17, r1 + 1, l.ramp[0] - 17, 2);
+  b.paint('camino_tierra', [...ramp, ...spur]);
+  b.stamp('cartel_madera', l.sign.x, l.sign.y);
+  b.stamp('flores_blancas', l.x + 5, l.y + 2);
+  b.stamp('macizo_flores', l.x + 2, l.y + 3);
+}
+
 function paintDetails(b) {
   // Hierba alta (encuentros).
   for (const [x, y, w, h] of [[5, 8, 7, 7], [5, 22, 6, 9], [18, 34, 7, 6], [14, 45, 7, 5], [4, 44, 5, 6]]) b.rect(null, x, y, w, h, 'hierba_alta');
@@ -76,13 +116,12 @@ function paintDetails(b) {
   b.stamp('setas', 19, 29);
   // Árboles y flores sueltos.
   for (const [s, x, y] of [
-    ['arbol', 18, 7], ['pino', 17, 11], ['pino', 5, 34], ['arbol', 9, 36],
-    ['pino', 18, 47], ['arbol', 9, 54], ['pino', 20, 55],
+    ['pino', 5, 34], ['arbol', 9, 36], ['pino', 18, 47], ['arbol', 9, 54], ['pino', 20, 55],
   ]) b.stamp(s, x, y);
   for (const [s, x, y] of [
-    ['flores_rosas', 12, 3], ['flores_blancas', 17, 4], ['macizo_flores', 17, 14], ['flores_rosas', 6, 41],
+    ['flores_rosas', 12, 3], ['flores_blancas', 17, 4], ['flores_rosas', 6, 41],
     ['flores_blancas', 11, 39], ['macizo_flores', 5, 20], ['flores_rosas', 12, 57], ['flores_blancas', 17, 58],
-    ['macizo_flores', 19, 22], ['guijarros', 17, 25], ['brotes', 11, 17], ['brotes', 20, 37],
+    ['macizo_flores', 19, 22], ['guijarros', 17, 25], ['brotes', 11, 21], ['brotes', 20, 37],
   ]) b.stamp(s, x, y);
   b.rect(null, 9, 20, 3, 1, 'flores_azules');
   b.rect(null, 18, 51, 3, 2, 'flores_azules');
@@ -107,10 +146,19 @@ export default {
     paintForests(b);
     b.paint('camino_arena', PATH.filter(([x, y]) => !NARROW.some(([nx, ny]) => nx === x && ny === y)));
     paintStream(b);
+    paintWestCrossing(b);
+    paintLookout(b);
     paintDetails(b);
   },
 
-  connections: [{ dir: 'north', to: 'villa_alba', offset: -VILLA_OFFSET }],
+  connections: [
+    { dir: 'north', to: 'villa_alba', offset: -VILLA_OFFSET },
+    ...[linkIfReady('villa_zaguan'), linkIfReady('ruta_10')].filter(Boolean),
+  ],
 
-  events: ruta1Events({ southRow: H - 1, pathX0: 13, pathX1: 16 }),
+  events: ruta1Events({
+    southRow: H - 1, pathX0: 13, pathX1: 16,
+    zaguanOpen: HAS_ZAGUAN, westOpen: HAS_RUTA_10,
+    westCrossing: WEST_CROSSING, lookout: LOOKOUT, survey: SURVEY,
+  }),
 };

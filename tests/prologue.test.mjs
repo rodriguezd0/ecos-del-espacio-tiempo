@@ -7,7 +7,10 @@ import {
   validateName, validateGender, createNewGameState, prologueSeen, markPrologueSeen, resolveStartMap,
   NAME_MAX, START_HOUR, PROLOGUE_FLAG, PROLOGUE_SEEN_KEY, START_MAP, FALLBACK_MAP, TIME_CAPTION,
 } from '../game/src/content/newgameRules.js';
-import { SHOTS, REGION_POINTS, landCell, landCells, cellToScreen } from '../game/src/content/cutscenes/prologueData.js';
+import {
+  SHOTS, REGION_POINTS, CORE_TRAILS, landCell, landCells, cellToScreen, resolveRegionPoints, snapCell, coreLaunchVector,
+  landGrid, terrainAt,
+} from '../game/src/content/cutscenes/prologueData.js';
 import { REGION_MAP } from '../game/src/ui/logic/regionMapData.js';
 import { buildMapNode } from '../tools/lib/map_node.mjs';
 import { dx, dy } from '../game/src/world/gameMap.js';
@@ -166,16 +169,44 @@ test('planos del prólogo en el orden del guion', () => {
   assert.deepEqual([...SHOTS], ['p01', 'p02', 'p03', 'montaje', 'p04', 'final']);
 });
 
-test('dispersión: origen, pueblo y 5 núcleos sobre tierra; uno cae al norte del pueblo', () => {
-  const grid = REGION_MAP.grid;
-  const all = [REGION_POINTS.origin, REGION_POINTS.village, ...REGION_POINTS.cores];
-  for (const [x, y] of all) assert.ok(landCell(grid, x, y), `(${x},${y}) en tierra`);
-  assert.equal(REGION_POINTS.cores.length, 5);
-  const [vx, vy] = REGION_POINTS.village;
-  assert.ok(REGION_POINTS.cores.some(([x, y]) => x === vx && y < vy), 'un núcleo al norte del pueblo');
-  const cells = landCells();
-  assert.ok(cells.length > 100, 'hay destinos de sobra para 100 células');
-  for (const p of all.map(cellToScreen)) assert.ok(p.x > 0 && p.x < 512 && p.y > 0 && p.y < 384);
+test('dispersión (CAMPANA §2.4): cinco estelas grandes en cinco direcciones desde el aljibe', () => {
+  const grid = landGrid(REGION_MAP);
+  const { origin, village, cores } = REGION_POINTS;
+  assert.equal(cores.length, 5);
+  assert.deepEqual(CORE_TRAILS.map((t) => t.core), ['N1', 'N2', 'N3', 'N4', 'N5']);
+  for (const [x, y] of [origin, village]) assert.ok(landCell(grid, x, y), `(${x},${y}) en tierra`);
+  const [n1, n2, n3, n4, n5] = cores;
+  const [vx, vy] = village;
+  assert.ok(n1[0] === vx && n1[1] < vy && landCell(grid, ...n1), 'N1 al norte del pueblo');
+  assert.ok(n2[0] > vx && landCell(grid, ...n2), 'N2 en la meseta del este');
+  assert.deepEqual(n3, origin, 'N3 vuelve al propio aljibe');
+  assert.ok(n4[1] > vy && !landCell(grid, ...n4), 'N4 en el mar del sur');
+  assert.ok(n5[1] < vy && n5[0] > vx && landCell(grid, ...n5), 'N5 en el norte helado');
+  assert.ok(origin[0] < vx && origin[1] < vy, 'el Monte del Portal queda al noroeste del pueblo (X22)');
+  // Salidas: cuatro direcciones distintas y la del aljibe sube y vuelve
+  const from = cellToScreen(origin);
+  const vecs = cores.map((c, i) => coreLaunchVector(from, cellToScreen(c), 3.4, CORE_TRAILS[i].arc));
+  assert.equal(vecs.filter((v) => v.returns).length, 1, 'solo N3 vuelve al origen');
+  assert.ok(vecs[2].returns && vecs[2].vy < 0, 'N3 sube antes de caer en el aljibe');
+  const angles = vecs.filter((v) => !v.returns).map((v) => Math.round(Math.atan2(v.vy, v.vx) * 10));
+  assert.equal(new Set(angles).size, 4, 'cuatro direcciones distintas');
+  assert.ok(landCells().length > 100, 'hay destinos de sobra para 100 células');
+  for (const p of [origin, village, ...cores].map(cellToScreen)) assert.ok(p.x > 0 && p.x < 512 && p.y > 0 && p.y < 384);
+});
+
+test('dispersión: los puntos se ajustan a la rejilla aunque cambie el atlas (X02) y respetan sus ids', () => {
+  const grid = ['......', '.####.', '.####.', '......'];
+  const pts = resolveRegionPoints({ grid, points: [{ id: 'villa_alba', x: 2, y: 2 }] });
+  assert.deepEqual(pts.village, [2, 2], 'usa el punto del atlas');
+  assert.deepEqual(pts.cores[0], [2, 1], 'N1 justo al norte');
+  assert.ok(landCell(grid, ...pts.origin) && !landCell(grid, ...pts.cores[3]), 'origen en tierra y N4 en el mar');
+  const atlas = { terrain: ['~~~', '~f^', 'l.:'], places: [{ id: 'villa_alba', x: 1, y: 1 }] };
+  assert.deepEqual(landGrid(atlas), ['...', '.##', '.##'], 'atlas con tipos: agua = mar, lago y arrecife');
+  assert.equal(terrainAt(atlas, 2, 1), '^');
+  assert.deepEqual(resolveRegionPoints(atlas).village, [1, 1], 'usa los lugares (places) del atlas');
+  assert.deepEqual(snapCell(grid, [0, 0], 'land'), [1, 1]);
+  assert.equal(landCell(grid, ...snapCell(grid, [2, 1], 'sea')), false);
+  assert.deepEqual(snapCell(grid, [2, 2], 'land'), [2, 2], 'una celda válida no se mueve');
 });
 
 // ───────────────────────────── Mapa montana_portal ─────────────────────────────

@@ -9,6 +9,9 @@ export const START = Object.freeze({ x: 8, y: 6, dir: 2 });
 /** Casilla de la escalera (se pisa desde la izquierda) y llegada desde la planta baja. */
 export const STAIRS = Object.freeze({ x: 10, y: 4 });
 export const STAIRS_ARRIVAL = Object.freeze({ x: 9, y: 4, dir: 4 });
+/** Casilla del evento con la vista de la ventana (fotograma 96×64 centrado en x 5: cubre la ventana 5–6). */
+export const WINDOW_VIEW = Object.freeze({ x: 5, y: 3 });
+const WINDOW_TEXT = 'Entra la luz de la mañana. Sobre los tejados de Villa Alba y el bosque se alza el Monte del Portal, con su gran cascada.';
 
 export default {
   id: 'casa_prota_2f',
@@ -55,7 +58,13 @@ export default {
       id: 'luz_manana', x: 5, y: 4, through: true, when: when({ none: [F.starter] }),
       glow: { name: 'softLight', radius: 110, intensity: 0.22, pulse: 0.08, color: [255, 232, 160] },
     },
-    ...examineRect('ventana', 5, 3, 2, 1, 'Entra la luz de la mañana. Se ven los tejados de Villa Alba y, detrás, el bosque.'),
+    // Vista por la ventana: el Monte del Portal con su gran cascada (CAMPANA «B01 — ajustes»; X22).
+    // Sprite generado por tools/b01_assets.mjs: solo pinta los cristales del stamp 'ventana_cortinas'.
+    {
+      id: 'vista_monte', x: WINDOW_VIEW.x, y: WINDOW_VIEW.y, sprite: 'asset:objects/ventana_monte.png', dir: 2,
+      through: true, directionFix: true, walkAnime: false, stepAnime: true, speed: 1, shadow: false,
+    },
+    ...examineRect('ventana', 5, 3, 2, 1, WINDOW_TEXT),
     ...examineRect('estanteria', 4, 4, 1, 1, 'Libros de Pokémon y un par de mapas del bosque, muy usados.'),
     ...examineRect('comoda', 8, 4, 1, 1, 'Ropa doblada. La mochila está preparada al lado.'),
     ...examineRect('tele', 4, 5, 2, 2, 'Un programa sobre Pokémon del bosque. Nada que no sepas ya.'),

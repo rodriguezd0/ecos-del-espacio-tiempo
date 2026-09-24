@@ -120,6 +120,7 @@ movePokemon(from, to)          // ref = { party: i } | { box, slot }; { party: �
 registerSeen(sp) registerCaught(sp) seenCount() caughtCount() hasPokedex() obtainPokedex()
 clues hasClue(id) addClue(id, texto)→bool solveClue(id)
 hasCell/addCell hasCore/addCore zygardeAbility(k)/setZygardeAbility(k, v) addFragment addTablet
+hasFlyPoint(id) unlockFlyPoint(id)   // destinos de Vuelo desbloqueados por guion (id de lugar del atlas, §7e)
 hour advanceMinutes(m) isDay()
 ```
 El equipo nunca se queda sin un Pokémon capaz de combatir (depositar/mover/liberar lanzan «¡Es tu último
@@ -193,6 +194,7 @@ Brushes: `{ tile, variants }`, `{ autotile: slot }`, `{ nine: [x,y] }`, `pattern
 `terrace`, `room`, `cave`, `line`. Stamps: `{ src:[x,y,w,h], layer, door }`, `{ from: { map, x, y, w, h, layers } }`
 (horneados con `node tools/stamps_bake.mjs`) o `{ tiles: { w, h, layers } }`. **Ojo**: el agua exterior se pinta con
 el brush `agua` + `orilla` (el autotile de agua de Añil solo tiene válidos sus 4 bloques interiores).
+Kit de Pilar, tinte por Pilar, tiles propios y biblioteca por bioma: §12.
 
 ### Eventos (`world/mapEvent.js`, tipos en `world/eventTypes.js`)
 ```js
@@ -279,6 +281,76 @@ Otros → «Aquí no se puede usar.». Añadir un objeto: `registerFieldItem('ID
 **Repelente**: `state.startRepel` al usarlo; `World` descuenta un paso por paso (no en hielo), bloquea salvajes de
 nivel < al del primer Pokémon y al agotarse avisa y ofrece usar otro (`repelWoreOff`).
 
+## 6b. Historia transversal (propietario: story)
+
+Sistemas narrativos de toda la campaña (CAMPANA §1.7, §3.0, §3.1; TABLILLAS.md). Datos y lógica PUROS en
+`content/story/` (sin DOM ni motor: se prueban con `node --test`); la presentación (`storyFx.js`) se carga bajo demanda.
+
+**Datos** (`content/story/`):
+- `clues.js` — `CLUE_ARCS` T01–T15: `{ id, title, tablet, place, zone (id de mapa: anillo del mapa regional), block,
+  opens: { block, by, flag|null }, available: { label, flag: 'pN_restored' }, abilities[], queueUntil: { ability }|null,
+  after, night, steps: [{ label, by, text }×2], closes: { tablet } }`. `MAX_ACTIVE_CLUES = 3`, `ZYGARDE_LINES`.
+- `tablets.js` — `TABLETS` (18 = 17 tablas de tipo + `LEGENDPLATE`; **sin `BLANKPLATE`**): `{ id, name, type, arc,
+  chronicle, place, block, arceusPhase }`; `CAMPAIGN_TABLETS` (15), `ARCEUS_TABLETS` (3), `missingCampaignTablets(state)`,
+  `hasAllCampaignTablets(state)` (Puerta de las Quince).
+- `chronicle.js` — `CHRONICLE` I–XV y `ARCEUS_CHRONICLE`; `chronicleFor(tabletId)`; se desbloquea con `state.tablets`.
+- `verses.js` — `VERSES` I–X `{ n, numeral, pillarName, text, readBy, effect, keep }` y `CONFIRMATION`; `unownText`,
+  `partialTranslation`, `verseTranslation(verse, full)`; traducción total con `GLYPHKEY`. Flags `verse_<n>`, `verse_confirmation`.
+- `fragments.js` — `FRAGMENTS` 1–10 `{ id: 'F01'…, flag: 'pN_restored', name, place, keeper, tint (kit de Pilar),
+  localEffect }`; `highestRestoredPillar(state)`, `hasFragment(state, n)`.
+- `crisis.js` — fases 0–4 + 5 (cielo restablecido, flag `game_cleared`): 1 desde P3, 2 desde P6, 3 desde P8, 4 desde P10.
+  `crisisPhase(state)` (var `crisis_phase` la fuerza), `crisisLayer(fase)`, `crisisTone`.
+
+**Estado de las pistas** (`clueLogic.js`): cada pista de arco es una entrada de `state.clues`
+`{ id, text, solved, status: 'active'|'queued'|'solved', step: 1|2, seen, order }` (se modifica con el nuevo
+`GameState.updateClue(id, patch)`, inmutable). Máximo 3 activas; el resto en cola por orden de apertura; T11/T12
+esperan a Nadar; el descubrimiento directo supera el límite. Las notas sueltas de `state.addClue` no ocupan hueco.
+`clueZones(state)` → `[{ id, zone, place }]` (segundas pistas activas) para el mapa regional; `syncClueSchedule(state)`
+abre las pistas cuyo hito (`opens.flag`) ya pasó.
+
+**API para guiones** (`content/story/api.js`; en los guiones como `ctx.story.*`, o importando las funciones con ctx primero):
+```js
+await ctx.story.openClue('T01', { direct, silent })  → 'active'|'queued'|'solved'   (aviso «Nueva pista en la Libreta»)
+await ctx.story.advanceClue('T01', 2)                 // segunda pista (la activa aunque estuviera en cola)
+await ctx.story.closeClue('T01')                      // resuelve y deja pasar la siguiente de la cola
+await ctx.story.giveTablet('MEADOWPLATE')             // mochila + state.addTablet + animación + Crónica + cierra su arco
+await ctx.story.revealVerse(3 | 'confirmation')       // placa Unown (Fonts/Annon.ttf), traducción parcial/total
+await ctx.story.restorePillar(n, { core: {x, y}, onRestored: async (ctx, fragmento) => {}, requirePrevious = true,
+  showVerse = true, bgmAfter, force })                // «Pilar restaurado» → true | false
+await ctx.story.forgeAzureFlute()                     // los diez Fragmentos → AZUREFLUTE (B20)
+ctx.story.setCrisisPhase(3 | null)   ctx.story.crisisPhase()   ctx.story.clueStatus('T02')   ctx.story.refreshClues()
+```
+`restorePillar`: jingle `VinculoSupremo` → brillo del núcleo (`softLight` con el tinte del Pilar, destello, temblor) →
+Fragmento Azur n (`state.addFragment('F0n')` y contador del objeto `AZUREFRAGMENT`) → verso n → flag `pN_restored` →
+`opts.onRestored` (efecto local) → `LeyendaPrisma`. Cadena de resonancia: sin el Fragmento n−1 el núcleo no responde.
+
+**Libreta** (`ui/screens/clues.js`, `ui.openClues({ tab: 'clues'|'prophecy'|'chronicle'|'tablets' })`): pestañas
+Pistas (abiertas n/3 con «¡Nuevo!», en espera, notas, resueltas; frase de Zygarde si falta una capacidad), Profecía,
+Crónica y Tablillas (18 casillas). Q/E cambian de pestaña. Vista pura en `content/story/notebook.js`.
+
+**Cielo de crisis** (`content/story/crisisSky.js`): MapScene lo sincroniza cada fotograma en mapas `outdoor` (un mapa
+se excluye con `crisis: false`): tono propio de la fase sumado al de día/noche, aurora + luna + grietas (fase 3), luna
+(fase 4), atardeceres largos (fase 2), tormentas secas (fase 1) y temblores nocturnos (fase 0, solo tras
+`b01_left_town`). Probar: `?scene=map&map=dev_story&vars=crisis_phase:3&time=23`.
+
+**Descanso** (`world/rest.js`): `await ctx.rest({ kind: 'home'|'bed'|'center'|'inn'|'camp', storm, heal = true,
+message, mode, slot })` → `{ rested, mode, slot }`. «Descansar» elige Mañana (8:00) / Tarde (15:00) / Noche (21:00);
+«Dormir profundamente» solo en `home` (despierta a las 8:00 y prueba los ganchos `registerDreamHook(async ctx => bool)`,
+con la pantalla en negro); «Descansar hasta tormenta» solo en `inn` con `storm: true` (3 h de juego de clima `storm`
+en exteriores: `stormActive(state)`, `stormWeather(state, def)` que consulta MapScene). Cada descanso cura, suma la
+var `rest_count` y llama a `registerRestHook((ctx, { mode, kind }) => …)` (reaparición de Alfas y legendarios).
+
+**Transporte** (`world/transport.js`): `TRAIN` (tras `p4_restored`; Caudal, Brontia, Estrato, Lúmina, Nexo; cada
+estación se activa al usarla — flag `train_station_<id>` — o al visitar su mapa) y `FERRY` (tras `p7_restored`;
+Nexo ↔ Caleta Sonda, Nexo ↔ Villa Boreal). En el mapa de la estación: `stationEvent({ id, x, y, station: 'caudal' })`,
+`portEvent({ id, x, y, port: 'nexo' })` o `takeTrain(ctx, 'caudal')` / `takeFerry(ctx, 'nexo')` /
+`takeTransport(ctx, from, { network })`. Llegada: `arrival: { x, y, dir }` de cada parada (null = `start` del mapa;
+quien construya el mapa rellena sus coordenadas en `TRAIN`/`FERRY`). Tarjeta de viaje con fundido.
+
+**Fuentes** (`ui/core/text.js`): `font: 'unown'` (Annon; cargar antes con `ensureUnownFont()` de `storyFx.js`) y
+`font: 'note'` (Power Green 20 px, nítida; `small`/`tiny` pierden la «m», la «ll» y algunas cifras).
+**Mapa de prueba**: `?scene=map&map=dev_story&debug` (pistas, Tablillas, Pilar, cielo, Clave Glífica, descanso, tren y ferri).
+
 ## 7. Combate
 
 Desde el mapa: `world/battleFlow.js#runBattle(scene, request)` (lo usan `ctx.battle/wildBattle`): destellos +
@@ -358,6 +430,148 @@ oscuridad con luces) → efectos luminosos → pasada final (destello, fundido, 
   tilemaps, sprites, partículas de clima y efectos (verificado con `tools/perf_map.mjs`: 0 fugas en 20 warps).
   Rendimiento medido (mapa 120×120 con 40 NPC, headless): lógica ≈0,1 ms/frame, dibujo ≈0,6 ms/frame (CPU).
 
+## 7e. Servicios de pueblo, pesca y atlas (propietario: services)
+
+Todo se importa desde `content/services/index.js` (módulos puros salvo los guiones, que usan `ctx`).
+
+**Catálogo de mapas por zona** (`content/services/zones.js`, CAMPANA §1.3–1.8, música y fondos TÉCNICO X04/X20):
+```js
+export default { id: 'ruta_4', ...zoneDefaults('ruta_4'), tileset: 1, … }   // { name, bgm, battleback } (sin nulls)
+mapInfo(id) → { id, place, name, bgm, battleback } | null    mapDisplayName(id)    mapPlace(id) → id de lugar del atlas
+```
+Cubre todos los ids de mapa de CAMPANA (test) y resuelve interiores por prefijo (`zaguan_centro`, `caudal_tienda` →
+población). `ui/core/mapNames.js#mapName` lo usa como respaldo del `name` de la definición.
+
+**Centro Pokémon** (`services/pokecenter.js`, tileset 4 con `mostrador_centro` y `pc_centro` + piezas `svc_*` en línea):
+```js
+// content/maps/<bloque>/zaguan_centro.js
+export default pokemonCenterMap({ id: 'zaguan_centro', exit: { map: 'villa_zaguan', x: 20, y: 15 } });
+// opts: name, bgm ('pokecenter'), shop: false | { list, items, extra, remove, greeting, prices }, pc: false,
+//       rest: false, nurseSprite ('enfermera'), clerkSprite ('tendero'), events: [...]
+// en el exterior: { x, y, to: 'zaguan_centro', ...CENTER_ENTRY, door: true }
+```
+Interior 19×14 (`CENTER_LAYOUT`): enfermera (9,5), casilla de cura (9,7) mirando arriba, máquina con las Poké Balls
+de Añil (`Healing balls 1/2`, una por Pokémon, parpadean con el ME `heal`), PC (14–15,5), mostrador de tienda con
+dependiente (13,11), rincón de descanso (X25) y salida de 3 casillas (8–10,12). Curar = `ctx.heal()` +
+`ctx.setHealPoint(9, 7, 8)`. Piezas sueltas para Centros con otro diseño: `nurseEvent(opts)`,
+`pokemonCenterHeal(ctx, { machine, healPoint })`, `playHealMachine(ctx, { x, y, offsetX, count, onHeal })`,
+`pcEvents(x, y)`, `buildCenter(b)`.
+
+**Tiendas** (`services/shop.js`): `STOCK_TABLES` (`general`, `balls`, `fishing`; tramos por Pilares restaurados
+`p1_restored`…, TÉCNICO provisional). `shopStock(state, { list, items, extra, remove })`,
+`clerkEvent({ x, y, dir, list, extra, greeting, prices })`, `openMart(ctx, opts)` y el interior
+`shopMap({ id, exit, list, extra, bgm })` (15×12, dependiente en (9,8), `SHOP_LAYOUT`).
+
+**Posada y descanso** (`services/inn.js`, delega en `ctx.rest` de `world/rest.js`): `innkeeperEvent({ x, y, price,
+storm })` («Descansar hasta tormenta» solo con `storm: true`), `restSpotEvent(id, x, y, { kind: 'center'|'camp' })`.
+
+**Tutor y Recordador** (`services/moveTeaching.js`): `moveTutorEvent({ x, y, moves: ['FIREPUNCH', { move, cost }],
+cost: { money } | { item, count } })`, `moveReminderEvent({ x, y, cost })`; puros `tutorCanLearn`,
+`relearnableMoves`, `costLabel`, `teachMove(ctx, índice, mov)`.
+
+**Pesca** (`world/fishing.js`, registrada en `fieldActions`): OLDROD/GOODROD/SUPERROD desde la Mochila mirando a agua
+con `canFish`. Tablas del mapa en el formato de encuentros: `encounters: { fish_old: [[peso,'ESPECIE',min,max]…],
+fish_good, fish_super }` (admiten `fish_oldNight`…). Essentials: pica con 20+25×caña % (×1,5 Viscosidad/Ventosas),
+5–10 puntos de espera, «¡Algo ha picado!» y ½–1 s para pulsar A; pulsar antes o no tener tabla → «Parece que no
+pican…». Animación: hoja `protagonista_<m|f>_fish_offset` si existe en `content/characters.js`; si no, caña, sedal y
+boya provisionales dibujados con Three.js. API pura: `biteChance`, `rollFishing(rng, …)`, `fishingSpot(world)`,
+`fishingType(encounters, rod, hora)`.
+
+**Atlas y mapa regional** (`ui/logic/regionMapData.js`; pantalla `ui/screens/regionMap.js`):
+`REGION_MAP = { terrain[20×30], grid, places, points (alias), roads, seaRoads, rivers }`. Lugares en las casillas de la
+ilustración `game/assets/ui/region_map.png` (+ `region_map.json`, agente de arte; test de coincidencia) con
+`links` direccionales de las tablas de CAMPANA (test de simetría), `pillar(s)`, `parent`, `fly`, `flyUnlock`,
+`mapIds`, `flyTo: { map }`. Funciones: `pointAt`, `pointForMap`, `canFlyTo(lugar, flyPoints, visited)`,
+`flyDestinations(state)`, `resolveFlyTarget(idLugar, loadMapDefinition)` → `{ mapId, x, y, dir }` (usa
+**`flyPoint: { x, y, dir }` de la definición del mapa** del pueblo, o su `start`), `registerRegionMarks(fn)`.
+`ui.openRegionMap({ fly: true })` devuelve el id del lugar elegido (solo visitados o desbloqueados); las marcas de
+células salen de `world/zygarde/detection.js#regionPointMarks`. Sin la ilustración se dibuja una versión
+provisional con los mismos datos. Prueba: `?scene=map&map=dev_services&debug` (Centro, tienda, lago con las tres
+cañas, tutor, recordador, posadero y cartógrafa con el mapa y el Vuelo).
+
+## 7f. Sistema de campo de Zygarde (propietario: zygarde)
+
+CAMPANA §2 (D10) y biblia §8. Datos en `content/zygarde/`, lógica en `world/zygarde/`, pantalla `ui/screens/zygarde.js`.
+
+**Datos** (puros):
+- `content/zygarde/cells.js`: `CELLS` (100: `{ id: 'C001', key: 'cell_villa_alba_1', map, area, stage 'A'–'H', where,
+  required, scripted }`), `cellByKey`, `cellById`, `cellsOnMap`, `stageCounts`, `CELL_MAPS`. **La clave `key` es lo que
+  se guarda** (`state.addCell(key)`) y el `cell` del evento. `map` = id PREVISTO: si un bloque crea el mapa con otro id,
+  se corrige aquí (lo vigila `tests/zygarde_content.test.mjs`). Las `scripted` (C009, C029–C032) se dan por guion.
+- `content/zygarde/thresholds.js`: `CAPABILITIES` (§2.1: `{ key, name, short, form, cells, cores, milestone, requires,
+  hint }`), `FORMS`/`FORM_ORDER` (`core`, `'10'`, `'50'`, `complete`), `STAGES`, `CORES` (N1–N5 con requisitos y lo que
+  desbloquean), `PILLARS`, `TIMELINE`, `MILESTONES`, `FORM_FLAGS` (`zyg_10`, `zyg_50`, `zyg_complete`), `coreFlag(id)`
+  (`zyg_core_2`…). Claves: `run ram terrain climb swim detect dive fly rebuild jump anchor`.
+- Hitos (flags): `run` → `p1_restored` · `climb` → `p5_restored` · `dive` → **`b13_dive_resonance`** (nombre técnico
+  para la resonancia del muelle de buzos) · `complete` (Vuelo + Reconstrucción) → `p8_restored` · `jump` →
+  `p10_restored` · `anchor` → `game_cleared`.
+- `content/zygarde/texts.js`: líneas de «recuerdo» (telepatía sobria), `missingPartsLine(n)` («Me faltan dos partes.»),
+  textos de obstáculos sin cifras (`FIELD_TEXT`).
+
+**Progresión** (`world/zygarde/progression.js`, puro; `scenes.js` con `ctx`):
+```js
+capabilityStatus(state, key) → { unlocked, eligible, cellsMissing, coresMissing, milestoneMet, requiresMet }
+pendingCapabilities(state) → ['run', …]   missingParts(state, key)   unlockedForms(state)   naturalForm(state)
+applyUnlock(state, key) → { changed, formChanged }   joinCore(state, 'N2')   canChooseForm(state, form)   zygardeSummary(state)
+// Guiones de bloque:
+await checkZygardeProgress(ctx, { scenes = true })   // activa lo que ya se cumple (escena corta genérica); la llama sola zygardeCell
+await reachMilestone(ctx, 'run' | 'climb' | 'dive' | 'complete' | 'jump' | 'anchor')  // flag + activa o «Me faltan N partes.»
+await grantCore(ctx, 'N2', { scenes })   await unlockCapability(ctx, key, { scene })   await remindMissing(ctx)
+```
+Una escena de bloque con su propio guion (N2 en el Colector, puente del P8…) llama a `grantCore`/`reachMilestone` con
+`{ scenes: false }`. El Core, al hablarle, recuerda las partes que faltan si hay un hito esperando.
+`GameState` (añadido): `zygardeForm`, `setZygardeForm(null|'core'|'10'|'50'|'complete')`, `cellCount()`.
+
+**Montura** (`world/zygarde/mount.js`): tecla **R (E)** monta/desmonta el 10 % (exteriores y cuevas; `mount: false`
+o `noMount` lo prohíben); montado + Mayús = galope a velocidad 5.5 (el doble que la carrera humana, 4.5; hook
+`world.runSpeed`). Nadando o en mapas `underwater` se muestra el 50 %. Arte: `<protagonista>_ride10`, `_ride50` y, bajo el
+agua, `_dive` (content/characters.js); sin arte, fallback con el seguidor de Añil bajo el jugador (Character extra en
+`world.extraCharacters`, que WorldView dibuja). Consultas: `isRiding(world)`, `isMounted(world, form)`, `mountForm`,
+`playerWeight(world)` (1 a pie, 3 montado: puzles de peso de B08), `setRiding(world, on)`, `canRide(world)`.
+
+**Tipos de evento** (`world/zygarde/eventTypes.js`, registrados en `world/eventTypes.js`, sustituyen a los básicos):
+| type | propiedades |
+|---|---|
+| `zygardeCell` | `cell` (clave), `text`, `onFound`, `when`; al recogerla comprueba la progresión |
+| `ramRock` | `kind`: `'rock'` o `'log'`, `group` (se rompen juntos), `sprite`/`tileId`; fisura blanca con brillo verde |
+| `roughTerrain` | `kind`: `'mud'`, `'sand'` o `'snow'`; `mounted` (además montado); a pie el jugador se hunde un poco |
+| `gravelSlope` | cuesta de grava: solo montado en el 10 % (ofrece montar) |
+| `climbWall` | `to: [x, y]`, `down`, `h` (alto de las vetas); anima la subida/bajada (`<protagonista>_climb` si existe) |
+| `diveSpot` | `to, tx, ty, dir`; `surface: true` = salida del fondo |
+| `diveVent` | respiradero verde / `kind: 'bolsa'`: recarga la burbuja y es el punto de regreso |
+| `diveCurrent` | `dir`, `length`: corriente que empuja |
+| `rebuildGap` | `tiles: [[x, y, capa, id]…]` en un zócalo hexagonal; las piedras suben y quedan (self switch A + patch) |
+
+`zygardeArea(type, prefijo, x, y, w, h, extra)` crea un evento por casilla (barro, arena, nieve, grava).
+
+**Buceo** (`dive.js`): mapa con `underwater: { shallow: [[x, y, w, h]…] }` (+ `dark`). Medidor de 8 segmentos en el
+HUD; pierde uno cada 5 s en lo profundo; al agotarse, fundido y regreso al último respiradero sin daño. Luz radio 3
+(5 con Destello en el equipo). **Detección** (`detection.js`): latido (sonido y anillo) del Core/10 % a ≤ 10 casillas de
+una célula; rótulo «Células: n/m» al entrar en un mapa con células; con `detect`, flecha verde hacia la célula más
+cercana; `regionCellMarks(state)` / `regionPointMarks(state, points)` para el mapa regional (visitados; en la crisis del
+P8, todos). **Acciones** (`actions.js`): `flyWithZygarde(ctx)` (usa `ui.openRegionMap({ fly: true })` y
+`resolveFlyTarget` de services; disgregación en hexágonos y tira `<protagonista>_vuelo`), `changeForm(ctx, form)`,
+`convergenceJump(ctx, { to, x, y, dir, frames = 1500 })` (B21: 10 % deliberado, estelas; saltable con A/B desde la
+segunda vez, flag `zyg_jump_seen`), `spatialAnchor(ctx, { onAnchor })` + `canAnchor(state, def)` (postgame, mapas con
+`anchorZone: true`), `ramBreak`, `climbWall`, `rebuildStones`, `diveDown`, `surfaceUp`.
+
+**Pantalla y Arca**: `ui.openZygarde()` (desde el menú de pausa o usando el Arca `ZYGARDECUBE` en la Mochila) muestra
+forma, células, núcleos, formas (con el Arca se cambia entre las desbloqueadas) y capacidades con iconos, sin umbrales.
+Devuelve `{ type: 'zygarde', action: 'fly' | 'formChanged' }`, que el mapa ejecuta (`registerFieldAction` en
+`world/fieldActions.js`).
+
+**Integración** (aditiva): MapScene crea `scene.zygarde = new ZygardeField(scene)` (`world/zygarde/field.js`) y lo llama en
+`enter/enterMap/onConnectionCrossed/refreshFollower/update/updateWhilePaused/drawUI/exit`; efectos Three.js propios
+registrados con `registerEffect(name, factory)` de `render/effects.js` (`zygardeHexBurst`, `zygardeFissure`,
+`zygardeVeins`, `zygardeSocket`, `zygardeWhirl`, `zygardeVent`, `zygardeCurrent`, `zygardeBubble`, `zygardeHeartbeat`,
+`zygardeStrip`), utilizables con `ctx.effect(nombre, opts)`. Seguidor por forma en `content/companion.js`.
+
+**Pruebas**: `tests/zygarde_{data,progress,field,content}.test.mjs` (invariantes 1–3 del grafo, umbrales, escenas,
+montura, obstáculos, detección, Buceo, Vuelo). Mapas `dev_zygarde` (tileset 1: cresta con roca/troncos/grava, barro,
+nieve, arena honda, pared, estanque con remolino, sima con zócalo, 3 células) y `dev_zygarde_fondo` (tileset 15).
+Parámetros: `?zygarde=all|run,ram…` (adopta la forma natural), `?zform=core|10|50|complete`, `?zcells=N` (primeras N
+del registro), `?zcores=N`, `?zmount=1`. Ej.: `?scene=map&map=dev_zygarde&zygarde=all&debug`.
+
 ## 8. Pokémon (objeto serializable, `battle/core/pokemon.js`)
 ```js
 { uid, species, form, nickname, level, exp, gender, nature, ability, abilityIndex, shiny, alpha,
@@ -387,3 +601,141 @@ Pruebas:
 - Flujos completos: `node tools/e2e_flows.mjs [saveload keepopen clues repel escape]`.
 - Rendimiento/fugas: `node tools/perf_map.mjs [--map=<id>] [--seconds=5] [--warps=10]`.
 - Cada bloque jugable se verifica dentro del juego antes de darse por terminado.
+
+## 10. Bloque 1: cinemáticas, integración de combate, contenido y validación (propietario: b01)
+
+### 10.1 Cinemáticas (`content/cutscenes`)
+- **Director** (`director.js`, PURO): reloj de fotogramas propio. `await d.wait(n)`, `await d.tween(obj, { x: 100 }, n,
+  'linear'|'in'|'out'|'inOut'|'back'|fn)`, `const stop = d.every((frame) => …)` (devolver `false` la quita),
+  `d.caption(texto, { frames, fade, style: 'small'|'center' })`, `d.waitFor(promesa)`, `d.check()`, `d.cancel()` (todo lo
+  pendiente y futuro rechaza con `CancelledError`; `isCancel(err)`), `d.stepsFor(acelerando)` (×`SPEED_UP` = 3).
+- **CineOverlay** (`cineOverlay.js`): escena transparente encima de la escena filmada (escenario propio o MapScene):
+  la actualiza 1 vez por fotograma (×3 manteniendo A), START salta si el Director es `skippable`, dibuja rótulos.
+  `await stageScene(overlay, escena, params)` sustituye la pila y vuelve a poner el overlay encima;
+  `untilFrame(pred, ms)` espera por fotogramas de pantalla.
+- **Prólogo** (`prologue.js`): `await playPrologue({ skippable, from })` → `'done'|'skipped'|'error'` (nunca lanza; rueda
+  con una partida provisional y termina en negro). Planos `SHOTS`: `p01` (Distorsión, `prologueP01.js`), `p02`–`p03`
+  (`montana_portal` sobre MapScene, `prologueMountain.js`/`prologueBattle.js`), `montaje`, `p04` (victoria) y `final`
+  (dispersión y pueblo, `prologueFinale.js`, escenario `prologueStage.js`: modos `distortion|sky|village|black`).
+  Partículas y brillos en `cineGfx.js` (`target: { x, y, k, kill, minAge }`).
+- **Dispersión P-04** (`prologueData.js`, PURO; CAMPANA §2.4): `CORE_TRAILS` = cinco estelas grandes N1–N5 (norte del
+  pueblo, meseta del este, el propio aljibe, mar del sur, norte helado) con su `arc`; `resolveRegionPoints(atlas)` las
+  sitúa con los lugares de `ui/logic/regionMapData.js` (`montana_portal`, `villa_alba`, `meseta_impulso`, `mar_del_sur`,
+  `villa_boreal`) ajustadas a tierra/mar (`snapCell`); `landGrid(atlas)`/`terrainAt` admiten `terrain` (X02) y el
+  formato antiguo `grid`; `coreLaunchVector(from, to, speed, arc)`. `regionCanvas.js` pinta el plano nocturno por tipo.
+- **Rutas**: `?scene=prologue[&shot=p01|p02|p03|montaje|p04|final][&skip=1]` (al acabar vuelve al título) y
+  `&full=1[&noprologue=1]` (flujo completo de partida nueva: `content/newgame.js#newGameFlow`). Prólogo visto =
+  `localStorage['ecos.prologue_seen']` (START lo salta) + flag `prologue_seen`.
+
+### 10.2 Resultado de combate y sprites de entrenador
+- `battle(config)` (battle/api.js, con escena o sin DOM) devuelve SIEMPRE el resultado normalizado de
+  `battle/scene/results.js#finalizeBattleResult`: `{ …motor, outcome, party, caught, stored, canLose, trainer? }`.
+  El motor (`buildResult`) sigue entregando `playerParty`; `resultParty(r)` acepta ambos. `stored: true` = ya aplicado a
+  la partida (escena real: equipo, dinero, mochila, vistos, capturas con mote y evoluciones); con `stored: false`
+  `world/battleFlow.js` lo aplica con `applyBattleResult` + `storeCaught` de `caughtList(r)`. `applyBattleResult` nunca
+  deja el equipo vacío. Las implementaciones de `installBattle(fn)` pueden devolver resultados crudos: battleFlow los
+  normaliza. La derrota usa `state.healPoint`.
+- Sprite del rival: `battle/scene/trainerSprites.js#resolveTrainerSprite(sprite, { anilUrl })` → `{ file, cols, source }`
+  con `getBattleSprite` de `content/characters.js`: ids propios (`gael_front`, `guardiana_front`…), `anil:<clase>`
+  (content/anilClasses.js), `anil:<ARCHIVO>` de Graphics/Trainers, charsets con `battle.front` (`gael` → `gael_front`),
+  ruta `.png` o `Graphics/Trainers/<X>.png`. Si no carga: aviso y `anil:CHICO`.
+
+### 10.3 Contenido del Bloque 1 (`content/maps/b01`, `content/events/b01*`; detalle en `maps/b01/README.md`)
+- Elenco `CAST` (Agente Olmedo, familia Arenzana, Lía) en `events/b01_town_common.js`; `setHomeHealPoint(ctx)`.
+- Células: `events/b01_cells.js` — `B01_CELLS [{ id, code, map, x, y, stage, required, where }]`, `cellsOf(map)`,
+  `cellEvent(cell, { when })` (tipo `zygardeCell`: el tipo acepta `when(state, ev)` extra), `collectCell(ctx, id,
+  { react })` (recoger desde un guion: texto «(n/100)», reacción del Core y `checkZygardeProgress`).
+- C001: `events/b01_town_cell.js` (`parterreCellEvents()`, `parterreScene(ctx)`).
+- Enlaces con bloques futuros: `maps/b01/pending_links.js` — `PENDING_LINKS` (`villa_zaguan` B02 sur, `ruta_10` B11
+  oeste: offset, texto del aviso y lo que debe respetar el destino), `mapRegistered(id)`, `linkIfReady(id)` →
+  conexión o null. La Ruta 1 abre el enlace sola cuando el mapa se registra.
+- Arte del bloque: `node tools/b01_assets.mjs [--preview]` → `assets/objects/ventana_monte.png` (vista del Monte del
+  Portal en la ventana de la habitación) y `assets/objects/tripode.png` (trípode del Consorcio).
+
+### 10.4 Validación de contenido y recorrido E2E
+- `node tools/validate_content.mjs [--quiet] [--json]` (sale con 1 si hay errores; API `validateContent()` →
+  `{ report, stats, files }`, comprobaciones en `tools/validate_content_lib.mjs`): cada mapa construye y crea sus eventos;
+  warps (destino registrado, llegada dentro y transitable); conexiones (destino, vuelta simétrica, algún paso por el
+  borde); eventos (ids, coordenadas, objetos, entrenadores, gráficos en disco); encuentros (species.json, pesos,
+  niveles); entrenadores (equipos formables también dinámicos, especies, movimientos, objetos, sprite); guiones
+  (giveItem/addKeyItem y entrenadores por id); células (claves, `content/zygarde/cells.js`, `B01_CELLS`; las pendientes
+  de otros bloques salen como nota); flags leídos por `when()` en `maps/b01` que ningún guion pone (`EXTERNAL_FLAGS`
+  documenta los que pone otro bloque). Lo ejecuta `tests/content_validate.test.mjs`.
+- `node tools/e2e_b01.mjs [--base=…] [--prologue] [--headed]`: el Bloque 1 completo con teclas reales (título →
+  prólogo saltado o acelerado → «¿Quién eres?» → casa → laboratorio → señal → sigilo → Core → Gael → Pokédex → C001 →
+  regalo de Mamá → Ruta 1 → cartel del Umbral), piloto automático en los combates (`installBattle` + `auto`),
+  comprobación de flags y de la transcripción de diálogos por hito, capturas `tools/cache/screens/e2e_b01_*.png` y
+  transcripción `e2e_b01_dialogos.txt`. Ayudantes en página: `tools/e2e_b01_page.mjs` (`window.__e2e`).
+
+## 11. Arte provisional de la campaña (propietario: art; detalle en `docs/arte.md` §6–8)
+
+Todo es **PROVISIONAL (D30)** y se regenera con `node tools/pixel_build.mjs [id…] [--preview] [--lineup]`
+(fuentes en `tools/pixel_chars/`) y `node tools/pixel_map.mjs`. Tests: `tests/art_campaign.test.mjs`,
+`tests/art_region_map.test.mjs` (+ `tests/characters.test.mjs`, que valida todo el registro).
+
+**Registro** (`content/characters.js` + entradas de campaña en `content/characters_campaign.js`):
+```js
+getCharacter(id)            // también alias: 'casilda' → Guardiana, 'alerce' → profesor, 'ramon' → 'anil:capitan'…
+getBattleSprite(id)         // 'leandro_front', 'casilda_front', 'anil:minero'…
+playerVariant('M'|'F', v)   // v: run | ride10 | ride50 | dive | climb | fish | vuelo → id de hoja o null
+getCharacter('protagonista_f').variants  // { run, ride10, ride50, dive, climb, fish, vuelo }
+listAliases()               // { alias: destino }
+```
+- Tipos de hoja: `charset` (4×4; frames 64×64 o **96×96** en montura 10%, nado 50%, buceo y pesca), `battle_back`,
+  `battle_front` (160×160) y **`effect`** (tira `cols × rows`: `protagonista_*_vuelo` 8×1 de 96×96, `zygarde_hex` 4×2
+  de 32×32). Los charsets se anclan abajo-centro como cualquier otro (`render/charsets.js` deduce el frame de la imagen).
+- La hoja de pesca se llama `protagonista_<m|f>_fish_offset`: por el nombre, `render/charsets.js` la dibuja 16 px más
+  abajo (convención de Essentials) y `offsetY: 16` lo documenta en la entrada.
+- `ride10` es la pareja completa (seguidor ZYGARDE_1 de Añil + jinete): mientras se monta basta con usarla como
+  `characterName` y ocultar el seguidor; `ride50` sirve como `charsets.surf`.
+- Elenco con combate (`<id>` + `<id>_front`): leandro, abril, fermin, olvido, sol, vertice (+ `vertice_lider` con el
+  mismo frontal), casia, garrido, genesis_tecnico, genesis_tecnica. Sin combate: genesis_investigador/a, enfermera,
+  dependiente, molinero, buzo, archivista. Clases de Añil nuevas: `anil:minero`/`minera`, `anil:buceador`/`buceadora`.
+- Visor: `?scene=sprites&char=<id>&mode=<walk|run|ride10|ride50|dive|climb|fish|vuelo>&battle`.
+
+**Mapa regional**: `assets/ui/region_map.png` (480×320, solo relieve; la pantalla de services dibuja encima),
+`assets/ui/region_map_marcado.png` (con caminos y marcadores) y `assets/ui/region_map.json`
+(`coords: { id: [x, y] }`, `places: { id: { name, kind, xy, cell, mapIds, pillar(s)?, parent?, flyOnly? } }`,
+`paths`, `seaPaths`); cada lugar en el centro de su casilla de 16 px.
+
+## 12. Biblioteca de stamps para toda la campaña (propietario: stamps; catálogo en `docs/stamps.md`)
+
+**Bibliotecas** (`loadStampLibrary(ts)`): 1, 2 (y 12–15), 3, 4, 5, **6** (ExteriorSafari), 7, **8** (InteriorLiga),
+**9** (ExteriorPrisma), **11** (InteriorTorre). `docs/stamps.md` incluye la tabla «bioma de CAMPANA → tileset → piezas».
+
+**Tiles propios (overlay)** — `content/stamps/extraTiles.js`: piezas que Añil no tiene, dibujadas por
+`tools/stamps_extra.mjs` (+ `_art`, `_terrain`) en filas VACÍAS de los atlas `game/assets/tilesets/<Imagen>.png`, con su
+pasabilidad/prioridad/terrain tag escritos en `game/data/tilesets.json` para todos los tilesets de esa imagen.
+`npm run data` lo vuelve a aplicar tras extraer; `node tools/stamps_extra.mjs --check` (y un test) avisan si falta.
+```js
+EXTRA_PIECES[nombre]   // { w, h, kind: 'stamp'|'nine'|'pattern'|'line', layer, pass: ['x.'…], prio, tag, desc, tags }
+EXTRA_LAYOUTS[imagen]  // { row, rows, pieces: { nombre: [col, fila] } }
+extraTiles(imagen) → [{ id, name, dx, dy, passage, priority, terrain }]   extraDefs(imagen) → { stamps, brushes }
+```
+Las entradas del overlay llevan `extra: true` y `derive.js` no las hereda entre imágenes. `TERRAIN_PATCHES` corrige
+terrain tags de Añil que la campaña necesita (orilla y playa de ExteriorSafari → agua navegable, como en Exterior1).
+
+**Kit común de Pilar (X23)** — `content/stamps/pilar.js`. Mismos nombres `pilar_*` en 2/12–15, 11 y 8 (kit exterior
+en 1 y 7): monolito, dintel, canal (`pilar_canal`/`_v`, brush línea), placa Unown, glifos, pedestal, columna(s),
+escalinata(s), cámara de núcleo, zócalos (`pilar_zocalo`, `_gastado`, `_vivo`), losa de eco, aristas, manantial y
+`pilar_enlosado` (brush nine). Tinte por Pilar = **tono del mapa** (`def.tone`, que el compositor suma a día/noche):
+```js
+import { PILAR_TINTS, PILAR_KIT, PILAR_KIT_EXTERIOR, PILAR_TILESETS, pilarTone } from '../stamps/pilar.js';
+tone: pilarTone('P1')                         // P1 ocre … P10 oro; pilarTone(n, intensidad 0..1)
+await ctx.tone(pilarTone('P6', 0.5), 30)      // cambio en guion
+```
+Sala de prueba: `?scene=map&map=dev_stamps&debug` (`vars=pilar:N` aplica el tinte N al entrar).
+
+**Brushes nuevos**: `edge2` (`{ edge2: { src, fill? } }`, borde doble: playas con espuma) en `content/stamps/brushes.js`.
+`world/mapBuilder.js#resolveBrush` (cambio aditivo) delega en `paintBrush` los `{ nine: 'ids' }` —antes el builder
+los pintaba mal— y cualquier tipo que no conozca si hay pintor.
+
+**Gráficos de evento de barreras** — `game/assets/objects/barreras.png` (`tools/stamps_objects.mjs`), charset 4×4 con
+brillo animado: `dir 2` roca agrietada, `4` tronco agrietado, `6` vetas verdes de Trepar (superposición), `8` roca nevada.
+```js
+{ id: 'roca1', type: 'ramRock', x, y, sprite: 'asset:objects/barreras.png', dir: 2, directionFix: true, stepAnime: true }
+{ id: 'pared1', type: 'climbWall', x, y, to: [x, y - 3], sprite: 'asset:objects/barreras.png', dir: 6, directionFix: true, stepAnime: true }
+```
+Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset), `tools/stamps_demo.mjs` (+
+`stamps_demo_campaign.mjs`: kit y tintes, costa, nieve, oriental, sala solemne, ciudad, barreras). Tests:
+`tests/stamps.test.mjs`, `tests/stamps_campaign.test.mjs`.

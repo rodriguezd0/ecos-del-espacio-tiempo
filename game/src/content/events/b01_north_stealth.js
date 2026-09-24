@@ -3,7 +3,7 @@
 // el haz de su linterna. Si te ve: "!", "¡Eh! ¿Qué te he dicho?", fundido y vuelta al punto seguro de la
 // entrada mirando al norte; el policía vuelve a su ruta. Tras 3 detecciones patrulla un tramo más corto.
 // La visión usa el mecanismo de entrenadores (eventTouch + sight → MapEvent.canReachPlayer).
-import { F, SPEAKER, SPRITE } from './b01_town_common.js';
+import { F, SPEAKER, SPRITE, CAST } from './b01_town_common.js';
 import { placeChainBehind } from '../../world/follower.js';
 import { dx, dy } from '../../world/gameMap.js';
 
@@ -102,7 +102,7 @@ function guard(id, patrol, when) {
     id,
     x: patrol.start.x,
     y: patrol.start.y,
-    name: 'Policía',
+    name: CAST.police,
     pages: [{
       when,
       sprite: SPRITE.police,
@@ -125,7 +125,7 @@ export function stealthEvents() {
     guard('policia_patrulla_corta', SHORT_PATROL, (s) => active(s) && caughtCount(s) >= SHORT_AFTER),
     {
       id: 'cartel_laberinto', type: 'sign', x: 17, y: 27,
-      text: 'LABERINTO DE LA PROFUNDIDAD\nPropiedad privada. Se ruega no pasar.',
+      text: `LABERINTO DE LA PROFUNDIDAD\nPropiedad de la familia ${CAST.owners}. Se ruega no pasar.`,
     },
   ];
 }

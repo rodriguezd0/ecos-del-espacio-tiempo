@@ -7,6 +7,14 @@
 //                 (0 y 2 de pie, 1 y 3 pasos). Frames 64×64 (arte nativo 32×32 ampliado ×2 exacto).
 //   battle_back   tira horizontal de 5 frames (0 = estático, 1..4 = lanzamiento), como Essentials.
 //   battle_front  sprite frontal de entrenador (1 frame).
+//   effect        tira de efecto (cols × rows frames), p. ej. la disgregación en hexágonos del Vuelo.
+// Los charsets pueden tener frames mayores (monturas, buceo y pesca: 96×96): frameW/frameH de la entrada.
+//
+// Variantes de campo de los protagonistas (CAMPANA §2.7–2.8; docs/arte.md §8):
+//   getCharacter('protagonista_m').variants → { run, ride10, ride50, dive, climb, fish, vuelo }
+//   playerVariant('F', 'ride50') → 'protagonista_f_ride50' (id de charset) o null.
+// Alias de personajes con nombre (content/characters_campaign.js): getCharacter('casilda') → Guardiana;
+//   getBattleSprite('casilda_front'); listAliases().
 //
 // Uso:
 //   import { getCharacter, frameRect } from '../content/characters.js';
@@ -18,6 +26,7 @@
 //     getCharacter('anil:bichero') → charset; getBattleSprite('anil:bichero') → Trainers/CAZABICHOS.png.
 //   Sprites de combate: getBattleSprite('gael_front' | 'anil:<alias>' | 'anil:<ARCHIVO de Graphics/Trainers>').
 import { ANIL_CLASSES } from './anilClasses.js';
+import { campaignEntries, fieldVariants, CHARACTER_ALIASES } from './characters_campaign.js';
 
 export const DIR_ROW = Object.freeze({ 2: 0, 4: 1, 6: 2, 8: 3 });
 
@@ -31,12 +40,13 @@ const base = (kind, file, extra) => Object.freeze({
 const charset = (file, extra) => base('charset', file, { frameW: FRAME, frameH: FRAME, cols: 4, rows: 4, ...extra });
 const battleBack = (file, extra) => base('battle_back', file, { frameW: BATTLE_FRAME, frameH: BATTLE_FRAME, cols: 5, rows: 1, ...extra });
 const battleFront = (file, extra) => base('battle_front', file, { frameW: BATTLE_FRAME, frameH: BATTLE_FRAME, cols: 1, rows: 1, ...extra });
+const effect = (file, extra) => base('effect', file, { frameW: FRAME, frameH: FRAME, cols: 1, rows: 1, ...extra });
 
 export const CHARACTERS = Object.freeze({
   protagonista_m: charset('protagonista_m.png', {
     name: 'Protagonista (masculino)',
     note: 'Castaño cobrizo sin gorra, chaqueta azul petróleo cerrada, camiseta clara, pantalón y calzado oscuros, tirador verde #B9FF66 (biblia §13.1) y mochila arena (D06).',
-    variants: { run: 'protagonista_m_run' },
+    variants: { run: 'protagonista_m_run', ...fieldVariants('protagonista_m') },
     battle: { back: 'protagonista_m_back' },
   }),
   protagonista_m_run: charset('protagonista_m_run.png', {
@@ -46,7 +56,7 @@ export const CHARACTERS = Object.freeze({
   protagonista_f: charset('protagonista_f.png', {
     name: 'Protagonista (femenina)',
     note: 'Azul marino casi nocturno y acento verde (biblia §13.2), mochila teja (D06). Melena, chaqueta clara y pantalón corto con mallas: PROPUESTA pendiente de D30.',
-    variants: { run: 'protagonista_f_run' },
+    variants: { run: 'protagonista_f_run', ...fieldVariants('protagonista_f') },
     battle: { back: 'protagonista_f_back' },
   }),
   protagonista_f_run: charset('protagonista_f_run.png', {
@@ -79,8 +89,8 @@ export const CHARACTERS = Object.freeze({
     note: 'NPC genérico (PROPUESTA): joven con melena corta negra y horquilla, bata clara sobre jersey coral.',
   }),
   guardiana: charset('guardiana.png', {
-    name: 'Guardiana del Umbral',
-    note: 'D07: veterana escéptica (~60 años), pelo cano con moño, chaqueta de campo oliva, pañuelo teja, botas altas. Nombre pendiente.',
+    name: 'Casilda Roquer, Guardiana del Umbral',
+    note: 'D07/X06: Casilda Roquer (64, escepticismo), pelo cano con moño, chaqueta de campo oliva, pañuelo teja, botas altas. Alias "casilda".',
     battle: { front: 'guardiana_front' },
   }),
   nino: charset('nino.png', {
@@ -112,14 +122,49 @@ export const CHARACTERS = Object.freeze({
     note: 'Propuesta neutral: abrigo claro abierto, jersey pizarra; nada que revele su pasado (D03).',
   }),
   guardiana_front: battleFront('guardiana_front.png', {
-    name: 'Guardiana del Umbral — combate, frontal',
+    name: 'Casilda Roquer — combate, frontal',
     note: 'Brazos cruzados (escéptica, sin hostilidad), correa de zurrón cruzada, botas altas (D07).',
   }),
   zygarde_celula: charset('zygarde_celula.png', {
     name: 'Célula de Zygarde',
     note: 'Gota verde flotante con destellos; las 4 filas son iguales (sirve con cualquier dirección y con "animación en parada").',
   }),
+  ...campaignEntries({ charset, battleFront, effect }),
 });
+
+/** Id registrado o de Añil ('anil:…') al que apunta un alias, siguiendo cadenas; null si no es alias. */
+function aliasTarget(id) {
+  let target = null;
+  let cur = id;
+  for (let i = 0; i < 4 && Object.hasOwn(CHARACTER_ALIASES, cur); i++) {
+    target = CHARACTER_ALIASES[cur];
+    cur = target;
+  }
+  return target;
+}
+
+/** Entrada de un alias: la de su destino con `alias` y `aliasOf` añadidos (objeto nuevo, congelado). */
+function aliasEntry(id, resolve) {
+  const target = aliasTarget(id);
+  if (!target) return undefined;
+  const entry = resolve(target);
+  return entry ? Object.freeze({ ...entry, alias: id, aliasOf: target }) : null;
+}
+
+/** Alias de personajes con nombre ({ alias: destino }). */
+export function listAliases() {
+  return { ...CHARACTER_ALIASES };
+}
+
+/**
+ * Charset de una variante del protagonista: gender 'M' | 'F' y variante 'run' | 'ride10' | 'ride50' |
+ * 'dive' | 'climb' | 'fish' | 'vuelo'. Devuelve el id registrado o null si no existe.
+ */
+export function playerVariant(gender, variant) {
+  const base = gender === 'F' ? 'protagonista_f' : 'protagonista_m';
+  const id = CHARACTERS[base]?.variants?.[variant];
+  return id && Object.hasOwn(CHARACTERS, id) ? id : null;
+}
 
 /** Hoja original de Añil (tamaño de frame deducido de la imagen). */
 function anilSheet(kind, dir, name, extra = {}) {
@@ -136,6 +181,8 @@ function anilSheet(kind, dir, name, extra = {}) {
  */
 export function getCharacter(id) {
   if (typeof id !== 'string' || !id) return null;
+  const aliased = aliasEntry(id, getCharacter);
+  if (aliased !== undefined) return aliased;
   if (id.startsWith('anil:')) {
     const name = id.slice(5);
     const cls = Object.hasOwn(ANIL_CLASSES, name) ? ANIL_CLASSES[name] : null;
@@ -155,6 +202,8 @@ export function getCharacter(id) {
  */
 export function getBattleSprite(id) {
   if (typeof id !== 'string' || !id) return null;
+  const aliased = aliasEntry(id, getBattleSprite);
+  if (aliased !== undefined) return aliased;
   if (id.startsWith('anil:')) {
     const name = id.slice(5);
     const front = Object.hasOwn(ANIL_CLASSES, name) ? ANIL_CLASSES[name].front : name;

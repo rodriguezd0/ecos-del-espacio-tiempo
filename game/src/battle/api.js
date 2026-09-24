@@ -19,24 +19,26 @@ export function battleBGM(config = {}) {
 
 /** Combate sin presentación (Node): útil para pruebas de integración del flujo. */
 async function headlessBattle(config) {
-  const [{ Battle, HeadlessBattleUI }, { buildBattleConfig }, { getTrainer }] = await Promise.all([
-    import('./core/index.js'), import('./scene/setup.js'), import('../content/trainers/index.js'),
+  const [{ Battle, HeadlessBattleUI }, { buildBattleConfig }, { getTrainer }, { finalizeBattleResult }] = await Promise.all([
+    import('./core/index.js'), import('./scene/setup.js'), import('../content/trainers/index.js'), import('./scene/results.js'),
   ]);
   const db = config.db;
   if (!db) {
     // Sin base de datos no se puede simular: se mantiene el comportamiento del stub original (victoria).
     console.info('[battle] Sin config.db: combate omitido (victoria).');
-    return { outcome: 'win', party: [...(config.player?.party || [])], stored: false };
+    return finalizeBattleResult({ outcome: 'win', party: [...(config.player?.party || [])] }, { canLose: Boolean(config.canLose) });
   }
   const { config: full, meta } = buildBattleConfig(config, { db, state: config.state || null, getTrainer });
   const result = await new Battle(full, new HeadlessBattleUI(config.headless || {})).run();
-  return { ...result, party: (result.playerParty || []).filter(Boolean), stored: false, canLose: meta.canLose };
+  // Sin escena nada se aplica a la partida: stored = false (lo aplica world/battleFlow).
+  return finalizeBattleResult(result, { stored: false, canLose: meta.canLose, trainer: meta.trainer });
 }
 
 /**
  * @param {object} config  ver docs/ARCHITECTURE.md §7 (type, format, trainer | opponent | wild, rules, battleback,
  *                         environment, weather, time, bgm, canLose…)
- * @returns {Promise<{ outcome: 'win'|'lose'|'run'|'caught'|'forfeit', party: object[], caught?: object, stored: boolean }>}
+ * @returns {Promise<{ outcome: 'win'|'lose'|'run'|'caught'|'forfeit', party: object[], caught: object|null, stored: boolean,
+ *   canLose: boolean }>}  (normalizado con finalizeBattleResult de scene/results.js; stored = ya aplicado a la partida)
  */
 export async function startBattle(config) {
   if (HEADLESS) return headlessBattle(config);

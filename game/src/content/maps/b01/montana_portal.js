@@ -3,7 +3,8 @@
 // ASCENDENTE de tres tramos y, arriba, un estrado de piedra con el PORTAL HORIZONTAL (aljibe; sprite propio
 // game/assets/objects/aljibe.png, generado con tools/prologue_assets.mjs).
 // Tileset 1 (Exterior1): terrazas de muros finos, escaleras de terraza, acantilado marrón y cascada animada.
-// Sin encuentros ni hierba alta. [PROVISIONAL X02] El nombre de la montaña no está fijado en la biblia.
+// Sin encuentros ni hierba alta. Nombre: Monte del Portal (X22, docs/DECISIONES.md). En B11/B12 se
+// ampliará (CAMPANA §1.4: 50×70, E Ruta 10, Trepar); el prólogo usa este mapa tal cual.
 const W = 44;
 const H = 50;
 
@@ -62,8 +63,8 @@ const RUIN = { rota: 2, monolito: 4, columna: 6, escombros: 8 };
 
 export default {
   id: 'montana_portal',
-  name: 'Montaña de la cascada',
-  showLocation: false, // el prólogo no muestra rótulo; el Pilar 6 decidirá el suyo (X02)
+  name: 'Monte del Portal',
+  showLocation: false, // el prólogo no muestra rótulo; el Pilar 6 decidirá si lo muestra
   tileset: 1,
   width: W,
   height: H,

@@ -11,9 +11,16 @@ export const MAPS = {
   "montana_portal": () => import("./b01/montana_portal.js"),
   "ruta_1": () => import("./b01/ruta_1.js"),
   "villa_alba": () => import("./b01/villa_alba.js"),
+  "dev_services_centro": () => import("./dev_services_centro.js"),
+  "dev_services_tienda": () => import("./dev_services_tienda.js"),
+  "dev_services": () => import("./dev_services.js"),
+  "dev_stamps": () => import("./dev_stamps.js"),
+  "dev_story": () => import("./dev_story.js"),
   "dev_test_casa": () => import("./dev_test_casa.js"),
   "dev_test_este": () => import("./dev_test_este.js"),
   "dev_test": () => import("./dev_test.js"),
+  "dev_zygarde_fondo": () => import("./dev_zygarde_fondo.js"),
+  "dev_zygarde": () => import("./dev_zygarde.js"),
 };
 
 export async function loadMapDefinition(id) {

@@ -22,17 +22,21 @@ import { buildMoveSoundIndex, TYPE_SE } from './moveStyle.js';
 import { BATTLE_WEATHER_FX } from './setup.js';
 import { trainerPosition, focusPoint } from './layout.js';
 import { getCharacter } from '../../content/characters.js';
+import { resolveTrainerSprite, FALLBACK_TRAINER } from './trainerSprites.js';
 
 let moveSounds = null;
 
-/** URL del sprite de un entrenador: id de characters.js, 'anil:<ARCHIVO>' o ruta. */
+/**
+ * Sprite de combate de un entrenador → { file, cols } (getBattleSprite de content/characters.js: ids propios
+ * como 'gael_front'/'guardiana_front', alias 'anil:<clase>', 'anil:<ARCHIVO>', charsets con frontal o ruta).
+ */
+export function trainerSprite(sprite) {
+  return resolveTrainerSprite(sprite, { anilUrl: (p) => engine.assets.anil(p) });
+}
+
+/** URL del sprite de un entrenador (compatibilidad). */
 export function trainerSpriteUrl(sprite) {
-  if (!sprite) return null;
-  if (sprite.startsWith('anil:')) return engine.assets.anil(`Graphics/Trainers/${sprite.slice(5)}.png`);
-  const ch = getCharacter(sprite);
-  if (ch) return ch.file;
-  if (/\.(png|gif)$/i.test(sprite)) return sprite;
-  return engine.assets.anil(`Graphics/Trainers/${sprite}.png`);
+  return trainerSprite(sprite)?.file || null;
 }
 
 export class BattleScene extends Scene {
@@ -99,8 +103,13 @@ export class BattleScene extends Scene {
     this.trainers.foe = await Promise.all(sprites.map(async (s, i) => {
       const p = trainerPosition(1, i, sprites.length);
       const t = new TrainerSprite(this.field.fieldLayer, { side: 1, x: p.x, y: p.y });
-      const ok = await t.load(trainerSpriteUrl(s) || engine.assets.anil('Graphics/Trainers/CHICO.png'), 1);
-      if (!ok) await t.load(engine.assets.anil('Graphics/Trainers/CHICO.png'), 1);
+      const fallback = trainerSprite(FALLBACK_TRAINER);
+      const want = trainerSprite(s) || fallback;
+      const ok = await t.load(want.file, want.cols);
+      if (!ok) {
+        console.warn(`[combate] Sprite de entrenador no encontrado: "${s}" (${want.file}); se usa ${FALLBACK_TRAINER}`);
+        await t.load(fallback.file, fallback.cols);
+      }
       return t;
     }));
   }

@@ -1,0 +1,505 @@
+{
+ "provisional": "D30 · X02",
+ "note": "Coordenadas en píxeles del PNG de 480×320 (centro de casilla de 16 px). Generado por tools/pixel_map.mjs.",
+ "image": "assets/ui/region_map.png",
+ "marked": "assets/ui/region_map_marcado.png",
+ "width": 480,
+ "height": 320,
+ "cell": 16,
+ "coords": {
+  "villa_alba": [168, 136],
+  "villa_zaguan": [168, 168],
+  "ciudad_caudal": [184, 200],
+  "villa_brontia": [312, 200],
+  "ciudad_estrato": [360, 264],
+  "ciudad_lumina": [72, 232],
+  "aldea_mnemos": [40, 168],
+  "ciudad_nexo": [88, 280],
+  "caleta_sonda": [24, 296],
+  "villa_boreal": [408, 88],
+  "mesa_vientos": [440, 136],
+  "bastion_axis": [424, 296],
+  "ruta_1": [168, 152],
+  "ruta_2": [168, 184],
+  "ruta_3": [136, 200],
+  "ruta_4": [248, 200],
+  "ruta_5": [360, 184],
+  "ruta_6": [312, 232],
+  "ruta_7": [152, 264],
+  "ruta_8_marisma": [56, 200],
+  "ruta_9_neblino": [56, 120],
+  "ruta_10": [120, 104],
+  "ruta_11": [328, 168],
+  "ruta_12_senda_lazo": [280, 72],
+  "ruta_13": [376, 104],
+  "ruta_14_reserva": [88, 264],
+  "ruta_15": [56, 280],
+  "ruinas_dintel": [152, 168],
+  "garganta_albo": [120, 184],
+  "meseta_impulso": [424, 168],
+  "cerro_plomo": [440, 248],
+  "archivo_hondo": [40, 168],
+  "aljibe_portal": [72, 40],
+  "arrecife_eco": [40, 312],
+  "lagos_alma": [408, 40],
+  "sima_eje": [216, 232],
+  "laberinto_profundidad": [168, 120],
+  "cerro_del_alba": [200, 120],
+  "montana_portal": [88, 72],
+  "cumbre_azur": [248, 40],
+  "paso_del_norte": [344, 120],
+  "gruta_escarcha": [456, 88],
+  "mar_boreal": [344, 40],
+  "instalacion_cierzo": [440, 24],
+  "canteria_solano": [328, 248],
+  "dunas_ceniza": [408, 264],
+  "senda_mirador": [200, 216],
+  "mirador_sur": [216, 248],
+  "calzada_rey": [264, 232],
+  "mar_del_sur": [264, 296],
+  "islote_lumbre": [136, 312],
+  "estacion_talasa": [232, 312],
+  "volcan_tizon": [328, 296]
+ },
+ "places": {
+  "villa_alba": {
+   "name": "Villa Alba",
+   "kind": "town",
+   "xy": [168, 136],
+   "cell": [10, 8],
+   "mapIds": ["villa_alba", "casa_prota_1f", "casa_prota_2f", "casa_gael", "casa_vecinos_n", "casa_vecinos_se", "laboratorio_alerce"]
+  },
+  "villa_zaguan": {
+   "name": "Villa Zaguán",
+   "kind": "town",
+   "xy": [168, 168],
+   "cell": [10, 10],
+   "mapIds": ["villa_zaguan", "zaguan_centro", "casa_dintel"]
+  },
+  "ciudad_caudal": {
+   "name": "Ciudad Caudal",
+   "kind": "city",
+   "xy": [184, 200],
+   "cell": [11, 12],
+   "mapIds": ["ciudad_caudal"]
+  },
+  "villa_brontia": {
+   "name": "Villa Brontia",
+   "kind": "town",
+   "xy": [312, 200],
+   "cell": [19, 12],
+   "mapIds": ["villa_brontia"]
+  },
+  "ciudad_estrato": {
+   "name": "Ciudad Estrato",
+   "kind": "city",
+   "xy": [360, 264],
+   "cell": [22, 16],
+   "mapIds": ["ciudad_estrato", "mina_galena"]
+  },
+  "ciudad_lumina": {
+   "name": "Ciudad Lúmina",
+   "kind": "city",
+   "xy": [72, 232],
+   "cell": [4, 14],
+   "mapIds": ["ciudad_lumina"]
+  },
+  "aldea_mnemos": {
+   "name": "Aldea Mnemos",
+   "kind": "town",
+   "xy": [40, 168],
+   "cell": [2, 10],
+   "mapIds": ["aldea_mnemos"]
+  },
+  "ciudad_nexo": {
+   "name": "Ciudad Nexo",
+   "kind": "city",
+   "xy": [88, 280],
+   "cell": [5, 17],
+   "mapIds": ["ciudad_nexo"]
+  },
+  "caleta_sonda": {
+   "name": "Caleta Sonda",
+   "kind": "town",
+   "xy": [24, 296],
+   "cell": [1, 18],
+   "mapIds": ["caleta_sonda"]
+  },
+  "villa_boreal": {
+   "name": "Villa Boreal",
+   "kind": "town",
+   "xy": [408, 88],
+   "cell": [25, 5],
+   "mapIds": ["villa_boreal"]
+  },
+  "mesa_vientos": {
+   "name": "Mesa de los Vientos",
+   "kind": "town",
+   "xy": [440, 136],
+   "cell": [27, 8],
+   "mapIds": ["mesa_vientos"],
+   "flyOnly": true
+  },
+  "bastion_axis": {
+   "name": "Bastión Axis",
+   "kind": "post",
+   "xy": [424, 296],
+   "cell": [26, 18],
+   "mapIds": ["bastion_axis"]
+  },
+  "ruta_1": {
+   "name": "Ruta 1",
+   "kind": "route",
+   "xy": [168, 152],
+   "cell": [10, 9],
+   "mapIds": ["ruta_1"]
+  },
+  "ruta_2": {
+   "name": "Ruta 2",
+   "kind": "route",
+   "xy": [168, 184],
+   "cell": [10, 11],
+   "mapIds": ["ruta_2"]
+  },
+  "ruta_3": {
+   "name": "Ruta 3",
+   "kind": "route",
+   "xy": [136, 200],
+   "cell": [8, 12],
+   "mapIds": ["ruta_3"]
+  },
+  "ruta_4": {
+   "name": "Ruta 4",
+   "kind": "route",
+   "xy": [248, 200],
+   "cell": [15, 12],
+   "mapIds": ["ruta_4"]
+  },
+  "ruta_5": {
+   "name": "Ruta 5",
+   "kind": "route",
+   "xy": [360, 184],
+   "cell": [22, 11],
+   "mapIds": ["ruta_5"]
+  },
+  "ruta_6": {
+   "name": "Ruta 6",
+   "kind": "route",
+   "xy": [312, 232],
+   "cell": [19, 14],
+   "mapIds": ["ruta_6"]
+  },
+  "ruta_7": {
+   "name": "Ruta 7",
+   "kind": "route",
+   "xy": [152, 264],
+   "cell": [9, 16],
+   "mapIds": ["ruta_7"]
+  },
+  "ruta_8_marisma": {
+   "name": "Ruta 8 · Marisma Turbia",
+   "kind": "route",
+   "xy": [56, 200],
+   "cell": [3, 12],
+   "mapIds": ["ruta_8_marisma"]
+  },
+  "ruta_9_neblino": {
+   "name": "Ruta 9 · Bosque Neblino",
+   "kind": "route",
+   "xy": [56, 120],
+   "cell": [3, 7],
+   "mapIds": ["ruta_9_neblino"]
+  },
+  "ruta_10": {
+   "name": "Ruta 10",
+   "kind": "route",
+   "xy": [120, 104],
+   "cell": [7, 6],
+   "mapIds": ["ruta_10"]
+  },
+  "ruta_11": {
+   "name": "Ruta 11",
+   "kind": "route",
+   "xy": [328, 168],
+   "cell": [20, 10],
+   "mapIds": ["ruta_11"]
+  },
+  "ruta_12_senda_lazo": {
+   "name": "Ruta 12 · Senda del Lazo",
+   "kind": "route",
+   "xy": [280, 72],
+   "cell": [17, 4],
+   "mapIds": ["ruta_12_senda_lazo"]
+  },
+  "ruta_13": {
+   "name": "Ruta 13",
+   "kind": "route",
+   "xy": [376, 104],
+   "cell": [23, 6],
+   "mapIds": ["ruta_13"]
+  },
+  "ruta_14_reserva": {
+   "name": "Ruta 14 · Reserva del Delta",
+   "kind": "route",
+   "xy": [88, 264],
+   "cell": [5, 16],
+   "mapIds": ["ruta_14_reserva"]
+  },
+  "ruta_15": {
+   "name": "Ruta 15 · Sendero de los Acantilados",
+   "kind": "route",
+   "xy": [56, 280],
+   "cell": [3, 17],
+   "mapIds": ["ruta_15"]
+  },
+  "ruinas_dintel": {
+   "name": "Ruinas del Dintel (Pilar del Umbral)",
+   "kind": "pillar",
+   "xy": [152, 168],
+   "cell": [9, 10],
+   "pillar": 1,
+   "mapIds": ["explanada_umbral", "ruinas_dintel"]
+  },
+  "garganta_albo": {
+   "name": "Garganta del Albo (Pilar de la Corriente)",
+   "kind": "pillar",
+   "xy": [120, 184],
+   "cell": [7, 11],
+   "pillar": 2,
+   "mapIds": ["garganta_albo", "pilar_corriente"]
+  },
+  "meseta_impulso": {
+   "name": "Meseta del Impulso (Pilar del Impulso)",
+   "kind": "pillar",
+   "xy": [424, 168],
+   "cell": [26, 10],
+   "pillar": 3,
+   "mapIds": ["meseta_impulso", "parque_eolico", "anillo_vientos", "galerias_soplo"]
+  },
+  "cerro_plomo": {
+   "name": "Cerro Plomo (Pilar de la Masa)",
+   "kind": "pillar",
+   "xy": [440, 248],
+   "cell": [27, 15],
+   "pillar": 4,
+   "mapIds": ["cerro_plomo", "camara_contrapesos"]
+  },
+  "archivo_hondo": {
+   "name": "Archivo Hondo (Pilar de la Memoria)",
+   "kind": "pillar",
+   "xy": [40, 168],
+   "cell": [2, 10],
+   "pillar": 5,
+   "parent": "aldea_mnemos",
+   "mapIds": ["archivo_hondo"]
+  },
+  "aljibe_portal": {
+   "name": "Aljibe del Portal (Pilar Invertido)",
+   "kind": "pillar",
+   "xy": [72, 40],
+   "cell": [4, 2],
+   "pillar": 6,
+   "mapIds": ["pilar_invertido"]
+  },
+  "arrecife_eco": {
+   "name": "Arrecife del Eco (Pilar de los Ecos)",
+   "kind": "pillar",
+   "xy": [40, 312],
+   "cell": [2, 19],
+   "pillar": 7,
+   "mapIds": ["arrecife_eco", "fondo_mar_sur", "fosa_eco"]
+  },
+  "lagos_alma": {
+   "name": "Lagos del Alma (Pilar del Alma)",
+   "kind": "pillar",
+   "xy": [408, 40],
+   "cell": [25, 2],
+   "pillar": 8,
+   "mapIds": ["lagos_alma", "santuario_alma"]
+  },
+  "sima_eje": {
+   "name": "Sima del Eje (Pilares de la Convergencia y del Origen)",
+   "kind": "pillar",
+   "xy": [216, 232],
+   "cell": [13, 14],
+   "pillar": 9,
+   "pillars": [9, 10],
+   "mapIds": ["sima_eje", "puente_convergencia", "camara_cruce", "puerta_quince", "senda_origen", "cielo_interior", "nucleo_origen"]
+  },
+  "laberinto_profundidad": {
+   "name": "Laberinto de la Profundidad",
+   "kind": "place",
+   "xy": [168, 120],
+   "cell": [10, 7],
+   "mapIds": ["laberinto_profundidad"]
+  },
+  "cerro_del_alba": {
+   "name": "Cerro del Alba",
+   "kind": "place",
+   "xy": [200, 120],
+   "cell": [12, 7],
+   "mapIds": ["cerro_del_alba"]
+  },
+  "montana_portal": {
+   "name": "Monte del Portal",
+   "kind": "place",
+   "xy": [88, 72],
+   "cell": [5, 4],
+   "mapIds": ["montana_portal", "campamento_monte"]
+  },
+  "cumbre_azur": {
+   "name": "Cumbre Azur · Columna Lanza",
+   "kind": "place",
+   "xy": [248, 40],
+   "cell": [15, 2],
+   "mapIds": ["columna_lanza"]
+  },
+  "paso_del_norte": {
+   "name": "Paso del Norte",
+   "kind": "place",
+   "xy": [344, 120],
+   "cell": [21, 7],
+   "mapIds": ["paso_del_norte"]
+  },
+  "gruta_escarcha": {
+   "name": "Gruta Escarcha",
+   "kind": "place",
+   "xy": [456, 88],
+   "cell": [28, 5],
+   "mapIds": ["gruta_escarcha"]
+  },
+  "mar_boreal": {
+   "name": "Mar Boreal",
+   "kind": "sea",
+   "xy": [344, 40],
+   "cell": [21, 2],
+   "mapIds": ["mar_boreal"]
+  },
+  "instalacion_cierzo": {
+   "name": "Instalación Cierzo",
+   "kind": "post",
+   "xy": [440, 24],
+   "cell": [27, 1],
+   "mapIds": ["instalacion_cierzo"]
+  },
+  "canteria_solano": {
+   "name": "Cantería Solano",
+   "kind": "place",
+   "xy": [328, 248],
+   "cell": [20, 15],
+   "mapIds": ["canteria_solano"]
+  },
+  "dunas_ceniza": {
+   "name": "Dunas de Ceniza",
+   "kind": "place",
+   "xy": [408, 264],
+   "cell": [25, 16],
+   "mapIds": ["dunas_ceniza"]
+  },
+  "senda_mirador": {
+   "name": "Senda del Mirador",
+   "kind": "place",
+   "xy": [200, 216],
+   "cell": [12, 13],
+   "mapIds": ["senda_mirador"]
+  },
+  "mirador_sur": {
+   "name": "Mirador Sur",
+   "kind": "place",
+   "xy": [216, 248],
+   "cell": [13, 15],
+   "mapIds": ["mirador_sur"]
+  },
+  "calzada_rey": {
+   "name": "Calzada del Rey",
+   "kind": "place",
+   "xy": [264, 232],
+   "cell": [16, 14],
+   "mapIds": ["calzada_rey"]
+  },
+  "mar_del_sur": {
+   "name": "Mar del Sur",
+   "kind": "sea",
+   "xy": [264, 296],
+   "cell": [16, 18],
+   "mapIds": ["mar_del_sur"]
+  },
+  "islote_lumbre": {
+   "name": "Islote Lumbre",
+   "kind": "place",
+   "xy": [136, 312],
+   "cell": [8, 19],
+   "mapIds": ["islote_lumbre"]
+  },
+  "estacion_talasa": {
+   "name": "Estación Talasa",
+   "kind": "place",
+   "xy": [232, 312],
+   "cell": [14, 19],
+   "mapIds": ["estacion_talasa"]
+  },
+  "volcan_tizon": {
+   "name": "Volcán Tizón",
+   "kind": "place",
+   "xy": [328, 296],
+   "cell": [20, 18],
+   "mapIds": ["volcan_tizon"]
+  }
+ },
+ "paths": [
+  ["villa_alba", "laberinto_profundidad"],
+  ["villa_alba", "ruta_1"],
+  ["ruta_1", "villa_zaguan"],
+  ["ruta_1", "cerro_del_alba"],
+  ["ruta_1", "ruta_10"],
+  ["ruta_10", "montana_portal"],
+  ["ruta_10", "ruta_9_neblino"],
+  ["villa_zaguan", "ruinas_dintel"],
+  ["villa_zaguan", "ruta_2"],
+  ["ruta_2", "ciudad_caudal"],
+  ["ciudad_caudal", "ruta_3"],
+  ["ruta_3", "garganta_albo"],
+  ["ciudad_caudal", "ruta_4"],
+  ["ruta_4", "villa_brontia"],
+  ["villa_brontia", "ruta_5"],
+  ["ruta_5", "meseta_impulso"],
+  ["villa_brontia", "ruta_11"],
+  ["ruta_11", "paso_del_norte"],
+  ["paso_del_norte", "ruta_12_senda_lazo"],
+  ["ruta_12_senda_lazo", "cumbre_azur"],
+  ["paso_del_norte", "ruta_13"],
+  ["ruta_13", "villa_boreal"],
+  ["villa_boreal", "lagos_alma"],
+  ["villa_boreal", "gruta_escarcha"],
+  ["villa_brontia", "ruta_6"],
+  ["ruta_6", "canteria_solano"],
+  ["canteria_solano", "ciudad_estrato"],
+  ["ciudad_estrato", "dunas_ceniza"],
+  ["dunas_ceniza", "cerro_plomo"],
+  ["ciudad_estrato", "ruta_7"],
+  ["ruta_7", "ciudad_lumina"],
+  ["mirador_sur", "ruta_7"],
+  ["mirador_sur", "sima_eje"],
+  ["sima_eje", "senda_mirador"],
+  ["senda_mirador", "ciudad_caudal"],
+  ["sima_eje", "calzada_rey"],
+  ["calzada_rey", "ruta_6"],
+  ["ciudad_lumina", "ruta_8_marisma"],
+  ["ruta_8_marisma", "aldea_mnemos"],
+  ["aldea_mnemos", "ruta_9_neblino"],
+  ["ciudad_lumina", "ruta_14_reserva"],
+  ["ruta_14_reserva", "ciudad_nexo"],
+  ["ciudad_nexo", "ruta_15"],
+  ["ruta_15", "caleta_sonda"],
+  ["montana_portal", "aljibe_portal"]
+ ],
+ "seaPaths": [
+  ["caleta_sonda", "arrecife_eco"],
+  ["ciudad_nexo", "islote_lumbre"],
+  ["islote_lumbre", "estacion_talasa"],
+  ["estacion_talasa", "volcan_tizon"],
+  ["volcan_tizon", "bastion_axis"],
+  ["villa_boreal", "mar_boreal"],
+  ["mar_boreal", "instalacion_cierzo"]
+ ]
+}

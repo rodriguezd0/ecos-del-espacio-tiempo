@@ -2,6 +2,7 @@
 // llamada a battle() de battle/api.js, aplicación del resultado y derrota (volver al último punto de cura).
 import { engine } from '../core/engine.js';
 import { battle, battleBGM } from '../battle/api.js';
+import { applyBattleResult, caughtList, finalizeBattleResult, storeCaught } from '../battle/scene/results.js';
 import { createPokemon, healed } from '../battle/core/pokemon.js';
 import { ui } from '../ui/api.js';
 import { isNightHour } from '../render/dayNight.js';
@@ -76,15 +77,20 @@ export async function runBattle(scene, config = {}) {
   scene.inBattle = true;
   let result;
   try {
-    result = (await battle(full)) || { outcome: 'win' };
+    // Contrato único (battle/scene/results.js#finalizeBattleResult): { outcome, party, caught, stored, canLose }.
+    const raw = (await battle(full)) || { outcome: 'win' };
+    result = finalizeBattleResult(raw, { stored: Boolean(raw.stored), canLose: Boolean(raw.canLose) });
   } catch (err) {
     console.error('Error en el combate:', err);
     engine.reportError?.(err);
-    result = { outcome: 'forfeit', error: err };
+    result = finalizeBattleResult({ outcome: 'forfeit', error: err }, { stored: true });
   }
   scene.inBattle = false;
-  if (Array.isArray(result.party)) state.setParty(result.party);
-  if (result.outcome === 'caught' && result.caught && !result.stored) state.addPokemon(result.caught);
+  // Sin escena (o con una implementación instalada que no toca la partida) se aplica aquí.
+  if (!result.stored) {
+    applyBattleResult(state, result);
+    for (const p of caughtList(result)) storeCaught(state, p);
+  }
   audio?.resumeBGM?.(20);
   scene.world.encounters.reset();
   scene.fx.clearTransition();
@@ -109,7 +115,7 @@ export async function whiteout(scene) {
   await ui.message('No te quedan Pokémon en condiciones de combatir…');
   await scene.fx.fadeOut(20);
   state.setParty(state.party.map((p) => healed(engine.data, p)));
-  const heal = state.data.lastHeal;
+  const heal = state.healPoint;
   const def = scene.world.current.def;
   if (heal) await scene.transfer(heal.mapId, heal.x, heal.y, heal.dir ?? 2, { fade: false });
   else await scene.transfer(def.id, def.start?.x ?? scene.world.player.x, def.start?.y ?? scene.world.player.y, 2, { fade: false });

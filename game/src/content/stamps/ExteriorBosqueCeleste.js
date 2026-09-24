@@ -6,10 +6,15 @@
 // from: recorte de un mapa de Añil (tools/cache/anil_maps). Los mapas del tileset 1 (Exterior1) comparten casi
 //       todos los IDs con este tileset; cada recorte se verificó dibujándolo con el tileset 7.
 // door: [dx, dy] casilla de la puerta relativa al stamp. solid: true si bloquea el paso (pasabilidad real = tileset).
+// Al final: kit exterior de Pilar y grava (tiles propios del overlay, extraTiles.js; no se heredan).
+import { extraDefs } from './extraTiles.js';
+
+const KIT = extraDefs('ExteriorBosqueCeleste');
+
 export default {
   tileset: 7,
   image: 'ExteriorBosqueCeleste',
-  preview: { ground: 'cesped', under: { orilla: 'agua' } },
+  preview: { ground: 'cesped', under: { orilla: 'agua', playa: 'agua' } },
   stamps: {
     // ─── Edificios (capa 2, como en Añil; incluyen su sombra) ────────────────────────────────
     casa_roja: { src: [0, 60, 7, 11], layer: 2, door: [4, 7], tags: ['edificio', 'casa'], desc: 'Casa de tejado rojo a dos aguas con mirador (7×11, sombra incluida)' },
@@ -103,6 +108,9 @@ export default {
     // ─── Recortes probados de mapas de Añil (tileset 1, compatibles) ──────────────────────────
     jardin_vallado: { from: { map: 2, x: 8, y: 22, w: 8, h: 4, layers: [1, 2] }, tags: ['jardin', 'flor', 'valla'], desc: 'Valla blanca con dos jardineras de tulipanes y flores (Pueblo Paleta)' },
     seto_largo: { from: { map: 2, x: 24, y: 23, w: 10, h: 2, layers: [1] }, tags: ['seto'], desc: 'Seto florido largo (10×2)' },
+
+    // ─── Kit exterior de Pilar (explanada del P1) ─────────────────────────────────────────────
+    ...KIT.stamps,
   },
 
   brushes: {
@@ -134,5 +142,7 @@ export default {
     saliente: { line: { ids: [651, 657, 652] }, layer: 1, desc: 'Saliente horizontal (ledge): se salta hacia el sur' },
     valla_blanca: { line: { ids: [568, 565, 569] }, layer: 1, desc: 'Valla blanca horizontal' },
     valla_blanca_v: { line: { ids: [578, 586, 586], axis: 'v' }, layer: 1, desc: 'Valla blanca vertical (remate arriba)' },
+    cascada: { autotile: 0, layer: 2, desc: 'Cascada animada (autotile 0): rectángulo sobre el acantilado, con agua arriba y abajo' },
+    ...KIT.brushes,
   },
 };

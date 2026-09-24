@@ -13,6 +13,12 @@ export const FONTS = {
   small: { family: 'Power Green Small', size: 18, baseline: 18 },
   tiny: { family: 'Power Green Small', size: 12, baseline: 12 },
   big: { family: 'Power Green', size: 48, baseline: 42 },
+  // Escritura Unown (Fonts/Annon.ttf de Añil): se carga bajo demanda con ensureUnownFont()
+  // (content/story/storyFx.js) antes de medir o dibujar. Solo A–Z, espacio, ? y !.
+  unown: { family: 'Annon', size: 24, baseline: 22 },
+  // Texto compacto y nítido (Libreta, placas de verso): Power Green a 20 px conserva la «m» y la «ll»,
+  // que Power Green Small (small/tiny) pierde al rasterizar.
+  note: { family: 'Power Green', size: 20, baseline: 18 },
 };
 
 const ALPHA_THRESHOLD = 96;

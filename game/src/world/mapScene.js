@@ -28,6 +28,9 @@ import { dayNightTone } from '../render/dayNight.js';
 import { playerCharsets } from '../render/charsets.js';
 import { ScriptRunner } from '../script/runner.js';
 import { createContext } from '../script/context.js';
+import { CrisisSky } from '../content/story/crisisSky.js';
+import { stormWeather } from './rest.js';
+import { ZygardeField } from './zygarde/field.js';
 
 export const DEFAULT_MAP = 'dev_test';
 // [PROVISIONAL] Ritmo del reloj de juego: 1 minuto de juego por segundo real (TEC-06; ritmo por decidir).
@@ -49,11 +52,15 @@ export default class MapScene extends Scene {
     this.effects = new EffectsLayer();
     this.weather = new WeatherLayer({ playSE: (n) => engine.audio?.playSE?.(n), flash: (c, a, f) => this.fx.flashScreen(c, a, f) });
     this.camera = new Camera();
+    this.crisisSky = new CrisisSky(this); // capa de cielo de la crisis (content/story, CAMPANA §3.1)
     this.runner = new ScriptRunner();
     this.world = new World({ state: this.state, input: engine.input, hooks: this.worldHooks() });
     this.world.scriptBusyFn = () => this.runner.busy || this.transferring || this.menuOpen || this.inBattle;
     this.visible = new VisibleEncounters(this.world, { onBattle: (ctx, enc) => ctx.wildBattle(enc) });
     applyDevParams(this, params);
+    // Sistema de campo de Zygarde: montura, detección, Buceo, Salto (world/zygarde/field.js).
+    this.zygarde = new ZygardeField(this);
+    this.zygarde.applyDevParams(params);
     this.world.player.setCharsets(await playerCharsets(this.state.player.gender));
     const saved = this.state.player;
     const resume = !params.map && Boolean(saved.mapId);
@@ -80,6 +87,8 @@ export default class MapScene extends Scene {
   exit() {
     this.uninstallDevKeys?.();
     this.runner.cancelAll();
+    this.zygarde?.dispose();
+    this.crisisSky?.dispose();
     this.worldView.dispose();
     this.effects.clear();
     this.weather.dispose();
@@ -155,6 +164,7 @@ export default class MapScene extends Scene {
     await this.applyEnvironment(def);
     this.state.setPosition(id, p.x, p.y, p.direction);
     this.announce(def);
+    this.zygarde?.onEnterMap(entry);
     this.pendingWarp = null;
     this.pendingEncounter = null;
     if (typeof def.onEnter === 'function') this.runScript(def.onEnter, null, `${id}.onEnter`);
@@ -189,6 +199,7 @@ export default class MapScene extends Scene {
     this.state.setPosition(next.id, this.world.player.x, this.world.player.y, this.world.player.direction);
     this.applyEnvironment(next.def);
     this.announce(next.def);
+    this.zygarde?.onEnterMap(next);
     this.loadNeighbors(next);
   }
 
@@ -202,7 +213,8 @@ export default class MapScene extends Scene {
     // Siempre se pide la música del mapa (audio no reinicia la misma pista): si una escena cambió la
     // música con ctx.bgm(), al entrar en otro mapa con la misma BGM que el anterior vuelve a sonar la del mapa.
     if (def.bgm) engine.audio?.playBGM?.(def.bgm, { fadeOutPrevious: 20 });
-    const w = this.devWeather || (def.weather ? [def.weather.type || def.weather, def.weather.power ?? 5] : ['none', 0]);
+    // «Descansar hasta tormenta» (world/rest.js) sustituye el clima de los mapas exteriores durante unas horas.
+    const w = this.devWeather || stormWeather(this.state, def) || (def.weather ? [def.weather.type || def.weather, def.weather.power ?? 5] : ['none', 0]);
     if (w[0] !== this.weather.type) await this.weather.set(w[0], Number(w[1] ?? 5)).catch((e) => console.warn(e.message));
     await this.weather.setMapFog(def.fog || null);
     this.darkness = def.dark ? { amount: def.dark.amount ?? 0.94, radius: def.dark.radius ?? PLAYER_LIGHT } : null;
@@ -225,6 +237,7 @@ export default class MapScene extends Scene {
     core.talk = coreTalk;
     const appeared = (!hadPokemon && !f.hidden) || (!hadCore && !core.hidden);
     if (appeared && w.map) placeChainBehind(w.player, w.followers);
+    this.zygarde?.onFollowerRefresh();
   }
 
   // ------------------------------------------------------------ guiones y acciones
@@ -338,6 +351,7 @@ export default class MapScene extends Scene {
     }
     const camX = this.camera.x; const camY = this.camera.y;
     this.world.update(dt);
+    this.zygarde?.update(dt);
     this.visible.update();
     this.startParallelEvents();
     if (!this.world.scriptBusy()) {
@@ -351,6 +365,7 @@ export default class MapScene extends Scene {
       }
     }
     this.tickClock();
+    this.crisisSky?.update();
     this.camera.update();
     this.weather.update(dt, this.camera.x - camX, this.camera.y - camY);
   }
@@ -374,6 +389,7 @@ export default class MapScene extends Scene {
     } finally {
       this.world.inputLocked -= 1;
     }
+    this.zygarde?.update(dt, { paused: true });
     this.camera.update();
     this.weather.update(dt, this.camera.x - camX, this.camera.y - camY);
   }
@@ -419,7 +435,9 @@ export default class MapScene extends Scene {
     const def = this.world.current.def;
     const day = def.outdoor && def.dayNight !== false ? dayNightTone(this.state.data.clock.minutes) : [0, 0, 0, 0];
     // def.tone: tono propio del mapa [r, g, b, gris] (p. ej. la penumbra verde del Laberinto).
-    this.fx.apply(day, this.weather.tone(), def.tone || [0, 0, 0, 0]);
+    // Capa de crisis: efectos de cielo y tono propios de la fase, independientes del reloj (TEC-06).
+    this.crisisSky?.sync();
+    this.fx.apply(day, this.weather.tone(), def.tone || [0, 0, 0, 0], this.crisisSky?.tone() || null);
     const dark = this.darkness || (this.devDark ? { amount: 0.94 } : null);
     this.compositor.setDarkness(dark ? dark.amount : 0, dark ? this.lights() : []);
     this.compositor.render(
@@ -430,6 +448,7 @@ export default class MapScene extends Scene {
   }
 
   drawUI(g) {
+    if (this.ready) this.zygarde?.drawUI(g);
     if (engine.debug && this.ready) drawDebug(this, g);
   }
 }

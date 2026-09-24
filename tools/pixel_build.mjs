@@ -6,7 +6,7 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Img, preview, strayPixels } from './pixel.mjs';
-import { buildHumanSheet, exportSheet, NATIVE, SCALE } from './pixel_chars/assemble.mjs';
+import { buildHumanSheet, exportSheet, SCALE } from './pixel_chars/assemble.mjs';
 import { CHARACTERS } from './pixel_chars/roster.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -14,9 +14,10 @@ const outFlag = process.argv.find((a) => a.startsWith('--out='));
 const OUT_DIR = outFlag ? path.resolve(ROOT, outFlag.slice(6)) : path.join(ROOT, 'game', 'assets', 'characters');
 const PREVIEW_DIR = path.join(ROOT, 'tools', 'cache', 'pixel');
 
-function buildOne(spec) {
+function buildOne(spec, only = null) {
   const outputs = [];
   for (const sheetSpec of spec.sheets) {
+    if (only && !only.includes(spec.id) && !only.includes(sheetSpec.id)) continue;
     const native = sheetSpec.build ? sheetSpec.build() : buildHumanSheet(spec, sheetSpec.poses);
     const strays = strayPixels(native);
     if (strays.length) console.warn(`  aviso: ${sheetSpec.id} tiene ${strays.length} píxeles sueltos, p. ej. ${JSON.stringify(strays.slice(0, 4))}`);
@@ -27,28 +28,36 @@ function buildOne(spec) {
   return outputs;
 }
 
+const LINEUP_PAGE = 12; // hojas por página de la alineación
+
 /**
- * Alineación de todos los charsets (4 direcciones, patrón 0 y 1) sobre césped real de Añil,
- * a escala de juego y ampliada ×2 → tools/cache/pixel/_lineup.png.
+ * Alineación de los charsets (4 direcciones, patrones 0 y 1) sobre césped real de Añil, a escala de
+ * juego y ampliada ×2 → tools/cache/pixel/_lineup.png, _lineup_2.png… (12 hojas por página).
+ * Cada frame se alinea abajo-centro en celdas del tamaño del mayor frame de la página (como en el mapa).
  */
 function lineup(outputs) {
   const grassSrc = Img.load(path.join(ROOT, 'Pokemon Anil V4.13', 'Graphics', 'Tilesets', 'Exterior1.png')).crop(0, 0, 128, 128);
   const charsets = outputs.filter((o) => o.kind === 'charset');
-  const frame = NATIVE * SCALE;
   const cols = 8;
-  const out = new Img(cols * frame, Math.max(1, charsets.length) * frame);
-  for (let y = 0; y < out.h; y += 128) for (let x = 0; x < out.w; x += 128) out.blit(grassSrc, x, y);
-  charsets.forEach((o, r) => {
-    const sheetImg = exportSheet(o.native);
-    for (let c = 0; c < cols; c++) {
-      const dirRow = c % 4;
-      const pattern = c < 4 ? 0 : 1;
-      out.blit(sheetImg.crop(pattern * frame, dirRow * frame, frame, frame), c * frame, r * frame);
-    }
-  });
-  const file = path.join(PREVIEW_DIR, '_lineup.png');
-  out.scale(2).save(file);
-  console.log(`  alineación → ${path.relative(ROOT, file)}`);
+  for (let page = 0; page * LINEUP_PAGE < charsets.length; page++) {
+    const list = charsets.slice(page * LINEUP_PAGE, (page + 1) * LINEUP_PAGE);
+    const cell = Math.max(...list.map((o) => o.grid)) * SCALE;
+    const out = new Img(cols * cell, list.length * cell);
+    for (let y = 0; y < out.h; y += 128) for (let x = 0; x < out.w; x += 128) out.blit(grassSrc, x, y);
+    list.forEach((o, r) => {
+      const frame = o.grid * SCALE;
+      const sheetImg = exportSheet(o.native);
+      for (let c = 0; c < cols; c++) {
+        const dirRow = c % 4;
+        const pattern = c < 4 ? 0 : 1;
+        const f = sheetImg.crop(pattern * frame, dirRow * frame, frame, frame);
+        out.blit(f, c * cell + (cell - frame) / 2, r * cell + cell - frame);
+      }
+    });
+    const file = path.join(PREVIEW_DIR, page ? `_lineup_${page + 1}.png` : '_lineup.png');
+    out.scale(2).save(file);
+    console.log(`  alineación → ${path.relative(ROOT, file)} (${list.map((o) => o.id).join(', ')})`);
+  }
 }
 
 function main() {
@@ -56,11 +65,12 @@ function main() {
   const wantPreview = args.includes('--preview');
   const wantLineup = args.includes('--lineup');
   const ids = args.filter((a) => !a.startsWith('--'));
-  const list = CHARACTERS.filter((c) => !ids.length || ids.includes(c.id));
-  if (!list.length) throw new Error(`Ningún personaje coincide con: ${ids.join(', ')}`);
+  // Un id puede ser el de un personaje (todas sus hojas) o el de una hoja concreta.
+  const list = CHARACTERS.filter((c) => !ids.length || ids.includes(c.id) || c.sheets.some((s) => ids.includes(s.id)));
+  if (!list.length) throw new Error(`Ningún personaje ni hoja coincide con: ${ids.join(', ')}`);
   const all = [];
   for (const spec of list) {
-    for (const out of buildOne(spec)) {
+    for (const out of buildOne(spec, ids.length ? ids : null)) {
       all.push(out);
       console.log(`✓ ${path.relative(ROOT, out.file)}`);
       if (wantPreview) {

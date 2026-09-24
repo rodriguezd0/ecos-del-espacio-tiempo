@@ -6,6 +6,7 @@ import { loadMapDefinition } from '../content/maps/index.js';
 import { displayName, maxHP } from '../battle/core/pokemon.js';
 import { isKeyItem } from '../ui/logic/bagLogic.js';
 import { repelSteps } from '../ui/logic/fieldItems.js';
+import { FISHING_ITEMS } from './fishing.js';
 
 export const CANT_USE = 'Aquí no se puede usar.';
 const HEALTH_SHARE = 5; // Amortiguador/Batido: ceden 1/5 de los PS máximos (Essentials)
@@ -16,6 +17,7 @@ const FIELD_ITEMS = {
   ESCAPEROPE: useEscapeRope,
   CLUENOTEBOOK: async (ctx) => { await ctx.ui.openClues(); return true; },
   POKEDEXAXIS: async (ctx) => { await ctx.ui.openPokedex(); return true; },
+  ...FISHING_ITEMS, // OLDROD, GOODROD, SUPERROD (world/fishing.js)
 };
 
 /** Movimientos de campo desde el equipo: id → async (ctx, moveId, partyIndex) => boolean. */
@@ -34,6 +36,15 @@ export function registerFieldItem(itemId, fn) {
   FIELD_ITEMS[itemId] = fn;
 }
 
+/** Otros tipos de acción de pantallas (p. ej. { type: 'zygarde', … } de ui/screens/zygarde.js). */
+const FIELD_ACTION_TYPES = {};
+
+/** Registra un tipo de acción devuelta por el menú de pausa: fn(ctx, action) → boolean. */
+export function registerFieldAction(type, fn) {
+  if (typeof fn !== 'function') throw new Error(`registerFieldAction(${type}): se esperaba una función`);
+  FIELD_ACTION_TYPES[type] = fn;
+}
+
 /** Ejecuta la acción devuelta por el menú de pausa. */
 export async function runFieldAction(ctx, action) {
   if (!action) return false;
@@ -46,6 +57,7 @@ export async function runFieldAction(ctx, action) {
       return true;
     }
     default:
+      if (FIELD_ACTION_TYPES[action.type]) return FIELD_ACTION_TYPES[action.type](ctx, action);
       console.warn('Acción de campo desconocida', action);
       return false;
   }

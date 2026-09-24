@@ -188,7 +188,7 @@ export class ParticleField {
 
   /**
    * Añade una partícula. p: { x, y, vx, vy, ax, ay, drag, size, grow, life, color:[r,g,b], alpha,
-   *   target:{ x, y, k } (atracción), fadeIn, onDeath(p) }
+   *   target:{ x, y, k (atracción), kill (radio de llegada), minAge }, fadeIn, onDeath(p) }
    */
   spawn(p) {
     if (this.list.length >= this.max) this.list.shift();
@@ -216,7 +216,10 @@ export class ParticleField {
         p.size = Math.max(0, p.size + p.grow);
         p.age += 1;
       }
-      const dead = this.list.filter((p) => p.age >= p.life || (p.target?.kill && Math.hypot(p.target.x - p.x, p.target.y - p.y) < p.target.kill));
+      // target.minAge: la partícula no «llega» antes de esa edad (estelas que salen y vuelven al origen).
+      const arrived = (p) => p.target?.kill && p.age >= (p.target.minAge || 0)
+        && Math.hypot(p.target.x - p.x, p.target.y - p.y) < p.target.kill;
+      const dead = this.list.filter((p) => p.age >= p.life || arrived(p));
       if (dead.length) {
         this.list = this.list.filter((p) => !dead.includes(p));
         for (const p of dead) p.onDeath?.(p);

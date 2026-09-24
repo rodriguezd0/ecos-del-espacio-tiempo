@@ -4,6 +4,8 @@ import { engine } from '../core/engine.js';
 import { ui } from '../ui/api.js';
 import { createPokemon, healed, displayName } from '../battle/core/pokemon.js';
 import { dx, dy } from '../world/gameMap.js';
+import { storyApi } from '../content/story/api.js';
+import { rest } from '../world/rest.js';
 
 const DIRS = { down: 2, left: 4, right: 6, up: 8, abajo: 2, izquierda: 4, derecha: 6, arriba: 8 };
 
@@ -167,5 +169,8 @@ export function createContext(scene, event = null) {
       return { x: p.x + dx(p.direction), y: p.y + dy(p.direction) };
     },
   };
+  // ---- historia (content/story/api.js) y descanso (world/rest.js), docs/ARCHITECTURE.md §6b
+  ctx.story = storyApi(ctx);
+  ctx.rest = (opts = {}) => rest(ctx, opts);
   return ctx;
 }

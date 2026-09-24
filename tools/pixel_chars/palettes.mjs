@@ -5,9 +5,9 @@
 export const ZYGARDE_GREEN = '#B9FF66';
 
 const EYES = { e: '#1C1820', w: '#F8F8F8' };
-const SKIN_LIGHT = { S: '#FCE0C4', s: '#F2BC8E', r: '#C8845A', o: '#7A4A30', ...EYES };
-const SKIN_MID = { S: '#F4CCA4', s: '#DDA070', r: '#AE6E46', o: '#6A3E26', ...EYES };
-const SKIN_TAN = { S: '#E8B888', s: '#C98E5E', r: '#99603A', o: '#5A3420', ...EYES };
+export const SKIN_LIGHT = { S: '#FCE0C4', s: '#F2BC8E', r: '#C8845A', o: '#7A4A30', ...EYES };
+export const SKIN_MID = { S: '#F4CCA4', s: '#DDA070', r: '#AE6E46', o: '#6A3E26', ...EYES };
+export const SKIN_TAN = { S: '#E8B888', s: '#C98E5E', r: '#99603A', o: '#5A3420', ...EYES };
 
 export const PALETTES = {
   // Protagonista masculino (biblia §13.1): castaño cobrizo, chaqueta azul petróleo cerrada, camiseta

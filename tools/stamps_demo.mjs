@@ -104,6 +104,8 @@ async function main() {
   await demoRuta();
   await demoInterior();
   await demoCueva();
+  const { campaignDemos } = await import('./stamps_demo_campaign.mjs');
+  await campaignDemos(canvas);
 }
 
 main().catch((err) => {

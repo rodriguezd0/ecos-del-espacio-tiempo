@@ -2,8 +2,10 @@
 // Añil, desfile de todo el elenco a escala de juego y sprites de combate. Todo el arte propio es
 // PROVISIONAL (D30). Con E (R) se alterna con las clases genéricas de entrenador de Añil
 // (content/anilClasses.js): charset + sprite de combate de cada alias 'anil:<clase>'.
-// Controles: ←/→ personaje · Z (A) caminar/correr · X (B) zoom ×1/×2 · C (START) combate · E Axis/Añil.
-// Parámetros: &char=<id> · &run · &battle · &anil (empieza en las clases de Añil; &char=<alias>).
+// Controles: ←/→ personaje · Z (A) modo (caminar, correr y, en los protagonistas, montura 10%, nado 50%,
+// buceo, trepar, pesca y Vuelo) · X (B) zoom ×1/×2 · C (START) combate · E Axis/Añil.
+// Parámetros: &char=<id> · &run · &mode=<walk|run|ride10|ride50|dive|climb|fish|vuelo> · &battle ·
+// &anil (empieza en las clases de Añil; &char=<alias>).
 import { engine, SCREEN_W, SCREEN_H } from '../core/engine.js';
 import { Scene } from '../core/scenes.js';
 import { CHARACTERS, frameRect, getCharacter, getBattleSprite } from '../content/characters.js';
@@ -21,6 +23,13 @@ const FONT = '"Power Green", monospace';
 const FONT_SMALL = '"Power Green Small", "Power Green", monospace';
 
 const PER_PAGE = 16; // desfile: 2 filas de 8
+// Modos del visor: caminar, correr y variantes de campo de los protagonistas (content/characters.js).
+const MODES = ['walk', 'run', 'ride10', 'ride50', 'dive', 'climb', 'fish', 'vuelo'];
+const MODE_NAMES = {
+  walk: 'Caminar', run: 'Correr', ride10: 'Montado en Zygarde 10%', ride50: 'Nadando sobre Zygarde 50%',
+  dive: 'Buceo (burbuja)', climb: 'Trepar', fish: 'Pescar', vuelo: 'Vuelo: disgregación (ida y vuelta)',
+};
+const EFFECT_FRAMES = 6; // frames lógicos por frame de efecto
 
 export default class SpriteViewerScene extends Scene {
   async enter(params = {}) {
@@ -51,6 +60,14 @@ export default class SpriteViewerScene extends Scene {
     await Promise.all(loads);
     if (params.battle !== undefined) this.showBattle = true;
     if (params.run !== undefined) this.mode = 'run';
+    if (MODES.includes(params.mode)) this.mode = params.mode;
+  }
+
+  /** Modos disponibles para el personaje actual (las variantes solo existen en los protagonistas). */
+  modesFor(id) {
+    if (this.anil) return ['walk'];
+    const variants = CHARACTERS[id]?.variants || {};
+    return MODES.filter((m) => m === 'walk' || (variants[m] && CHARACTERS[variants[m]]));
   }
 
   get selectedId() {
@@ -88,7 +105,11 @@ export default class SpriteViewerScene extends Scene {
     if (!this.ids.length) return;
     if (input.repeat('RIGHT')) this.index = (this.index + 1) % this.ids.length;
     if (input.repeat('LEFT')) this.index = (this.index + this.ids.length - 1) % this.ids.length;
-    if (input.pressed('A')) this.mode = this.mode === 'walk' ? 'run' : 'walk';
+    if (input.pressed('A')) {
+      const modes = this.modesFor(this.selectedId);
+      const i = modes.indexOf(this.mode);
+      this.mode = modes[(i + 1) % modes.length] || 'walk';
+    }
     if (input.pressed('B')) this.zoom = this.zoom === 2 ? 1 : 2;
     if (input.pressed('START')) this.showBattle = !this.showBattle;
   }
@@ -134,21 +155,42 @@ export default class SpriteViewerScene extends Scene {
     this.text(g, ellipsis(g, ch.note || '', SCREEN_W - 16), 8, 36, { color: '#C8D8D0', font: FONT_SMALL, size: 14 });
   }
 
-  /** Personaje seleccionado caminando en las 4 direcciones. */
+  /** Personaje seleccionado en las 4 direcciones con el modo actual (caminar, correr o variante). */
   drawDirections(g) {
     const id = this.sheetFor(this.selectedId);
     const entry = this.entryFor(id);
     const img = this.imageFor(id, entry);
-    const size = 64 * this.zoom;
+    if (entry && entry.kind === 'effect') {
+      this.drawEffect(g, entry, img);
+      return;
+    }
+    const fh = (entry && entry.frameH) || 64;
+    const zoom = Math.max(1, Math.min(this.zoom, Math.floor(128 / fh))); // los frames de 96 caben a ×1
+    const size = fh * zoom;
     const slot = SCREEN_W / 4;
-    const top = 48 + (128 - size) / 2;
+    const top = 48 + Math.max(0, (128 - size) / 2);
     DIRS.forEach((dir, i) => {
       const x = i * slot + (slot - size) / 2;
-      this.drawFrame(g, entry, img, dir, this.pattern(), x, top, this.zoom);
+      this.drawFrame(g, entry, img, dir, this.pattern(), x, top, zoom);
       this.text(g, DIR_NAMES[dir], i * slot + slot / 2, 190, { align: 'center', color: '#FFFFFF', shadow: true });
     });
-    const label = id === this.selectedId ? (this.mode === 'run' ? 'Correr: sin hoja propia (se muestra caminar)' : 'Caminar') : 'Correr';
+    let label = MODE_NAMES[this.mode] || 'Caminar';
+    if (id === this.selectedId && this.mode !== 'walk') label = `${label}: sin hoja propia (se muestra caminar)`;
     this.text(g, label, SCREEN_W / 2, 206, { align: 'center', color: '#F0F0C0', font: FONT_SMALL, size: 14, shadow: true });
+  }
+
+  /** Tira de efecto (Vuelo): ida (disgregarse) y vuelta (rehacerse) animadas en bucle. */
+  drawEffect(g, entry, img) {
+    const total = entry.cols * entry.rows;
+    const step = Math.floor(this.t / EFFECT_FRAMES) % (total + 4); // pausa de 4 frames al final
+    const k = Math.min(step, total - 1);
+    const slot = SCREEN_W / 2;
+    [k, total - 1 - k].forEach((frame, i) => {
+      const r = { x: (frame % entry.cols) * entry.frameW, y: Math.floor(frame / entry.cols) * entry.frameH, w: entry.frameW, h: entry.frameH };
+      if (img) g.drawImage(img, r.x, r.y, r.w, r.h, Math.round(i * slot + (slot - r.w) / 2), 60, r.w, r.h);
+      this.text(g, i ? 'Llegada (al revés)' : 'Partida', i * slot + slot / 2, 190, { align: 'center', color: '#FFFFFF', shadow: true });
+    });
+    this.text(g, `${MODE_NAMES.vuelo} · frame ${k + 1}/${total}`, SCREEN_W / 2, 206, { align: 'center', color: '#F0F0C0', font: FONT_SMALL, size: 14, shadow: true });
   }
 
   /** Sprites de combate del seleccionado (espalda con lanzamiento, frontal). */
@@ -205,19 +247,18 @@ export default class SpriteViewerScene extends Scene {
   drawFooter(g) {
     g.fillStyle = 'rgba(16, 24, 28, 0.82)';
     g.fillRect(0, SCREEN_H - 20, SCREEN_W, 20);
-    const hint = `←/→ personaje · Z andar/correr · X zoom · C combate · E ${this.anil ? 'Axis' : 'clases Añil'}`;
+    const hint = `←/→ personaje · Z modo · X zoom · C combate · E ${this.anil ? 'Axis' : 'clases Añil'}`;
     this.text(g, hint, 8, SCREEN_H - 6, { color: '#C8D8D0', font: FONT_SMALL, size: 14 });
     if (this.errors.length) this.text(g, `Errores: ${this.errors.length} (ver consola)`, SCREEN_W - 8, SCREEN_H - 6, { color: '#FF8080', align: 'right', font: FONT_SMALL, size: 14 });
   }
 
   // ─────────────────────────── utilidades ───────────────────────────
 
-  /** Hoja a mostrar según el modo (correr si existe). */
+  /** Hoja a mostrar según el modo (la variante si existe; si no, caminar). */
   sheetFor(id) {
-    if (this.anil) return id;
-    const ch = CHARACTERS[id];
-    if (this.mode === 'run' && ch.variants && ch.variants.run && CHARACTERS[ch.variants.run]) return ch.variants.run;
-    return id;
+    if (this.anil || this.mode === 'walk') return id;
+    const v = CHARACTERS[id]?.variants?.[this.mode];
+    return v && CHARACTERS[v] ? v : id;
   }
 
   pattern(frames = this.mode === 'run' ? RUN_FRAMES : WALK_FRAMES) {

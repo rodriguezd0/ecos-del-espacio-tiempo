@@ -5,6 +5,7 @@
 import { TOWN_DOORS, INTERIOR_ENTRIES, TOWN_EXITS } from './villa_alba_layout.js';
 import { W, H, buildVillaAlba } from './villa_alba_build.js';
 import { villageEvents } from '../../events/b01_town_village.js';
+import { parterreCellEvents } from '../../events/b01_town_cell.js';
 
 export default {
   id: 'villa_alba',
@@ -34,5 +35,6 @@ export default {
     { dir: 'south', to: TOWN_EXITS.south.to, offset: TOWN_EXITS.south.offset },
   ],
 
-  events: villageEvents(),
+  // C001 en el parterre central con su escena forzada al salir del laboratorio con la Pokédex (CAMPANA §2.3).
+  events: [...villageEvents(), ...parterreCellEvents()],
 };

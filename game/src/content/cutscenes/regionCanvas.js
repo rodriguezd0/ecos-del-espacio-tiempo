@@ -1,10 +1,11 @@
-// Plano nocturno de la región para la dispersión del prólogo (P-04): silueta suavizada a partir de la
-// rejilla PROVISIONAL de ui/logic/regionMapData.js (atlas pendiente, X02). Pixel art a ×2 (arte 256×192).
+// Plano nocturno de la región para la dispersión del prólogo (P-04): silueta suavizada a partir del atlas
+// de ui/logic/regionMapData.js (X02: `terrain`, o `grid` en el formato antiguo) con el tono de cada terreno
+// (bosque, montaña, nieve, meseta, arena…) muy apagado. Pixel art a ×2 (arte 256×192).
 // Devuelve el lienzo 512×384 y los puntos (px de pantalla) de origen, núcleos y pueblo.
 import { SCREEN_W, SCREEN_H } from '../../core/engine.js';
 import { makeCanvas } from '../../render/textures.js';
 import { REGION_MAP } from '../../ui/logic/regionMapData.js';
-import { REGION_ART, REGION_POINTS, landCell, cellToScreen } from './prologueData.js';
+import { REGION_ART, REGION_POINTS, landCell, landGrid, terrainAt, cellToScreen } from './prologueData.js';
 
 const ART_W = REGION_ART.w;
 const ART_H = REGION_ART.h;
@@ -37,8 +38,14 @@ const PAL = {
   land: [14, 34, 24], land2: [18, 44, 30], forest: [8, 24, 16], rock: [38, 38, 46], light: [255, 214, 120],
 };
 
+/** Tono nocturno por tipo de terreno del atlas (TERRAIN_KEYS); el resto usa la tierra común. */
+const TERRAIN_TONE = {
+  f: [9, 26, 17], '^': [25, 26, 33], '*': [32, 38, 50], p: [22, 32, 23], ':': [34, 31, 25], w: [15, 28, 24],
+  o: [6, 6, 12], v: [36, 17, 15], i: [20, 34, 26],
+};
+
 export function buildRegionCanvas(map = REGION_MAP) {
-  const grid = map.grid;
+  const grid = landGrid(map);
   const art = makeCanvas(ART_W, ART_H);
   const img = art.g.createImageData(ART_W, ART_H);
   const land = new Uint8Array(ART_W * ART_H);
@@ -57,8 +64,10 @@ export function buildRegionCanvas(map = REGION_MAP) {
       if (isLand(x, y)) {
         const coast = !isLand(x - 1, y) || !isLand(x + 1, y) || !isLand(x, y - 1) || !isLand(x, y + 1);
         const dm = Math.hypot(x - origin[0], (y - origin[1]) * 1.3);
+        const tone = TERRAIN_TONE[terrainAt(map, Math.floor((x - OX) / CELL), Math.floor((y - OY) / CELL))];
         if (coast) c = PAL.coast;
         else if (dm < 10 && h < 0.55) c = PAL.rock;
+        else if (tone) c = h < 0.12 ? PAL.land2 : tone;
         else if (hash(x >> 2, y >> 2) < 0.28) c = h < 0.7 ? PAL.forest : PAL.land;
         else c = h < 0.15 ? PAL.land2 : PAL.land;
       } else {

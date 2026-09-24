@@ -98,7 +98,11 @@ class PauseMenuScene extends UIScene {
         const item = await ui.openBag({ mode: 'field' });
         return item ? { type: 'useItem', item } : null;
       }
-      case 'zygarde': await ui.openZygarde(); return null;
+      case 'zygarde': {
+        // La pantalla de Zygarde puede devolver una acción para el mapa ({ type: 'zygarde', action: 'fly' … }).
+        const r = await ui.openZygarde();
+        return r && r.type ? r : null;
+      }
       case 'card': await ui.openTrainerCard(); return null;
       case 'save': await ui.openSave(); return null;
       case 'options': await ui.openOptions(); return null;

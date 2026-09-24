@@ -81,3 +81,53 @@ export const SKIRT = {
   up1: SKIRT_FRONT.down1,
   up3: SKIRT_FRONT.down3,
 };
+
+// ───────────────────────── Elenco de la campaña ─────────────────────────
+
+/** Superposición con los símbolos cambiados ({ C: 'Y', … }): permite dos piezas de distinto color. */
+export function recolorOverlay(overlay, map) {
+  const sub = (rows) => rows.map((r) => [...r].map((ch) => map[ch] || ch).join(''));
+  return Object.fromEntries(Object.entries(overlay).map(([k, rows]) => [k, sub(rows)]));
+}
+
+/** Poses { down, left, up } con los símbolos del cuerpo cambiados (p. ej. manos → guantes). */
+export function recolorPoses(poses, map) {
+  const sub = (rows) => rows.map((r) => [...r].map((ch) => map[ch] || ch).join(''));
+  return Object.fromEntries(Object.entries(poses).map(([dir, list]) => [dir, list.map((p) => ({ ...p, body: sub(p.body) }))]));
+}
+
+// Peto blanco del mono de los técnicos de Genesis, con el emblema (G) en el pecho; de espaldas, tirantes.
+const PETO_BIB = {
+  18: '......C..c........', 19: '......CCCcc.......', 20: '......CCGcc.......', 21: '......CCCcc.......',
+  22: '......CCCcc.......', 23: '......CCCcc.......', 24: '......xxxxx.......',
+};
+const PETO_SIDE = { 19: '......CC..........', 20: '......CG..........', 21: '......CC..........', 22: '......CC..........', 23: '......cc..........' };
+const PETO_BACK = { 18: '......c..c........', 19: '......c..c........', 20: '.......cc.........', 21: '.......cc.........', 22: '......c..c........' };
+export const PETO = {
+  down0: sparse(PETO_BIB), down1: sparse(shiftMap(PETO_BIB, -1)), down3: sparse(shiftMap(PETO_BIB, -1)),
+  left0: sparse(PETO_SIDE), left1: sparse(shiftMap(PETO_SIDE, -1)), left3: sparse(shiftMap(PETO_SIDE, -1)),
+  up0: sparse(PETO_BACK), up1: sparse(shiftMap(PETO_BACK, -1)), up3: sparse(shiftMap(PETO_BACK, -1)),
+};
+
+// Capa corta carbón del Líder Supremo (sobre la bata): de frente cubre hombros y deja ver el centro;
+// de espaldas cubre la espalda. Símbolos Y (luz), y (sombra), Z (bajo).
+const CAPE_FRONT = {
+  18: '...kYYYk..kyyyk...', 19: '..kYYYYk..kyyyyk..', 20: '..kYYYYk..kyyyyk..', 21: '..kZZZZk..kZZZZk..', 22: '...kkkk....kkkk...',
+};
+const CAPE_BACK = {
+  18: '...kYYYYYYYYyyk...', 19: '..kYYYYYYYYYyyyk..', 20: '..kYYYYYYYYYyyyk..', 21: '..kYYYYYYYYYyyyk..',
+  22: '..kZZZZZZZZZZZZk..', 23: '...kkkkkkkkkkkk...',
+};
+const CAPE_SIDE = {
+  18: '.....kYYYYyk......', 19: '.....kYYYYyyk.....', 20: '.....kYYYYyyk.....', 21: '.....kZZZZZZk.....', 22: '......kkkkkk......',
+};
+export const CAPE = {
+  down0: sparse(CAPE_FRONT), down1: sparse(shiftMap(CAPE_FRONT, -1)), down3: sparse(shiftMap(CAPE_FRONT, -1)),
+  left0: sparse(CAPE_SIDE), left1: sparse(shiftMap(CAPE_SIDE, -1)), left3: sparse(shiftMap(CAPE_SIDE, -1)),
+  up0: sparse(CAPE_BACK), up1: sparse(shiftMap(CAPE_BACK, -1)), up3: sparse(shiftMap(CAPE_BACK, -1)),
+};
+
+// Maletín de instrumentos (técnicos): colgado de la mano derecha, solo visible de frente.
+const CASE_ROWS = ['.............kkkkk', '.............kMMmk', '.............kkkkk'];
+const caseAt = (y) => sparse(Object.fromEntries(CASE_ROWS.map((r, i) => [y + i, r])));
+export const CASE = { down0: caseAt(26), down1: caseAt(26), down3: caseAt(25) };

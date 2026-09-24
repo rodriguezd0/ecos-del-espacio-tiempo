@@ -27,6 +27,7 @@
 //   { room: { wall, floor, floorShade, void, frame } } habitación interior con marco (ver paintRoom) (capas 0 y 2)
 //   { line: { ids: [ini, medio..., fin] | src: [x, y, w, h], axis: 'h'|'v' } }
 //                                                      línea con extremos (salientes, vallas) (capa 1)
+//   { edge2: { src: [x, y], fill? } }                   borde doble 5×5 (playas: espuma + arena) (capa 1)
 import { resolveAutotileId, FIRST_REGULAR_TILE } from '../../shared/autotile.js';
 
 const tileId = (x, y) => FIRST_REGULAR_TILE + y * 8 + x;
@@ -308,9 +309,33 @@ function paintLine(brush, cells, opts) {
   });
 }
 
+/**
+ * Borde doble (playas de Añil: espuma + arena mojada): bloque 5×5 desde `src`. Columnas 0–1 borde oeste
+ * (exterior, interior), 2 centro, 3–4 borde este (interior, exterior); filas igual (0–1 norte, 2 centro,
+ * 3–4 sur). Pensado para formas convexas (las esquinas cóncavas usan el centro). `fill: 0` deja el centro vacío.
+ */
+function paintEdge2(brush, cells, opts) {
+  const { src: [sx, sy], fill } = brush.edge2;
+  const layer = brush.layer ?? 1;
+  const inside = makeMask(cells, opts);
+  // 1 = la vecina ya está fuera; 2 = fuera a dos casillas; 3 = dentro al menos dos casillas
+  const dist = (x, y, dx, dy) => { let d = 1; while (d <= 2 && inside(x + dx * d, y + dy * d)) d++; return d; };
+  const out = [];
+  for (const [x, y] of cells) {
+    const dn = dist(x, y, 0, -1); const ds = dist(x, y, 0, 1);
+    const dw = dist(x, y, -1, 0); const de = dist(x, y, 1, 0);
+    const row = dn <= 2 ? dn - 1 : ds <= 2 ? 5 - ds : 2;
+    const col = dw <= 2 ? dw - 1 : de <= 2 ? 5 - de : 2;
+    const id = row === 2 && col === 2 && fill !== undefined ? fill : tileId(sx + col, sy + row);
+    if (id) out.push({ x, y, layer, id });
+  }
+  return out;
+}
+
 const PAINTERS = {
   tile: paintTile, pattern: paintPattern, grid: paintGrid, autotile: paintAutotile, nine: paintNine,
   forest: paintForest, cliff: paintCliff, terrace: paintTerrace, room: paintRoom, cave: paintCave, line: paintLine,
+  edge2: paintEdge2,
 };
 
 /** Tipo de un brush (clave principal de su definición). */
@@ -346,6 +371,7 @@ export function brushDemo(brush) {
   if (kind === 'terrace') return { w: 9, h: 9, cells: rectCells(1, 1, 7, 7) };
   if (kind === 'room') return { w: 13, h: 12, cells: rectCells(2, 2, 9, 8) };
   if (kind === 'cave') return { w: 16, h: 12, cells: rectCells(4, 5, 8, 5) };
+  if (kind === 'edge2') return { w: 10, h: 9, cells: rectCells(1, 1, 8, 7) };
   if (kind === 'line') {
     return brush.line.axis === 'v' ? { w: 3, h: 7, cells: rectCells(1, 1, 1, 5) } : { w: 8, h: 3, cells: rectCells(1, 1, 6, 1) };
   }

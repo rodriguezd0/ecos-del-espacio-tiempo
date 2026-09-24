@@ -26,12 +26,19 @@ export const STARTERS = Object.freeze(['TURTWIG', 'LITTEN', 'SOBBLE']);
 export const ADVANTAGE = Object.freeze({ TURTWIG: 'LITTEN', LITTEN: 'SOBBLE', SOBBLE: 'TURTWIG' });
 export const STARTER_LEVEL = 5;
 
+/** Nombres del elenco secundario (X07, docs/CAMPANA.md «B01 — ajustes DECIDIDO-DEV»). */
+export const CAST = Object.freeze({
+  police: 'Agente Olmedo', // el policía del acceso al Laberinto
+  owners: 'Arenzana', // familia dueña del Laberinto de la Profundidad
+  assistant: 'Lía', // ayudante del laboratorio (mujer joven)
+});
+
 export const SPEAKER = Object.freeze({
   mom: 'Mamá',
   gael: 'Gael',
   alerce: 'Prof. Alerce',
-  police: 'Policía',
-  assistant: 'Ayudante',
+  police: CAST.police,
+  assistant: CAST.assistant,
 });
 
 /** Gráficos de los personajes (content/characters.js o charsets de Añil). */
@@ -40,7 +47,7 @@ export const SPRITE = Object.freeze({
   gael: 'gael',
   alerce: 'profesor',
   police: 'policia',
-  assistant: 'asistenta',
+  assistant: 'ayudante',
   ball: 'Object ball',
 });
 
@@ -71,11 +78,12 @@ export function when({ all = [], none = [], test = null } = {}) {
   return (s) => Boolean(s) && all.every((k) => s.flag(k)) && none.every((k) => !s.flag(k)) && (!test || test(s));
 }
 
-/** Punto de cura de casa (la madre): se guarda en state.data.lastHeal para volver tras perder. */
+/** Punto de cura de casa (la madre): destino tras perder y de la Cuerda Huida (state.healPoint). */
 export const HOME_HEAL_POINT = Object.freeze({ mapId: 'casa_prota_1f', x: 4, y: 6, dir: 8 });
 
-export function setHomeHealPoint(state) {
-  if (!state) return;
+/** Fija la casa como punto de cura con la API de guiones (ctx.setHealPoint, ARCHITECTURE §6). */
+export function setHomeHealPoint(ctx) {
+  if (!ctx || typeof ctx.setHealPoint !== 'function') return;
   const { mapId, x, y, dir } = HOME_HEAL_POINT;
-  state.setHealPoint(mapId, x, y, dir);
+  ctx.setHealPoint(x, y, dir, mapId);
 }

@@ -24,12 +24,49 @@ export function boxLabel(state, box) {
 }
 
 /**
+ * Equipo del jugador tras el combate. CONTRATO ÚNICO hacia el mundo: `party` (ARCHITECTURE §7); el motor
+ * (battle/core buildResult) lo entrega como `playerParty`. Devuelve null si el resultado no trae equipo.
+ */
+export function resultParty(result) {
+  const list = Array.isArray(result?.party) ? result.party : (Array.isArray(result?.playerParty) ? result.playerParty : null);
+  return list ? list.filter(Boolean) : null;
+}
+
+/**
+ * Resultado normalizado que devuelven battle() (api.js, con o sin escena) y world/battleFlow:
+ * `{ ...motor, outcome, party, caught, stored, canLose }`. `stored` = ya aplicado a la partida (equipo,
+ * dinero, mochila, vistos y capturas); si es false, quien lo recibe debe aplicarlo (applyBattleResult +
+ * storeCaught). No modifica la entrada.
+ */
+export function finalizeBattleResult(result, { stored = false, canLose = false, trainer } = {}) {
+  const r = result || { outcome: 'win' };
+  const caught = r.caught ?? (Array.isArray(r.caughtAll) ? r.caughtAll[0] ?? null : null);
+  return {
+    ...r,
+    outcome: r.outcome || 'win',
+    party: resultParty(r) ?? [],
+    caught: caught ?? null,
+    stored: Boolean(stored),
+    canLose: Boolean(canLose || r.canLose),
+    ...(trainer !== undefined ? { trainer } : {}),
+  };
+}
+
+/** Pokémon capturados de un resultado (todos: el motor admite varias capturas). */
+export function caughtList(result) {
+  if (Array.isArray(result?.caughtAll) && result.caughtAll.length) return result.caughtAll.filter(Boolean);
+  return result?.caught ? [result.caught] : [];
+}
+
+/**
  * Aplica equipo, dinero, mochila y Pokédex vistos. No almacena capturas (ver storeCaught).
+ * Acepta el resultado del motor (`playerParty`) o el normalizado (`party`).
  * @returns {{ moneyChange: number }}
  */
 export function applyBattleResult(state, result) {
   if (!state || !result) return { moneyChange: 0 };
-  if (Array.isArray(result.playerParty)) state.setParty(result.playerParty.filter(Boolean));
+  const party = resultParty(result);
+  if (party?.length) state.setParty(party); // un equipo vacío nunca es válido (combate fallido): no se toca
   const delta = Number(result.moneyChange) || 0;
   if (delta) state.addMoney(delta);
   if (result.bag) syncBag(state, result.bag);

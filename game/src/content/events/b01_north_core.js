@@ -45,13 +45,19 @@ export async function coreChoice(ask, say) {
   }
 }
 
-/** El Core se une: estado, evento fuera y compañero de campo en su lugar. */
-function coreJoins(ctx, coreEvent) {
+/**
+ * El Core se une: estado (con joinCore del sistema de Zygarde si está: núcleo, flag global y forma), evento
+ * fuera y compañero de campo en su lugar.
+ */
+function coreJoins(ctx, coreEvent, joinCore = null) {
   const s = ctx.state;
-  // GameState aún no tiene setter de forma (core/ es de integración): se usa si aparece.
-  if (typeof s.setZygardeForm === 'function') s.setZygardeForm('core');
-  else s.data.zygarde.form = 'core';
-  s.addCore(CORE_ID);
+  if (typeof joinCore === 'function') {
+    joinCore(s, CORE_ID);
+  } else {
+    if (typeof s.setZygardeForm === 'function') s.setZygardeForm('core');
+    else s.data.zygarde.form = 'core';
+    s.addCore(CORE_ID);
+  }
   ctx.setFlag(F.coreFound);
   const at = { x: coreEvent.x, y: coreEvent.y };
   ctx.erase(coreEvent);
@@ -117,7 +123,11 @@ async function coreScene(ctx, chamber) {
   await ctx.say(CORE_LINES.accept, SAY_CORE);
   ctx.audio?.playCoreSignal?.({ volume: 60 });
   await ctx.flash(GREEN, 30, 200);
-  const core = coreJoins(ctx, coreEv);
+  const progression = await import('../../world/zygarde/progression.js').catch((err) => {
+    console.warn('[b01] Sistema de Zygarde no disponible; el Core se une sin él', err);
+    return null;
+  });
+  const core = coreJoins(ctx, coreEv, progression?.joinCore);
   await ctx.move(core, [{ jump: [0, 0] }], { through: true });
   core.turnToward(ctx.player);
   await ctx.wait(20);

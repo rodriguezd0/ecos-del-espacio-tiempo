@@ -99,6 +99,11 @@ export class WorldView {
       seen.add(f.uid);
       this.spriteFor(f).sync(f, 0, 0, { visible: f.visible && !p.surfing });
     }
+    // Personajes extra del mundo actual (p. ej. la montura de Zygarde, world/zygarde/mount.js).
+    for (const ch of world.extraCharacters || []) {
+      seen.add(ch.uid);
+      this.spriteFor(ch).sync(ch, 0, 0, { visible: ch.visible !== false, shadow: ch.shadow !== false });
+    }
     for (const [uid, s] of this.sprites) {
       if (!seen.has(uid)) { s.dispose(); this.sprites.delete(uid); }
     }

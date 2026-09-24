@@ -9,7 +9,10 @@ import { paintBrush, brushKind, rectCells, cellHash } from '../game/src/content/
 import { FIRST_REGULAR_TILE, isAutotile, autotileSlot } from '../game/src/shared/autotile.js';
 
 const tilesets = JSON.parse(fs.readFileSync(new URL('../game/data/tilesets.json', import.meta.url))).tilesets;
-const MIN_ENTRIES = { ExteriorBosqueCeleste: 60, Interior1: 40, Cueva1: 30, Exterior1: 60, Exterior2: 40, Exterior3: 40 };
+const MIN_ENTRIES = {
+  ExteriorBosqueCeleste: 100, Interior1: 70, Cueva1: 160, Exterior1: 140, Exterior2: 110, Exterior3: 100,
+  ExteriorSafari: 65, ExteriorPrisma: 110, InteriorTorre: 90, InteriorLiga: 90,
+};
 const ANIL_MAPS = new URL('../tools/cache/anil_maps/index.json', import.meta.url);
 
 async function loadAll() {

@@ -5,8 +5,9 @@ Todo el arte de personajes de este documento es **provisional** y está pendient
 `game/src/content/characters.js` lleva `provisional: true` y `decision: 'D30'`. Nada de lo aquí propuesto
 fija canon: donde la biblia deja un campo abierto, la solución es una propuesta para aprobar o descartar.
 
-Visor: `http://localhost:8080/?scene=sprites` (←/→ personaje · Z caminar/correr · X zoom · C combate ·
-E alterna con las clases genéricas de Añil). Parámetros: `&char=<id>`, `&run`, `&battle`, `&anil`
+Visor: `http://localhost:8080/?scene=sprites` (←/→ personaje · Z modo: caminar, correr y, en los protagonistas,
+montura 10%, nado 50%, buceo, trepar, pesca y Vuelo · X zoom · C combate · E alterna con las clases genéricas de
+Añil). Parámetros: `&char=<id>`, `&run`, `&mode=<walk|run|ride10|ride50|dive|climb|fish|vuelo>`, `&battle`, `&anil`
 (empieza en las clases de Añil; con `&char=<alias>`).
 
 ## 1. Método técnico
@@ -39,10 +40,16 @@ node tools/pixel_build.mjs [id ...] [--preview] [--lineup] [--out=tools/cache/pi
   (cabezas por matrices de caracteres), `palettes.mjs` (todas las paletas), `zygarde.mjs`, `battle_back.mjs`,
   `battle_front.mjs`, `battle_front_b01.mjs` (sprites grandes con formas + sombreado de celda de `raster.mjs`),
   `roster.mjs` (qué hojas se generan).
+- Campaña (§7–8): `palettes_campaign.mjs`, `heads_campaign.mjs` (Guardianes, Sol, oficios; `withGlasses`),
+  `heads_genesis.mjs`, `front_kit.mjs` + `battle_front_campaign.mjs` (frontales), `overlays.mjs` (también peto,
+  capa corta, maletín, `recolorOverlay`, `recolorPoses`), `follower_src.mjs` (lee los seguidores de Añil),
+  `rider.mjs` (jinete sentado), `mounts.mjs` (10% y 50%), `actions.mjs` (buceo, trepar, pesca) y `flight.mjs` (Vuelo).
+- Un id puede ser un personaje (todas sus hojas) o una hoja concreta: `node tools/pixel_build.mjs protagonista_f_ride50`.
 - `--out=<carpeta>` escribe los PNG en otra carpeta para iterar sin tocar el juego en marcha.
 - Salida: `game/assets/characters/<id>.png`. Con `--preview`, vistas ×6 con rejilla en
   `tools/cache/pixel/<id>.png`; con `--lineup`, todo el elenco sobre césped real de Añil en
-  `tools/cache/pixel/_lineup.png`.
+  `tools/cache/pixel/_lineup.png`, `_lineup_2.png`… (12 hojas por página, frames alineados abajo-centro).
+- Mapa regional: `node tools/pixel_map.mjs [--preview]` (§6).
 - `tools/pixel.mjs` es la biblioteca base y también CLI de inspección:
   `zoom`, `crop`, `palette`, `bbox` (ver su cabecera).
 - El constructor avisa de píxeles sueltos; los tests (`npm test`) comprueban tamaños, bloques 2×2 exactos,
@@ -111,12 +118,14 @@ altura de la mandíbula con flequillo recto y **horquilla amarilla**, **bata cla
 misma pieza que el profesor pero en blanco frío) sobre jersey coral. Si los diálogos la tratan en masculino,
 se cambia el peinado/paleta en `heads_b01.mjs`/`palettes.mjs`.
 
-### Guardiana del Umbral — `guardiana` (+ `guardiana_front`) (D07)
-Veterana escéptica de unos 60 años que custodia por tradición familiar. Pelo **cano** con raya al medio y
+### Casilda Roquer, Guardiana del Umbral — `guardiana` (+ `guardiana_front`) (D07, X06) · alias `casilda`
+**Casilda Roquer** (64, escepticismo; CAMPANA B02). Se usa con `sprite: 'casilda'` en el mapa y
+`sprite: 'casilda_front'` en combate (alias de `guardiana` / `guardiana_front`, §7).
+Veterana escéptica que custodia por tradición familiar. Pelo **cano** con raya al medio y
 **moño alto**, cejas rectas grises, arrugas bajo los ojos y boca firme (seria, no hostil). **Chaqueta de campo
 oliva**, pañuelo teja al cuello, pantalón de trabajo pardo y **botas altas**: ropa sobria de exploración de
 ruinas, sin emblemas. Frontal de combate con **brazos cruzados** (escepticismo), correa de zurrón cruzada y
-bolsillos. Nombre: pendiente (D07).
+bolsillos.
 
 ### Niños del pueblo — `nino`, `nina`
 Cuerpo infantil propio (ver §1). Niño: pelo castaño revuelto con remolino, camiseta celeste, pantalón corto
@@ -166,8 +175,12 @@ son idénticas: sirve para eventos con "animación en parada" en cualquier direc
 4. **Profesor (D03)**: edad, pelo, gafas sí/no, abrigo de campo o bata.
 5. **Core**: color del núcleo (azul provisional). (D06 resuelto: los protagonistas llevan mochila y el Core
    los sigue en el mapa.)
-6. ¿Hacen falta hojas de bici, surf, pesca o retratos de diálogo? (no producidas todavía).
-7. **Ayudante**: ¿mujer (propuesta actual) u hombre? **Guardiana**: nombre (D07) y si el moño alto encaja.
+6. ¿Hacen falta retratos de diálogo? (Montura, nado, buceo, trepar, pesca y Vuelo ya están, §8.)
+7. **Ayudante** (Lía, X07): ¿mujer (propuesta actual) u hombre? **Casilda**: ¿encaja el moño alto?
+8. **Elenco de la campaña (§7)**: aprobar o corregir los diseños propuestos de Leandro, Abril, Fermín, Olvido, Sol,
+   Vértice, Casia, Garrido, técnicos/investigadores de Genesis, enfermera, dependiente, molinero, buzo y archivista.
+9. **Personajes secundarios con alias de Añil** (Ramón, Remedios, Rosalía, Rosendo, Evaristo, Quino, Bea, Darío):
+   ¿arte propio o se quedan con charsets de Añil?
 
 ## 5. Limitaciones conocidas
 
@@ -176,6 +189,108 @@ son idénticas: sirve para eventos con "animación en parada" en cualquier direc
 - Los niños no balancean los brazos al andar de frente (solo de perfil).
 - Los sprites de combate grandes se generan con formas y sombreado automático: correctos y coherentes, pero
   menos pulidos que un trabajo a mano; son los primeros candidatos a sustituir cuando haya arte aprobado.
-- Sin hojas de bici/surf/pesca/buceo, sin retratos, sin sombra propia (la sombra la pone el motor).
+- Sin retratos ni sombra propia (la sombra la pone el motor). Las hojas de montura, nado, buceo, trepar, pesca
+  y Vuelo existen desde la 3.ª pasada (§8); no hay bici (Axis no la usa: la montura es Zygarde 10%).
+- Las monturas usan como base los seguidores de Añil (ZYGARDE_1 y ZYGARDE) muestreados a resolución nativa: si se
+  sustituye el arte de Zygarde, basta con regenerar (`pixel_build.mjs protagonista_m_ride10 …`).
 - La vista de perfil se obtiene por espejo (como en BW): el flequillo y el tirador cambian de lado al mirar
   a la derecha.
+
+## 6. Mapa regional de Axis (ilustración PROVISIONAL, D30 · X02) — para el agente *services*
+
+Generador: `node tools/pixel_map.mjs [--preview]` (geografía en `tools/pixel_map_data.mjs`, que sigue el esquema
+ASCII y la lógica de CAMPANA §1.1–1.2). Se pinta a 240×160 nativos y se amplía ×2.
+
+| Archivo | Contenido |
+|---|---|
+| `game/assets/ui/region_map.png` | 480×320: **solo relieve**, costa, ríos y lagos (lo que usa `ui/screens/regionMap.js`, que dibuja encima rutas, lugares y cursor). |
+| `game/assets/ui/region_map_marcado.png` | 480×320: relieve + caminos (blancos, con sombra) + marcadores (pueblos/ciudades azul, Pilares rombo dorado, lugares marrón, postgame malva): referencia visual o fondo si se quiere sin marcadores propios. |
+| `game/assets/ui/region_map.json` | `coords: { id: [x, y] }` (píxeles del PNG) y `places: { id: { name, kind, xy, cell, mapIds, pillar?, parent?, flyOnly? } }`, más `paths` y `seaPaths` (pares de ids) e `image`/`marked` (rutas de los PNG). Coincide con `REGION_MAP` de services (su test lo comprueba). |
+
+- **Rejilla**: cada lugar está en el **centro de una casilla de 16 px** (`xy = [16·cx + 8, 16·cy + 8]`, `cell = [cx, cy]`),
+  igual que `ui/logic/regionMapData.js` (30×20 casillas). No hay dos lugares en la misma casilla salvo los que llevan
+  `parent` (el Archivo Hondo, P5, dentro de Aldea Mnemos).
+- `kind`: `town`, `city`, `route`, `pillar` (con `pillar: n`; la Sima lleva `pillars: [9, 10]`), `place`, `sea`, `post`.
+- `mapIds`: ids de mapa de CAMPANA (existentes o previstos) que se sitúan en ese punto → `pointForMap`.
+- Lugares principales (x, y): Villa Alba (168, 136) · Laberinto (168, 120) · Ruta 1 (168, 152) · Villa Zaguán (168, 168) ·
+  Ruinas del Dintel P1 (152, 168) · Ciudad Caudal (184, 200) · Garganta del Albo P2 (120, 184) · Villa Brontia (312, 200) ·
+  Meseta del Impulso P3 (424, 168) · Ciudad Estrato (360, 264) · Cerro Plomo P4 (440, 248) · Ciudad Lúmina (72, 232) ·
+  Aldea Mnemos / Archivo Hondo P5 (40, 168) · Monte del Portal (88, 72) · Aljibe P6 (72, 40) · Ciudad Nexo (88, 280) ·
+  Caleta Sonda (24, 296) · Arrecife del Eco P7 (40, 312) · Villa Boreal (408, 88) · Lagos del Alma P8 (408, 40) ·
+  Sima del Eje P9/P10 (216, 232) · Cumbre Azur (248, 40) · Mesa de los Vientos (440, 136, solo Vuelo). El resto, en el JSON.
+- Relieve: cordillera nevada al norte con el **Monte del Portal** (NO, con la gran cascada en su flanco este) y la
+  **Cumbre Azur** (la más alta, con anillo de nubes y el destello de Columna Lanza); fiordo del **Mar Boreal** que baja
+  hasta el Paso del Norte; tierras heladas del NE (Lagos del Alma, Villa Boreal, Gruta Escarcha); **Río Albo** desde la
+  cascada por la Garganta y Caudal hasta la **Sima del Eje** (abismo con resplandor violeta), reaparece y forma el Delta
+  junto a Nexo; bosque lila del Neblino, bambú y cerezos de Mnemos, Marisma Turbia, Reserva tropical, Meseta con el
+  Parque Eólico, cañón de Estrato, Dunas de Ceniza grises; mar del sur con Islote Lumbre, Talasa, Volcán Tizón y Bastión.
+- Tests: `tests/art_region_map.test.mjs` (tamaño, ×2 exacto, JSON al día con el generador, casillas únicas, pueblos
+  en tierra y mares en agua, los diez Pilares presentes).
+
+## 7. Elenco de la campaña (PROVISIONAL, D30) — CAMPANA §3, §5, §6
+
+Mismo método que §1 (32×32 nativos ×2, frontales 80×80 ×2). Descripciones de CAMPANA/X06/X08/D14; lo que el
+canon no fija (colores, peinados, poses) es propuesta. **Genesis nunca usa el verde de Zygarde** (lo comprueba
+`tests/art_campaign.test.mjs`): petróleo #1F4E5A, blanco clínico #F2F4F5, carbón #2B2D31 y magenta #B03A8C; emblema de
+dos tubos de ensayo cruzados sobre un círculo (en gorras, petos, batas y la tableta de Casia).
+
+| Id (charset) | Frontal | Quién | Diseño propuesto |
+|---|---|---|---|
+| `leandro` | `leandro_front` | Leandro Alcántara (38, orgullo), Maestre de Esclusas | Levita azul río con botones de latón, camisa blanca, botas de agua, tupé y barba de días. Frontal: mano en la cadera y la gran llave de esclusa al hombro |
+| `abril` | `abril_front` | Abril Céspedes (19, tedio) | Rubio ceniza revuelto por el viento, cortavientos mostaza con capucha gris, auriculares cian, pantalón corto y mallas. Frontal: manos en los bolsillos, párpados a media asta |
+| `fermin` | `fermin_front` | Fermín Galena (51, carga familiar) | Casco de minero ocre con lámpara, barba canosa, chaqueta gris plomo con banda reflectante. Frontal: pico al hombro, cejas caídas |
+| `olvido` | `olvido_front` | Olvido Arrieta (78, fascinación) | Moño bajo cano con un lápiz, gafas redondas, rebeca sepia, falda granate. Frontal: libreta abierta, sonrisa |
+| `sol` | `sol_front` | Sol Galena (TABLILLAS T05, combate) | Casco blanco con lámpara, trenza, chaqueta teja con banda amarilla. Frontal: manos en la cadera |
+| `vertice` | `vertice_front` | Dr. Aurelio Vértice (63, D14) | Traje carbón con alfiler magenta, pelo plateado hacia atrás, barba blanca corta, gafas redondas violeta (gala, B09) |
+| `vertice_lider` | `vertice_front` | Vértice como Líder Supremo | Bata blanca y capa corta carbón (Talasa, P9). Frontal: manos a la espalda |
+| `casia` | `casia_front` | Dra. Casia Varela (41) | Melena lisa con raya, bata larga con solapas carbón y ribete magenta. Frontal: tableta contra el pecho |
+| `garrido` | `garrido_front` | Ulises Garrido (47), excapataz | Pelo gris al rape, barba de días, bata de director sobre ropa carbón. Frontal: casco de obra bajo el brazo |
+| `genesis_tecnico` / `genesis_tecnica` | `…_front` | Técnicos de campo | Gorra y mono petróleo con visor magenta, peto blanco con emblema, guantes y botas carbón, maletín (coleta en la técnica) |
+| `genesis_investigador` / `genesis_investigadora` | — | Investigadores | Bata corta blanca con emblema sobre ropa petróleo, gafas-visor magenta |
+| `enfermera` | — | Centros Pokémon de Axis | Cofia blanca con banda rosa, moño castaño, uniforme rosa pálido y delantal blanco (propio, no el de Añil) |
+| `dependiente` | — | Tiendas | Camisa celeste, delantal azul marino, pantalón caqui |
+| `molinero` | — | Anselmo (70) y molineros | Boina, pelo y bigote blancos, chaleco marrón, delantal enharinado |
+| `buzo` | — | Fausto y buzos de Caleta Sonda | Neopreno con franja cian y gafas de buceo en la frente |
+| `archivista` | — | Archivo Hondo, museo | Gafas redondas, chaleco sepia |
+
+**Alias** (`content/characters_campaign.js` → `CHARACTER_ALIASES`; `getCharacter`/`getBattleSprite` los resuelven y
+devuelven la entrada del destino con `alias` y `aliasOf`): `casilda` → `guardiana` (+ `casilda_front`), `alerce` →
+`profesor` (+ `alerce_front`), `olmedo` → `policia`, `lia` → `ayudante`, `anselmo` → `molinero`, `fausto` → `buzo`,
+`nilo` → `genesis_tecnico`, `iker` → `nino`, `sixto` → `anciano`; con charsets de Añil (provisionales, sin combate):
+`ramon` → `anil:capitan` (farero), `remedios` → `anil:anciana1` (curandera), `rosalia` → `anil:empresariaa` (curadora),
+`rosendo` → `anil:anciano2` (tallista), `evaristo` → `anil:anciano1` (Correos), `quino` → `anil:operario`,
+`bea` → `anil:minera`, `dario` → `anil:empresario`.
+
+**Oficios genéricos con arte de Añil** (`content/anilClasses.js`, con sprite de combate): `anil:pescador`/`pescadora`,
+`anil:minero`/`minera` (torneo de Estrato, T05), `anil:buceador`/`buceadora` (Escalera de Estanques, B04),
+`anil:cientifico`, `anil:marinero`, `anil:excursionista`, `anil:montanero`… Otros NPC sin combate pueden usar
+charsets de Añil directamente: `anil:cocinero`, `anil:Repartidor`, `anil:secretaria`, `anil:capitan`, `anil:anciana1`.
+
+**Uso**: mapa `sprite: 'leandro'`; entrenador `{ sprite: 'leandro_front', overworld: 'leandro' }` (el sprite de combate
+es el id del frontal o de su alias). Alerce y Gael no tienen variantes: CAMPANA no pide cambios de edad ni de abrigo.
+Si el combate doble con aliado (Gael en B06, Alerce en Talasa) llega a mostrar al compañero, harán falta
+`gael_back`/`profesor_back` (pendiente).
+
+## 8. Monturas y acciones de Zygarde (PROVISIONAL, D30) — para el agente *zygarde*
+
+Hojas por protagonista (`protagonista_m_*` y `protagonista_f_*`), registradas como variantes:
+`getCharacter('protagonista_f').variants` → `{ run, ride10, ride50, dive, climb, fish, vuelo }` y
+`playerVariant('F', 'ride50')` → `'protagonista_f_ride50'` (content/characters.js).
+
+| Variante | Id | Hoja | Uso |
+|---|---|---|---|
+| `ride10` | `…_ride10` | charset 4×4, frames **96×96**, abajo-centro | Montado en Zygarde 10% (Correr). Es la **pareja completa** (10% de Añil + jinete): mientras se monta, el jugador usa esta hoja como `characterName` y se oculta el seguidor. No hace falta elevar al jugador (`yOffset`): el jinete ya va dibujado encima. Patrones = ciclo de galope del 10%; el jinete sigue su bote |
+| `ride50` | `…_ride50` | charset 4×4, 96×96 | Nadando sobre el 50% (Nadar): cuerpo bajo la línea de agua con espuma animada en los 4 patrones. Úsese como `charsets.surf` (el motor ya aplica el bote de surf) |
+| `dive` | `…_dive` | charset 4×4, 96×96 | Buceo: protagonista dentro de la burbuja verde (sin relleno: se ve el fondo) con destellos hexagonales que giran; patrones = patadas. Para `?…&mode` de buceo o el mapa de fondo |
+| `climb` | `…_climb` | charset 4×4, 64×64 | Trepar: de espaldas, 4 frames; las 4 filas son iguales (sirve en cualquier dirección) |
+| `fish` | `…_fish_offset` | charset 4×4, 96×96 | Pesca (para *services*): 0 caña atrás, 1 en alto, 2 lanzada, 3 lanzada con sedal. El id lleva **`_offset`** → `render/charsets.js` la dibuja 16 px más abajo, como las de Essentials (pies en la fila 38 de 48) |
+| `vuelo` | `…_vuelo` | `effect` 8×1, 96×96 | Vuelo: 0 aura, 1 red hexagonal, 2–6 disgregación de los pies a la cabeza en hexágonos que suben, 7 chispas. Al revés (7 → 0) = llegada. Mismo ancla que un charset (pies en la fila 46 de 48) |
+| — | `zygarde_hex` | `effect` 4×2, 32×32 | Partículas sueltas: fila 0 celda hexagonal de la red (brillante, media, tenue, chispa); fila 1 partícula que se apaga |
+
+- Frames: `frameRect(entry, dir, patrón)` usa `frameW/frameH` de la entrada (96 para montura/nado/buceo/pesca); un
+  `effect` se recorre por índice (`x = (i % cols) · frameW`). `render/charsets.js` deduce el frame de la imagen
+  (ancho/4), así que las hojas 4×4 funcionan tal cual como `characterName`.
+- Visor: `?scene=sprites&char=protagonista_f&mode=ride50` (Z cambia de modo: caminar, correr, 10%, 50%, buceo,
+  trepar, pesca, Vuelo; el Vuelo se ve de ida y de vuelta).
+- Regenerar: `node tools/pixel_build.mjs protagonista_m_ride10 …` (fuentes en `tools/pixel_chars/mounts.mjs`,
+  `actions.mjs`, `flight.mjs`). Tests: `tests/art_campaign.test.mjs`.

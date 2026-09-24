@@ -37,6 +37,12 @@ export const ANIL_CLASSES = Object.freeze({
   marinero: cls('marinero', 'MARINERO', 'Marinero', 'M'),
   mecanico: cls('operario', 'MECANICO', 'Mecánico', 'M'),
   mecanica: cls('operaria', 'MECANICA', 'Mecánica', 'F'),
+  // Oficios de la campaña (CAMPANA §3): mineros del torneo de Estrato (T05) y buceadores de la Escalera
+  // de Estanques (B04). Mismo arte de Añil que mecánico/nadador, con su nombre de clase.
+  minero: cls('operario', 'MECANICO', 'Minero', 'M'),
+  minera: cls('operaria', 'MECANICA', 'Minera', 'F'),
+  buceador: cls('nadador', 'NADADOR', 'Buceador', 'M'),
+  buceadora: cls('nadadora', 'NADADORA', 'Buceadora', 'F'),
   tecnico: cls('tecnico', 'TECNICO', 'Técnico', 'M'),
   medium: cls('medium', 'MEDIUM', 'Médium', 'M'),
   exorcista: cls('exorcista', 'EXORCISTA', 'Exorcista', 'F'),

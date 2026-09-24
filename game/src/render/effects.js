@@ -128,6 +128,19 @@ function shaderMat(frag, extra = {}, { vert = VERT, blending = THREE.AdditiveBle
 
 const colorOf = (c, fallback) => (Array.isArray(c) ? new THREE.Color(c[0] / 255, c[1] / 255, c[2] / 255) : fallback);
 
+/** Efectos registrados por otros módulos (p. ej. world/zygarde/fx.js): nombre → factory(layer, opts). */
+const CUSTOM_EFFECTS = new Map();
+
+/**
+ * Registra un efecto propio. `factory(layer, opts)` crea el objeto THREE, lo añade a `layer.worldRoot` (o
+ * `layer.skyScene`) y lo devuelve; `obj.userData.update()` se llama cada fotograma. Sus ShaderMaterial deben
+ * tener los uniforms `uTime` y `uAlpha` (la capa los actualiza).
+ */
+export function registerEffect(name, factory) {
+  if (typeof factory !== 'function') throw new Error(`registerEffect(${name}): se esperaba una función`);
+  CUSTOM_EFFECTS.set(name, factory);
+}
+
 export class EffectsLayer {
   constructor() {
     this.worldScene = new THREE.Scene();
@@ -151,7 +164,7 @@ export class EffectsLayer {
       moon: () => this.makeSky(FRAGS.moon, { uMoon: { value: new THREE.Vector3(opts.x ?? 400, opts.y ?? 80, opts.radius ?? 56) } }, colorOf(opts.color, new THREE.Color(1, 0.96, 0.85)), THREE.NormalBlending),
       softLight: () => this.makeLight(opts),
       visionCone: () => this.makeBeam(opts),
-    }[name];
+    }[name] || (CUSTOM_EFFECTS.has(name) ? () => CUSTOM_EFFECTS.get(name)(this, opts) : null);
     if (!make) throw new Error(`Efecto desconocido "${name}"`);
     const obj = make();
     const item = { name, obj, alpha: 0, target: opts.alpha ?? 1, fadeIn: opts.fadeIn ?? 20, fadeOut: 0, dead: false, update: obj.userData.update };

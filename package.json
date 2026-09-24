@@ -7,7 +7,7 @@
   "scripts": {
     "serve": "node server.mjs",
     "test": "node --test \"tests/**/*.test.mjs\"",
-    "data": "node tools/extract_data.mjs && node tools/extract_tilesets.mjs && node tools/extract_audio.mjs",
+    "data": "node tools/extract_data.mjs && node tools/extract_tilesets.mjs && node tools/stamps_extra.mjs && node tools/extract_audio.mjs",
     "vendor": "node tools/vendor.mjs",
     "smoke": "node tools/smoke.mjs"
   },

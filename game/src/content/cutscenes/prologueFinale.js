@@ -1,21 +1,31 @@
-// P-04 (final): la dispersión sobre el plano oscuro de la región —100 destellos pequeños (células) y 5 mayores
-// (núcleos) con estelas— y el núcleo que cae al norte de un pequeño pueblo entre bosques. Fundido a negro.
+// P-04 (final): la dispersión sobre el plano oscuro de la región —100 destellos pequeños (células) y CINCO
+// ESTELAS GRANDES (núcleos) en cinco direcciones (docs/CAMPANA.md §2.4: norte del pueblo, meseta del este, el
+// propio aljibe, mar del sur y norte helado; ver CORE_TRAILS en prologueData.js)— y el núcleo que cae al norte
+// de un pequeño pueblo entre bosques. Sin texto. Fundido a negro.
 import { SCREEN_W } from '../../core/engine.js';
-import { cellToScreen, landCells } from './prologueData.js';
+import { cellToScreen, landCells, CORE_TRAILS, CORE_LAUNCH_ORDER, coreLaunchVector } from './prologueData.js';
 import { rand } from './cineGfx.js';
 import { sfx, SFX } from './prologueAudio.js';
 
 const GREEN = [185, 255, 102];
 const PALE = [230, 255, 190];
 
-/** Lanza una estela desde `from` hacia `to` con arco inicial. */
-function launch(field, from, to, { big = false } = {}) {
+/** Lanza una célula (estela pequeña) desde `from` hacia `to` con arco inicial al azar. */
+function launch(field, from, to) {
   const ang = rand(-Math.PI * 0.9, -Math.PI * 0.1);
-  const speed = big ? rand(2.2, 3) : rand(2.5, 4.5);
+  const speed = rand(2.5, 4.5);
   return field.spawn({
     x: from.x, y: from.y, vx: Math.cos(ang) * speed, vy: Math.sin(ang) * speed, drag: 0.965,
-    size: big ? 12 : 6, life: 600, color: big ? PALE : GREEN, alpha: 1, fadeIn: 4,
-    target: { x: to.x, y: to.y, k: big ? 0.0022 : 0.003, kill: 5 }, big,
+    size: 6, life: 600, color: GREEN, alpha: 1, fadeIn: 4, target: { x: to.x, y: to.y, k: 0.003, kill: 5 }, big: false,
+  });
+}
+
+/** Lanza la estela grande de un núcleo desde el aljibe hacia su destino. */
+function launchCore(field, from, to, arc) {
+  const v = coreLaunchVector(from, to, 3.4, arc);
+  return field.spawn({
+    x: from.x, y: from.y, vx: v.vx, vy: v.vy, drag: 0.975, size: 14, life: 700, color: PALE, alpha: 1, fadeIn: 4,
+    target: { x: to.x, y: to.y, k: v.returns ? 0.0014 : 0.0019, kill: 6, minAge: v.returns ? 60 : 0 }, big: true,
   });
 }
 
@@ -28,7 +38,7 @@ export async function shotScatter(d, stage) {
   const blips = [];
   const stopTrail = d.every(() => {
     for (const p of heads.list) {
-      trail.spawn({ x: p.x, y: p.y, size: p.big ? 8 : 4, life: p.big ? 56 : 30, color: p.big ? GREEN : [140, 220, 90], alpha: p.big ? 0.85 : 0.7 });
+      trail.spawn({ x: p.x, y: p.y, size: p.big ? 10 : 4, life: p.big ? 90 : 30, color: p.big ? GREEN : [140, 220, 90], alpha: p.big ? 0.9 : 0.7 });
     }
   });
   const arrive = (p) => {
@@ -48,12 +58,13 @@ export async function shotScatter(d, stage) {
     p.onDeath = arrive;
     if (i % 8 === 7) await d.wait(3);
   }
-  // 5 núcleos: el último, al norte del pequeño pueblo
-  const order = [1, 2, 3, 4, 0];
-  for (const i of order) {
-    await d.wait(i === 0 ? 40 : 16);
-    const p = launch(heads, points.origin, points.cores[i], { big: true });
+  // 5 estelas grandes en cinco direcciones (CORE_TRAILS); la última, al norte del pequeño pueblo
+  await d.wait(20);
+  for (const i of CORE_LAUNCH_ORDER) {
+    await d.wait(i === 0 ? 36 : 12);
+    const p = launchCore(heads, points.origin, points.cores[i], CORE_TRAILS[i].arc);
     p.onDeath = arrive;
+    p.core = CORE_TRAILS[i].core;
     sfx(SFX.fall, { volume: 60, pitch: 80 + i * 5 });
   }
   await d.wait(40);

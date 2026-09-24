@@ -105,8 +105,12 @@ export class MapBuilder {
     }
     if (brush.erase) return { kind: 'id', def: { id: 0 } };
     if (brush.autotile !== undefined) return { kind: brush.patterns?.length ? 'autofixed' : 'autotile', def: brush };
+    // nine con IDs explícitos ({ nine: 'ids', ids }) lo resuelve content/stamps/brushes.js
+    if (brush.nine === 'ids') return { kind: 'delegate', def: brush };
     for (const k of ['tile', 'pattern', 'grid', 'nine', 'line']) if (brush[k] !== undefined) return { kind: k, def: brush };
     if (brush.forest || brush.cliff || brush.terrace || brush.room || brush.cave) return { kind: 'delegate', def: brush };
+    // Tipos nuevos de la biblioteca (edge2…): se delegan en el pintor, que valida el tipo.
+    if (this.painter) return { kind: 'delegate', def: brush };
     throw new Error(`MapBuilder: pincel no reconocido ${JSON.stringify(brush)}`);
   }
 

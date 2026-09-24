@@ -2,7 +2,10 @@
 // Sin contenido narrativo: los textos son genéricos y sustituibles con las propiedades del evento.
 //   sign, item, trainer            → mundo básico
 //   ramRock, roughTerrain, climbWall, diveSpot, rebuildGap, zygardeCell → hooks de campo de Zygarde
+//   (versiones completas en world/zygarde/eventTypes.js, que además añade gravelSlope, diveVent y
+//   diveCurrent y SUSTITUYE a las de aquí: ver el final de EXPANDERS).
 // Los guiones reciben `ctx` (script/context.js).
+import { ZYGARDE_EVENT_TYPES } from './zygarde/eventTypes.js';
 
 const notA = (_s, ev) => !ev.selfSwitch('A');
 const isA = (_s, ev) => ev.selfSwitch('A');
@@ -188,13 +191,15 @@ const EXPANDERS = {
 
   // ---- Zygarde: Célula en el suelo (brillo verde hexagonal). La colocación real está PENDIENTE (D10).
   // `text` puede ser una función (state) => texto (p. ej. con el recuento) y `onFound` un guion posterior
-  // (p. ej. la reacción del Core).
+  // (p. ej. la reacción del Core). `when(state, ev)` opcional: condición extra de aparición (célula que
+  // aparece tras un hito de historia).
   zygardeCell(d) {
     if (!d.cell) throw new Error(`zygardeCell ${d.id}: falta "cell"`);
+    const extra = typeof d.when === 'function' ? d.when : null;
     return {
       ...d,
       pages: [{
-        when: (s) => !s?.hasCell(d.cell),
+        when: (s, ev) => !s?.hasCell(d.cell) && (!extra || Boolean(extra(s, ev))),
         glow: 'zygardeCell',
         through: true,
         trigger: 'touch',
@@ -209,6 +214,9 @@ const EXPANDERS = {
       }],
     };
   },
+
+  // Sistema de campo de Zygarde (agente zygarde): sustituye a los tipos básicos anteriores y añade los nuevos.
+  ...ZYGARDE_EVENT_TYPES,
 };
 
 export const EVENT_TYPES = Object.keys(EXPANDERS);

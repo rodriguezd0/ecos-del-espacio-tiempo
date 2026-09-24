@@ -45,7 +45,43 @@ inferior no es pasable) con flechas `FlechaSalida` debajo.
 `ctx.warp('laboratorio_alerce', LAB.escort.x, LAB.escort.y, LAB.escort.dir)` = **(9,11) mirando ↑**. La escena del
 regreso arranca sola al entrar (policía en 10,11; el Core y el inicial siguen al jugador).
 
-**Punto de cura** (`HOME_HEAL_POINT`): `casa_prota_1f` (4,6) ↑. Se fija al despertar y cada vez que la madre cura.
+**Punto de cura** (`HOME_HEAL_POINT`): `casa_prota_1f` (4,6) ↑. Se fija al despertar y cada vez que la madre cura
+(`setHomeHealPoint(ctx)` → `ctx.setHealPoint`).
+
+## Ajustes DECIDIDO-DEV (docs/CAMPANA.md «B01 — ajustes»)
+
+- **Elenco (X07)** — `CAST` en `events/b01_town_common.js`: el policía es el **Agente Olmedo** (hablante de todas sus
+  líneas), los dueños del Laberinto son la **familia Arenzana** (carteles y línea del agente) y la ayudante es **Lía**
+  (sprite `ayudante` de `content/characters.js`).
+- **Células (§2.3)** — catálogo del bloque con casillas en `events/b01_cells.js` (`B01_CELLS`; las claves son las del
+  registro global `content/zygarde/cells.js`):
+
+| Código | Clave | Mapa (casilla) | Dónde |
+|---|---|---|---|
+| C001 | `cell_villa_alba_1` | villa_alba (22,16) | parterre central; aparece con la Pokédex y la escena forzada al salir del laboratorio («Aquí. Una parte de mí.», `events/b01_town_cell.js`) |
+| C002 | `cell_ruta_1_1` | ruta_1 (14,19) | puente de troncos (único cruce del arroyo) |
+| C003 | `cell_ruta_1_2` | ruta_1 (13,27) | hueco entre las rocas del estrechamiento |
+| C004 | `cell_ruta_1_3` | ruta_1 (11,46) | camino junto al Bichero Luis |
+| C005 | `cell_ruta_1_4` | ruta_1 (16,56) | junto al cartel del Pilar del Umbral |
+| C006 | `cell_ruta_1_5` | ruta_1 (24,32) | claro del este (opcional) |
+| C024 | `cell_ruta_1_6` | ruta_1 (22,8) | mirador del nordeste, tras la cuesta de grava (`gravelSlope`, etapa B: montado en el 10 %) |
+
+- **Ruta 1** — topógrafos del Consorcio Meridiano (8,15) y (10,15) (sprites `genesis_tecnico`/`genesis_tecnica` del
+  arte de campaña; reserva `anil:cientifico/a`) con su trípode (9,15) junto al cruce oeste,
+  «Lecturas de campo. Siga, por favor.», hasta `p1_restored`; mirador `LOOKOUT` (terraza x 18–25, y 6–12; rampa x 21–22);
+  cruce oeste `WEST_CROSSING` (camino de tierra y 16–17, cartel «RUTA 10» en 12,15).
+- **Enlaces pendientes** (`maps/b01/pending_links.js`): mientras el mapa no esté registrado hay un aviso neutro y un
+  paso atrás; al registrarlo (gen_registries) la conexión se activa sola:
+
+| Destino | Bloque | Conexión | Aviso mientras tanto | El destino debe… |
+|---|---|---|---|---|
+| `villa_zaguan` | B02 | `south`, offset −5 | «El sendero sigue hacia Villa Zaguán, pero por ahora no puedes continuar.» (y=59, x 13–16) | abrir su camino norte en x 18–21 y conectar `north` con offset 5 |
+| `ruta_10` | B11 | `west`, offset −4 | «El camino del oeste está cortado por un desprendimiento.» (x 4, y 16–17; rocas en x 0–3) | abrir su salida este en y 20–21 y conectar `east` con offset 4 |
+
+- **Habitación** — el evento `vista_monte` (5,3) pinta el Monte del Portal con su gran cascada animada en los cristales
+  de la ventana (`assets/objects/ventana_monte.png`, generado con `node tools/b01_assets.mjs`, que también crea el
+  trípode). Examinar la ventana lo describe.
+- **Monte del Portal** — `montana_portal` se llama así (X22).
 
 ## Flags y escenas
 
@@ -60,6 +96,7 @@ regreso arranca sola al entrar (policía en 10,11; el Core y el inicial siguen a
 | La señal (§4.4) | `villa_alba` auto al salir | `b01_starter_chosen && !b01_signal_heard` | `b01_signal_heard` |
 | El policía entra (§4.4) | `villa_alba` franja y=10 (x 21–24) o hablarle | `b01_signal_heard && !b01_police_entered` | `b01_police_entered` |
 | Regreso y duelo (§4.7) | `laboratorio_alerce` auto | `b01_escorted && !b01_gael_duel_done` | `b01_gael_duel_done`, `b01_dex_received` |
+| C001 en el parterre | `villa_alba` auto (al salir del laboratorio) | `b01_dex_received` y sin `cell_villa_alba_1` | célula C001 |
 | Sale del pueblo | `villa_alba` franja y=34 | `b01_dex_received && !b01_left_town` | `b01_left_town` |
 
 Límites: el policía (22,8) y su casilla libre (23,8) cierran el camino norte salvo entre `b01_police_entered` y
@@ -78,4 +115,8 @@ inicial), `b01_town_path.js` (rutas a pie BFS para que los NPC rodeen muebles).
 - `?scene=map&map=villa_alba&x=22&y=14&dir=8&party=TURTWIG:5&flags=b01_woke,b01_met_mom,b01_starter_chosen,b01_signal_heard&debug` — el policía entra.
 - `?scene=map&map=laboratorio_alerce&x=9&y=11&dir=8&party=TURTWIG:5&core=1&flags=b01_woke,b01_met_mom,b01_lab_intro_seen,b01_starter_chosen,b01_signal_heard,b01_police_entered,b01_core_found,b01_escorted&vars=starter:TURTWIG,gael_starter:LITTEN&debug` — regreso y duelo.
 - `?party=none|ESPECIE:nivel,…` (world/devTools.js) sustituye el equipo de prueba.
-- `node --test tests/b01_town.test.mjs` · `node tools/preview_map.mjs villa_alba --pass`
+- C001: `?scene=map&map=laboratorio_alerce&x=9&y=13&dir=2&party=TURTWIG:5&core=1&flags=b01_woke,b01_met_mom,b01_lab_intro_seen,b01_starter_chosen,b01_signal_heard,b01_police_entered,b01_core_found,b01_escorted,b01_gael_duel_done,b01_dex_received&debug` y bajar.
+- Ruta 1: `?scene=map&map=ruta_1&x=13&y=16&dir=4&party=TURTWIG:8&core=1&noenc=1&debug` (cruce oeste y topógrafos).
+- `node --test tests/b01_town.test.mjs tests/north_b01.test.mjs tests/content_b01.test.mjs` ·
+  `node tools/preview_map.mjs villa_alba --pass` · `node tools/validate_content.mjs` ·
+  **recorrido completo**: `node tools/e2e_b01.mjs` (≈4 min, capturas `tools/cache/screens/e2e_b01_*`).

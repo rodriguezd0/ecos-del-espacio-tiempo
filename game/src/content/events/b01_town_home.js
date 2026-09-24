@@ -18,7 +18,7 @@ const MOM_GIFT_BYE = 'Por si acaso. Y vuelve de vez en cuando.';
 export async function restAtHome(ctx) {
   await ctx.fade('out', 16);
   ctx.heal();
-  setHomeHealPoint(ctx.state);
+  setHomeHealPoint(ctx);
   ctx.me(AUDIO.heal);
   await ctx.wait(90);
   await ctx.fade('in', 16);
@@ -34,7 +34,7 @@ export function bedroomEvents() {
       when: when({ none: [F.woke] }),
       script: async (ctx) => {
         // Sin sueño explicativo (biblia §5): luz de mañana y el protagonista se levanta.
-        setHomeHealPoint(ctx.state);
+        setHomeHealPoint(ctx);
         await ctx.wait(30);
         ctx.face('player', 'down');
         ctx.setFlag(F.woke);

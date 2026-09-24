@@ -6,7 +6,7 @@ import { Battle } from '../core/index.js';
 import { ui } from '../../ui/api.js';
 import { getTrainer } from '../../content/trainers/index.js';
 import { buildBattleConfig } from './setup.js';
-import { applyBattleResult, storeCaught, storedMessage } from './results.js';
+import { applyBattleResult, storeCaught, storedMessage, finalizeBattleResult } from './results.js';
 import { BattleScene } from './battleScene.js';
 import { SceneBattleUI } from './sceneUI.js';
 
@@ -107,11 +107,7 @@ export async function runSceneBattle(request = {}, { state = engine.state, db = 
     await closed;
   }
   if (error) throw error;
-  return {
-    ...result,
-    party: state ? state.party.slice() : (result.playerParty || []).filter(Boolean),
-    stored: Boolean(state),
-    canLose: meta.canLose,
-    trainer: meta.trainer,
-  };
+  // Con partida, el resultado ya está aplicado (equipo tras capturas y evoluciones): stored = true.
+  const party = state ? state.party.slice() : undefined;
+  return finalizeBattleResult({ ...result, ...(party ? { party } : {}) }, { stored: Boolean(state), canLose: meta.canLose, trainer: meta.trainer });
 }

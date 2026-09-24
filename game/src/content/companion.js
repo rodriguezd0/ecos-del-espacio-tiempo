@@ -2,8 +2,16 @@
 // Gráfico según la forma (state.data.zygarde.form) y frases telepáticas breves y contextuales al hablarle.
 // Voz: sobria y telepática (docs/bloques/B01_apertura.md). Nada de explicar la profecía (D02b).
 
-/** Sprite de campo por forma. [PROVISIONAL D30] las formas 10 %/50 % aún no tienen arte: se usa el Core. */
-const FORM_SPRITES = Object.freeze({ core: 'zygarde_core' });
+/**
+ * Sprite de campo por forma: Core (arte propio) y seguidores de Añil para 10 % (Followers/ZYGARDE_1.png) y
+ * 50 % (Followers/ZYGARDE.png). [PROVISIONAL D30] La Forma Completa no tiene seguidor en Añil: usa el del 50 %.
+ */
+const FORM_SPRITES = Object.freeze({
+  core: 'zygarde_core',
+  10: 'follower:ZYGARDE:1:0',
+  50: 'follower:ZYGARDE:0:0',
+  complete: 'follower:ZYGARDE:0:0',
+});
 
 /** Clave de gráfico del compañero para una forma de Zygarde ('' si no acompaña). */
 export function coreSpriteKey(form) {

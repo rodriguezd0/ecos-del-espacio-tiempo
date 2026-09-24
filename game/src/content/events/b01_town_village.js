@@ -1,6 +1,6 @@
 // Eventos exteriores de Villa Alba (B01 §4.2 y §4.4): carteles, vecinos, el policía del camino norte,
 // la señal al salir del laboratorio y los límites de la salida sur. Textos del guion; el resto, neutros.
-import { F, SPEAKER, SPRITE, when } from './b01_town_common.js';
+import { F, SPEAKER, SPRITE, CAST, when } from './b01_town_common.js';
 import { POLICE_POST } from '../maps/b01/villa_alba_layout.js';
 
 const P = SPEAKER.police;
@@ -20,7 +20,7 @@ function signs() {
   const out = [
     sign('cartel_pueblo', 20, 30, 'VILLA ALBA\nDonde el bosque guarda sus piedras.', TOWN_SKIN),
     sign('cartel_ruta1', 25, 30, 'RUTA 1\nHacia el sur de Axis.', ROUTE_SKIN),
-    sign('cartel_laberinto', 24, 12, 'LABERINTO DE LA PROFUNDIDAD\nPropiedad privada. Prohibido el paso.', ROUTE_SKIN),
+    sign('cartel_laberinto', 24, 12, `LABERINTO DE LA PROFUNDIDAD\nPropiedad de la familia ${CAST.owners}. Prohibido el paso.`, ROUTE_SKIN),
     sign('panel_lab', 39, 20, 'Laboratorio Pokémon del Prof. Alerce.'),
     sign('panel_lab_2', 39, 19, 'Laboratorio Pokémon del Prof. Alerce.'),
     sign('buzon_prota', 5, 25, 'Casa de \\PN.'),
@@ -102,7 +102,7 @@ async function policeEntersScene(ctx) {
 
 const POLICE_LINES = [
   'Alto ahí. Al otro lado está el Laberinto de la Profundidad. Es propiedad privada.',
-  'Los dueños no viven en Villa Alba, y desde los temblores nos pidieron que nadie entre. Hay muros que no aguantan ni una mirada.',
+  `Los dueños, los ${CAST.owners}, no viven en Villa Alba, y desde los temblores nos pidieron que nadie entre. Hay muros que no aguantan ni una mirada.`,
 ];
 
 async function policeTalk(ctx) {
