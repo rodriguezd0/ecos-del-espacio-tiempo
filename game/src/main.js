@@ -1,7 +1,19 @@
 // Arranque de Pokémon: Ecos del Espacio-Tiempo.
-import * as THREE from 'three';
-import { engine, SCREEN_W, SCREEN_H } from './core/engine.js';
-import { Scene } from './core/scenes.js';
+// Rutas de desarrollo: ?scene=<ruta> (ver DEV_ROUTES). Sin parámetro → pantalla de título.
+import { engine } from './core/engine.js';
+import { GameAudio } from './audio/audio.js';
+
+// Cada ruta carga un módulo cuyo export por defecto es una clase Scene.
+// Los parámetros de la URL se pasan a scene.enter(params).
+const DEV_ROUTES = {
+  title: () => import('./ui/screens/title.js'),
+  map: () => import('./world/mapScene.js'),
+  ui: () => import('./ui/dev/uiTest.js'),
+  audio: () => import('./audio/dev/jukebox.js'),
+  battle: () => import('./battle/scene/devBattle.js'),
+  sprites: () => import('./dev/spriteViewer.js'),
+  boot: () => import('./dev/bootCheck.js'),
+};
 
 async function loadDatabase() {
   const a = engine.assets;
@@ -12,53 +24,43 @@ async function loadDatabase() {
   return { species, moves, abilities, items, types, trainerTypes, tilesets, dex };
 }
 
-/** Escena provisional de arranque: verifica Three.js, /anil/ y la capa UI. */
-class BootCheckScene extends Scene {
-  async enter() {
-    this.scene = new THREE.Scene();
-    this.camera = new THREE.OrthographicCamera(0, SCREEN_W, 0, -SCREEN_H, -100, 100);
-    this.root = new THREE.Group();
-    this.root.scale.y = -1; // coordenadas en píxeles con y hacia abajo
-    this.scene.add(this.root);
-    const tex = await engine.assets.texture(engine.assets.anil('Graphics/Pokemon/Front/ZYGARDE_1.png'));
-    this.frames = Math.max(1, Math.round(tex.image.width / tex.image.height));
-    this.size = tex.image.height;
-    tex.repeat.set(1 / this.frames, 1);
-    this.tex = tex;
-    const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, side: THREE.DoubleSide });
-    this.sprite = new THREE.Mesh(new THREE.PlaneGeometry(this.size * 2, this.size * 2), mat);
-    this.sprite.position.set(SCREEN_W / 2, SCREEN_H / 2 - 10, 0);
-    this.root.add(this.sprite);
-    this.t = 0;
+async function loadFonts() {
+  const a = engine.assets;
+  await Promise.all([
+    a.font('Power Green', a.anil('Fonts/power green.ttf')),
+    a.font('Power Green Narrow', a.anil('Fonts/power green narrow.ttf')),
+    a.font('Power Green Small', a.anil('Fonts/power green small.ttf')),
+    a.font('Power Clear', a.anil('Fonts/power clear.ttf')),
+    a.font('Power Clear Bold', a.anil('Fonts/power clear bold.ttf')),
+  ].map((p) => p.catch((err) => console.warn(err))));
+}
+
+async function openRoute(route, params) {
+  const loader = DEV_ROUTES[route] || DEV_ROUTES.title;
+  let mod;
+  try {
+    mod = await loader();
+  } catch (err) {
+    console.warn(`Ruta "${route}" no disponible todavía; se usa bootCheck.`, err);
+    mod = await DEV_ROUTES.boot();
   }
-  update() {
-    this.t += 1;
-    const f = Math.floor(this.t / 3) % this.frames;
-    this.tex.offset.x = f / this.frames;
-  }
-  render(r) {
-    r.render(this.scene, this.camera);
-  }
-  drawUI(g) {
-    g.fillStyle = '#b9ff66';
-    g.font = '24px "Power Green", monospace';
-    g.textAlign = 'center';
-    g.fillText('Pokémon: Ecos del Espacio-Tiempo', SCREEN_W / 2, 40);
-    g.font = '18px "Power Green", monospace';
-    g.fillStyle = '#ffffff';
-    g.fillText(`Datos: ${Object.keys(engine.data.species).length} especies · ${engine.data.dex.entries.length} en inventario Axis`, SCREEN_W / 2, SCREEN_H - 30);
-    g.textAlign = 'left';
-  }
+  const SceneClass = mod.default;
+  await engine.scenes.replace(new SceneClass(), params);
 }
 
 async function main() {
   engine.init();
   try {
-    await engine.assets.font('Power Green', engine.assets.anil('Fonts/power green.ttf'));
+    engine.audio = new GameAudio(engine.assets);
+    const unlock = () => engine.audio.unlock();
+    window.addEventListener('keydown', unlock, { once: true });
+    window.addEventListener('pointerdown', unlock, { once: true });
+    await loadFonts();
     engine.data = await loadDatabase();
     document.getElementById('boot')?.remove();
     engine.start();
-    await engine.scenes.push(new BootCheckScene());
+    const params = Object.fromEntries(new URLSearchParams(location.search));
+    openRoute(params.scene || 'title', params);
   } catch (err) {
     engine.reportError(err);
   }

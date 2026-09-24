@@ -10,6 +10,10 @@ documento en el mismo cambio. La **continuidad narrativa** manda la biblia
 - Resolución interna **512×384** (16×12 tiles de 32 px, como Añil/Essentials). Escalado entero por CSS
   (`image-rendering: pixelated`), letterbox negro.
 - Arte a escala DS×2: un "píxel de arte" = 2 px de pantalla. Tiles 32 px; personajes BW ≈ 64×64 por frame.
+- **Convención de coordenadas Three.js**: cámara `OrthographicCamera(0, 512, 0, -384)` y un grupo raíz con
+  `scale.y = -1`, de modo que todo el contenido se posiciona en **píxeles con y hacia abajo** (como RMXP).
+  Todas las texturas se crean con `flipY = false` (`assets.texture`), así que **v = 0 es la fila superior** de la
+  imagen. Materiales con `side: THREE.DoubleSide` (la escala negativa invierte el winding).
 - **ES modules sin bundler**. `three` se importa como `import * as THREE from 'three'` (importmap en
   `game/index.html` → `game/vendor/three.module.js`).
 - Recursos de Añil se sirven sin copiar en `/anil/<ruta original>` (ver `server.mjs`). Recursos propios o

@@ -68,9 +68,14 @@ export class Assets {
   }
 }
 
-/** Textura Three.js apta para pixel art. */
+/**
+ * Textura Three.js apta para pixel art.
+ * flipY = false: el mundo usa y hacia abajo (grupo raíz con scale.y = -1), así que
+ * v = 0 corresponde a la fila superior de la imagen (cómodo para atlas y tiras).
+ */
 export function makePixelTexture(source) {
   const tex = new THREE.Texture(source);
+  tex.flipY = false;
   tex.magFilter = THREE.NearestFilter;
   tex.minFilter = THREE.NearestFilter;
   tex.generateMipmaps = false;
