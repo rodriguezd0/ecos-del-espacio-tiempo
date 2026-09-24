@@ -98,6 +98,15 @@ export function combinedMountSprite(base, form, { underwater = false } = {}) {
   return null;
 }
 
+/**
+ * Desplazamiento horizontal (px) de una hoja combinada para una dirección: `anchorX: { 4, 6 }` de su entrada en
+ * content/characters_campaign.js (la pareja jinete+montura no está centrada en el frame en las filas laterales).
+ */
+export function anchorOffsetX(sheetId, direction) {
+  const n = Number(getCharacter(sheetId)?.anchorX?.[direction]);
+  return Number.isFinite(n) ? n : 0;
+}
+
 /** Character extra que dibuja la montura (se crea una vez por World). */
 function mountCharacter(world) {
   const m = mountState(world);
@@ -143,6 +152,7 @@ function applyForm(world, prev, form) {
   }
   if (!form || m.combined) {
     p.yOffset = 0;
+    p.xOffset = 0;
     p.calculateBushDepth();
   }
   const ch = mountCharacter(world);
@@ -166,6 +176,7 @@ export function syncMount(world, { onFormChange } = {}) {
     applyForm(world, prev, form);
     if (prev !== form) onFormChange?.(prev, form);
   }
+  if (m.combined) world.player.xOffset = anchorOffsetX(m.combined, world.player.direction);
   if (!form || m.combined) return form;
   const p = world.player;
   const ch = m.char;

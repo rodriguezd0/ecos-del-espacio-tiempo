@@ -1,7 +1,7 @@
 // Herramientas de desarrollo del mapa (solo con ?debug o parámetros de URL):
 //   ?time=HH[:MM]  ?weather=rain[:7]  ?mode=visible|classic  ?zygarde=all|ram,climb…  ?dark=1
 //   ?through=1  ?fx=aurora,moon,cracks  ?follower=0  ?flags=a,b  ?vars=k:v  ?core=1
-//   ?party=none | ?party=TURTWIG:5,BIDOOF:3
+//   ?party=none | ?party=TURTWIG:5,BIDOOF:3   ?fragments=N (Fragmentos Azur F01…F0N)
 // Teclas (con ?debug): T +1 h · Y clima siguiente · U oscuridad · G atravesar muros · N modo encuentros
 //   B efectos de crisis · J probar transición de combate · K encuentro salvaje ahora · L luz de linterna
 import { WEATHER_TYPES } from '../render/weather.js';
@@ -34,6 +34,14 @@ export function applyDevParams(scene, params) {
     }
   }
   if (params.core === '1' && !state.data.zygarde.form) state.data.zygarde.form = 'core';
+  // ?fragments=N: Fragmentos Azur F01…F0N (cadena de resonancia de los Pilares; aditivo B06)
+  if (params.fragments) {
+    const n = Math.max(0, Math.min(10, Number(params.fragments) || 0));
+    for (let i = 1; i <= n; i++) {
+      const id = `F${String(i).padStart(2, '0')}`;
+      if (!(state.data.fragments || []).includes(id)) state.addFragment(id);
+    }
+  }
   if (params.party) applyDevParty(state, String(params.party));
   scene.devWeather = params.weather ? String(params.weather).split(':') : null;
   scene.devDark = params.dark === '1';

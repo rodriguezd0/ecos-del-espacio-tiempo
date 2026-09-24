@@ -1,18 +1,50 @@
-// Vista pura de la Libreta de pistas (ui/screens/clues.js la dibuja): pestañas Pistas, Profecía, Crónica y
-// Tablillas (docs/TABLILLAS.md §4.2). Sin DOM: se prueba con node --test.
+// Vista pura de la Libreta de pistas (ui/screens/clues.js la dibuja): pestañas Pistas, Profecía, Crónica,
+// Tablillas, Diario y Células (docs/TABLILLAS.md §4.2). Sin DOM: se prueba con node --test.
 import { clueNotebook, activeCount } from './clueLogic.js';
 import { MAX_ACTIVE_CLUES } from './clues.js';
 import { VERSES, CONFIRMATION, CONFIRMATION_FLAG, hasGlyphKey, isVerseRevealed, verseTranslation, unownText } from './verses.js';
 import { ALL_CHRONICLE, isChronicleUnlocked } from './chronicle.js';
 import { TABLETS, tabletById, hasTablet, tabletCounts } from './tablets.js';
 import { fragmentFor } from './fragments.js';
+import { livedJournal, JOURNAL_TOTAL } from './journal.js';
+import { CELLS, CELL_MAPS, cellsOnMap } from '../zygarde/cells.js';
+import { mapDisplayName } from '../services/zones.js';
 
 export const NOTEBOOK_TABS = Object.freeze([
   Object.freeze({ id: 'clues', name: 'Pistas' }),
   Object.freeze({ id: 'prophecy', name: 'Profecía' }),
   Object.freeze({ id: 'chronicle', name: 'Crónica' }),
   Object.freeze({ id: 'tablets', name: 'Tablillas' }),
+  Object.freeze({ id: 'journal', name: 'Diario' }),
+  Object.freeze({ id: 'cells', name: 'Células' }),
 ]);
+
+/** Filas del Diario: hitos ya vividos (etapas completadas y Pilares restaurados), en orden de bloque. */
+export function journalRows(state) {
+  return livedJournal(state);
+}
+
+const ownedCells = (state) => new Set(state.data?.zygarde?.cells || []);
+
+/**
+ * Filas de Células: una por mapa visitado que tiene células (orden del registro de content/zygarde/cells.js)
+ * con { mapId, name, found, total, cells: [{ id, found, where|null }] } (las que faltan no se describen).
+ */
+export function cellRows(state) {
+  const have = ownedCells(state);
+  const visited = new Set(state.data?.visited || []);
+  return CELL_MAPS.filter((mapId) => visited.has(mapId)).map((mapId) => {
+    const list = cellsOnMap(mapId);
+    const cells = list.map((c) => ({ id: c.id, found: have.has(c.key), where: have.has(c.key) ? c.where : null }));
+    return {
+      mapId,
+      name: mapDisplayName(mapId) || list[0]?.area || mapId,
+      found: cells.filter((c) => c.found).length,
+      total: cells.length,
+      cells,
+    };
+  });
+}
 
 /** Lista de la pestaña Pistas: cabeceras de sección y filas seleccionables. */
 export function clueListItems(state) {
@@ -82,6 +114,8 @@ export function tabCounter(state, tabId) {
       const c = tabletCounts(state);
       return `Tablillas ${c.owned}/${c.total}`;
     }
+    case 'journal': return `Hitos ${journalRows(state).length}/${JOURNAL_TOTAL}`;
+    case 'cells': return `Células ${CELLS.filter((c) => ownedCells(state).has(c.key)).length}/${CELLS.length}`;
     default: return '';
   }
 }

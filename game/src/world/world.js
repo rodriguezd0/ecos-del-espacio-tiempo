@@ -312,6 +312,12 @@ export class World {
       ev.start();
       any = true;
     }
+    // Puertas sobre tiles no pasables (p. ej. los edificios de Exterior1, como las puertas-evento de RMXP):
+    // empujar contra la casilla de un warp lo activa.
+    if (!any && this.warpAt(tx, ty)) {
+      this.hooks.warp?.(this.warpAt(tx, ty));
+      any = true;
+    }
     return any;
   }
 

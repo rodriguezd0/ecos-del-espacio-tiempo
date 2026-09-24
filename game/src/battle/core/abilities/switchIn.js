@@ -448,14 +448,4 @@ S.add('TINTINEO', (a, battler, battle) => {
   });
 });
 
-// Espesura y similares: aviso al entrar con 1/3 o menos de PS (Añil).
-S.add('OVERGROW', (a, battler, battle) => {
-  if (battler.hp > Math.floor(battler.totalhp / 3)) return;
-  const data = battle.db.abilities && battle.db.abilities[a];
-  const flag = data && data.flags && data.flags[0];
-  const typeName = flag && battle.db.types[flag] ? battle.typeName(flag) : null;
-  splash(battle, battler, () => battle.pbDisplay(typeName
-    ? `¡${battler.abilityName()} activado! Los ataques de tipo ${typeName} de ${battler.pbThis(true)} ahora son más potentes.`
-    : `¡${battler.abilityName()} activado! Los ataques del primer tipo de ${battler.pbThis(true)} ahora son más potentes.`));
-});
-S.copy('OVERGROW', 'TORRENT', 'BLAZE', 'SWARM', 'SOBRECARGA');
+// Espesura y similares: sin aviso al entrar (Essentials; el cartel solo acompaña a efectos visibles).

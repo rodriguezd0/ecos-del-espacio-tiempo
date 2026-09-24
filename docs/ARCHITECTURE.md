@@ -140,8 +140,12 @@ si hace falta convertir, en `migrate` subiendo `SAVE_VERSION` + test en `tests/i
 - `species.json`: `{ ID: { id, num, name, types[], baseStats{hp,atk,def,spe,spa,spd}, genderRatio, growthRate, baseExp, evs{}, catchRate, happiness, abilities[], hiddenAbilities[], moves[[lvl,MOVE]], tutorMoves[], eggMoves[], eggGroups[], height, weight, category, pokedex, evolutions[[target,method,param]], flags[], forms{…}, metrics{…} } }`
 - `moves.json`: `{ ID: { id, name, type, category, power, accuracy, pp, target, priority, functionCode, flags[], effectChance, description } }`
 - `items.json` (`pocket` 1–8, `price`, `fieldUse`, `battleUse`, `flags`, `move` para MT) + **`items_axis.json`**
-  (objetos propios: AZUREFRAGMENT, AZUREFLUTE, CLUENOTEBOOK, POKEDEXAXIS). Campo opcional **`icon`**: archivo
+  (objetos propios: AZUREFRAGMENT, AZUREFLUTE, CLUENOTEBOOK, POKEDEXAXIS… y sobrescrituras de Añil como las cañas de
+  X17: OLDROD «Caña Vieja», GOODROD «Caña Buena», SUPERROD «Supercaña»). La fusión de `main.js` sustituye la entrada
+  ENTERA: una sobrescritura copia todos los campos de `items.json`. Campo opcional **`icon`**: archivo
   de `Graphics/Items` de Añil (o `game/assets/items/<icon>.png`) que usa la UI en lugar del id.
+  Objetos clave y Tablillas (`content/story/tablets.js`) no se tiran ni se venden (`ui/logic/bagLogic.js#isProtectedItem`,
+  `canToss`, `canSell`).
 - `abilities.json`, `types.json`, `trainer_types.json`, `tilesets.json`, `dex_axis.json` (inventario de 412; **no es roster final, D28**).
 
 Sprites de Pokémon (Añil): `/anil/Graphics/Pokemon/{Front,Back,Front shiny,Back shiny}/<ID>[_forma].png` (tiras
@@ -324,9 +328,14 @@ ctx.story.setCrisisPhase(3 | null)   ctx.story.crisisPhase()   ctx.story.clueSta
 Fragmento Azur n (`state.addFragment('F0n')` y contador del objeto `AZUREFRAGMENT`) → verso n → flag `pN_restored` →
 `opts.onRestored` (efecto local) → `LeyendaPrisma`. Cadena de resonancia: sin el Fragmento n−1 el núcleo no responde.
 
-**Libreta** (`ui/screens/clues.js`, `ui.openClues({ tab: 'clues'|'prophecy'|'chronicle'|'tablets' })`): pestañas
-Pistas (abiertas n/3 con «¡Nuevo!», en espera, notas, resueltas; frase de Zygarde si falta una capacidad), Profecía,
-Crónica y Tablillas (18 casillas). Q/E cambian de pestaña. Vista pura en `content/story/notebook.js`.
+**Libreta** (`ui/screens/clues.js`, `ui.openClues({ tab: 'clues'|'prophecy'|'chronicle'|'tablets'|'journal'|'cells' })`):
+pestañas Pistas (abiertas n/3 con «¡Nuevo!», en espera, notas, resueltas; frase de Zygarde si falta una capacidad),
+Profecía, Crónica, Tablillas (18 casillas), **Diario** (hitos vividos: una entrada genérica por etapa completada —flag de
+salida de cada bloque de CAMPANA, `content/story/journal.js#JOURNAL_BLOCKS`— y por Pilar restaurado, con lugar, Fragmento
+y efecto local de `fragments.js`) y **Células** (mapas visitados con células: encontradas/total y dónde estaban las ya
+recogidas, de `content/zygarde/cells.js`). Q/E cambian de pestaña. Vista pura en `content/story/notebook.js`
+(`journalRows`, `cellRows`, `tabCounter`). Las segundas pistas activas dibujan un aro azul en el mapa regional
+(`clueZones` → `ui/logic/regionMapData.js#clueRings`).
 
 **Cielo de crisis** (`content/story/crisisSky.js`): MapScene lo sincroniza cada fotograma en mapas `outdoor` (un mapa
 se excluye con `crisis: false`): tono propio de la fase sumado al de día/noche, aurora + luna + grietas (fase 3), luna
@@ -348,16 +357,26 @@ Nexo ↔ Caleta Sonda, Nexo ↔ Villa Boreal). En el mapa de la estación: `stat
 quien construya el mapa rellena sus coordenadas en `TRAIN`/`FERRY`). Tarjeta de viaje con fundido.
 
 **Fuentes** (`ui/core/text.js`): `font: 'unown'` (Annon; cargar antes con `ensureUnownFont()` de `storyFx.js`) y
-`font: 'note'` (Power Green 20 px, nítida; `small`/`tiny` pierden la «m», la «ll» y algunas cifras).
+`font: 'note'` (Power Green Small ×2, como `small`). Las Power Green se rasterizan a su tamaño nativo (`grid`: 12 px,
+Small 9 px; muestreo a 4× para esquivar el difuminado horizontal del navegador) y se amplían por vecino más cercano
+a escala ENTERA (`system`/`narrow` ×2, `small`/`note` ×2, `tiny` = Power Green ×1, `big` ×4). Los glifos rotos del TTF
+(m, w, M, W, «…», la «l» de Small) y las rayas — – que faltan se dibujan con `ui/core/glyphPatches.js`; los caracteres
+que no tiene la fuente caen a una genérica. Test: `tests/ui_glyphs.test.mjs`.
 **Mapa de prueba**: `?scene=map&map=dev_story&debug` (pistas, Tablillas, Pilar, cielo, Clave Glífica, descanso, tren y ferri).
 
 ## 7. Combate
 
 Desde el mapa: `world/battleFlow.js#runBattle(scene, request)` (lo usan `ctx.battle/wildBattle`): destellos +
 transición, `battle(request)` de **`battle/api.js`** (implementación instalada por `battle/scene` con
-`installBattle(fn)`), aplica el resultado y, si pierde sin `canLose`, derrota → curación y `state.healPoint`.
+`installBattle(fn)`), aplica el resultado y, si pierde sin `canLose`, derrota → curación y `state.healPoint` sin volver
+a mostrar el mapa del combate. El aviso «¡Estás fuera de combate!» (`BLACKOUT_TEXT`) sale una sola vez: lo da el motor
+(resultado `blackedOut: true`) y el mapa solo lo repite si faltó (`results.js#whiteoutText`). Espesura, Mar Llamas,
+Torrente, Enjambre (y Sobrecarga de Añil) no muestran cartel ni mensaje, como en Essentials.
 `request`: `{ type, trainer: id|def, opponent: { name, trainerType, party }, wild, format, rules, canLose, bgm,
 transition, battleback, environment, weather (del mapa: 'rain'…), time, cave, phases, seed }`.
+Dobles con varios rivales y un aliado (B06, `battle/scene/setup.js`): `{ type: 'trainer', format: 'double',
+trainers: ['id'|def, …], ally: { name, party: [spec…], skill } }` → un rival del motor por entrenador (un sprite de
+combate por cada uno) y `config.ally`; el resultado solo devuelve el equipo del jugador (`allyParty` aparte).
 Resultado: `{ outcome: 'win'|'lose'|'run'|'caught'|'forfeit', party?, caught?, stored?, canLose? }`.
 
 Motor puro `battle/core` (sin DOM): `import { Battle, HeadlessBattleUI, normalizeConfig } from './battle/core/index.js'`,
@@ -586,7 +605,8 @@ Funciones puras: `createPokemon(db, species, level, opts)`, `calcStats`, `maxHP`
 **Rutas** (`?scene=`): `title` (por defecto), `map`, `ui`, `audio`, `battle`, `sprites`, `boot`.
 **Mapa**: `?scene=map&map=<id>&x=&y=&dir=&debug` y además `time=HH[:MM]`, `weather=rain[:7]`, `mode=visible|classic`,
 `zygarde=all|ram,climb…`, `dark=1`, `through=1`, `noenc=1`, `fx=aurora,moon,cracks,cell`, `follower=0`,
-`flags=a,b`, `vars=k:v,…`, `core=1`. Sin partida se crea una de prueba (Pikachu nv 8).
+`flags=a,b`, `vars=k:v,…`, `core=1`, `fragments=N` (Fragmentos Azur F01…F0N). Sin partida se crea una de prueba
+(Pikachu nv 8).
 **Teclas con `?debug`** en el mapa: T +1 h · Y clima siguiente · U oscuridad · G atravesar muros · N modo de
 encuentros · B efectos de crisis · J transición de combate · K encuentro salvaje · L linterna. Consola:
 `window.__map` (MapScene: `.state`, `.world`, `.runScript(fn)`, `.transfer(id, x, y)`), `window.__ui`.
@@ -687,7 +707,9 @@ listAliases()               // { alias: destino }
 - La hoja de pesca se llama `protagonista_<m|f>_fish_offset`: por el nombre, `render/charsets.js` la dibuja 16 px más
   abajo (convención de Essentials) y `offsetY: 16` lo documenta en la entrada.
 - `ride10` es la pareja completa (seguidor ZYGARDE_1 de Añil + jinete): mientras se monta basta con usarla como
-  `characterName` y ocultar el seguidor; `ride50` sirve como `charsets.surf`.
+  `characterName` y ocultar el seguidor; `ride50` sirve como `charsets.surf`. En las filas laterales la pareja no está
+  centrada en su frame: la entrada lleva `anchorX: { 4, 6 }` (px) y `world/zygarde/mount.js` lo aplica como `xOffset`
+  del jugador (`anchorOffsetX`), sin tocar el arte.
 - Elenco con combate (`<id>` + `<id>_front`): leandro, abril, fermin, olvido, sol, vertice (+ `vertice_lider` con el
   mismo frontal), casia, garrido, genesis_tecnico, genesis_tecnica. Sin combate: genesis_investigador/a, enfermera,
   dependiente, molinero, buzo, archivista. Clases de Añil nuevas: `anil:minero`/`minera`, `anil:buceador`/`buceadora`.
@@ -739,3 +761,17 @@ brillo animado: `dir 2` roca agrietada, `4` tronco agrietado, `6` vetas verdes d
 Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset), `tools/stamps_demo.mjs` (+
 `stamps_demo_campaign.mjs`: kit y tintes, costa, nieve, oriental, sala solemne, ciudad, barreras). Tests:
 `tests/stamps.test.mjs`, `tests/stamps_campaign.test.mjs`.
+
+## 13. Bloque 6: Pilar del Impulso (propietario: b06; detalle en `content/maps/b06/README.md`)
+
+- **Ráfagas y veletas** (reutilizables): reglas puras en `content/events/b06_wind_logic.js` (`settleWind`,
+  `rotateDir`, `parseRoom` de salas ASCII y el solucionador `solveRoom`/`solvableWith` para tests) y eventos en
+  `content/events/b06_wind.js`: `gustEvents(sala, ox, oy, { prefix, active, only })` (un evento `touch` por ráfaga,
+  hoja `asset:objects/rafagas(_fuertes).png`; los sectores con veleta tienen 4 páginas por la var
+  `b06_veleta_<sala>_<letra>`) y `vaneEvents(sala, ox, oy)`. Fuerza 1 se remonta montado, fuerza 2 nunca; si el viento
+  choca o da la vuelta devuelve al jugador a la casilla de partida.
+- Arte propio: `node tools/b06_assets.mjs` (ráfagas, veleta, esfera del Colector, aerogenerador, campana, hoguera).
+- Combates de guion que se pueden perder sin pérdida (§2.6 de CAMPANA): `scriptedBattle(ctx, request, { x, y, dir })`
+  de `content/events/b06_common.js` (`canLose` + `noMoneyLoss`; al perder cura y devuelve a la casilla de reintento sin
+  tocar `state.healPoint`). Alcanzabilidad a pie de los mapas del bloque: `tests/b06_reach.test.mjs`.
+- Recorrido: `node tools/e2e_b06.mjs [--from=anillo|galerias|sala] [--no-retry]` (ayudantes en `tools/e2e_b06_page.mjs`).

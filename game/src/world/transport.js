@@ -20,8 +20,8 @@ export const TRAIN = Object.freeze({
   unlockFlag: TRAIN_UNLOCK_FLAG,
   needsVisit: true,
   stops: Object.freeze([
-    stop('caudal', 'Ciudad Caudal', 'ciudad_caudal'),
-    stop('brontia', 'Villa Brontia', 'villa_brontia'),
+    stop('caudal', 'Ciudad Caudal', 'ciudad_caudal', { x: 57, y: 44, dir: 2 }), // B03: delante de la estación (caudal_layout.js TRAIN_ARRIVAL)
+    stop('brontia', 'Villa Brontia', 'villa_brontia', { x: 28, y: 34, dir: 2 }), // B05: delante de la estación (villa_brontia_layout.js TRAIN_ARRIVAL)
     stop('estrato', 'Ciudad Estrato', 'ciudad_estrato'),
     stop('lumina', 'Ciudad Lúmina', 'ciudad_lumina'),
     stop('nexo', 'Ciudad Nexo', 'ciudad_nexo'),

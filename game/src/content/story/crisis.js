@@ -106,3 +106,18 @@ export function crisisTone(lay, minutes, intensity = 1) {
 export function crisisAppliesTo(def) {
   return Boolean(def && def.outdoor && def.crisis !== false);
 }
+
+/**
+ * Calma local (efecto real de cada Pilar, CAMPANA §3.1): tras restaurarse, su comarca deja de sentir los destellos y
+ * temblores ambientales aunque la fase global siga. B02: «cesan los temblores alrededor de Villa Alba». mapa → flag.
+ */
+export const LOCAL_CALM = Object.freeze({
+  villa_alba: 'p1_restored', ruta_1: 'p1_restored', laberinto_profundidad: 'p1_restored',
+  villa_zaguan: 'p1_restored', explanada_umbral: 'p1_restored',
+});
+
+/** ¿Está en calma (sin temblores ambientales) este mapa? */
+export function ambientCalm(state, mapId) {
+  const flag = LOCAL_CALM[mapId];
+  return Boolean(flag && state?.flag?.(flag));
+}

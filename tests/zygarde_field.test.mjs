@@ -112,6 +112,23 @@ test('arte combinado de montura: se usa si existe en characters.js; si no, fallb
   assert.equal(world.player.charsets.walk, 'protagonista_m', 'al desmontar recupera sus hojas');
 });
 
+test('montura 10 % en vista lateral: la pareja queda centrada en la casilla (anchorX del registro)', () => {
+  for (const base of ['protagonista_m', 'protagonista_f']) {
+    const { world } = worldWith(['.....'], [], { abilities: ['run'], sprite: base });
+    const p = world.player;
+    setRiding(world, true);
+    for (const [dir, sign] of [[2, 0], [8, 0], [4, -1], [6, 1]]) {
+      p.direction = dir;
+      syncMount(world);
+      assert.equal(Math.sign(p.xOffset), sign, `${base} dir ${dir}: xOffset ${p.xOffset}`);
+      if (sign) assert.ok(Math.abs(p.xOffset) >= 10 && Math.abs(p.xOffset) <= 12 && p.xOffset % 2 === 0, `${base} dir ${dir}: ${p.xOffset}`);
+    }
+    setRiding(world, false);
+    syncMount(world);
+    assert.equal(p.xOffset, 0, 'a pie vuelve al centro');
+  }
+});
+
 test('cuesta de grava: bloquea a pie y se cruza montado en el 10 %', () => {
   const { world } = worldWith(['.....'], zygardeArea('gravelSlope', 'grava', 2, 0, 1, 1), { abilities: ['run'] });
   const p = world.player;
@@ -269,6 +286,15 @@ test('Vuelo: destino desde el mapa regional (flyTo, mapIds u objeto) y mapas don
   assert.deepEqual(await resolveFlyDestination({ mapId: 'x', x: 1, y: 2 }, points), { map: 'x', x: 1, y: 2, dir: 2 });
   assert.equal(await resolveFlyDestination(null, points), null);
   assert.equal(await resolveFlyDestination('nada', points), null);
+  // Lugar real del atlas: la casilla es el flyPoint de la definición del mapa (resolveFlyTarget de services).
+  const defs = {
+    villa_zaguan: { id: 'villa_zaguan', start: { x: 3, y: 4, dir: 2 }, flyPoint: { x: 20, y: 16, dir: 8 } },
+    villa_alba: { id: 'villa_alba', start: { x: 5, y: 6, dir: 2 } },
+  };
+  const loadDef = async (id) => { if (!defs[id]) throw new Error(`Mapa desconocido: ${id}`); return defs[id]; };
+  assert.deepEqual(await resolveFlyDestination('villa_zaguan', { loadDef }), { map: 'villa_zaguan', x: 20, y: 16, dir: 8 });
+  assert.deepEqual(await resolveFlyDestination('villa_alba', { loadDef }), { map: 'villa_alba', x: 5, y: 6, dir: 2 }, 'sin flyPoint: start');
+  assert.equal(await resolveFlyDestination('ciudad_caudal', { loadDef }), null, 'mapa aún no construido: no se vuela');
   assert.equal(canFlyFrom({ outdoor: true }), true);
   assert.equal(canFlyFrom({ outdoor: false }), false);
   assert.equal(canFlyFrom({ outdoor: true, underwater: true }), false);

@@ -4,8 +4,11 @@
 //   Profecía   versos revelados en escritura Unown (Fonts/Annon.ttf) con traducción parcial o total (GLYPHKEY)
 //   Crónica    entradas I–XV (y las tres de Arceus) desbloqueadas por Tablilla
 //   Tablillas  18 casillas con los iconos de Graphics/Items
+//   Diario     hitos ya vividos: etapas completadas y Pilares restaurados (content/story/journal.js)
+//   Células    recuento por mapa visitado (content/zygarde/cells.js)
 // Datos y reglas: content/story/ (notebook.js, clueLogic.js). Controles: Q/E (L/R) pestañas; izquierda/derecha
-// también en las listas; arriba/abajo elegir; X salir. open({ tab: 'clues'|'prophecy'|'chronicle'|'tablets' }).
+// también en las listas; arriba/abajo elegir; X salir.
+// open({ tab: 'clues'|'prophecy'|'chronicle'|'tablets'|'journal'|'cells' }).
 import { engine, SCREEN_W, SCREEN_H } from '../../core/engine.js';
 import { ScreenScene, openScene } from '../core/uiScene.js';
 import { img, preload } from '../core/images.js';
@@ -13,10 +16,13 @@ import { drawText, wrapLines, cropText } from '../core/text.js';
 import { itemIconCandidates, drawScrollArrow, COMMON_GFX } from '../core/widgets.js';
 import { drawHexOutline, drawHexFilled } from '../message/messageBox.js';
 import { playSE, sfx } from '../core/sound.js';
-import { NOTEBOOK_TABS, clueListItems, verseRows, chronicleRows, tabletCells, tabCounter } from '../../content/story/notebook.js';
+import {
+  NOTEBOOK_TABS, clueListItems, verseRows, chronicleRows, tabletCells, journalRows, cellRows, tabCounter,
+} from '../../content/story/notebook.js';
 import { refreshClueQueue, markCluesSeen } from '../../content/story/clueLogic.js';
 import { TABLETS } from '../../content/story/tablets.js';
 import { numeral as romanNumeral } from '../../content/story/verses.js';
+import { fragmentFor } from '../../content/story/fragments.js';
 import { ensureUnownFont, drawUnown, preloadItemIcon } from '../../content/story/storyFx.js';
 
 const P = {
@@ -35,12 +41,20 @@ const TOP = 80;
 const BOTTOM = 342;
 const LINE = 21;
 /** Ancho de lista y comienzo del detalle por pestaña (la Crónica deja más sitio al texto). */
-const LAYOUT = { clues: { listW: 146, detailX: 212 }, prophecy: { listW: 146, detailX: 212 }, chronicle: { listW: 122, detailX: 188 } };
+const LAYOUT = {
+  clues: { listW: 146, detailX: 212 }, prophecy: { listW: 146, detailX: 212 }, chronicle: { listW: 122, detailX: 188 },
+  journal: { listW: 146, detailX: 212 }, cells: { listW: 146, detailX: 212 },
+};
 const GRID = { x: 72, y: 88, cols: 6, cell: 62 };
 const TAB_KEYS = NOTEBOOK_TABS.map((t) => t.id);
+/** Pestañas: repartidas a lo ancho de la hoja (seis desde el Diario y las Células). */
+const TAB = { x: 14, gap: 4, w: Math.floor((PAPER.w - 4 * (NOTEBOOK_TABS.length - 1)) / NOTEBOOK_TABS.length) };
+const CELL_HEX = { r: 7, step: 20, perRow: 12 };
 const PAGE_SE = 'GUI trainer card flip';
 
 const txt = (g, s, x, y, color = P.ink, font = 'note', extra = {}) => drawText(g, s, x, y, { color, shadow: P.inkShadow, font, ...extra });
+/** Tinte del kit del Pilar n (el de su placa de verso) como color CSS. */
+const fragmentTint = (n) => `rgb(${(fragmentFor(n)?.tint || [140, 106, 60]).join(',')})`;
 
 const silhouettes = new Map();
 function silhouette(im) {
@@ -71,8 +85,8 @@ class CluesScene extends ScreenScene {
   async enter(opts = {}) {
     refreshClueQueue(engine.state);
     this.tab = TAB_KEYS.includes(opts.tab) ? opts.tab : 'clues';
-    this.sel = { clues: 0, prophecy: 0, chronicle: 0, tablets: 0 };
-    this.scroll = { clues: 0, prophecy: 0, chronicle: 0 };
+    this.sel = { clues: 0, prophecy: 0, chronicle: 0, tablets: 0, journal: 0, cells: 0 };
+    this.scroll = { clues: 0, prophecy: 0, chronicle: 0, journal: 0, cells: 0 };
     this.unownCache = new Map();
     this.rebuild();
     const firstNew = this.clueItems.findIndex((it) => it.kind === 'clue' && it.row.isNew);
@@ -92,6 +106,16 @@ class CluesScene extends ScreenScene {
     this.verses = verseRows(st);
     this.chronicle = chronicleRows(st);
     this.cells = tabletCells(st);
+    this.journal = journalRows(st);
+    this.cellMaps = cellRows(st);
+    // El Diario abre en el hito más reciente.
+    this.sel.journal = Math.max(0, this.journal.length - 1);
+    this.fixScroll('journal', this.journal.length);
+  }
+
+  /** Filas de las pestañas de lista simple (Profecía, Crónica, Diario, Células). */
+  listRows(key) {
+    return { prophecy: this.verses, chronicle: this.chronicle, journal: this.journal, cells: this.cellMaps }[key] || [];
   }
 
   /** Al cerrar (pantalla ya en negro) las pistas mostradas dejan de ser «nuevas». */
@@ -110,7 +134,7 @@ class CluesScene extends ScreenScene {
     if (inp.pressed('R') || (!grid && inp.repeat('RIGHT'))) { this.switchTab(1); return; }
     if (grid) this.moveGrid(inp);
     else if (this.tab === 'clues') this.moveClues(inp);
-    else this.moveList(inp, this.tab, this.tab === 'prophecy' ? this.verses.length : this.chronicle.length);
+    else this.moveList(inp, this.tab, this.listRows(this.tab).length);
   }
 
   switchTab(d) {
@@ -174,6 +198,8 @@ class CluesScene extends ScreenScene {
     if (this.tab === 'clues') this.drawClues(g);
     else if (this.tab === 'prophecy') this.drawProphecy(g);
     else if (this.tab === 'chronicle') this.drawChronicle(g);
+    else if (this.tab === 'journal') this.drawJournal(g);
+    else if (this.tab === 'cells') this.drawCells(g);
     else this.drawTablets(g);
     g.restore();
     this.drawFooter(g);
@@ -209,25 +235,25 @@ class CluesScene extends ScreenScene {
   drawTabs(g) {
     const hasNew = this.clueItems.some((it) => it.kind === 'clue' && it.row.isNew);
     NOTEBOOK_TABS.forEach((tab, i) => {
-      const x = 22 + i * 118;
+      const x = TAB.x + i * (TAB.w + TAB.gap);
       const on = tab.id === this.tab;
       if (on) {
         g.fillStyle = P.tabOn;
-        g.fillRect(x, 40, 112, 32);
+        g.fillRect(x, 40, TAB.w, 32);
         g.fillStyle = '#fffaf0';
-        g.fillRect(x + 2, 40, 108, 2);
+        g.fillRect(x + 2, 40, TAB.w - 4, 2);
       } else {
         g.fillStyle = P.tabOff;
-        g.fillRect(x, 44, 112, 24);
+        g.fillRect(x, 44, TAB.w, 24);
         g.fillStyle = P.tabOffTop;
-        g.fillRect(x, 44, 112, 2);
+        g.fillRect(x, 44, TAB.w, 2);
       }
-      drawText(g, tab.name, x + 56, on ? 45 : 47, {
+      drawText(g, tab.name, x + TAB.w / 2, on ? 45 : 47, {
         align: 'center', font: 'note', color: on ? P.tabOnText : P.tabOffText, shadow: on ? P.tabOnShadow : P.tabOffShadow,
       });
       if (tab.id === 'clues' && hasNew) {
         g.fillStyle = P.red;
-        g.fillRect(x + 100, on ? 46 : 50, 6, 6);
+        g.fillRect(x + TAB.w - 8, on ? 44 : 48, 6, 6);
       }
     });
   }
@@ -414,7 +440,7 @@ class CluesScene extends ScreenScene {
     if (!row.revealed) {
       drawHexOutline(g, px + pw / 2, py + ph / 2, 22, tint, 0.8);
       drawText(g, '?', px + pw / 2, py + ph / 2 - 12, { align: 'center', color: tint, shadow: '#0a1018' });
-      txt(g, 'Este verso aún no se ha revelado.', x, py + ph + 14, P.faded);
+      this.paragraph(g, 'Este verso aún no se ha revelado.', x, py + ph + 14, w, P.faded);
       return;
     }
     if (row.unown) {
@@ -446,6 +472,74 @@ class CluesScene extends ScreenScene {
     txt(g, row.tablet?.name || '', x, TOP + LINE, P.ink);
     const y = this.paragraph(g, `«${e.text}»`, x, TOP + LINE * 2 + 6, w);
     if (e.note && y <= BOTTOM - 14) txt(g, `(${e.note})`, x + w, y + 2, P.sepia, 'note', { align: 'right' });
+  }
+
+  /** Hoja vacía de una pestaña de lista (mismo estilo que Pistas). */
+  drawEmpty(g, text) {
+    txt(g, text, PAPER.x + PAPER.w / 2 + 16, PAPER.y + 120, P.faded, 'system', { align: 'center' });
+  }
+
+  // ---- Diario
+  drawJournal(g) {
+    if (!this.journal.length) { this.drawEmpty(g, 'El diario aún está en blanco.'); return; }
+    this.drawDivider(g);
+    this.drawList(g, 'journal', this.journal, (r) => r.label, () => false);
+    const row = this.journal[this.sel.journal];
+    if (!row) return;
+    const x = this.layout.detailX;
+    const w = RIGHT - x;
+    const pillar = row.kind === 'pillar';
+    txt(g, pillar ? '— Pilar restaurado —' : '— Etapa del viaje —', x, TOP, P.sepia);
+    if (pillar) {
+      const tint = fragmentTint(row.n);
+      drawHexOutline(g, x + 7, TOP + LINE + 11, 6, tint, 1, 2);
+      drawHexFilled(g, x + 7, TOP + LINE + 11, 3, tint, 1);
+    }
+    txt(g, cropText(row.title, w - (pillar ? 18 : 0), 'note'), x + (pillar ? 18 : 0), TOP + LINE, P.ink);
+    let y = TOP + LINE * 2 + 6;
+    row.lines.forEach((line, i) => {
+      if (y > BOTTOM - LINE) return;
+      y = this.paragraph(g, line, x, y, w, i === 0 && pillar ? P.blue : P.ink) + 4;
+    });
+  }
+
+  // ---- Células
+  drawCells(g) {
+    if (!this.cellMaps.length) { this.drawEmpty(g, 'Aún no has visitado lugares con células.'); return; }
+    const { listW } = this.layout;
+    this.drawDivider(g);
+    const start = this.scroll.cells;
+    this.cellMaps.slice(start, start + LIST.rows).forEach((row, i) => {
+      const y = LIST.y + i * LIST.rowH;
+      if (start + i === this.sel.cells) this.drawSelection(g, LIST.x - 6, y, listW + 6, LIST.rowH);
+      const count = `${row.found}/${row.total}`;
+      const done = row.found === row.total;
+      txt(g, cropText(row.name, listW - 42, 'note'), LIST.x, y + 3, done ? P.green : P.ink);
+      txt(g, count, LIST.x + listW - 4, y + 3, done ? P.green : P.sepia, 'note', { align: 'right' });
+    });
+    this.drawListArrows(g, 'cells', this.cellMaps.length);
+    const row = this.cellMaps[this.sel.cells];
+    if (row) this.drawCellDetail(g, row);
+  }
+
+  drawCellDetail(g, row) {
+    const x = this.layout.detailX;
+    const w = RIGHT - x;
+    txt(g, '— Células de Zygarde —', x, TOP, P.sepia);
+    txt(g, cropText(row.name, w, 'note'), x, TOP + LINE, P.ink);
+    txt(g, `Encontradas: ${row.found} de ${row.total}`, x, TOP + LINE * 2, row.found === row.total ? P.green : P.blue);
+    const gy = TOP + LINE * 3 + 14;
+    row.cells.forEach((c, i) => {
+      const cx = x + 8 + (i % CELL_HEX.perRow) * CELL_HEX.step;
+      const cy = gy + Math.floor(i / CELL_HEX.perRow) * CELL_HEX.step;
+      if (c.found) drawHexFilled(g, cx, cy, CELL_HEX.r, P.green, 1);
+      else drawHexOutline(g, cx, cy, CELL_HEX.r, P.faded, 1, 2);
+    });
+    let y = gy + Math.ceil(row.cells.length / CELL_HEX.perRow) * CELL_HEX.step;
+    for (const c of row.cells) {
+      if (!c.found || y > BOTTOM - LINE) continue;
+      y = this.paragraph(g, `· ${c.where}`, x, y, w, P.faded);
+    }
   }
 
   // ---- Tablillas

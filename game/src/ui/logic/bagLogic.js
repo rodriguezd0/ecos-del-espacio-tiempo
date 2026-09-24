@@ -1,5 +1,6 @@
 // Lógica de la mochila: bolsillos, filtros y ordenación. Módulo PURO.
 // La mochila del guardado es { [itemId]: cantidad } (el orden de inserción = orden de obtención).
+import { tabletById } from '../../content/story/tablets.js';
 
 export const POCKETS = [
   { id: 1, name: 'Objetos' },
@@ -26,6 +27,25 @@ export const SORT_MODES = [
 export function isKeyItem(item) {
   if (!item) return false;
   return item.pocket === 8 || item.fieldUse === 'HM' || (item.flags || []).includes('KeyItem');
+}
+
+/**
+ * Objetos que no se pueden tirar ni vender: los objetos clave y las Tablillas de la historia
+ * (content/story/tablets.js; en Añil son tablas normales, con precio, del bolsillo Objetos).
+ */
+export function isProtectedItem(item) {
+  if (!item) return false;
+  return isKeyItem(item) || Boolean(tabletById(item.id));
+}
+
+/** ¿Se puede tirar desde la Mochila? */
+export function canToss(item) {
+  return Boolean(item) && !isProtectedItem(item);
+}
+
+/** ¿Se puede vender en la tienda? (tiene precio y no es un objeto protegido) */
+export function canSell(item) {
+  return canToss(item) && (item.price || 0) > 0;
 }
 
 /** ¿Muestra cantidad? (las MO y objetos clave no). */
@@ -135,5 +155,5 @@ export const BAG_FILTERS = {
   balls: (item) => (item.flags || []).includes('PokeBall'),
   holdable: (item) => !isKeyItem(item),
   berries: (item) => (item.flags || []).includes('Berry'),
-  sellable: (item) => !isKeyItem(item) && (item.price || 0) > 0,
+  sellable: (item) => canSell(item),
 };

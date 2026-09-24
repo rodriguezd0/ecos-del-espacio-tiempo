@@ -10,6 +10,12 @@
     "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "BLUEFLUTE",
     "description": "Instrumento reconstruido con los diez Fragmentos Azur. Se dice que su sonido llega hasta el Creador."
   },
+  "RESONANCEBEACON": {
+    "id": "RESONANCEBEACON", "name": "Baliza de resonancia", "namePlural": "Balizas de resonancia", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "CELLBATTERY",
+    "note": "B04 (CAMPANA): objeto de historia; las tres balizas del Consorcio retiradas en la Garganta del Albo. No se vende.",
+    "description": "Aparato de tres patas del Consorcio Meridiano, arrancado de la Garganta del Albo. Ya no zumba."
+  },
   "CLUENOTEBOOK": {
     "id": "CLUENOTEBOOK", "name": "Libreta de pistas", "namePlural": "Libretas de pistas", "pocket": 8, "price": 0,
     "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"], "icon": "TOWNMAP",
@@ -75,5 +81,23 @@
     "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"],
     "note": "Sustituye a la entrada de Añil (X15): se usa desde la Mochila y abre la pantalla de Zygarde (world/zygarde/field.js).",
     "description": "Caja hexagonal de los antiguos Custodios. Cuenta las células de Zygarde y le permite cambiar de forma."
+  },
+  "OLDROD": {
+    "id": "OLDROD", "name": "Caña Vieja", "namePlural": "Cañas Viejas", "pocket": 8, "price": 0,
+    "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"],
+    "note": "Nombre de X17 (DECISIONES.md). Sustituye a la entrada de Añil entera: resto de campos copiados de items.json.",
+    "description": "Una caña de pescar bastante usada y desgastada. Pesca Pokémon salvajes en todo tipo de aguas."
+  },
+  "GOODROD": {
+    "id": "GOODROD", "name": "Caña Buena", "namePlural": "Cañas Buenas", "pocket": 8, "price": 0,
+    "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"],
+    "note": "Nombre de X17 (DECISIONES.md). Sustituye a la entrada de Añil entera: resto de campos copiados de items.json.",
+    "description": "Una caña de pescar nuevecita y de gran calidad. Pesca Pokémon salvajes en todo tipo de aguas."
+  },
+  "SUPERROD": {
+    "id": "SUPERROD", "name": "Supercaña", "namePlural": "Supercañas", "pocket": 8, "price": 0,
+    "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"],
+    "note": "Nombre de X17 (DECISIONES.md; en Añil «Caña de Pescar»). Resto de campos copiados de items.json.",
+    "description": "Una increíble caña de pescar de alta tecnología. Pesca Pokémon salvajes en todo tipo de aguas."
   }
 }

@@ -6,6 +6,7 @@ import { TOWN_DOORS, INTERIOR_ENTRIES, TOWN_EXITS } from './villa_alba_layout.js
 import { W, H, buildVillaAlba } from './villa_alba_build.js';
 import { villageEvents } from '../../events/b01_town_village.js';
 import { parterreCellEvents } from '../../events/b01_town_cell.js';
+import { villaAlbaStarlyEvents } from '../../events/b02_world.js'; // B02: los Starly vuelven a los tejados tras el P1
 
 export default {
   id: 'villa_alba',
@@ -36,5 +37,5 @@ export default {
   ],
 
   // C001 en el parterre central con su escena forzada al salir del laboratorio con la Pokédex (CAMPANA §2.3).
-  events: [...villageEvents(), ...parterreCellEvents()],
+  events: [...villageEvents(), ...parterreCellEvents(), ...villaAlbaStarlyEvents()],
 };

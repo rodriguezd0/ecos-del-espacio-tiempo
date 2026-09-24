@@ -10,7 +10,7 @@ import { ListCursor } from '../core/list.js';
 import { preloadDialogGfx } from '../message/messageScenes.js';
 import { playSE, SE, sfx } from '../core/sound.js';
 import {
-  POCKETS, SORT_MODES, pocketEntries, pocketCounts, nextPocket, showsQuantity, isKeyItem, BAG_FILTERS,
+  POCKETS, SORT_MODES, pocketEntries, pocketCounts, nextPocket, showsQuantity, isKeyItem, canToss, BAG_FILTERS,
 } from '../logic/bagLogic.js';
 import { drawHelpWindow, showCommands, message, confirm, chooseNumber } from './common.js';
 import { useBagItem } from './bagUse.js';
@@ -119,7 +119,7 @@ class BagScene extends ScreenScene {
     const add = (label, fn) => cmds.push({ label, fn });
     if (e.item.fieldUse || isKeyItem(e.item)) add('Usar', () => this.useItem(e));
     if (!isKeyItem(e.item) && this.state.party.length) add('Dar', () => this.giveItem(e));
-    if (!isKeyItem(e.item)) add('Tirar', () => this.tossItem(e));
+    if (canToss(e.item)) add('Tirar', () => this.tossItem(e)); // ni objetos clave ni Tablillas
     add('Ordenar', () => this.sortPocket());
     add('Cancelar', null);
     this.help = `¿Qué hacer con ${e.item.name}?`;
@@ -140,6 +140,7 @@ class BagScene extends ScreenScene {
   }
 
   async tossItem(e) {
+    if (!canToss(e.item)) { await message('¡No se puede tirar eso!'); return; }
     let n = 1;
     if (e.qty > 1) {
       n = await chooseNumber({ min: 1, max: e.qty, initial: 1, message: `¿Cuántos ${e.item.namePlural || e.item.name} quieres tirar?` });

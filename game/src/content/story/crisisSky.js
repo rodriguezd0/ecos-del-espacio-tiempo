@@ -4,7 +4,7 @@
 // Solo en mapas exteriores (def.outdoor) salvo `crisis: false`. Los destellos/temblores ambientales solo
 // se lanzan con el jugador libre (sin guion, menú ni combate) y nunca durante el Bloque 1.
 import { engine } from '../../core/engine.js';
-import { crisisPhase, crisisIntensity, crisisLayer, crisisTone, crisisAppliesTo } from './crisis.js';
+import { crisisPhase, crisisIntensity, crisisLayer, crisisTone, crisisAppliesTo, ambientCalm } from './crisis.js';
 import { createRng } from '../../world/prng.js';
 
 const FRAMES_PER_SECOND = 60;
@@ -90,6 +90,7 @@ export class CrisisSky {
     const busy = s.world?.scriptBusy?.() || s.inBattle || s.menuOpen || s.transferring;
     if (busy) return;
     if (amb.night && s.state.isDay()) return;
+    if (ambientCalm(s.state, s.world?.current?.id)) return; // calma local tras restaurar el Pilar de la comarca
     this.playAmbient(amb);
   }
 

@@ -1,109 +1,110 @@
 # Lista de cobertura — Ecos del Espacio-Tiempo
 
 Todo lo previsto por la biblia debe aparecer aquí con su estado. Estados: ⬜ sin empezar · 🟨 en curso /
-provisional · ✅ implementado y probado en juego · ⛔ bloqueado por decisión (Dxx) · 🗄️ antecedente/descartado (no implementar).
+provisional · ✅ implementado y probado en juego · 🗄️ antecedente/descartado (no implementar).
+Las decisiones abiertas de la biblia están cerradas (autor: D01–D08; resto DECIDIDO-DEV en `docs/DECISIONES.md`,
+detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revisable por el autor.
 
 ## Sistemas
 
 | Sistema | Estado | Notas |
 |---|---|---|
 | Servidor de desarrollo + aviso de actualización | ✅ | `npm run serve` → http://localhost:8080 |
-| Pipeline de datos Añil → JSON (especies, movimientos, habilidades, objetos, tipos, tilesets) | ✅ | `npm run data` |
-| Render Three.js pixel-perfect, escalado entero | ✅ | Fundación (24-09) |
+| Pipeline de datos Añil → JSON (especies, movimientos, habilidades, objetos, tipos, tilesets, audio) | ✅ | `npm run data` |
+| Render Three.js pixel-perfect, escalado entero | ✅ | |
 | Tilemap RMXP (3 capas, autotiles animados, prioridades) | ✅ | |
 | Movimiento en rejilla, correr, colisiones, terrain tags, salientes | ✅ | |
 | Eventos/NPC, disparadores, rutas de movimiento, condiciones | ✅ | |
-| Guiones async (ctx), cinemáticas, cámara | ✅ | |
+| Guiones async (ctx), cinemáticas, cámara | ✅ | Director de cinemáticas del prólogo |
 | Warps, puertas, conexiones entre mapas | ✅ | Animación de puertas pendiente |
-| Pokémon acompañante (seguidor) | ✅ | Cadena con el Core: fase 2 |
+| Pokémon acompañante + Core en cadena (D06) | ✅ | |
 | Encuentros: modo clásico y visible (seleccionable) | ✅ | Biblia §15 |
-| Ciclo día/noche (reloj de juego, descansar) + estados de crisis del cielo | 🟨 | Reloj y efectos aurora/luna/grietas hechos; "descansar" pendiente |
+| Ciclo día/noche, descansar/dormir/esperar tormenta, fases de crisis del cielo | ✅ | `world/rest.js`, `content/story/crisis*` |
 | Clima, niebla, oscuridad con luces | ✅ | |
-| UI: mensajes, elecciones, menú de pausa | ✅ | Estilo telepático del Core incluido |
-| Equipo, datos (resumen), mochila, Pokédex, opciones, guardar/cargar | ✅ | |
-| Tienda, Centro Pokémon, PC de almacenamiento | 🟨 | Tienda y PC hechos; Centro Pokémon (evento de cura) con el contenido |
-| Mapa de Axis / Vuelo (Complete) | 🟨 | Estructura hecha; datos del atlas pendientes (X02) |
+| UI: mensajes, elecciones, menú de pausa | ✅ | Estilo telepático del Core |
+| Equipo, datos, mochila, Pokédex, opciones, guardar/cargar (3 ranuras + archivo) | ✅ | |
+| Centro Pokémon, tienda por etapas, posada, tutor y recordador | ✅ | `content/services` |
+| Pesca (Caña Vieja/Buena/Supercaña) | ✅ | |
+| Mapa de Axis y Vuelo | ✅ | Atlas de CAMPANA §1; ilustración provisional |
+| Tren regional y ferris | ✅ | Sistema; estaciones con cada bloque |
 | Combate: motor (daño, tipos, estados, efectos, habilidades, objetos, IA) | ✅ | 463/463 códigos de función, 327/328 habilidades |
-| Combate: escena estilo BW2 (sprites animados, cajas, menús, animaciones) | 🟨 | Fase 2 en curso |
-| Captura, experiencia, subir nivel, aprender movimientos, evolución | 🟨 | Motor ✅; presentación en fase 2 |
-| Megaevolución (Mega Aro, piedras) | 🟨 | Motor ✅; obtención en campaña pendiente |
-| Alpha (raros, tamaño) y shiny | ⬜ | ⛔ tasas D29 (provisional ~3% Alpha) |
-| Condiciones de captura legendaria comunicadas en UI | ⬜ | Biblia §15 |
-| Zygarde: Core compañero de campo (fuera del equipo) | ⬜ | |
-| Zygarde: células (100) y núcleos (5), detector | ⬜ | ⛔ D10 ubicaciones |
-| Zygarde 10%: Correr, Embestida, Terreno complicado, Trepar | ⬜ | |
-| Zygarde 50%: Nadar, Detección mejorada, Buceo (burbuja) | ⬜ | |
-| Zygarde Completo: Vuelo clásico, Reconstrucción de terreno | ⬜ | |
-| Salto de Convergencia (10% → Columna Lanza) | ⬜ | |
-| Arca de Zygarde (gestión de formas, sin coerción) | ⬜ | |
-| Registro de pistas de Tablillas (2–3 abiertas) | ⬜ | ⛔ D11 |
-| Guardado local (3 ranuras) + exportar/importar | ✅ | |
-| Sonido: BGM con bucles, SE, ME, gritos | ✅ | 82/110 BGM con puntos de bucle; señal del Core procesada |
-| Cordón Unión (evolución por intercambio en solitario) | ⬜ | Biblia §15 |
+| Combate: escena estilo BW2 | ✅ | Animaciones genéricas por tipo/categoría |
+| Captura, experiencia, subir nivel, aprender movimientos, evolución | ✅ | |
+| Megaevolución | ✅ | Mega Aro en T04 (B07) |
+| Alpha (raros, tamaño) y shiny | 🟨 | Tasas provisionales D29 (Alpha ×1.2) |
+| Condiciones de captura legendaria comunicadas en UI | ✅ | Motor + escena |
+| Fases de jefe (Arceus) | ✅ | Mecánica genérica; reglas de B21 |
+| Zygarde: Core compañero de campo | ✅ | |
+| Zygarde: 100 células y 5 núcleos, latido, rótulo, Detección mejorada | ✅ | Registro `content/zygarde/cells.js` |
+| Zygarde 10%: montura, Embestida, Terreno complicado, Trepar | ✅ | |
+| Zygarde 50%: Nadar, Buceo (burbuja con medidor) | ✅ | |
+| Zygarde Completo: Vuelo, Reconstrucción persistente | ✅ | |
+| Salto de Convergencia, Anclaje espacial | 🟨 | API lista; escenas en B21/postgame |
+| Arca de Zygarde (formas, sin coerción) | ✅ | |
+| Libreta: pistas (2–3 abiertas), Profecía (Unown), Crónica, Tablillas | ✅ | Pestañas Diario/Células en corrección |
+| Secuencia «Pilar restaurado» (Fragmento, verso, efecto local) | ✅ | `ctx.story.restorePillar` |
+| Kit de Pilar con tinte por Pilar | ✅ | Arte provisional |
+| Cordón Unión (evolución por intercambio en solitario) | 🟨 | Objeto en Añil; venta en Lúmina (B09) |
+| Validador de contenido y E2E por bloque | ✅ | `tools/validate_content.mjs`, `tools/e2e_*.mjs` |
 | Cooperativo / intercambio / PvP | ⬜ | Opcional; nunca requisito (biblia §15) |
 
-## Capítulos y escenas (juego base)
+## Capítulos y escenas (juego base) — guion en `docs/CAMPANA.md`
 
 | Bloque | Contenido | Estado |
 |---|---|---|
-| P-01…P-04 | Prólogo: Distorsión, montaña/cascada/portal, Zygarde Completo, dispersión (100 células, 5 núcleos) | ⬜ |
-| Apertura | Pueblo inicial, hogar, laboratorio, iniciales (Turtwig/Litten/Sobble), señal, policía, sigilo, Core, regreso, Gael, salida | ⬜ ⛔ D01–D06 |
-| P1 Umbral | Laberinto sencillo, mecanismos + Geodude, Guardián humano, Fragmento 1, primer 10% | ⬜ ⛔ D07–D08 |
-| P2 Corriente | Guardián humano, Fragmento 2 (sin exigir Nadar) | ⬜ ⛔ D09 |
-| P3 Impulso | Requiere Embestida; Guardián humano; Fragmento 3 | ⬜ |
-| P4 Masa | Terreno complicado; Guardián humano; Fragmento 4 | ⬜ |
-| P5 Memoria | Guardián humano; Fragmento 5; acceso por ratificar | ⬜ ⛔ D09 |
-| P6 Invertido | Trepar a la montaña del prólogo; Mundo Distorsión; sombra de Giratina; Fragmento 6 | ⬜ |
-| P7 Ecos | Buceo; eco del pasado; Bramaluna Alpha; Fragmento 7 | ⬜ |
-| P8 Alma | Uxie/Mesprit/Azelf; Cadena Roja; Fragmento 8; hito Zygarde Completo | ⬜ ⛔ D17 |
-| P9 Convergencia | Cadena Roja; Dialga/Palkia (elección); Fragmento 9 | ⬜ ⛔ D18 |
-| P10 Origen | 9 fragmentos + 15 Tablillas; Trío de las Nubes; Gael; Fragmento 10; Flauta Azur | ⬜ ⛔ D20 |
-| Final | Falsa calma; Salto de Convergencia; captura voluntaria de Zygarde; Arceus Tierra→Fantasma→Normal; 18 Tablillas; epílogo | ⬜ ⛔ D21–D24 |
-| Tablillas | 15 arcos obligatorios (T01–T15) incl. museo | ⬜ ⛔ D11 |
-| Genesis | Presencia desde el juego base, líder que huye, profesor ex-Genesis (revelación sutil), combate aliado con el profesor | ⬜ ⛔ D13–D15 |
-| Postgame | Búsquedas legendarias (biblia §12) | ⬜ |
-| DLC 1 / DLC 2 | Gael + Hoopa + Mega Zygarde / investigaciones legendarias | ⬜ ⛔ D25–D27 |
+| B01 | Prólogo P-01…P-04 + apertura (Villa Alba, laboratorio, iniciales, señal, sigilo, Core, Gael, Ruta 1) | ✅ E2E completo |
+| B02 | P1 Umbral: Villa Zaguán, Ruinas del Dintel, Casilda, Geodude, 10% | 🟨 oleada B |
+| B03 | Interludio 1: Ruta 2, Ciudad Caudal, T01 | 🟨 oleada B |
+| B04 | P2 Corriente: Ruta 3, Garganta, Escalera de Estanques, Leandro | 🟨 oleada B |
+| B05 | Interludio 2: Molino del Diezmo, Ruta 4, Villa Brontia | 🟨 oleada B |
+| B06 | P3 Impulso: Ruta 5, Meseta, Parque Eólico (N2), Abril | 🟨 oleada B |
+| B07–B08 | Ruta 6, Cantería (Mega Aro) / P4 Masa: Estrato, Mina, Dunas, Fermín | ⬜ |
+| B09–B10 | Lúmina, museo, Reserva, Marisma, Nexo, Caleta / P5 Memoria: Mnemos, Olvido | ⬜ |
+| B11–B12 | Neblino, Monte, regreso a casa / P6 Invertido (Mundo Distorsión, N3) | ⬜ |
+| B13–B14 | Talasa (N4, combate con Alerce), Lumbre, Tizón / P7 Ecos (Bramaluna Alfa) | ⬜ |
+| B15–B16 | Norte, Villa Boreal (N5, Gael) / P8 Alma (Uxie, Mesprit, Azelf, Cadena Roja, Completa) | ⬜ |
+| B17–B18 | Axis en eclipse / P9 Convergencia (Dialga/Palkia) | ⬜ |
+| B19–B20 | Calzada del Rey / P10 Origen (Trío de las Nubes, Gael, Flauta) | ⬜ |
+| B21 | Columna Lanza: Salto, captura voluntaria de Zygarde, Arceus 3 fases, epílogo | ⬜ |
+| Tablillas | 15 arcos T01–T15 (museo T06) repartidos en B03–B19 | ⬜ |
+| B22 | Postgame del juego base (búsquedas legendarias) | ⬜ |
+| B23 / B24 | DLC 1 «Almenara» (Gael, Hoopa, Mega Zygarde) / DLC 2 Registro de Expediciones | ⬜ |
 
-## Personajes
+## Personajes (arte provisional D30 en `game/assets/characters`)
 
 | Personaje | Estado | Notas |
 |---|---|---|
-| Protagonista masculino (castaño cobrizo, sin gorra, chaqueta teal oscuro, acento #B9FF66) | ⬜ | ⛔ D01, D30 (arte provisional) |
-| Protagonista femenina (pelo azul marino) | ⬜ | ⛔ D01, D30 |
-| Gael (rival; antecedente: rubio, chaqueta bordó) | ⬜ | ⛔ D16, diseño por ratificar |
-| Profesor (ex-Genesis, revelación tardía) | ⬜ | ⛔ D03, D15 |
-| Policía del acceso restringido | ⬜ | ⛔ D04 |
-| Guardianes: Umbral, Corriente, Impulso, Masa, Memoria | ⬜ | ⛔ D07 y siguientes |
-| Líder Supremo de Genesis | ⬜ | ⛔ D14 |
-| Investigadores/mandos de Genesis | ⬜ | ⛔ D13 |
-| Curador/personal del museo | ⬜ | ⛔ D11 |
-| NPC de investigación legendaria (DLC 2) | ⬜ | ⛔ D27 |
-| Zygarde: Core inicial + 4 núcleos | ⬜ | |
-| Habitantes del pueblo inicial | ⬜ | |
+| Protagonista M (castaño cobrizo, sin gorra, chaqueta teal, #B9FF66, mochila) | ✅ provisional | Caminar, correr, monturas, buceo, trepar, pesca, combate |
+| Protagonista F (pelo azul marino, mochila) | ✅ provisional | Ídem |
+| Gael | ✅ provisional | Paleta histórica |
+| Prof. Alerce | ✅ provisional | |
+| Agente Olmedo, Mamá, Lía, vecinos, niños | ✅ provisional | |
+| Guardianes: Casilda, Leandro, Abril, Fermín, Olvido | ✅ provisional | Charset + frontal |
+| Genesis: Vértice, Casia, Garrido, técnicos/investigadores | ✅ provisional | Sin verde Zygarde |
+| Curador/personal del museo, NPC del DLC 2 | ⬜ | Con sus bloques |
+| Zygarde Core + 4 núcleos | ✅ | Core propio; núcleos por guion |
 
 ## Legendarios con función narrativa
 
-Giratina (prólogo, P6 sombra) · Dialga/Palkia (prólogo, P9) · Zygarde (todo) · Uxie/Mesprit/Azelf (P8) ·
-Bramaluna Alpha = ROARINGMOON (P7, fuera del inventario de 412: pendiente D28) · Tornadus/Thundurus/Landorus (P10) ·
-Arceus (final) · Hoopa Desatado (DLC 1) — todos ⬜.
+Giratina (prólogo ✅, P6 sombra) · Dialga/Palkia (prólogo ✅, P9) · Zygarde (todo) · Uxie/Mesprit/Azelf (P8) ·
+Bramaluna Alfa = ROARINGMOON (P7) · Tornadus/Thundurus/Landorus (P10) · Arceus (final) · Hoopa Desatado (DLC 1).
 
 ## Especies
 
-Inventario de 412 en `game/data/dex_axis.json` (336 generales, 7 Paradoja, 11 Ultraentes, 58 legendarios/singulares).
-Todos los IDs verificados contra PBS de Añil ✅. Distribución por zonas/versiones ⛔ D28.
-Pendientes de reconciliación: ROARINGMOON, DITTO, SABLEYE, LATIAS/LATIOS, fauna submarina.
+Pokédex de Axis: 425 entradas (412 del inventario + 13 reconciliaciones, D28 DECIDIDO-DEV). Distribución por zonas en
+`docs/POKEDEX_DISTRIBUCION.md`; se implementa con cada bloque.
 
 ## Objetos clave
 
 | Objeto | Estado |
 |---|---|
-| Fragmentos Azur ×10 → Flauta Azur | ⬜ |
-| Tablillas ×18 (15 + 3 de Arceus) | ⬜ ⛔ D11/D12 |
-| Cadena Roja (componentes de Uxie/Mesprit/Azelf) | ⬜ ⛔ D17 |
-| Arca de Zygarde (ZYGARDECUBE en PBS) | ⬜ |
-| Pokédex, Poké Balls | ⬜ ⛔ D05 (mecanismo de entrega) |
-| Mega Aro + megapiedras | ⬜ |
-| Cordón Unión | ⬜ |
+| Pokédex (POKEDEXAXIS), Poké Balls | ✅ B01 |
+| Fragmentos Azur ×10 → Flauta Azur | ✅ sistema; entrega por Pilar |
+| Tablillas ×18 (17 de tipo + Legendaria; sin BLANKPLATE) | ✅ sistema; entrega por arco |
+| Libreta de pistas, Arca de Zygarde | ✅ sistema; entrega en B02 |
+| Clave Glífica, Hebras, Cadena Roja, Llave del fondo, Atrapasueños, Piedra Magma, Piedra Crisol, Engranajes | ✅ datos (`items_axis.json`) |
+| Mega Aro + megapiedras | ⬜ con sus bloques |
+| Cordón Unión | ⬜ B09 |
 
 ## TODO de integración entre bloques (Bloque 1)
 
@@ -113,6 +114,6 @@ esté registrado hay un aviso neutro; al crearlo y ejecutar `node tools/gen_regi
 | Estado | Enlace | Bloque | Qué falta |
 |---|---|---|---|
 | ⬜ | Ruta 1 → **Ruta 10** (cruce oeste, tramo bajo; C007) | B11 | Crear `ruta_10` con su salida este en y 20–21 y conexión `east` a `ruta_1` con offset 4. Hasta entonces: «El camino del oeste está cortado por un desprendimiento.» |
-| ⬜ | Ruta 1 → **Villa Zaguán** (salida sur) | B02 | Crear `villa_zaguan` con su camino norte en x 18–21 y conexión `north` a `ruta_1` con offset 5. Hasta entonces: aviso en la fila sur de la Ruta 1. |
+| 🟨 | Ruta 1 → **Villa Zaguán** (salida sur) | B02 | Crear `villa_zaguan` con su camino norte en x 18–21 y conexión `north` a `ruta_1` con offset 5. |
 | ⬜ | Ruta 1 → **Cerro del Alba** (cornisa, Trepar) | B11/postgame | Conexión este y pared de Trepar (CAMPANA §1.4); sin preparar en B01. |
 | ⬜ | Monte del Portal: C050, C051 y C076 | B11/B12 | `montana_portal` es aún el mapa del prólogo; al ampliarlo (50×70) colocar sus células (lo avisa `node tools/validate_content.mjs`). |

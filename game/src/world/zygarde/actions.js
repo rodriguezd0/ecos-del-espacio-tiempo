@@ -7,6 +7,8 @@ import { getCharacter, playerVariant } from '../../content/characters.js';
 import { canRide, isRiding, setRiding, mountState, syncMount } from './mount.js';
 import { canChooseForm, setForm } from './progression.js';
 import { safeEffect, GREEN } from './scenes.js';
+import { placeById, resolveFlyTarget } from '../../ui/logic/regionMapData.js';
+import { loadMapDefinition } from '../../content/maps/index.js';
 
 const WHITE_GREEN = [228, 255, 214];
 
@@ -180,33 +182,25 @@ export function canFlyFrom(def) {
 }
 
 /**
- * Destino de vuelo a partir de lo que devuelve ui.openRegionMap({ fly: true }): un id de punto del mapa
- * regional (ui/logic/regionMapData.js: point.flyTo = { map, x, y, dir } o point.mapIds[0]) o un objeto
- * { mapId|map, x, y, dir }. null si no hay destino.
+ * Destino de vuelo a partir de lo que devuelve ui.openRegionMap({ fly: true }): un id de lugar del atlas o un
+ * objeto { mapId|map, x, y, dir }. Para un lugar del atlas la casilla de llegada la da
+ * `resolveFlyTarget` de services (ui/logic/regionMapData.js): el `flyPoint` de la definición del mapa del
+ * pueblo o, si no tiene, su `start`. Si el mapa aún no existe no hay destino (null).
+ * `opts`: { loadDef (content/maps/index.js#loadMapDefinition), points } o, forma antigua, la lista `points`
+ * (lugares propios con flyTo = { map, x, y, dir } o mapIds; pruebas y mapas de desarrollo).
  */
-export async function resolveFlyDestination(pick, points = null) {
+export async function resolveFlyDestination(pick, opts = {}) {
   if (!pick) return null;
   if (typeof pick === 'object') {
     const map = pick.mapId || pick.map;
     return map ? { map, x: pick.x, y: pick.y, dir: pick.dir ?? 2 } : null;
   }
-  let list = points;
-  if (!list) {
-    try {
-      const data = await import('../../ui/logic/regionMapData.js');
-      // Agente services: casilla de llegada del lugar (`flyPoint` del mapa del pueblo o su `start`).
-      if (typeof data.resolveFlyTarget === 'function') {
-        const { loadMapDefinition } = await import('../../content/maps/index.js');
-        const t = await data.resolveFlyTarget(pick, loadMapDefinition);
-        if (t?.mapId) return { map: t.mapId, x: t.x, y: t.y, dir: t.dir ?? 2 };
-      }
-      list = data.REGION_MAP?.points || [];
-    } catch (err) {
-      console.warn('[zygarde] mapa regional no disponible', err);
-      list = [];
-    }
+  const { points = null, loadDef = loadMapDefinition } = Array.isArray(opts) ? { points: opts } : (opts || {});
+  if (placeById(pick)) {
+    const t = await resolveFlyTarget(pick, loadDef);
+    return t?.mapId ? { map: t.mapId, x: t.x, y: t.y, dir: t.dir ?? 2 } : null;
   }
-  const point = list.find((p) => p.id === pick);
+  const point = (points || []).find((p) => p.id === pick);
   if (!point) return null;
   const to = point.flyTo || point.fly;
   if (to && typeof to === 'object' && (to.map || to.mapId)) return { map: to.map || to.mapId, x: to.x, y: to.y, dir: to.dir ?? 2 };

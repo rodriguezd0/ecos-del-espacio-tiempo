@@ -151,7 +151,25 @@ export function buildBattleConfig(request = {}, { db, state = null, getTrainer =
     trainerMeta = res.meta;
     trainerTypes = { ...trainerTypes, ...res.trainerType };
   }
+  // Varios entrenadores rivales (dobles 2 contra 2, aditivo B06): request.trainers = ['id' | def, …].
+  let rivalSprites = null;
+  if (isTrainer && Array.isArray(request.trainers) && request.trainers.length) {
+    if (typeof getTrainer !== 'function' && request.trainers.some((t) => typeof t === 'string')) {
+      throw new Error('buildBattleConfig: no se pueden resolver entrenadores por id');
+    }
+    const list = request.trainers.map((t) => (typeof t === 'string'
+      ? resolveTrainer(getTrainer(t, state), db, t)
+      : resolveTrainer(t, db, t.id || 'custom')));
+    opponent = list.map((r) => r.opponent);
+    trainerMeta = { ...list[0].meta, name: list.map((r) => r.meta.name).join(' y ') };
+    for (const r of list) trainerTypes = { ...trainerTypes, ...r.trainerType };
+    rivalSprites = list.map((r) => r.meta.sprite);
+  }
   if (Array.isArray(opponent.party)) opponent.party = opponent.party.map((p) => pokemonFromSpec(db, p));
+  // Compañero en dobles (aditivo B06): request.ally = { name, party: [spec…], skill? }.
+  const ally = request.ally && Array.isArray(request.ally.party)
+    ? { ...request.ally, party: request.ally.party.map((spec) => pokemonFromSpec(db, spec)) }
+    : null;
   const p = request.player || {};
   const bag = p.bag || state?.data?.bag || {};
   const caught = Object.keys(state?.data?.dex?.caught || {});
@@ -195,12 +213,13 @@ export function buildBattleConfig(request = {}, { db, state = null, getTrainer =
   };
   if (!config.phases) delete config.phases;
   if (config.phaseTarget === undefined) delete config.phaseTarget;
+  if (ally) config.ally = ally;
   const backdrop = resolveBackdrop({ battleback: request.battleback, environment: request.environment, time, cave: Boolean(request.cave) });
   const meta = {
     isTrainer,
     canLose,
     trainer: trainerMeta,
-    trainerSprites: isTrainer ? [trainerMeta?.sprite || request.trainerSprite || null] : [],
+    trainerSprites: isTrainer ? (rivalSprites || [trainerMeta?.sprite || request.trainerSprite || null]) : [],
     playerGender: p.gender || state?.player?.gender || 'M',
     backdrop,
     bgm: battleBgmFor(request, trainerMeta),

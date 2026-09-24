@@ -2,7 +2,7 @@
 import { Battle } from './battle.js';
 import { Battler } from './battler.js';
 import { newPosition } from './effects.js';
-import { DECISION_OUTCOME } from './constants.js';
+import { BLACKOUT_TEXT, DECISION_OUTCOME } from './constants.js';
 import { Settings } from './settings.js';
 import { AbilityEffects } from './abilities/registry.js';
 import { makeUnmega } from './pokemonUtil.js';
@@ -236,7 +236,10 @@ Object.assign(Battle.prototype, {
         this.pbDisplayPaused(`¡Has perdido contra ${names.join(' y ')}!`);
       }
       this.pbLoseMoney();
-      if (!this.canLose) this.pbDisplayPaused('¡Estás fuera de combate!');
+      if (!this.canLose) {
+        this.pbDisplayPaused(BLACKOUT_TEXT);
+        this.blackedOut = true; // el mapa (world/battleFlow.js#whiteout) no lo repite
+      }
     }
     if (this.decision === 4) this.pbGainMoney();
     for (const b of this.battlers) {
@@ -312,6 +315,7 @@ Object.assign(Battle.prototype, {
       seen: [...this.seen],
       defeated: [...this.defeated],
       phase: { ...this.phaseState },
+      blackedOut: Boolean(this.blackedOut),
       log: [...this.log],
     };
   },

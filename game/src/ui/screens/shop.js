@@ -10,7 +10,7 @@ import { ListCursor } from '../core/list.js';
 import { preloadDialogGfx } from '../message/messageScenes.js';
 import { playSE, sfx } from '../core/sound.js';
 import { formatNumber, formatMoney } from '../logic/format.js';
-import { sellPrice, isKeyItem, BAG_FILTERS } from '../logic/bagLogic.js';
+import { sellPrice, isKeyItem, canSell, BAG_FILTERS } from '../logic/bagLogic.js';
 import { message, confirm, chooseNumber, closeMessage } from './common.js';
 import * as dialogs from '../message/dialogs.js';
 import { ui } from '../api.js';
@@ -137,7 +137,8 @@ async function sellFlow() {
     if (!id) return;
     const item = db.items[id];
     const each = sellPrice(item);
-    if (each <= 0) { await message(`Oh, no. No puedo comprar ${item.namePlural || item.name}.`); continue; }
+    // Objetos clave y Tablillas nunca se venden (el filtro ya los oculta; defensa por si llega otro id).
+    if (!canSell(item) || each <= 0) { await message(`Oh, no. No puedo comprar ${item.namePlural || item.name}.`); continue; }
     const have = s.itemCount(id);
     let qty = 1;
     if (have > 1) {

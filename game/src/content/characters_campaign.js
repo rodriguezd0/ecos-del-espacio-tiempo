@@ -2,13 +2,24 @@
 // (D30): se generan con `node tools/pixel_build.mjs` (fuentes en tools/pixel_chars/). Ver docs/arte.md §7–8.
 // characters.js las incorpora a CHARACTERS; este módulo solo describe las hojas.
 
+/**
+ * Corrección horizontal (px de pantalla, por dirección 4/6) de la montura 10 %: en las filas laterales la pareja
+ * Zygarde+jinete no está centrada en su frame de 96 px (caja opaca desplazada 11–12 px hacia la cola), así que
+ * se veía ~5 píxeles de arte a un lado de la casilla. world/zygarde/mount.js la aplica como xOffset del jugador.
+ * Valores pares: el arte sigue alineado con la rejilla de 2 px.
+ */
+const RIDE10_ANCHOR_X = Object.freeze({
+  protagonista_m: Object.freeze({ 4: -10, 6: 10 }),
+  protagonista_f: Object.freeze({ 4: -12, 6: 12 }),
+});
+
 /** Hojas de monturas y acciones de Zygarde de un protagonista (`p` = 'protagonista_m' | 'protagonista_f'). */
 function fieldSheets(p, label, { charset, effect }) {
   const big = { frameW: 96, frameH: 96 };
   return {
     [`${p}_ride10`]: charset(`${p}_ride10.png`, {
-      ...big, variantOf: p, name: `${label} — montado en Zygarde 10%`,
-      note: 'Correr (CAMPANA §2.7). Base: seguidor ZYGARDE_1 de Añil con el jinete encima; 4 direcciones × 4 patrones, frames 96×96 anclados abajo-centro.',
+      ...big, variantOf: p, name: `${label} — montado en Zygarde 10%`, anchorX: RIDE10_ANCHOR_X[p],
+      note: 'Correr (CAMPANA §2.7). Base: seguidor ZYGARDE_1 de Añil con el jinete encima; 4 direcciones × 4 patrones, frames 96×96 anclados abajo-centro (anchorX corrige las filas laterales).',
     }),
     [`${p}_ride50`]: charset(`${p}_ride50.png`, {
       ...big, variantOf: p, name: `${label} — nadando sobre Zygarde 50%`,

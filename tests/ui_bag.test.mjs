@@ -4,7 +4,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
   POCKETS, pocketEntries, sortEntries, pocketCounts, nextPocket, machineNumber, isKeyItem, sellPrice, BAG_FILTERS,
+  isProtectedItem, canToss, canSell,
 } from '../game/src/ui/logic/bagLogic.js';
+import { TABLETS } from '../game/src/content/story/tablets.js';
 import { useItemOnPokemon, fieldUseKind, evolvedPokemon, withMove, canLearnMachine } from '../game/src/ui/logic/fieldItems.js';
 import { createPokemon, calcStats } from '../game/src/battle/core/pokemon.js';
 
@@ -64,6 +66,40 @@ test('objetos clave y precios de venta', () => {
   assert.equal(isKeyItem(db.items.TOWNMAP || { pocket: 8 }), true);
   assert.equal(isKeyItem(db.items.POTION), false);
   assert.equal(sellPrice(db.items.POTION), Math.floor(db.items.POTION.price / 2));
+});
+
+test('Tablillas y objetos clave no se pueden vender ni tirar', () => {
+  const axis = load('items_axis');
+  const items = { ...db.items, ...axis };
+  for (const t of TABLETS) {
+    const item = items[t.id];
+    assert.ok(item.price > 0, `${t.id} tiene precio en Añil (por eso hay que bloquearla)`);
+    assert.equal(isProtectedItem(item), true, t.id);
+    assert.equal(canToss(item), false, `${t.id} no se tira`);
+    assert.equal(canSell(item), false, `${t.id} no se vende`);
+    assert.equal(BAG_FILTERS.sellable(item), false, `${t.id} fuera de la lista de venta`);
+  }
+  for (const id of ['OLDROD', 'SUPERROD', 'AZUREFRAGMENT', 'CLUENOTEBOOK']) {
+    assert.equal(canToss(items[id]), false, id);
+    assert.equal(canSell(items[id]), false, id);
+  }
+  assert.equal(canToss(items.POTION), true);
+  assert.equal(canSell(items.POTION), true);
+  assert.equal(canSell(items.BLANKPLATE), true, 'BLANKPLATE no es una Tablilla de Axis');
+});
+
+test('items_axis: cañas con los nombres de X17 y el resto de campos de Añil', () => {
+  const axis = load('items_axis');
+  const names = { OLDROD: 'Caña Vieja', GOODROD: 'Caña Buena', SUPERROD: 'Supercaña' };
+  for (const [id, name] of Object.entries(names)) {
+    const merged = { ...db.items, ...axis }[id];
+    assert.equal(merged.name, name);
+    assert.ok(merged.namePlural, `${id}.namePlural`);
+    for (const k of ['id', 'pocket', 'price', 'fieldUse', 'battleUse', 'flags', 'description']) {
+      assert.deepEqual(merged[k], db.items[id][k], `${id}.${k} igual que en items.json`);
+    }
+  }
+  assert.equal(axis.SUPERROD.namePlural, 'Supercañas');
 });
 
 test('Poción cura 20 PS y no se consume si no hay efecto', () => {

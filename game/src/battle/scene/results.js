@@ -1,6 +1,7 @@
 // Aplicación del resultado del combate a la partida (GameState). Módulo PURO: solo usa la API de GameState.
 //   - equipo actualizado (PS, PP, EXP, niveles…), dinero ganado/perdido, objetos gastados,
 //   - Pokédex (vistos en combates contra entrenadores) y Pokémon capturados (equipo o caja).
+import { BLACKOUT_TEXT } from '../core/constants.js';
 
 /**
  * Iguala la mochila de la partida a `bag` usando addItem/removeItem (sin sustituir el objeto).
@@ -50,6 +51,14 @@ export function finalizeBattleResult(result, { stored = false, canLose = false, 
     canLose: Boolean(canLose || r.canLose),
     ...(trainer !== undefined ? { trainer } : {}),
   };
+}
+
+/**
+ * Aviso de derrota que aún falta dar en el mapa (world/battleFlow.js#whiteout): ninguno si el combate ya dijo
+ * «¡Estás fuera de combate!» (`blackedOut` del motor; Essentials lo da una sola vez, dentro del combate).
+ */
+export function whiteoutText(result) {
+  return result?.blackedOut ? null : BLACKOUT_TEXT;
 }
 
 /** Pokémon capturados de un resultado (todos: el motor admite varias capturas). */

@@ -93,3 +93,6 @@ export const ACTIONS = Object.freeze({
 /** Resultado del combate (Essentials: 0 indeciso, 1 gana, 2 pierde, 3 huida, 4 captura, 5 empate). */
 export const DECISION = Object.freeze({ NONE: 0, WIN: 1, LOSE: 2, RUN: 3, CAUGHT: 4, DRAW: 5 });
 export const DECISION_OUTCOME = Object.freeze({ 0: 'forfeit', 1: 'win', 2: 'lose', 3: 'run', 4: 'caught', 5: 'draw' });
+
+/** «You blacked out!» de Essentials: único aviso de derrota (el combate lo da; el mapa solo si faltó). */
+export const BLACKOUT_TEXT = '¡Estás fuera de combate!';

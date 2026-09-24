@@ -46,6 +46,15 @@ const RULES = [
     when: ({ mapId }) => mapId === 'casa_prota_1f' || mapId === 'casa_prota_2f',
     lines: ['Descansa. Yo escucho.', 'Tu casa es tranquila.'],
   },
+  // B02 — Pilar del Umbral
+  {
+    when: ({ mapId, flag }) => mapId === 'ruinas_dintel' && !flag('p1_restored'),
+    lines: ['Estas piedras me conocen.', 'Más adentro. Algo mío espera.'],
+  },
+  {
+    when: ({ mapId, flag }) => (mapId === 'villa_zaguan' || mapId === 'explanada_umbral') && !flag('p1_restored'),
+    lines: ['Al oeste. Las piedras antiguas llaman.', 'Hay algo viejo cerca. Lo noto.'],
+  },
   {
     when: () => true,
     lines: ['Sigo aquí.', 'Te escucho.', 'Estoy contigo.'],

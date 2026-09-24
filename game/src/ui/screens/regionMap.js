@@ -1,7 +1,8 @@
 // Mapa regional de Axis / selector de Vuelo (estructura de 010_UI_RegionMap.rb de Añil con el atlas real,
 // ui/logic/regionMapData.js). Base: la ilustración game/assets/ui/region_map.png (480×320, solo terreno;
 // la prepara el agente de arte) o, si aún no existe, una versión provisional dibujada por código a partir
-// de la rejilla del atlas. Encima: ríos, rutas, lugares, Pilares, marcas (células) y cursor.
+// de la rejilla del atlas. Encima: ríos, rutas, lugares, Pilares, anillos de zona de las pistas abiertas
+// (content/story/clueLogic.js#clueZones), marcas (células) y cursor.
 import { engine } from '../../core/engine.js';
 import { ScreenScene, openScene } from '../core/uiScene.js';
 import { UI, blit, preload, img } from '../core/images.js';
@@ -10,8 +11,9 @@ import { COMMON_GFX } from '../core/widgets.js';
 import { preloadDialogGfx } from '../message/messageScenes.js';
 import { sfx } from '../core/sound.js';
 import {
-  REGION_MAP, CELL, pointAt, pointForMap, canFlyTo, pathCells, roadPath, regionMarks, childPlaces,
+  REGION_MAP, CELL, pointAt, pointForMap, canFlyTo, pathCells, roadPath, regionMarks, childPlaces, clueRings,
 } from '../logic/regionMapData.js';
+import { clueZones } from '../../content/story/clueLogic.js';
 import { message, confirm } from './common.js';
 
 const TM = (n) => UI(`Town Map/${n}.png`);
@@ -27,6 +29,10 @@ const ICON = {
 };
 const ROUTE = { fill: '#f0e0a0', edge: '#584018' };
 const PILLAR_COLOR = '#b9ff66';
+// Anillo de zona de una pista (el aro azul de la Libreta): radio en px de pantalla, late cada RING_PULSE fotogramas.
+const RING = { color: '#78c8ff', edge: '#10284c', radius: 12, pulse: 2 };
+const RING_PULSE = 24;
+const ART_PX = 2;
 
 // ---------------------------------------------------------------- ilustración provisional
 const TERRAIN_COLORS = {
@@ -142,6 +148,29 @@ async function zygardeCellMarks(state, map) {
   }
 }
 
+/** Anillos de las pistas abiertas en su segunda fase (content/story). Sin partida o si falla, ninguno. */
+function clueRingsFor(state, map) {
+  if (!state) return [];
+  try {
+    return clueRings(clueZones(state), map);
+  } catch (err) {
+    console.error('[mapa regional] anillos de pistas no disponibles', err);
+    return [];
+  }
+}
+
+/** Aro pixelado (píxeles de arte de 2 px) de radio `r` alrededor de (cx, cy); `w` = grosor en píxeles de arte. */
+function drawPixelRing(g, cx, cy, r, w, color) {
+  g.fillStyle = color;
+  const lim = r + w * ART_PX;
+  for (let dy = -lim; dy < lim; dy += ART_PX) {
+    for (let dx = -lim; dx < lim; dx += ART_PX) {
+      const d = Math.hypot(dx + ART_PX / 2, dy + ART_PX / 2);
+      if (Math.abs(d - r) <= (w * ART_PX) / 2) g.fillRect(cx + dx, cy + dy, ART_PX, ART_PX);
+    }
+  }
+}
+
 /** Línea continua de grosor `w` por los centros de una lista de casillas (tramos en L, sin antialias). */
 function drawCellLine(g, cells, w) {
   const h = w / 2;
@@ -173,6 +202,7 @@ class RegionMapScene extends ScreenScene {
     this.flyPoints = d.flyPoints || [];
     this.visited = d.visited || [];
     this.marks = new Map();
+    this.rings = clueRingsFor(engine.state, this.map);
   }
 
   async enter() {
@@ -242,6 +272,7 @@ class RegionMapScene extends ScreenScene {
       this.drawRoads(g);
       for (const p of this.map.places) if (p.kind !== 'route' && !p.parent) this.drawPlace(g, p);
     }
+    this.drawClueRings(g);
     for (const p of this.map.places) this.drawOverlay(g, p);
     this.drawHere(g);
     blit(g, TM('cursor'), OX + this.cx * CELL - 8, OY + this.cy * CELL - 8, (Math.floor(this.t / 16) % 2) * 32, 0, 32, 32);
@@ -303,6 +334,17 @@ class RegionMapScene extends ScreenScene {
     }
   }
 
+  /** Zonas de las pistas abiertas (segunda pista de la Libreta): aro azul que late alrededor del lugar. */
+  drawClueRings(g) {
+    const r = RING.radius + (Math.floor(this.t / RING_PULSE) % 2) * RING.pulse;
+    for (const ring of this.rings) {
+      const cx = OX + ring.x * CELL + 8;
+      const cy = OY + ring.y * CELL + 8;
+      drawPixelRing(g, cx, cy, r, 3, RING.edge);
+      drawPixelRing(g, cx, cy, r, 1, RING.color);
+    }
+  }
+
   drawHere(g) {
     if (!this.here || Math.floor(this.t / 20) % 2 === 0) return;
     const cx = OX + this.here.x * CELL + 8;
@@ -321,6 +363,8 @@ class RegionMapScene extends ScreenScene {
     let foot = p?.desc || '';
     const pillars = p ? [...(p.pillars || (p.pillar ? [p.pillar] : [])), ...childPlaces(p.id, this.map).map((c) => c.pillar).filter(Boolean)] : [];
     if (pillars.length) foot = `${foot}${foot ? ' · ' : ''}${pillars.length > 1 ? 'Pilares' : 'Pilar'} ${pillars.join(' y ')}`;
+    const ring = p ? this.rings.find((x) => x.placeId === p.id) : null;
+    if (ring) foot = `${foot}${foot ? ' · ' : ''}${ring.clues.length > 1 ? 'Pistas' : 'Pista'} de la Libreta`;
     if (this.opts.fly && p?.fly && !this.canFly(p)) foot = 'Aún no conoces este lugar.';
     const cells = (p ? this.marks.get(p.id) || [] : []).filter((m) => m.kind === 'cell');
     if (cells.length) {

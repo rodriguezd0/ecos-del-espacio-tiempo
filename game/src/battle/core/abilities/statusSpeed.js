@@ -56,22 +56,8 @@ A.OnHPDroppedBelowHalf.add('WIMPOUT', (a, battler, moveUser, battle) => {
 });
 // Nota: Añil deja comentada la copia a EMERGENCYEXIT; se mantiene igual (Huida sin efecto propio).
 
-// ---------------------------------------------------------------- Espesura y similares (mensaje al bajar de 1/3)
-function pinchMessage(a, target, user, move, switched, battle) {
-  if (!target.droppedBelowThirdHP) return;
-  splash(battle, target, () => {
-    const data = battle.db.abilities && battle.db.abilities[a];
-    const flag = data && data.flags && data.flags[0];
-    const typeName = flag && battle.db.types[flag] ? battle.typeName(flag) : null;
-    if (typeName) {
-      battle.pbDisplay(`¡${target.abilityName()} activado! Los ataques de tipo ${typeName} de ${target.pbThis(true)} ahora son más potentes.`);
-    } else {
-      battle.pbDisplay(`¡${target.abilityName()} activado! Los ataques del primer tipo de ${target.pbThis(true)} ahora son más potentes.`);
-    }
-  });
-}
-A.AfterMoveUseFromTarget.add('OVERGROW', pinchMessage);
-A.AfterMoveUseFromTarget.copy('OVERGROW', 'TORRENT', 'BLAZE', 'SWARM', 'SOBRECARGA');
+// Espesura, Mar Llamas, Torrente, Enjambre y Sobrecarga: como en Essentials, sin cartel ni mensaje (Añil
+// anunciaba «¡Espesura activado!» al bajar de 1/3 y al entrar). Su efecto está en abilities/damage.js.
 
 // ---------------------------------------------------------------- Estados
 A.StatusCheckNonIgnorable.add('COMATOSE', (a, b, status) => {

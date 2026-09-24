@@ -2,7 +2,7 @@
 // llamada a battle() de battle/api.js, aplicación del resultado y derrota (volver al último punto de cura).
 import { engine } from '../core/engine.js';
 import { battle, battleBGM } from '../battle/api.js';
-import { applyBattleResult, caughtList, finalizeBattleResult, storeCaught } from '../battle/scene/results.js';
+import { applyBattleResult, caughtList, finalizeBattleResult, storeCaught, whiteoutText } from '../battle/scene/results.js';
 import { createPokemon, healed } from '../battle/core/pokemon.js';
 import { ui } from '../ui/api.js';
 import { isNightHour } from '../render/dayNight.js';
@@ -97,10 +97,11 @@ export async function runBattle(scene, config = {}) {
   scene.fx.fadeAmount = 1;
   scene.fx.fadeColor = [0, 0, 0];
   scene.refreshFollower();
-  await scene.fx.fadeIn(24);
   // canLose puede venir de la petición, de sus reglas o del entrenador (battle/scene lo resuelve y lo devuelve).
   const canLose = Boolean(config.canLose || config.rules?.canLose || result.canLose);
-  if (result.outcome === 'lose' && !canLose) await whiteout(scene);
+  // Derrota: la pantalla sigue en negro hasta el punto de cura (como pbStartOver de Essentials).
+  if (result.outcome === 'lose' && !canLose) await whiteout(scene, result);
+  else await scene.fx.fadeIn(24);
   return result;
 }
 
@@ -109,11 +110,12 @@ export function runWildBattle(scene, enc) {
   return runBattle(scene, { type: 'wild', wild: enc });
 }
 
-/** Derrota: mensaje, curación y regreso al último punto de cura (o al inicio del mapa). */
-export async function whiteout(scene) {
+/** Derrota: (aviso si el combate no lo dio), curación y regreso al último punto de cura (o al inicio del mapa). */
+export async function whiteout(scene, result = null) {
   const state = engine.state;
-  await ui.message('No te quedan Pokémon en condiciones de combatir…');
   await scene.fx.fadeOut(20);
+  const text = whiteoutText(result);
+  if (text) await ui.message(text);
   state.setParty(state.party.map((p) => healed(engine.data, p)));
   const heal = state.healPoint;
   const def = scene.world.current.def;

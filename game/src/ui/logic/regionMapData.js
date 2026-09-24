@@ -305,6 +305,21 @@ export function pointForMap(map, mapId) {
 }
 
 /**
+ * Anillos de zona de las pistas (content/story/clueLogic.js#clueZones: segundas pistas activas) agrupados por
+ * lugar del atlas: [{ placeId, x, y, clues: [ids] }] en el orden de las pistas. Las zonas sin lugar se ignoran.
+ */
+export function clueRings(zones, map = REGION_MAP) {
+  const out = new Map();
+  for (const z of zones || []) {
+    const place = pointForMap(map, z?.zone);
+    if (!place) continue;
+    const ring = out.get(place.id) || { placeId: place.id, x: place.x, y: place.y, clues: [] };
+    out.set(place.id, { ...ring, clues: [...ring.clues, z.id] });
+  }
+  return [...out.values()];
+}
+
+/**
  * ¿Se puede volar a ese lugar? Es un destino (`fly`) y: se ha desbloqueado por guion (flyPoints) o, salvo
  * los de `flyUnlock`, se ha visitado alguno de sus mapas (state.data.visited, que rellena setPosition).
  * Firma antigua compatible: canFlyTo(point, flyPoints).

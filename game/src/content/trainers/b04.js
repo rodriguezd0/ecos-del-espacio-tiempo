@@ -1,0 +1,101 @@
+// Entrenadores del Bloque 4 (docs/CAMPANA.md B04; curva de docs/POKEDEX_DISTRIBUCION.md §7.1: entrenadores 14–18,
+// técnicos 15–17, Leandro 19–21). Técnicos del Consorcio Meridiano (Genesis sin nombre público, CAMPANA §5.1:
+// Magnemite, Bronzor, Solosis), pescadores y buceadoras de la Escalera de Estanques y el Guardián de la Corriente.
+// Nombres de ruta, técnicos y gente de la Escalera: genéricos (sin canon). Música por situación: CAMPANA §1.8 (X20).
+
+const GENESIS = { sprite: 'genesis_tecnico_front', overworld: 'genesis_tecnico', class: 'Técnico del Consorcio', bgm: 'EncuentroRocket', victoryBGM: 'victory_genesis', ai: 32 };
+const GENESIS_F = { ...GENESIS, sprite: 'genesis_tecnica_front', overworld: 'genesis_tecnica', class: 'Técnica del Consorcio' };
+const ROUTE = { bgm: 'PrismaEntrenador', ai: 24, items: [] };
+
+export default {
+  // ─── Ruta 3 ────────────────────────────────────────────────────────────────────────────
+  r3_pescador_nicanor: {
+    ...ROUTE, name: 'Nicanor', class: 'Pescador', sprite: 'anil:pescador', overworld: 'anil:pescador', money: 40,
+    party: [{ species: 'MAGIKARP', level: 14 }, { species: 'BARBOACH', level: 15 }],
+    loseText: 'Hoy no pica nada. Ni los combates.',
+    winText: '¡Por fin algo muerde!',
+  },
+  r3_excursionista_rufo: {
+    ...ROUTE, name: 'Rufo', class: 'Excursionista', sprite: 'anil:excursionista', overworld: 'anil:excursionista', money: 48,
+    party: [{ species: 'GEODUDE', level: 15 }, { species: 'MACHOP', level: 15 }],
+    loseText: '¡Uf! Ni cuesta arriba me ganas.',
+    winText: 'Piernas fuertes, Pokémon fuertes.',
+  },
+  r3_aspirante_vera: {
+    ...ROUTE, name: 'Vera', class: 'Aspirante', sprite: 'anil:aspirante_f', overworld: 'anil:aspirante_f', money: 64,
+    party: [{ species: 'BUIZEL', level: 16 }, { species: 'YANMA', level: 16 }],
+    loseText: 'Vale, vale. Tú subes más rápido.',
+    winText: '¡La Garganta entrena mejor que cualquier gimnasio!',
+  },
+
+  // ─── Garganta del Albo: técnicos de las balizas ────────────────────────────────────────────
+  ga_tecnico_ribas: {
+    ...GENESIS, name: 'Ribas', money: 90,
+    party: [{ species: 'MAGNEMITE', level: 15 }, { species: 'SOLOSIS', level: 15 }],
+    loseText: 'Tendré que anotar la incidencia en el parte.',
+    winText: 'Medición completada. Siga su camino, por favor.',
+  },
+  ga_tecnica_noa: {
+    ...GENESIS_F, name: 'Noa', money: 96,
+    party: [{ species: 'BRONZOR', level: 16 }, { species: 'MAGNEMITE', level: 16 }],
+    loseText: 'Interesante. No esperaba esa variable.',
+    winText: 'Las cifras no mienten.',
+  },
+  ga_tecnico_salcedo: {
+    ...GENESIS, name: 'Salcedo', money: 102,
+    party: [{ species: 'SOLOSIS', level: 16 }, { species: 'BRONZOR', level: 17 }],
+    loseText: 'Los datos de la puerta tendrán que esperar.',
+    winText: 'Gracias por su colaboración.',
+  },
+
+  // ─── Gruta del Albo ─────────────────────────────────────────────────────────────────────
+  gr_montanero_ciriaco: {
+    ...ROUTE, name: 'Ciriaco', class: 'Montañero', sprite: 'anil:montanero', overworld: 'anil:montanero', money: 68,
+    party: [{ species: 'GEODUDE', level: 16 }, { species: 'ZUBAT', level: 16 }, { species: 'MACHOP', level: 17 }],
+    loseText: 'Esta gruta es pequeña, pero tú no.',
+    winText: 'En la roca se aprende paciencia.',
+  },
+
+  // ─── Pilar de la Corriente: gente de la Escalera de Estanques ──────────────────────────────
+  pc_pescador_bruno: {
+    ...ROUTE, name: 'Bruno', class: 'Pescador', sprite: 'anil:pescador', overworld: 'anil:pescador', money: 60,
+    party: [{ species: 'MAGIKARP', level: 15 }, { species: 'BARBOACH', level: 16 }],
+    loseText: 'En el río ya no pican. Aquí dentro, tampoco.',
+    winText: 'Aquí abajo el agua aún obedece a alguien.',
+  },
+  pc_buceadora_marta: {
+    ...ROUTE, name: 'Marta', class: 'Buceadora', sprite: 'anil:buceadora', overworld: 'anil:buceadora', money: 68,
+    party: [{ species: 'BUIZEL', level: 17 }, { species: 'MARILL', level: 17 }],
+    loseText: '¡Me has dejado sin aire!',
+    winText: 'Bajo el agua se aguanta más de lo que crees.',
+  },
+  pc_pescador_tomas: {
+    ...ROUTE, name: 'Tomás', class: 'Pescador', sprite: 'anil:pescador', overworld: 'anil:pescador', money: 72,
+    party: [{ species: 'WOOPER', level: 18 }, { species: 'BARBOACH', level: 18 }],
+    loseText: 'Buena captura… para ti.',
+    winText: 'Paciencia y buen sedal.',
+  },
+  pc_buceadora_ines: {
+    ...ROUTE, name: 'Inés', class: 'Buceadora', sprite: 'anil:buceadora', overworld: 'anil:buceadora', money: 76,
+    party: [{ species: 'PSYDUCK', level: 18 }, { species: 'SHELLOS', level: 19 }],
+    loseText: 'Vale. Tú sí sabes nadar a contracorriente.',
+    winText: 'El agua de aquí dentro tiene memoria.',
+  },
+
+  // ─── Guardián de la Corriente (X06: Leandro Alcántara, 38, orgullo) ──────────────────────────
+  leandro: {
+    name: 'Leandro', class: 'Maestre de Esclusas', sprite: 'leandro_front', overworld: 'leandro',
+    party: [
+      { species: 'BARBOACH', level: 19 }, { species: 'BUIZEL', level: 19 },
+      { species: 'MARILL', level: 20 }, { species: 'QUAGSIRE', level: 21, item: 'SITRUSBERRY' },
+    ],
+    items: ['SUPERPOTION'],
+    ai: 64,
+    money: 100, // dinero = base × nivel del último Pokémon (100 × 21), entre Casilda (60) y Abril (120)
+    bgm: 'CombateLider',
+    victoryBGM: 'victory_important',
+    canLose: true, // reintento: se le vuelve a hablar (CAMPANA B04)
+    loseText: '…Sabes dónde pisas. Y sabes cuándo no pisar.',
+    winText: 'El agua no se doma a la primera. Vuelve a intentarlo.',
+  },
+};

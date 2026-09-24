@@ -121,7 +121,7 @@ add('fondo_sur', 5, 'fondo_mar_sur', 'Fosa Abisal (este)', 'G', ['Borde de la Fo
 add('ecos', 1, 'arrecife_eco', 'Pilar de los Ecos (capa presente)', 'G', [
   'Capa presente (las caracolas siguen funcionando tras P7)', 'Capa presente', 'Capa presente',
 ], { required: true });
-add('garganta', 5, 'garganta_albo', 'Pozo del Albo', 'G', ['Fondo del pozo']);
+add('garganta', 5, 'pozo_albo', 'Pozo del Albo', 'G', ['Fondo del pozo']); // mapa submarino propio (B04)
 add('caleta', 2, 'caleta_sonda', 'Caleta Sonda', 'G', ['Bosque de algas']);
 add('talasa', 3, 'estacion_talasa', 'Estación Talasa', 'G', ['Pilotes']);
 add('reserva', 3, 'ruta_14_reserva', 'Reserva del Delta', 'G', ['Fondo de la laguna']);
