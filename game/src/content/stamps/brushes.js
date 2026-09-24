@@ -115,7 +115,7 @@ function paintNine(brush, cells, opts) {
 }
 
 /** Tile vacío y bloqueante (prioridad 0) presente en todos los tilesets exteriores de Añil (1, 3, 5, 6, 7, 9). */
-const FOREST_BLOCKER_TILE = 503;
+export const FOREST_BLOCKER_TILE = 503;
 
 /**
  * Bosque: árboles de size[0]×size[1] anclados en rejilla period[0]×period[1]. Las columnas se alinean con el

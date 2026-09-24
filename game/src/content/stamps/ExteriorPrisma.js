@@ -22,7 +22,7 @@ const SHARED_BRUSHES = ['cesped', 'cesped_claro', 'hierba_alta', 'camino_arena',
 const own = {
   // ─── Cerezos ──────────────────────────────────────────────────────────────────────────────
   cerezo_grande: { src: [0, 443, 7, 9], layer: 2, solid: true, tags: ['oriental', 'arbol', 'cerezo'], desc: 'Cerezo grande en flor con dos troncos (7×9)' },
-  cerezo: { src: [0, 478, 4, 5], layer: 2, solid: true, tags: ['oriental', 'arbol', 'cerezo'], desc: 'Cerezo en flor (4×5)' },
+  cerezo: { src: [0, 477, 5, 6], layer: 2, solid: true, tags: ['oriental', 'arbol', 'cerezo'], desc: 'Cerezo en flor (5×6, copa entera)' },
   lluvia_petalos: { src: [0, 483, 5, 3], layer: 1, tags: ['oriental', 'cerezo', 'suelo'], desc: 'Corro de pétalos caídos sobre la hierba (5×3)' },
   nenufares: { src: [5, 483, 2, 2], layer: 2, tags: ['agua', 'decoracion'], desc: 'Nenúfares con flor (2×2, sobre el agua)' },
   secadero: { src: [0, 463, 2, 2], layer: 2, solid: true, tags: ['puerto', 'pesca'], desc: 'Secadero de redes/pescado (2×2)' },
