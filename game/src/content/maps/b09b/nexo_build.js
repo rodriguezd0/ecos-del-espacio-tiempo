@@ -4,7 +4,7 @@
 // con el ferri amarrado y el espigón del faro; al este, el brazo del Albo desembocando junto al astillero; al
 // suroeste, la playa que sigue hacia la Ruta 15. Módulo puro.
 import { W, H, terrainGrid, BUILDINGS, PLAZA, PORT } from './nexo_layout.js';
-import { paintQuayWall, paintWithMask } from './nexo_pieces.js';
+import { paintQuayWall, paintWithMask, sandUnderInnerBeach, sealCoveredBeachCorners } from './nexo_pieces.js';
 
 const T = (x, y) => 384 + y * 8 + x;
 const PIER_FLOOR = T(1, 397);
@@ -39,9 +39,7 @@ function paintWater(b, grid) {
   const inBeach = (x, y) => sandSet.has(`${x},${y}`) || quay.has(`${x},${y}`) || y < 32 || x < 0;
   paintWithMask(b, 'playa', sand, inBeach);
   // Bajo la arena interior, arena (no agua): las palmeras y las piezas sueltas no dejan ver el mar debajo.
-  for (const [x, y] of sand) {
-    if ([[1, 0], [-1, 0], [0, 1], [0, -1]].every(([dx, dy]) => inBeach(x + dx, y + dy))) b.set(0, x, y, SAND);
-  }
+  const holed = sandUnderInnerBeach(b, sand, inBeach, SAND);
   // Muelle y embarcaderos de piedra: bajo los que entran en el mar, suelo neutro (no agua: sin aviso de nadar).
   for (const [x, y] of piers) b.set(0, x, y, GRASS);
   b.paint('nexo_muelle', cellsOf(grid, 'q'));
@@ -53,6 +51,7 @@ function paintWater(b, grid) {
     paintQuayWall(b, x0, x1, PORT.wall.y);
     for (let x = x0; x <= x1; x++) { b.set(0, x, PORT.wall.y, PIER_FLOOR); b.set(0, x, PORT.wall.y + 1, PIER_FLOOR); }
   }
+  return holed;
 }
 
 function paintTrees(b, grid) {
@@ -127,13 +126,14 @@ function paintPort(b) {
 export function buildNexo(b) {
   const grid = terrainGrid();
   paintGround(b, grid);
-  paintWater(b, grid);
+  const holed = paintWater(b, grid);
   paintTrees(b, grid);
   paintGardens(b);
   paintBuildings(b);
   paintPlaza(b);
   paintStreets(b);
   paintPort(b);
+  sealCoveredBeachCorners(b, holed, SAND);
 }
 
 export { W, H };

@@ -57,7 +57,7 @@ lib.byTag('edificio');                          // stamps por etiqueta
 | `grid` | `{ grid: [[id, id], [id, id]] }` | Mosaico de IDs explícitos (agua de exterior) |
 | `autotile` | `{ autotile: slot }` | Autotile resuelto por vecinos (agua de cueva, flores animadas, **cascadas**) |
 | `nine` | `{ nine: [x, y], inner?, fill? }` / `{ nine: 'ids', ids }` | Borde 3×3 + esquinas cóncavas 2×2 (orden NO, NE / SO, SE) |
-| `edge2` | `{ edge2: { src: [x, y], fill? } }` | Borde doble 5×5 (playas de arena con espuma sobre el agua; formas convexas) |
+| `edge2` | `{ edge2: { src: [x, y], fill? } }` | Borde doble 5×5 (playas de arena con espuma sobre el agua); las esquinas cóncavas de `playa` usan tiles generados (`tools/beach_corners.mjs`) |
 | `forest` | `{ forest: { trees, size, period } }` | Bosque de árboles 2×6 apilados cada 4 filas (copas capa 2, troncos capa 1) |
 | `cliff` | `{ cliff: { src, width, faceRows, rows? } }` | Macizo convexo con cara (acantilados, cerezal) |
 | `terrace` | `{ terrace: { rim, side, face } }` | Terraza de muros finos convexa (ancho ≥ 5) |
@@ -138,7 +138,8 @@ Nada de esto es canon: los stamps son piezas gráficas; la distribución de cada
   una **X roja**. No usar `{ autotile: 1 }`: usar el brush `agua` (grid) y encima `orilla` o `playa` con la
   misma máscara. El agua de cueva (autotile 6) sí es un autotile completo.
 - **Terrain tags** útiles (tileset 7): hierba alta 388 (morada) y 396 (verde); salientes 651/657/652; arena 416–434.
-- **Brushes convexos**: `cliff`, `terrace`, `room`, `cave` y `edge2` trabajan sobre formas convexas; para formas en
+- **Brushes convexos**: `cliff`, `terrace`, `room` y `cave` trabajan sobre formas convexas (`playa` admite esquinas
+  cóncavas si bajo su casilla queda agua: arena en capa 0 solo donde las 8 vecinas son playa); para formas en
   L combina varios trazos o usa los recortes probados (`sala_cruz`, `sala_irregular`…). Las alfombras, manchas y
   estanques `nine` quedan mejor rectangulares.
 - **Salas `from`** (recortes de mapas de Añil): úsalas como plantilla; se horneaban con sus muebles, así que los
@@ -1151,7 +1152,7 @@ revisa la hoja con `preview_stamps --only=<nombre>` y ejecuta los tests.
 | `nevera` | 1×3 | 2 |  | cocina | Nevera blanca |
 | `fregadero` | 2×3 | 2 |  | cocina | Fregadero y encimera (2×3) |
 | `sartenes` | 2×2 | 2 |  | cocina, pared | Sartenes colgadas (va sobre la pared) |
-| `taza` | 1×1 | 2 |  | cocina | Taza (sobre una mesa) |
+| `taza` | 1×1 | 2 |  | cocina, sobre_mueble | Taza (se apila sobre una mesa) |
 | `planta` | 1×2 | 2 |  | decoracion | Planta en maceta (1×2) |
 | `planta_alta` | 1×2 | 2 |  | decoracion | Planta alta enredadera (1×2) |
 | `papelera` | 1×1 | 2 |  | decoracion | Papelera roja |
@@ -1231,7 +1232,7 @@ revisa la hoja con `preview_stamps --only=<nombre>` y ejecuta los tests.
 | `nevera` | 1×3 | 2 |  | cocina | Nevera blanca |
 | `fregadero` | 2×3 | 2 |  | cocina | Fregadero y encimera (2×3) |
 | `sartenes` | 2×2 | 2 |  | cocina, pared | Sartenes colgadas (va sobre la pared) |
-| `taza` | 1×1 | 2 |  | cocina | Taza (sobre una mesa) |
+| `taza` | 1×1 | 2 |  | cocina, sobre_mueble | Taza (se apila sobre una mesa) |
 | `planta` | 1×2 | 2 |  | decoracion | Planta en maceta (1×2) |
 | `planta_alta` | 1×2 | 2 |  | decoracion | Planta alta enredadera (1×2) |
 | `papelera` | 1×1 | 2 |  | decoracion | Papelera roja |
@@ -1334,7 +1335,7 @@ revisa la hoja con `preview_stamps --only=<nombre>` y ejecuta los tests.
 | `nevera` | 1×3 | 2 |  | cocina | Nevera blanca |
 | `fregadero` | 2×3 | 2 |  | cocina | Fregadero y encimera (2×3) |
 | `sartenes` | 2×2 | 2 |  | cocina, pared | Sartenes colgadas (va sobre la pared) |
-| `taza` | 1×1 | 2 |  | cocina | Taza (sobre una mesa) |
+| `taza` | 1×1 | 2 |  | cocina, sobre_mueble | Taza (se apila sobre una mesa) |
 | `planta` | 1×2 | 2 |  | decoracion | Planta en maceta (1×2) |
 | `planta_alta` | 1×2 | 2 |  | decoracion | Planta alta enredadera (1×2) |
 | `papelera` | 1×1 | 2 |  | decoracion | Papelera roja |

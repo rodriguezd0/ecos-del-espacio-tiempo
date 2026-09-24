@@ -13,7 +13,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PNG } from 'pngjs';
-import { ATLAS_COLUMNS, TILE, FIRST_REGULAR_TILE } from '../game/src/shared/autotile.js';
+import { ATLAS_COLUMNS, FIRST_REGULAR_TILE } from '../game/src/shared/autotile.js';
+import { origId, readTile, writeTile, ensureHeight, copyTileProps } from './lib/atlas_tiles.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DB_FILE = path.join(ROOT, 'game', 'data', 'tilesets.json');
@@ -27,30 +28,10 @@ const EXTERIOR_TILESETS = [1, 3, 5, 6, 7, 9];
 const UNIT_COLS = [0, 2];
 const UNIT_ROW = 39;
 const DENSE_ROWS = [40, 41, 42, 43];
-const ORIGINAL_COLUMNS = 8;
-
-const origId = (col, row) => FIRST_REGULAR_TILE + row * ORIGINAL_COLUMNS + col;
 
 /** ¿Césped en sombra? Verdes apagados (rojo alto, poca distancia verde-rojo) frente al follaje saturado. */
 function isShadowGrass(r, g, b) {
   return r >= 60 && b >= 60 && g > r && g - r < 100;
-}
-
-function tileOffset(id) {
-  const t = id - FIRST_REGULAR_TILE;
-  return { x: (t % ATLAS_COLUMNS) * TILE, y: Math.floor(t / ATLAS_COLUMNS) * TILE };
-}
-
-function readTile(png, id) {
-  const { x, y } = tileOffset(id);
-  const out = Buffer.alloc(TILE * TILE * 4);
-  for (let j = 0; j < TILE; j++) png.data.copy(out, j * TILE * 4, ((y + j) * png.width + x) * 4, ((y + j) * png.width + x + TILE) * 4);
-  return out;
-}
-
-function writeTile(png, id, data) {
-  const { x, y } = tileOffset(id);
-  for (let j = 0; j < TILE; j++) data.copy(png.data, ((y + j) * png.width + x) * 4, j * TILE * 4, (j + 1) * TILE * 4);
 }
 
 /** Color de follaje más oscuro y frecuente de la unidad (se usa para rellenar el césped en sombra). */
@@ -85,15 +66,6 @@ function denseTile(src, [fr, fg, fb]) {
     changed += 1;
   }
   return { out, changed };
-}
-
-function ensureHeight(png, rows) {
-  const needed = rows * TILE;
-  if (png.height >= needed) return png;
-  const bigger = new PNG({ width: png.width, height: needed });
-  bigger.data.fill(0);
-  png.data.copy(bigger.data, 0, 0, png.data.length);
-  return bigger;
 }
 
 const db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
@@ -140,11 +112,7 @@ for (const [image, sets] of byImage) {
     ts.tileCount = Math.max(ts.tileCount, tileCount);
     ts.atlasHeight = png.height;
     ts.forestDense = { base, map };
-    for (const [o, d] of Object.entries(map)) {
-      ts.passages[d] = ts.passages[o];
-      ts.priorities[d] = ts.priorities[o];
-      ts.terrainTags[d] = ts.terrainTags[o];
-    }
+    for (const [o, d] of Object.entries(map)) copyTileProps(ts, o, d);
     if (JSON.stringify([ts.tileCount, ts.forestDense]) !== before) pending = true;
     denseMap[ts.id] = map;
   }

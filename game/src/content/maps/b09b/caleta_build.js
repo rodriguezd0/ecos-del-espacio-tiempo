@@ -3,7 +3,7 @@
 // palmeras y rocas, embarcadero de piedra del ferri, muelle de madera de los buzos y el mar con el bosque de algas.
 // Módulo puro.
 import { W, H, PLATEAU, terrainGrid, BUILDINGS, PALMS, SEA_ROCKS, SPOTS } from './caleta_layout.js';
-import { paintWithMask } from './nexo_pieces.js';
+import { paintWithMask, sandUnderInnerBeach, sealCoveredBeachCorners } from './nexo_pieces.js';
 
 const SAND = 384 + 368 * 8 + 2;
 const GRASS = 384;
@@ -29,15 +29,14 @@ function paintGround(b, grid) {
   b.paint('agua', [...water, ...sand]);
   const sandSet = new Set([...sand, ...pier, ...dock].map(([x, y]) => `${x},${y}`));
   // La playa linda por arriba con la senda del pueblo: ese borde no lleva espuma.
-  paintWithMask(b, 'playa', sand, (x, y) => sandSet.has(`${x},${y}`) || y < 20 || x >= W);
-  for (const [x, y] of sand) {
-    const inner = [[1, 0], [-1, 0], [0, 1], [0, -1]].every(([dx, dy]) => sandSet.has(`${x + dx},${y + dy}`) || y + dy < 20 || x + dx >= W);
-    if (inner) b.set(0, x, y, SAND);
-  }
+  const inBeach = (x, y) => sandSet.has(`${x},${y}`) || y < 20 || x >= W;
+  paintWithMask(b, 'playa', sand, inBeach);
+  const holed = sandUnderInnerBeach(b, sand, inBeach, SAND);
   for (const [x, y] of [...pier, ...dock]) b.set(0, x, y, GRASS);
   b.paint('nexo_muelle', pier);
   b.paint('nexo_pantalan', dock);
   b.stamp('escalera_terraza_ancha', PLATEAU.stairs.x, PLATEAU.stairs.y);
+  return holed;
 }
 
 function paintNature(b, grid) {
@@ -68,9 +67,10 @@ export function buildCaleta(b) {
   const grid = terrainGrid();
   b.fill(null, 'cesped');
   paintPlateau(b);
-  paintGround(b, grid);
+  const holed = paintGround(b, grid);
   paintNature(b, grid);
   paintVillage(b);
+  sealCoveredBeachCorners(b, holed, SAND);
 }
 
 export { W, H };

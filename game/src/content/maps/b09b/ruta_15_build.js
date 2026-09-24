@@ -2,7 +2,7 @@
 // entre pinos y prados de flores, mirador sobre el acantilado, dos escaleras de madera que bajan a las calas de arena
 // con dunas, rocas en el agua y el Mar del Sur. Módulo puro.
 import { W, H, CLIFF, JETTY, HUT, terrainGrid, SEA_ROCKS, LOOKOUT, SPOTS } from './ruta_15_layout.js';
-import { paintWithMask } from './nexo_pieces.js';
+import { paintWithMask, sandUnderInnerBeach, sealCoveredBeachCorners } from './nexo_pieces.js';
 
 function cellsOf(grid, ...chars) {
   const out = [];
@@ -30,15 +30,13 @@ function paintGround(b, grid) {
   const inBeach = (x, y) => sandSet.has(`${x},${y}`) || y < CLIFF.faceY + 3 || (x < 0 && y < WEST_SEA_Y) || x >= W;
   paintWithMask(b, 'playa', sand, inBeach);
   // Bajo la arena interior, arena (no agua): así las piezas sueltas y las palmeras no dejan ver el mar debajo.
-  for (const [x, y] of sand) {
-    const inner = [[1, 0], [-1, 0], [0, 1], [0, -1]].every(([dx, dy]) => inBeach(x + dx, y + dy));
-    if (inner) b.set(0, x, y, SAND);
-  }
+  const holed = sandUnderInnerBeach(b, sand, inBeach, SAND);
   // Dunas: hierba de playa sobre suelo de hierba (no agua).
   const dunes = cellsOf(grid, '"').filter(([, y]) => y >= CLIFF.faceY + 3);
   for (const [x, y] of dunes) b.set(0, x, y, 384);
   b.paint('hierba_alta', cellsOf(grid, '"'));
   for (const s of CLIFF.stairs) b.stamp('escalera_terraza_ancha', s.x, s.y);
+  return holed;
 }
 
 const SAND = 384 + 368 * 8 + 2;
@@ -96,10 +94,11 @@ export function buildRuta15(b) {
   const grid = terrainGrid();
   b.fill(null, 'cesped');
   paintCliff(b);
-  paintGround(b, grid);
+  const holed = paintGround(b, grid);
   paintJetty(b, grid);
   paintNature(b, grid);
   paintLookout(b);
+  sealCoveredBeachCorners(b, holed, SAND);
 }
 
 export { W, H };

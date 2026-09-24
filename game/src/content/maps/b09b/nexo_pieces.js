@@ -3,6 +3,8 @@
 // barandillas, norays, palmeras en jardinera y rosetón de plaza. Son tiles del atlas de Exterior1 (coordenadas de la
 // imagen original: ID = 384 + fila·8 + columna), las mismas piezas que usa el puerto de Añil. Módulo puro: se pasan en
 // `brushes` / `stamps` de la definición del mapa.
+import { BEACH_CORNERS } from '../../stamps/beachCorners.js';
+
 const T = (x, y) => 384 + y * 8 + x;
 
 /** Rejilla de un stamp `tiles` en la capa `layer` a partir de un rectángulo del atlas. */
@@ -51,8 +53,40 @@ export const QUAY_WALL = Object.freeze({
 export function paintWithMask(b, brushName, cells, inMask) {
   const brush = b.findBrush(brushName);
   if (!brush || !b.painter || !cells.length) { b.paint(brushName, cells); return; }
-  const writes = b.painter(brush, cells, { seed: b.seed, width: b.width, height: b.height, inMask });
+  const writes = b.painter(brush, cells, { seed: b.seed, width: b.width, height: b.height, tileset: b.tileset, inMask });
   for (const w of writes) b.set(brush.layer ?? w.layer, w.x, w.y, w.id);
+}
+
+const NEIGHBORS_4 = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+
+/**
+ * Bajo la arena interior de una playa (vecinas ortogonales en la playa) pone suelo de arena (capa 0) en vez de agua,
+ * para que palmeras y piezas sueltas no dejen ver el mar. Excepción: la pieza de esquina cóncava del pincel `playa`
+ * que toca el agua (tools/beach_corners.mjs) tiene un hueco por el que se ve el mar, así que conserva el agua debajo
+ * (su terrain tag de arena la mantiene en tierra). → casillas de esquina con hueco (para `sealCoveredBeachCorners`).
+ */
+export function sandUnderInnerBeach(b, cells, inBeach, sandId) {
+  const holedIds = holedCornerIds(b);
+  const holed = [];
+  for (const [x, y] of cells) {
+    if (!NEIGHBORS_4.every(([dx, dy]) => inBeach(x + dx, y + dy))) continue;
+    if (holedIds.has(b.get(1, x, y))) holed.push([x, y]);
+    else b.set(0, x, y, sandId);
+  }
+  return holed;
+}
+
+/**
+ * Al terminar el mapa: las esquinas con hueco que un objeto ha tapado (palmera, roca, puesto…) ya no enseñan el mar,
+ * así que llevan arena debajo como el resto (si no, el objeto quedaría «en el agua» y se podría nadar hacia él).
+ */
+export function sealCoveredBeachCorners(b, holed, sandId) {
+  const holedIds = holedCornerIds(b);
+  for (const [x, y] of holed) if (!holedIds.has(b.get(1, x, y))) b.set(0, x, y, sandId);
+}
+
+function holedCornerIds(b) {
+  return new Set(Object.values(BEACH_CORNERS[b.tileset] || {}).map((ids) => ids[0]));
 }
 
 /**

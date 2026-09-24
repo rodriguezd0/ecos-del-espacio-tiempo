@@ -30,6 +30,7 @@
 //   { edge2: { src: [x, y], fill? } }                   borde doble 5×5 (playas: espuma + arena) (capa 1)
 import { resolveAutotileId, FIRST_REGULAR_TILE } from '../../shared/autotile.js';
 import { FOREST_DENSE } from './forestDense.js';
+import { BEACH_CORNERS, BEACH_CORNER_SRC } from './beachCorners.js';
 
 const tileId = (x, y) => FIRST_REGULAR_TILE + y * 8 + x;
 
@@ -341,15 +342,42 @@ function paintLine(brush, cells, opts) {
   });
 }
 
+/** Esquinas cóncavas generadas (tools/beach_corners.mjs) para este pincel y tileset, o null. */
+function concaveCorners(brush, opts) {
+  const [sx, sy] = brush.edge2.src;
+  if (sx !== BEACH_CORNER_SRC[0] || sy !== BEACH_CORNER_SRC[1]) return null;
+  return BEACH_CORNERS[opts.tileset] || null;
+}
+
+/**
+ * Casilla «centro» junto a una esquina cóncava: busca el agua en diagonal a 1–2 casillas (con las ortogonales dentro)
+ * y devuelve el tile del bloque 2×2 generado para esa orientación, o null.
+ */
+function concaveCornerTile(corners, inside, x, y) {
+  let best = null;
+  for (const key of Object.keys(corners)) {
+    const [qx, qy] = key.split(',').map(Number);
+    for (let j = 1; j <= 2; j++) {
+      for (let i = 1; i <= 2; i++) {
+        if (inside(x + qx * i, y + qy * j)) continue;
+        if (!best || i + j < best.i + best.j) best = { key, i, j };
+      }
+    }
+  }
+  return best ? corners[best.key][(best.i - 1) + 2 * (best.j - 1)] : null;
+}
+
 /**
  * Borde doble (playas de Añil: espuma + arena mojada): bloque 5×5 desde `src`. Columnas 0–1 borde oeste
  * (exterior, interior), 2 centro, 3–4 borde este (interior, exterior); filas igual (0–1 norte, 2 centro,
- * 3–4 sur). Pensado para formas convexas (las esquinas cóncavas usan el centro). `fill: 0` deja el centro vacío.
+ * 3–4 sur). Las esquinas cóncavas usan los tiles generados por tools/beach_corners.mjs (si existen para el
+ * tileset; si no, el centro). `fill: 0` deja el centro vacío.
  */
 function paintEdge2(brush, cells, opts) {
   const { src: [sx, sy], fill } = brush.edge2;
   const layer = brush.layer ?? 1;
   const inside = makeMask(cells, opts);
+  const corners = fill === undefined ? concaveCorners(brush, opts) : null;
   // 1 = la vecina ya está fuera; 2 = fuera a dos casillas; 3 = dentro al menos dos casillas
   const dist = (x, y, dx, dy) => { let d = 1; while (d <= 2 && inside(x + dx * d, y + dy * d)) d++; return d; };
   const out = [];
@@ -358,7 +386,9 @@ function paintEdge2(brush, cells, opts) {
     const dw = dist(x, y, -1, 0); const de = dist(x, y, 1, 0);
     const row = dn <= 2 ? dn - 1 : ds <= 2 ? 5 - ds : 2;
     const col = dw <= 2 ? dw - 1 : de <= 2 ? 5 - de : 2;
-    const id = row === 2 && col === 2 && fill !== undefined ? fill : tileId(sx + col, sy + row);
+    const center = row === 2 && col === 2;
+    const corner = center && corners ? concaveCornerTile(corners, inside, x, y) : null;
+    const id = corner || (center && fill !== undefined ? fill : tileId(sx + col, sy + row));
     if (id) out.push({ x, y, layer, id });
   }
   return out;
