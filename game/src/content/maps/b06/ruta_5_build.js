@@ -102,7 +102,7 @@ function details(b) {
   // Nada encima del camino (rocas, pinos y matas lo bordean): las piezas de flor y matojo llevan su propia hierba.
   for (const [n, x, y] of [
     ['poste_electrico', 5, 18], ['poste_electrico', 14, 18], ['poste_electrico', 22, 21],
-    ['pino', 4, 33], ['arbol', 12, 34], ['pino', 23, 26], ['pino', 40, 21], ['arbol', 55, 21],
+    ['pino', 4, 33], ['arbol', 12, 33], ['pino', 23, 26], ['pino', 40, 21], ['arbol', 55, 21],
     ['pino', 53, 17], ['roca_grande', 18, 23], ['roca_gris', 25, 13], ['roca_peque', 38, 18], ['roca_grande', 47, 11],
     ['roca_gris', 56, 17], ['arbustos', 10, 23], ['arbustos', 38, 11], ['tocon', 50, 12], ['tocon', 40, 35],
     ['roca_peque', 20, 13], ['arbustos', 55, 33], ['roca_grande', 16, 35], ['roca_peque', 44, 35],

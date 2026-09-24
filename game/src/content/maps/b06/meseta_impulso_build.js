@@ -106,7 +106,7 @@ function details(b) {
   // Nada sobre el camino ni sobre el pinar del borde (las piezas de flor y matojo llevan su propia hierba).
   for (const [n, x, y] of [
     ['poste_electrico', 13, 26],
-    ['pino', 3, 40], ['pino', 14, 44], ['arbol', 26, 42], ['pino', 44, 43], ['arbol', 29, 28], ['pino', 11, 25],
+    ['pino', 3, 40], ['pino', 17, 43], ['arbol', 26, 42], ['pino', 44, 43], ['arbol', 29, 28], ['pino', 11, 25],
     ['roca_grande', 18, 27], ['roca_gris', 23, 44], ['roca_peque', 9, 37], ['roca_gris', 41, 19],
     ['tocon', 5, 44], ['troncos', 32, 19], ['arbustos', 15, 36], ['arbustos', 29, 44], ['arbustos', 2, 38],
     ['troncos', 34, 16], ['roca_grande', 43, 16], ['arbustos', 36, 19], ['lupinos', 41, 23],

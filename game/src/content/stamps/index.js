@@ -58,8 +58,12 @@ function freezeStamp(name, def, bakedEntry, image) {
   const { src: _s, from: _f, tiles: _t, skip: _k, ...meta } = def;
   const layers = [];
   for (let l = 0; l < LAYERS; l++) layers.push(bakedEntry.layers[l] ? Object.freeze(bakedEntry.layers[l].slice()) : null);
+  // Un árbol suelto que pisa el borde de un bosque (u otro árbol) se dibuja DELANTE sin borrar lo de detrás:
+  // sustituirlo dejaba ver el césped entre las ramas (un «mordisco» en el bosque).
+  const stack = def.stack ?? (def.tags || []).includes('arbol');
   return Object.freeze({
     ...meta,
+    stack,
     name,
     w: bakedEntry.w,
     h: bakedEntry.h,
