@@ -6,6 +6,7 @@ import { dx, dy } from './gameMap.js';
 
 export const TILE_PX = 32;
 const SNAP = 0.5; // px (X_SUBPIXELS/2 subpíxeles de Essentials)
+const ATTENTION_RANGE = 2; // casillas: a esta distancia los NPC con diálogo se paran y miran al jugador
 
 /** Tiempo (s) por casilla para una velocidad de Essentials (1..6, admite decimales como Añil). */
 export function moveTimeFor(speed) {
@@ -571,6 +572,16 @@ export class Character {
         if (this.direction === old) this.stopCount = 0;
       }
       return;
+    }
+    // Los NPC con los que se habla dejan de pasear/girar y miran al jugador cuando se acerca,
+    // para que sea fácil hablarles (no aplica a entrenadores con visión ni a rutas fijas).
+    if (this.attendsPlayer?.()) {
+      const near = this.relToPlayer();
+      if (near && Math.abs(near.sx) + Math.abs(near.sy) <= ATTENTION_RANGE) {
+        this.turnTowardPlayer();
+        this.stopCount = 0;
+        return;
+      }
     }
     if (this.stopCount < this.commandDelay) return;
     switch (this.moveType) {

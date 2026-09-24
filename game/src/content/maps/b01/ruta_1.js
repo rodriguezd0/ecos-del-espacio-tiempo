@@ -52,6 +52,7 @@ function paintForests(b) {
 
 const PATH = [
   ...rect(13, 0, 4, 17), // desde Villa Alba hasta el arroyo
+  ...rect(17, 13, 6, 2), // ramal hasta el pie de la cuesta de grava del mirador
   ...rect(13, 21, 4, 22), // tras el puente
   ...rect(17, 30, 2, 2), // ramal al claro del este
   ...rect(9, 42, 8, 2), // quiebro al oeste
@@ -89,10 +90,9 @@ function paintLookout(b) {
   const l = LOOKOUT;
   b.blob(null, rect(l.x, l.y, l.w, l.h), 'terraza');
   const [r0, r1] = l.rampY;
-  // La cuesta atraviesa la cara de la terraza y baja hasta el camino (un solo trazo: bordes continuos).
-  const ramp = rect(l.ramp[0], r0, l.ramp.length, r1 - r0 + 2);
-  const spur = rect(17, r1 + 1, l.ramp[0] - 17, 2);
-  b.paint('camino_tierra', [...ramp, ...spur]);
+  // La cuesta de grava suelta (con marcas de derrape) atraviesa la cara de la terraza; el ramal de arena del
+  // camino principal llega hasta su pie (PATH), así se lee como un paso que existe pero que a pie no se sube.
+  b.paint('grava', rect(l.ramp[0], r0, l.ramp.length, r1 - r0 + 1));
   b.stamp('cartel_madera', l.sign.x, l.sign.y);
   b.stamp('flores_blancas', l.x + 5, l.y + 2);
   b.stamp('macizo_flores', l.x + 2, l.y + 3);

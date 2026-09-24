@@ -85,6 +85,41 @@ export class MapBuilder {
     return this;
   }
 
+  /**
+   * Escribe `id` en `layer` sin tapar lo que ya hay: si la casilla está ocupada usa una capa libre superior;
+   * si no queda ninguna, compacta la pila (de abajo arriba, sin huecos) descartando lo que queda oculto bajo
+   * una pieza totalmente opaca (p. ej. el suelo bajo una alfombra) y coloca el tile encima. Conserva el orden
+   * de dibujo y las marcas de autotile de cada tile movido.
+   */
+  setStacked(layer, x, y, id, name = 'stamp') {
+    checkLayer(layer);
+    if (!this.inBounds(x, y)) return this;
+    const i = x + y * this.width;
+    const cur = this.layers[layer][i];
+    if (!cur || cur === id) return this.set(layer, x, y, id);
+    for (let L = layer + 1; L < LAYERS; L++) {
+      if (!this.layers[L][i]) return this.set(L, x, y, id);
+    }
+    let pile = [];
+    for (let L = 0; L < LAYERS; L++) {
+      if (this.layers[L][i]) pile.push({ id: this.layers[L][i], slot: this.autoSlots[L][i] });
+    }
+    const isOpaque = this.isEmpty.isOpaque || (() => false);
+    for (let k = pile.length - 1; k > 0; k--) {
+      if (pile[k].slot < 0 && isOpaque(pile[k].id)) { pile = pile.slice(k); break; }
+    }
+    if (pile.length >= LAYERS) {
+      this.warnOnce(`MapBuilder: no hay capa libre para apilar "${name}" en (${x},${y}); se sustituye el tile`);
+      return this.set(layer, x, y, id);
+    }
+    pile.push({ id, slot: -1 });
+    for (let L = 0; L < LAYERS; L++) {
+      this.layers[L][i] = pile[L]?.id || 0;
+      this.autoSlots[L][i] = pile[L]?.slot ?? -1;
+    }
+    return this;
+  }
+
   findStamp(name) {
     return this.own.stamps[name] || this.library.stamps?.[name] || this.fallback.stamps[name] || null;
   }
@@ -304,6 +339,9 @@ export class MapBuilder {
     if (!def) { this.warnOnce(`MapBuilder: stamp "${name}" no disponible; se omite`); return null; }
     const grids = this.stampGrids(def, name);
     if (!grids) return null;
+    // Los objetos que van encima de un mueble (stamp con `stack: true`, p. ej. una taza sobre la mesa) se
+    // apilan sobre lo que ya hay en vez de sustituirlo. El resto sustituye (puertas sobre muros, etc.).
+    const stack = opts.layer === undefined && Boolean(opts.stack ?? def.stack);
     for (let l = 0; l < LAYERS; l++) {
       const g = grids.layers[l];
       if (!g) continue;
@@ -311,7 +349,9 @@ export class MapBuilder {
       for (let j = 0; j < grids.h; j++) {
         for (let i = 0; i < grids.w; i++) {
           const id = g[i + j * grids.w];
-          if (id) this.set(dst, x + i, y + j, id);
+          if (!id) continue;
+          if (stack) this.setStacked(dst, x + i, y + j, id, name);
+          else this.set(dst, x + i, y + j, id);
         }
       }
     }

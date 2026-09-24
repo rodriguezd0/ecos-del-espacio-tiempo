@@ -54,7 +54,7 @@ export default {
     nevera: { src: [5, 12, 1, 3], layer: 2, solid: true, tags: ['cocina'], desc: 'Nevera blanca' },
     fregadero: { src: [6, 14, 2, 3], layer: 2, solid: true, tags: ['cocina'], desc: 'Fregadero y encimera (2×3)' },
     sartenes: { src: [4, 15, 2, 2], layer: 2, tags: ['cocina', 'pared'], desc: 'Sartenes colgadas (va sobre la pared)' },
-    taza: { src: [3, 11, 1, 1], layer: 2, tags: ['cocina'], desc: 'Taza (sobre una mesa)' },
+    taza: { src: [3, 11, 1, 1], layer: 2, stack: true, tags: ['cocina', 'sobre_mueble'], desc: 'Taza (se apila sobre una mesa)' },
 
     // ─── Decoración ─────────────────────────────────────────────────────────────────────────
     planta: { src: [7, 0, 1, 2], layer: 2, solid: true, tags: ['decoracion'], desc: 'Planta en maceta (1×2)' },

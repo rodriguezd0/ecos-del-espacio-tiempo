@@ -20,6 +20,8 @@ const notA = (_s, ev) => !ev.selfSwitch('A');
 const isA = (_s, ev) => ev.selfSwitch('A');
 const YES_NO = ['Sí', 'No'];
 const DIR_NAME = { 2: 'down', 4: 'left', 6: 'right', 8: 'up' };
+/** Flag global: el Core ya explicó una vez que la grava se sube más adelante con la montura. */
+const GRAVEL_HINT_FLAG = 'zyg_gravel_hint';
 
 async function ask(ctx, message) {
   return (await ctx.choice(YES_NO, { message, cancel: 1 })) === 0;
@@ -122,6 +124,8 @@ export const ZYGARDE_EVENT_TYPES = {
   },
 
   // ---- Cuesta de grava (G1): a pie resbala; montado en el 10 % se sube.
+  // Responde al chocar contra ella (no solo con A) para que se entienda que es una barrera. Sin la montura,
+  // la primera vez el Core explica que es un paso para más adelante.
   gravelSlope(d) {
     return {
       ...d,
@@ -130,9 +134,14 @@ export const ZYGARDE_EVENT_TYPES = {
           when: (_s, ev) => !isRiding(ev?.world),
           solid: true,
           noOver: true,
-          trigger: 'action',
+          trigger: 'touch',
           script: async (ctx) => {
+            ctx.se('bump');
             await ctx.say(d.blockedText ?? FIELD_TEXT.gravel);
+            if (!ctx.zygarde('run') && !ctx.flag(GRAVEL_HINT_FLAG) && ctx.state.zygardeForm) {
+              ctx.setFlag(GRAVEL_HINT_FLAG);
+              await ctx.say(FIELD_TEXT.gravelCoreHint, { telepathy: true });
+            }
             await offerRide(ctx);
           },
         },

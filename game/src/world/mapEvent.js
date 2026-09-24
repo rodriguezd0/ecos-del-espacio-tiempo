@@ -154,6 +154,17 @@ export class MapEvent extends Character {
 
   hasGraphic() { return Boolean(this.characterName) || this.tileId > 0; }
 
+  /**
+   * NPC "atento": personaje con diálogo (se le habla con A) que pasea o mira alrededor. Cuando el jugador se
+   * acerca deja de moverse y lo mira (character.js). Excluye entrenadores con visión (girar hacia el jugador
+   * los haría descubrirlo), Pokémon salvajes visibles (eventTouch), rutas fijas y páginas con attentive:false.
+   */
+  attendsPlayer() {
+    if (!this.page || this.page.attentive === false || this.erased) return false;
+    if (this.sight > 0 || this.trigger !== 'action' || !this.script || !this.characterName) return false;
+    return this.moveType === 'wander' || this.moveType === 'random' || this.moveType === 'look';
+  }
+
   /** El evento está "bajo los pies" (sin gráfico sólido y sobre casilla pasable): se activa al pisarlo. */
   overTrigger() {
     if ((this.characterName || this.solid || this.page?.noOver) && !this.through) return false;

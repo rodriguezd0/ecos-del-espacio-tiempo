@@ -54,6 +54,8 @@ export const FIELD_TEXT = Object.freeze({
   roughSnow: 'Nieve profunda. Te hundes a cada paso.',
   roughMounted: 'Hace falta ir montado en Zygarde para cruzar esto.',
   gravel: 'Una cuesta de grava suelta. A pie, resbalas.',
+  // Primera vez que se intenta sin la montura: el Core explica que es un paso para más adelante.
+  gravelCoreHint: 'La grava cede bajo tus pies. Cuando recupere más de mí, podré llevarte arriba.',
   gravelAsk: '¿Quieres montar en Zygarde?',
   cantDismount: 'Aquí no puedes bajarte.',
   cantMount: 'Aquí no puedes montar.',
