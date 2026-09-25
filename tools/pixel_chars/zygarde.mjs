@@ -1,145 +1,41 @@
-// Zygarde Core (acompañante de campo) y Célula de Zygarde como charsets 4×4 (nativo 32×32 ×2).
-// Diseño PROVISIONAL (D30) coherente con el oficial: cuerpo gelatinoso verde con dos antenas,
-// placa hexagonal oscura al frente y núcleo luminoso; la célula es una gota verde con brillo.
-import { fromRows, compose, sheet } from '../pixel.mjs';
-import { NATIVE, checkRows, stretchRows } from './assemble.mjs';
+// Core de Zygarde (acompañante de campo) y Célula de Zygarde como charsets 4×4 (nativo 32×32 ×2).
+// Sprites ORIGINALES del creador del juego (25-09-2026), tal cual: tools/pixel_chars/originals/. No se redibujan.
+//   zygarde_core.png   hoja 128×128 nativa (4×4 frames de 32×32: abajo, izquierda, derecha, arriba).
+//   zygarde_celula.png el dibujo de la célula en la esquina de un lienzo de 128×128: la célula va QUIETA en el suelo
+//                      (sin flotar ni destellos, por petición del creador), igual en los 16 frames.
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { Img, compose, sheet } from '../pixel.mjs';
+import { NATIVE } from './assemble.mjs';
 
-export const CORE_PALETTE = {
-  k: '#0E2418', // contorno
-  L: '#B8F880', G: '#6CD040', g: '#3E9430', d: '#22602A', // cuerpo verde
-  x: '#16302A', X: '#2C5448', // placa hexagonal
-  N: '#E8FFFF', n: '#70D0F0', v: '#2E88C0', // núcleo
-};
+const DIR = path.join(path.dirname(fileURLToPath(import.meta.url)), 'originals');
+export const CORE_ORIGINAL = path.join(DIR, 'zygarde_core.png');
+export const CELL_ORIGINAL = path.join(DIR, 'zygarde_celula.png');
+const SHEET_NATIVE = NATIVE * 4;
+/** Última fila del frame en la que se apoya la célula (base de la casilla, con 2 px de margen como los objetos de Añil). */
+export const CELL_GROUND_Y = 29;
 
-const CORE_X = 8; // columna del frame donde empieza la rejilla de 16 px
-const CORE_W = 16;
-
-const CORE_DOWN = [
-  '...k........k...', // 15
-  '..kLk......kLk..', // 16
-  '..kGGk....kGgk..', // 17
-  '...kGGkkkkGgk...', // 18
-  '..kLGGGGGGGGgk..', // 19
-  '.kLGGGGGGGGGGgk.', // 20
-  '.kGGGkkkkkkGGgk.', // 21
-  'kLGGkXxxxxXkGggk', // 22
-  'kGGkXxxnnxxXkggk', // 23
-  'kGGkxxnNNnxxkggk', // 24
-  'kGGkXxxnvxxXkggk', // 25
-  'kGGGkXxxxxXkGggk', // 26
-  '.kGGGkkkkkkGggk.', // 27
-  '.kgGGGGGGGGggdk.', // 28
-  '..kkgggggggddk..', // 29
-  '....kkkkkkkk....', // 30
-];
-
-const CORE_LEFT = [
-  '....k.....k.....', // 15
-  '...kLk...kLk....', // 16
-  '...kGk...kGgk...', // 17
-  '...kGGkkkGgk....', // 18
-  '..kLGGGGGGGgk...', // 19
-  '.kLGGGGGGGGGgk..', // 20
-  '.kkkkGGGGGGGggk.', // 21
-  'kXxxXkGGGGGGggk.', // 22
-  'kxnnxkGGGGGggdk.', // 23
-  'knNNxkGGGGGggdk.', // 24
-  'kxnvxkGGGGgggdk.', // 25
-  'kXxxXkGGGGggddk.', // 26
-  '.kkkkGGGGGggddk.', // 27
-  '.kgGGGGGGgggdk..', // 28
-  '..kkggggggddk...', // 29
-  '....kkkkkkkk....', // 30
-];
-
-const CORE_UP = [
-  '...k........k...', // 15
-  '..kLk......kLk..', // 16
-  '..kGGk....kGgk..', // 17
-  '...kGGkkkkGgk...', // 18
-  '..kLGGGGGGGGgk..', // 19
-  '.kLGGLLGGGGGGgk.', // 20
-  '.kGGLGGGGGGGGgk.', // 21
-  'kLGGGGgggggGGggk', // 22
-  'kGGGGgGGGGGgGggk', // 23
-  'kGGGgGGGGGGGgggk', // 24
-  'kGGGGgGGGGGgGggk', // 25
-  'kGGGGGgggggGGggk', // 26
-  '.kGGGGGGGGGGggk.', // 27
-  '.kgGGGGGGGGggdk.', // 28
-  '..kkgggggggddk..', // 29
-  '....kkkkkkkk....', // 30
-];
-
-/** Aplasta (quita una fila central) o estira (la duplica). */
-function squash(rows, amount) {
-  if (amount > 0) return [...rows.slice(0, 7), ...rows.slice(8)];
-  if (amount < 0) return stretchRows(rows, 7);
-  return rows;
-}
-
-const GROUND_Y = 30; // última fila opaca (base apoyada)
-
-function coreFrame(rows, { squashBy = 0, lift = 0, glow = false }) {
-  checkRows('core', rows, CORE_W);
-  const pal = glow ? { ...CORE_PALETTE, n: '#B8F0FF', v: '#60C0F0' } : CORE_PALETTE;
-  const shaped = squash(rows, squashBy);
-  const img = fromRows(shaped, pal);
-  return compose(NATIVE, NATIVE, [{ img, x: CORE_X, y: GROUND_Y + 1 - shaped.length - lift }]);
-}
-
-/** Hoja del Core: rebote blando (normal, aplastado, normal, estirado y elevado) y pulso del núcleo. */
+/** Hoja del Core: el original del creador sin cambios. */
 export function buildCoreSheet() {
-  const cycle = (rows) => [
-    coreFrame(rows, {}),
-    coreFrame(rows, { squashBy: 1, glow: true }),
-    coreFrame(rows, {}),
-    coreFrame(rows, { squashBy: -1, lift: 1, glow: true }),
-  ];
-  const left = cycle(CORE_LEFT);
-  return sheet([cycle(CORE_DOWN), left, left.map((f) => f.mirrorX()), cycle(CORE_UP)], NATIVE, NATIVE);
+  const img = Img.load(CORE_ORIGINAL);
+  if (img.w !== SHEET_NATIVE || img.h !== SHEET_NATIVE) {
+    throw new Error(`zygarde_core original: se esperaba ${SHEET_NATIVE}×${SHEET_NATIVE}, mide ${img.w}×${img.h}`);
+  }
+  return img;
 }
 
-// ─────────────────────────── Célula ───────────────────────────
-
-export const CELL_PALETTE = {
-  k: '#0E2418', L: '#D8FFB0', G: '#7CDC48', g: '#44A032', d: '#22602A', x: '#16302A', N: '#E8FFFF',
-  '+': '#F4FFE0', '*': '#B9FF66',
-};
-
-const CELL = [
-  '....kk....', // 0
-  '...kLGk...', // 1
-  '..kLGGgk..', // 2
-  '.kLGGGGgk.', // 3
-  '.kGGxxGgk.', // 4
-  'kLGxNNxggk', // 5
-  'kGGGxxGggk', // 6
-  'kGGGGGggdk', // 7
-  '.kgGGggdk.', // 8
-  '..kkkkkk..', // 9
-];
-
-const SPARKLES = [
-  { x: 3, y: 2 }, { x: 13, y: 5 }, { x: 5, y: 12 }, { x: 12, y: 1 },
-];
-
-function sparkle(img, x, y, big) {
-  const star = big
-    ? ['..+..', '..*..', '+*+*+', '..*..', '..+..']
-    : ['.+.', '+*+', '.+.'];
-  return compose(NATIVE, NATIVE, [img, { img: fromRows(star, CELL_PALETTE), x: x - (big ? 2 : 1), y: y - (big ? 2 : 1) }]);
+/** Dibujo de la célula recortado a su caja (del lienzo original). */
+export function cellDrawing() {
+  const src = Img.load(CELL_ORIGINAL);
+  const box = src.bbox();
+  if (!box || box.w > NATIVE || box.h > NATIVE) throw new Error('zygarde_celula original: dibujo vacío o mayor que un frame');
+  return src.crop(box.x, box.y, box.w, box.h);
 }
 
-/** Hoja de la Célula: flota arriba/abajo con destellos rotando (las 4 filas iguales). */
+/** Hoja de la Célula: el dibujo original centrado y apoyado en el suelo, quieto, en los 16 frames. */
 export function buildCellSheet() {
-  checkRows('célula', CELL, 10);
-  const body = fromRows(CELL, CELL_PALETTE);
-  const bob = [0, 1, 2, 1];
-  const frames = bob.map((b, i) => {
-    const base = compose(NATIVE, NATIVE, [{ img: body, x: 11, y: 17 - b }]);
-    const s = SPARKLES[i];
-    return sparkle(base, 8 + s.x, 12 + s.y - b, i % 2 === 0);
-  });
-  return sheet([frames, frames, frames, frames], NATIVE, NATIVE);
+  const cell = cellDrawing();
+  const frame = compose(NATIVE, NATIVE, [{ img: cell, x: Math.round((NATIVE - cell.w) / 2), y: CELL_GROUND_Y + 1 - cell.h }]);
+  const row = [frame, frame, frame, frame];
+  return sheet([row, row, row, row], NATIVE, NATIVE);
 }
