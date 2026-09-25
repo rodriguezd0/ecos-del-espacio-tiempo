@@ -49,7 +49,7 @@ const TERRAIN = [
   '~..fffff..............:::::::~', // 16 Ruta 14 · Ruta 7 · Ciudad Estrato · Dunas de Ceniza
   '~........~~...~~~~.~~..~~~:~~~', // 17 Ruta 15 · Ciudad Nexo · costa sur
   '~...~~~~~~~~~~~~~~~~v~~~~~i~~~', // 18 Caleta Sonda · Mar del Sur · Volcán Tizón · Bastión Axis
-  '~~r~~~~~i~~~~~i~~~~~~~~~~~~~~~', // 19 Arrecife del Eco (P7) · Islote Lumbre · Estación Talasa
+  '~~r~i~~~~~~~~~i~~~~~~~~~~~~~~~', // 19 Arrecife del Eco (P7) · Islote Lumbre · Estación Talasa
 ];
 
 const P = (id, name, kind, x, y, links, extra = {}) => ({ id, name, kind, x, y, links, ...extra });
@@ -127,7 +127,8 @@ const RAW_PLACES = [
     [['ciudad_nexo', null], ['caleta_sonda', null], ['ruta_15', null], ['islote_lumbre', null], ['estacion_talasa', null],
       ['volcan_tizon', null], ['bastion_axis', null]],
     { desc: 'Un mar en tres sectores, con su fondo (Buceo)' }),
-  P('islote_lumbre', 'Islote Lumbre', 'zone', 8, 19, [['mar_del_sur', null]], { desc: 'Islote de cerezos y farolillos' }),
+  // Sector oeste del Mar del Sur, frente a Caleta Sonda (CAMPANA §1.2 y el mapa `mar_del_sur` de B13): al oeste de Nexo.
+  P('islote_lumbre', 'Islote Lumbre', 'zone', 4, 19, [['mar_del_sur', null]], { desc: 'Islote de cerezos y farolillos' }),
   P('estacion_talasa', 'Estación Talasa', 'zone', 14, 19, [['mar_del_sur', null]], { desc: 'Plataforma de investigación' }),
   P('volcan_tizon', 'Volcán Tizón', 'zone', 20, 18, [['mar_del_sur', null]], { desc: 'Cono volcánico con el caserío de la forja' }),
   P('arrecife_eco', 'Arrecife del Eco', 'sea', 2, 19, [['caleta_sonda', null]], { pillar: 7, desc: 'Arrecife y Ruinas de Antea' }),

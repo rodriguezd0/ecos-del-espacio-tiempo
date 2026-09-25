@@ -57,7 +57,7 @@
   "mirador_sur": [216, 248],
   "calzada_rey": [264, 232],
   "mar_del_sur": [264, 296],
-  "islote_lumbre": [136, 312],
+  "islote_lumbre": [72, 312],
   "estacion_talasa": [232, 312],
   "volcan_tizon": [328, 296]
  },
@@ -427,8 +427,8 @@
   "islote_lumbre": {
    "name": "Islote Lumbre",
    "kind": "place",
-   "xy": [136, 312],
-   "cell": [8, 19],
+   "xy": [72, 312],
+   "cell": [4, 19],
    "mapIds": ["islote_lumbre"]
   },
   "estacion_talasa": {

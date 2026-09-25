@@ -67,7 +67,7 @@ export const PLACES = {
   mirador_sur: [13, 15, 'Mirador Sur', 'place', { mapIds: ['mirador_sur'] }],
   calzada_rey: [16, 14, 'Calzada del Rey', 'place', { mapIds: ['calzada_rey'] }],
   mar_del_sur: [16, 18, 'Mar del Sur', 'sea', { mapIds: ['mar_del_sur'] }],
-  islote_lumbre: [8, 19, 'Islote Lumbre', 'place', { mapIds: ['islote_lumbre'] }],
+  islote_lumbre: [4, 19, 'Islote Lumbre', 'place', { mapIds: ['islote_lumbre'] }],
   estacion_talasa: [14, 19, 'Estación Talasa', 'place', { mapIds: ['estacion_talasa'] }],
   volcan_tizon: [20, 18, 'Volcán Tizón', 'place', { mapIds: ['volcan_tizon'] }],
 };
@@ -115,7 +115,7 @@ export const MAINLAND = [
 
 /** Islas: [cx, cy, rx, ry]. */
 export const ISLANDS = [
-  [136, 310, 9, 6], // Islote Lumbre
+  [72, 310, 9, 6], // Islote Lumbre (sector oeste, frente a Caleta)
   [328, 298, 15, 11], // Volcán Tizón
   [424, 294, 16, 9], // Bastión Axis (fortaleza costera)
   [38, 316, 7, 3], // bajío del Arrecife del Eco
