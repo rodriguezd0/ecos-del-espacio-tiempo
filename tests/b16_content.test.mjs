@@ -348,7 +348,7 @@ test('Mesprit: las tres respuestas se guardan en la variable que usa B20', async
 test('Don Evaristo (B09b): tras el P8 enseña la carta y abre la pista T14', async () => {
   const def = (await buildMapNode('nexo_correos')).def;
   const ev = def.events.find((e) => e.id === 'evaristo');
-  assert.equal(ev.pages.length, 2);
+  assert.ok(ev.pages.length >= 2, 'B17 añade sus páginas (T14 con Vuelo) detrás de la de B16');
   const s = entryState(96);
   assert.ok(!ev.pages[1].when(s), 'la página de T14 está antes del P8');
   s.setFlag('p8_restored');

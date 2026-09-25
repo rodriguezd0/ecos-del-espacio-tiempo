@@ -17,6 +17,7 @@ import { SPOTS as LS, STAIRS, BUILDINGS, EXITS as LX } from '../game/src/content
 import { FENCE, RESERVE, FLOWERS, BRIDGES, SPOTS as RS, EXITS as RX } from '../game/src/content/maps/b09a/ruta_14_layout.js';
 import { HALL, BASEMENT } from '../game/src/content/maps/b09a/museo_layout.js';
 import { B09A_CELLS } from '../game/src/content/events/b09a_cells.js';
+import { mapRegistered } from '../game/src/content/maps/b09a/links.js';
 
 const DV = { 2: [0, 1], 4: [-1, 0], 6: [1, 0], 8: [0, -1] };
 
@@ -108,7 +109,11 @@ test('Ruta 7: la vía no se pisa (salvo el paso a nivel) y el norte está cerrad
     assert.ok(!r.has(x, RAIL.y), `se puede andar por la vía en (${x},${RAIL.y})`);
   }
   assert.ok(r.has(RAIL.crossings[1], RAIL.y), 'el paso a nivel no se alcanza');
-  for (let x = R7.north.x0; x <= R7.north.x1; x++) assert.ok(!r.has(x, 0), `el Mirador de la Calzada no está cerrado en x ${x}`);
+  // B19: con `calzada_rey` registrado la verja se quita sola y el sendero del norte lleva a la Calzada del Rey.
+  const calzadaOpen = mapRegistered('calzada_rey');
+  for (let x = R7.north.x0; x <= R7.north.x1; x++) {
+    assert.equal(r.has(x, 0), calzadaOpen, calzadaOpen ? `sendero de la Calzada x ${x}` : `el Mirador de la Calzada no está cerrado en x ${x}`);
+  }
 });
 
 test('Ruta 7: C041 bajo el andén exige Terreno complicado; entrenadores y objetos alcanzables', async () => {
@@ -152,7 +157,11 @@ test('Lúmina: puertas, salidas, parque, célula C042 y objetos alcanzables', as
   }
   for (let x = LX.south.x0; x <= LX.south.x1; x++) assert.ok(r.has(x, LX.south.y), `salida sur x ${x}`);
   assert.ok(r.has(LX.west.x, LX.west.y0 + 1), 'salida oeste (Ruta 8)');
-  for (let x = LX.north.x0; x <= LX.north.x1; x++) assert.ok(!r.has(x, 0), 'la verja del Mirador Sur no cierra');
+  // B17: con `mirador_sur` registrado la verja se quita sola y el borde norte lleva al Mirador Sur.
+  const miradorOpen = mapRegistered('mirador_sur');
+  for (let x = LX.north.x0; x <= LX.north.x1; x++) {
+    assert.equal(r.has(x, 0), miradorOpen, miradorOpen ? `salida norte x ${x} (Mirador Sur)` : 'la verja del Mirador Sur no cierra');
+  }
   const c042 = B09A_CELLS.find((c) => c.code === 'C042');
   assert.ok(r.has(c042.x, c042.y), 'C042 inalcanzable');
   const items = ctx.world.events.filter((e) => e.def?.item);

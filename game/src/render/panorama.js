@@ -1,6 +1,7 @@
 // Panorama de fondo del mapa (el «panorama» de RMXP): se dibuja DETRÁS de los tilemaps, así que asoma en las
 // casillas sin tiles (el vacío). Con paralaje respecto a la cámara. Definición del mapa:
 //   panorama: { shader: 'distorsion', parallax?: 0.3, alpha?: 1 }              fondo procedural (Mundo Distorsión)
+//   panorama: { shader: 'sima', parallax?: 0.3 }                               abismo de la Sima del Eje (B18)
 //   panorama: { image: 'assets/panoramas/x.png' | 'anil:Graphics/Panoramas/x', parallax?: 0.5, scroll?: [sx, sy] }
 // Siluetas: `layer.silhouette({ url, frameW?, scale, from: [x, y], to: [x, y], frames, alpha, color })` cruza el
 // fondo (p. ej. la sombra de Giratina en El Sumidero, B12) y devuelve una promesa que se resuelve al terminar.
@@ -62,6 +63,56 @@ void main() {
     float d = length(ml - vec2(mx, my));
     vec3 tint = mh > 0.97 ? vec3(0.45, 0.95, 0.55) : vec3(0.70, 0.52, 1.0);
     col += tint * (1.0 - smoothstep(1.0, 2.2, d)) * 0.55;
+  }
+  col = floor(col * 28.0 + 0.5) / 28.0;
+  gl_FragColor = vec4(col * uAlpha, 1.0);
+}`;
+
+// Sima del Eje (aditivo B18): abismo visto desde arriba. Negro azulado que se aclara hacia el fondo, bancos de niebla
+// a dos profundidades (paralaje distinto), salientes de roca lejanos, un resplandor plata-violeta muy abajo (lo que
+// queda del cruce de ejes) y motas de polvo que caen hacia el fondo.
+const SIMA_FRAG = /* glsl */`
+precision highp float;
+uniform vec2 uCam; uniform float uTime; uniform float uAlpha; uniform float uPar;
+varying vec2 vUv;
+${NOISE}
+void main() {
+  vec2 px = floor(vec2(vUv.x * ${SCREEN_W}.0, (1.0 - vUv.y) * ${SCREEN_H}.0) / 2.0) * 2.0;
+  vec2 deep = (px + uCam * (uPar * 0.35)) / 260.0;
+  float n0 = fbm(deep + vec2(0.0, uTime * 0.004));
+  vec3 col = mix(vec3(0.012, 0.016, 0.034), vec3(0.040, 0.046, 0.082), smoothstep(0.30, 0.80, n0));
+  // resplandor del fondo: bandas lentas plata y violeta
+  float glow = fbm(deep * 1.7 + vec2(uTime * 0.006, -uTime * 0.003));
+  col += vec3(0.11, 0.10, 0.16) * smoothstep(0.62, 0.92, glow) * 0.55;
+  col += vec3(0.16, 0.08, 0.20) * smoothstep(0.70, 0.95, fbm(deep * 3.1 + 7.7)) * 0.30;
+  // salientes lejanos: masas oscuras de borde superior claro
+  vec2 led = (px + uCam * (uPar * 0.9)) / vec2(120.0, 46.0);
+  vec2 lc = floor(led); vec2 lf = fract(led);
+  float lr = hash(lc + 2.3);
+  if (lr > 0.66) {
+    float cx = 0.25 + 0.5 * hash(lc + 9.1);
+    float hw = 0.12 + 0.20 * hash(lc + 4.4);
+    float dxl = abs(lf.x - cx) / hw;
+    float top = 0.35 + 0.2 * hash(lc + 6.6);
+    float h = (1.0 - dxl * dxl) * 0.35 + (noise(vec2(lf.x * 22.0, lc.y)) - 0.5) * 0.06;
+    if (dxl < 1.0 && lf.y > top && lf.y < top + h) {
+      col = mix(col, vec3(0.020, 0.022, 0.040), 0.85);
+      col += vec3(0.09, 0.09, 0.13) * step(lf.y, top + 0.03);
+    }
+  }
+  // niebla cercana que se desliza
+  vec2 mist = (px + uCam * (uPar * 1.6)) / 150.0 + vec2(uTime * 0.012, 0.0);
+  float m = fbm(mist + fbm(mist * 0.7 + 3.0) * 0.8);
+  col = mix(col, vec3(0.20, 0.21, 0.28), smoothstep(0.58, 0.90, m) * 0.34);
+  // motas de polvo que caen
+  vec2 mp = px + uCam * (uPar * 2.2);
+  vec2 mc = floor(mp / 24.0);
+  float mh = hash(mc + 0.7);
+  if (mh > 0.88) {
+    vec2 ml = mod(mp, 24.0);
+    float my = mod(mh * 300.0 + uTime * (10.0 + 12.0 * mh), 24.0);
+    float d = length(ml - vec2(12.0 + 4.0 * sin(uTime * 0.6 + mh * 30.0), my));
+    col += vec3(0.62, 0.64, 0.78) * (1.0 - smoothstep(0.8, 2.0, d)) * 0.45;
   }
   col = floor(col * 28.0 + 0.5) / 28.0;
   gl_FragColor = vec4(col * uAlpha, 1.0);
@@ -148,6 +199,8 @@ export class PanoramaLayer {
       let material;
       if (def.shader === 'distorsion') {
         material = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: DISTORSION_FRAG, uniforms: common, depthTest: false, depthWrite: false });
+      } else if (def.shader === 'sima') { // aditivo B18: abismo de la Sima del Eje
+        material = new THREE.ShaderMaterial({ vertexShader: VERT, fragmentShader: SIMA_FRAG, uniforms: common, depthTest: false, depthWrite: false });
       } else if (def.image) {
         const url = def.image.startsWith('anil:') ? engine.assets.anil(def.image.slice(5)) : def.image;
         const tex = await loadRepeatTexture(url);

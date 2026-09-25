@@ -28,6 +28,8 @@ class BagScene extends ScreenScene {
     this.opts = opts;
     this.mode = opts.mode || 'field';
     this.filter = opts.filter || (this.mode === 'battle' ? BAG_FILTERS.battle : null);
+    // Objetos visibles pero no elegibles (aditivo B21): (item) → texto del motivo | null. Se dibujan en gris.
+    this.disabled = typeof opts.disabled === 'function' ? opts.disabled : null;
     this.help = '';
     this.busy = false;
   }
@@ -106,7 +108,23 @@ class BagScene extends ScreenScene {
     if (this.phase === 'active') this.refresh();
   }
 
+  /** Motivo por el que no se puede elegir la entrada (opts.disabled) o null. */
+  disabledReason(e) {
+    if (!this.disabled || !e) return null;
+    try {
+      return this.disabled(e.item, e.id) || null;
+    } catch (err) {
+      console.warn('[mochila] disabled', err);
+      return null;
+    }
+  }
+
   async onItem(e) {
+    const blocked = this.disabledReason(e);
+    if (blocked) {
+      await message(blocked);
+      return;
+    }
     if (this.mode !== 'field') {
       if (this.mode === 'battle') {
         this.help = `¿Qué hacer con ${e.item.name}?`;
@@ -209,8 +227,9 @@ class BagScene extends ScreenScene {
       }
       const qty = showsQuantity(e.item) ? `x${String(e.qty).padStart(3, ' ')}` : expShareLabel(this.state, e.id) || '';
       const qtyW = qty ? textWidth(qty) + 16 : 0;
-      drawText(g, cropText(e.item.name, 250 - qtyW), 200, y + 16, { color: C.bagText, shadow: C.bagShadow });
-      if (qty) drawText(g, qty, 450, y + 16, { color: C.bagText, shadow: C.bagShadow, align: 'right' });
+      const grey = this.disabledReason(e) ? { color: '#9c9ca6', shadow: '#d4d4dc' } : { color: C.bagText, shadow: C.bagShadow };
+      drawText(g, cropText(e.item.name, 250 - qtyW), 200, y + 16, grey);
+      if (qty) drawText(g, qty, 450, y + 16, { ...grey, align: 'right' });
     }
   }
 

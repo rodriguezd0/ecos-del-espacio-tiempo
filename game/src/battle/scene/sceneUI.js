@@ -3,6 +3,7 @@
 import { engine } from '../../core/engine.js';
 import { ui } from '../../ui/api.js';
 import { syncBag } from './results.js';
+import { resolveBackdrop } from './setup.js';
 import { contractArticles } from '../../shared/spanish.js';
 import { Autopilot } from './autopilot.js';
 import { playMoveAnimation } from './fx/moveAnims.js';
@@ -119,8 +120,11 @@ export class SceneBattleUI {
     const state = engine.state;
     if (!state) return this.chooseItemFallback(battler, ctx);
     if (this.battle?.bag) syncBag(state, this.battle.bag);
+    // Captura bloqueada (reglas del combate, p. ej. las fases de Arceus): Poké Balls en gris con el motivo (aditivo B21).
+    const rules = this.battle?.pbCatchRules?.();
+    const disabled = rules && !rules.allowed ? (it) => ((it?.flags || []).includes('PokeBall') ? rules.reason : null) : null;
     for (;;) {
-      const itemId = await ui.openBag({ mode: 'battle' });
+      const itemId = await ui.openBag({ mode: 'battle', ...(disabled ? { disabled } : {}) });
       if (!itemId) return null;
       const item = this.db.items[itemId] || {};
       const use = item.battleUse;
@@ -265,6 +269,12 @@ export class SceneBattleUI {
 
   async switchIn(view, opts = {}) {
     await sendOut(this.scene, view, opts);
+    // Aditivo B20: música del último Pokémon del rival (meta.lastPokemonBgm, p. ej. «Ultimo Pokemon» de Gael B6).
+    const last = this.scene.meta?.lastPokemonBgm;
+    if (last && !this.lastBgmPlayed && view?.side === 1 && this.battle?.pbAbleCount?.(1) === 1) {
+      this.lastBgmPlayed = true;
+      this.scene.bgm(last);
+    }
   }
 
   async throwBall(ball, shakes, caught, target, critical) {
@@ -305,6 +315,19 @@ export class SceneBattleUI {
     }
     for (const b of this.battle?.battlers || []) {
       if (b?.pokemon && s.boxes[b.index] && !s.boxes[b.index].hpAnim) s.boxes[b.index].setView(b.view());
+    }
+  }
+
+  /** Cambio de fase de un jefe (aditivo B21): música y fondo nuevos ({ bgm, backdrop: nombre de Battlebacks }). */
+  async bossPhase(info = {}) {
+    const s = this.scene;
+    if (info.bgm) s.bgm(info.bgm, { fadeOutPrevious: 20 });
+    if (info.backdrop && typeof s.field?.swapBackdrop === 'function') {
+      try {
+        await s.field.swapBackdrop(resolveBackdrop({ battleback: info.backdrop, time: s.meta?.backdrop?.night ? 'night' : 'day' }));
+      } catch (err) {
+        console.warn('[combate] fondo de fase', err);
+      }
     }
   }
 

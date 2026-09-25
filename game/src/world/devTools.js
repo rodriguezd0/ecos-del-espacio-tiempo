@@ -1,13 +1,15 @@
 // Herramientas de desarrollo del mapa (solo con ?debug o parámetros de URL):
 //   ?time=HH[:MM]  ?weather=rain[:7]  ?mode=visible|classic  ?zygarde=all|ram,climb…  ?dark=1
 //   ?through=1  ?fx=aurora,moon,cracks  ?follower=0  ?flags=a,b  ?vars=k:v  ?core=1
-//   ?party=none | ?party=TURTWIG:5,BIDOOF:3   ?fragments=N (Fragmentos Azur F01…F0N)
+//   ?party=none | ?party=TURTWIG:5,BIDOOF:3   ?fragments=N (Fragmentos Azur F01…F0N)   ?tablets=N (T01…T0N)
+//   ?items=REDCHAIN,GLYPHKEY,POTION:5 (objetos en la Mochila)
 // Teclas (con ?debug): T +1 h · Y clima siguiente · U oscuridad · G atravesar muros · N modo encuentros
 //   B efectos de crisis · J probar transición de combate · K encuentro salvaje ahora · L luz de linterna
 import { WEATHER_TYPES } from '../render/weather.js';
 import { TRANSITION_NAMES } from '../render/transitionShaders.js';
 import { engine } from '../core/engine.js';
 import { createPokemon } from '../battle/core/pokemon.js';
+import { CAMPAIGN_TABLETS } from '../content/story/tablets.js';
 
 const ZYGARDE_KEYS = ['run', 'ram', 'terrain', 'climb', 'swim', 'detect', 'dive', 'fly', 'rebuild'];
 
@@ -40,6 +42,26 @@ export function applyDevParams(scene, params) {
     for (let i = 1; i <= n; i++) {
       const id = `F${String(i).padStart(2, '0')}`;
       if (!(state.data.fragments || []).includes(id)) state.addFragment(id);
+    }
+  }
+  // ?tablets=N: las N primeras Tablillas de campaña (T01…T15) en la Mochila y en state.tablets (aditivo B20)
+  if (params.tablets) {
+    const n = Math.max(0, Math.min(CAMPAIGN_TABLETS.length, Number(params.tablets) || 0));
+    for (const t of CAMPAIGN_TABLETS.slice(0, n)) {
+      if (!(state.data.tablets || []).includes(t.id)) state.addTablet(t.id);
+      if (!state.hasItem(t.id)) state.addItem(t.id, 1);
+    }
+  }
+  // ?items=REDCHAIN,GLYPHKEY,POTION:5: objetos en la Mochila (objetos clave de bloques anteriores; aditivo B20)
+  if (params.items) {
+    for (const spec of String(params.items).split(',')) {
+      const [id, n = '1'] = spec.trim().toUpperCase().split(':');
+      if (!id) continue;
+      try {
+        if (!state.hasItem(id)) state.addItem(id, Math.max(1, Number(n) || 1));
+      } catch (err) {
+        console.warn(`?items: no se pudo añadir ${id}`, err);
+      }
     }
   }
   if (params.party) applyDevParty(state, String(params.party));

@@ -1,6 +1,6 @@
 // Tipos de evento de campo de Zygarde (se registran en world/eventTypes.js y sustituyen a los básicos).
 // Lectura en el mapa (CAMPANA §1.1): ninguna barrera muestra cifras.
-//   zygardeCell   { cell, text?, onFound? }                      célula (brillo); comprueba la progresión
+//   zygardeCell   { cell, text?, onFound?, sprite? }             célula (brillo + sprite); comprueba la progresión
 //   ramRock       { kind: 'rock'|'log', group?, sprite?, tileId? } Embestida: fisura blanca con brillo verde
 //   roughTerrain  { kind: 'mud'|'sand'|'snow', mounted? }       Terreno complicado (mounted: solo montado)
 //   gravelSlope   {}                                            cuesta de grava: solo montado en el 10 %
@@ -17,6 +17,12 @@ import { checkZygardeProgress } from './scenes.js';
 import { ramBreak, climbWall, rebuildStones, diveDown, surfaceUp } from './actions.js';
 import { diveSpotTarget } from './dive.js';
 
+/** Charset de la célula en el mapa (flota con pulso de brillo; las 4 filas son iguales). */
+const CELL_SPRITE = 'zygarde_celula';
+/** Brillo hexagonal alrededor de la célula: el aro rodea el sprite y no lo tapa (el pulso lo lleva el sprite). */
+const CELL_GLOW = Object.freeze({ name: 'zygardeCell', size: 88, alpha: 0.4 });
+/** Luz propia de la célula en mapas oscuros (solo actúa con oscuridad): se ve fuera del radio del jugador. */
+const CELL_LIGHT = Object.freeze({ radius: 40, intensity: 0.8 });
 const notA = (_s, ev) => !ev.selfSwitch('A');
 const isA = (_s, ev) => ev.selfSwitch('A');
 const YES_NO = ['Sí', 'No'];
@@ -49,7 +55,8 @@ async function offerRide(ctx) {
 const ROUGH_TEXT = { mud: FIELD_TEXT.roughMud, sand: FIELD_TEXT.roughSand, snow: FIELD_TEXT.roughSnow };
 
 export const ZYGARDE_EVENT_TYPES = {
-  // ---- Célula en el suelo: brillo verde hexagonal; al pisarla se recoge y se comprueba la progresión.
+  // ---- Célula en el suelo: brillo verde hexagonal + sprite flotante (zygarde_celula; `sprite: ''` lo quita);
+  // al pisarla se recoge y se comprueba la progresión.
   // `when(state, ev)` opcional: condición extra de aparición (célula que aparece tras un hito de historia).
   zygardeCell(d) {
     if (!d.cell) throw new Error(`zygardeCell ${d.id}: falta "cell"`);
@@ -58,7 +65,10 @@ export const ZYGARDE_EVENT_TYPES = {
       ...d,
       pages: [{
         when: (s, ev) => !s?.hasCell(d.cell) && (!extra || Boolean(extra(s, ev))),
-        glow: d.glow ?? 'zygardeCell',
+        sprite: d.sprite ?? CELL_SPRITE,
+        stepAnime: true,
+        glow: d.glow ?? CELL_GLOW,
+        light: d.light ?? CELL_LIGHT,
         through: true,
         trigger: 'touch',
         script: async (ctx) => {

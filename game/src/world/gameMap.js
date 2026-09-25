@@ -31,9 +31,14 @@ export class GameMap {
     this.terrainTags = tileset.terrainTags;
     this.events = []; // eventos del mapa (los asigna World); se usan los que tienen tileId
     this.listeners = new Set();
+    // Aditivo B18: con `def.voidBlocks` una casilla sin ningún tile (las tres capas vacías) es vacío y bloquea (el abismo
+    // de la Sima se ve por el panorama). En RMXP una casilla vacía se pisa; sin la opción nada cambia.
+    this.voidBlocks = Boolean(def?.voidBlocks);
   }
 
   valid(x, y) { return x >= 0 && y >= 0 && x < this.width && y < this.height; }
+  /** ¿Casilla sin ningún tile? (con `voidBlocks` bloquea el paso) */
+  isVoid(x, y) { return this.valid(x, y) && !this.data(x, y, 0) && !this.data(x, y, 1) && !this.data(x, y, 2); }
   data(x, y, layer) { return this.valid(x, y) ? this.layers[layer][x + y * this.width] : 0; }
   terrainOf(tileId) { return terrainTag(this.terrainTags[tileId] || 0); }
   passage(tileId) { return this.passages[tileId] || 0; }
@@ -100,6 +105,7 @@ export class GameMap {
       if (this.priority(ev.tileId) === 0) return true;
     }
     if (self && self.isPlayer) return this.playerPassable(x, y, d, env);
+    if (this.voidBlocks && this.isVoid(x, y)) return false;
     const nx = x + dx(d);
     const ny = y + dy(d);
     if (!this.valid(nx, ny)) return false;
@@ -138,6 +144,7 @@ export class GameMap {
 
   /** Game_Map#playerPassable? */
   playerPassable(x, y, d, env = {}) {
+    if (this.voidBlocks && this.isVoid(x, y)) return false;
     const bit = dirBit(d);
     const bridge = env.bridge || 0;
     for (let i = 2; i >= 0; i--) {
@@ -159,6 +166,7 @@ export class GameMap {
   /** Game_Map#passableStrict? — casilla totalmente pasable en todas las direcciones. */
   passableStrict(x, y, self = null) {
     if (!this.valid(x, y)) return false;
+    if (this.voidBlocks && this.isVoid(x, y)) return false;
     for (const ev of this.events) {
       if (ev === self || !(ev.tileId > 0) || ev.through || !ev.at(x, y)) continue;
       if (this.terrainOf(ev.tileId).ignorePassability) continue;

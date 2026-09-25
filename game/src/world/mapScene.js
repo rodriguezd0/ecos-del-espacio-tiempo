@@ -225,7 +225,8 @@ export default class MapScene extends Scene {
   }
 
   announce(def) {
-    if (def.showLocation === false || !def.name || def.name === this.lastLocation) return;
+    // scene.cinematic (aditivo B21): montajes y créditos que recorren mapas sin cartel de zona ni cambio de música.
+    if (this.cinematic || def.showLocation === false || !def.name || def.name === this.lastLocation) return;
     this.lastLocation = def.name;
     ui.showLocation(def.name);
   }
@@ -233,7 +234,7 @@ export default class MapScene extends Scene {
   async applyEnvironment(def) {
     // Siempre se pide la música del mapa (audio no reinicia la misma pista): si una escena cambió la
     // música con ctx.bgm(), al entrar en otro mapa con la misma BGM que el anterior vuelve a sonar la del mapa.
-    if (def.bgm) engine.audio?.playBGM?.(def.bgm, { fadeOutPrevious: 20 });
+    if (def.bgm && !this.cinematic) engine.audio?.playBGM?.(def.bgm, { fadeOutPrevious: 20 });
     // «Descansar hasta tormenta» (world/rest.js) sustituye el clima de los mapas exteriores durante unas horas.
     const w = this.devWeather || stormWeather(this.state, def) || (def.weather ? [def.weather.type || def.weather, def.weather.power ?? 5] : ['none', 0]);
     if (w[0] !== this.weather.type) await this.weather.set(w[0], Number(w[1] ?? 5)).catch((e) => console.warn(e.message));
@@ -249,13 +250,15 @@ export default class MapScene extends Scene {
   refreshFollower() {
     const w = this.world;
     const f = w.follower;
-    const lead = this.state.party.find((pk) => pk.hp > 0 && !pk.egg) || null;
+    const coreKey = w.current?.def?.noCore === true ? '' : coreSpriteKey(this.state.data.zygarde?.form);
+    // Zygarde en el equipo (B21, D21) ya camina a tu lado como compañero de campo: no se duplica como acompañante.
+    const lead = this.state.party.find((pk) => pk.hp > 0 && !pk.egg && !(coreKey && pk.species === 'ZYGARDE')) || null;
     const allowed = this.state.options.followerEnabled !== false && w.current?.def?.noFollower !== true;
     const hadPokemon = !f.hidden;
     f.setPokemon(allowed ? lead : null);
     const core = w.core;
     const hadCore = !core.hidden;
-    core.setGraphic(w.current?.def?.noCore === true ? '' : coreSpriteKey(this.state.data.zygarde?.form));
+    core.setGraphic(coreKey);
     core.talk = coreTalk;
     const appeared = (!hadPokemon && !f.hidden) || (!hadCore && !core.hidden);
     if (appeared && w.map) placeChainBehind(w.player, w.followers);

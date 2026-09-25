@@ -2,7 +2,7 @@
 // Se engancha una sola vez envolviendo engine.scenes.render (aditivo: no modifica core/).
 import { engine, SCREEN_W } from '../../core/engine.js';
 import { drawWindow, isDarkSkin, skinBorders, preloadSkins } from './windowskin.js';
-import { drawText, textWidth } from './text.js';
+import { drawText, textWidth, wrapLines } from './text.js';
 import { messageColors } from './colors.js';
 import { menuSkin } from './options.js';
 
@@ -78,12 +78,21 @@ function drawLocation(g, name, age) {
   return Math.max(0, y + h);
 }
 
-/** Aviso centrado; `top` evita solaparse con el cartel de zona. */
+const TOAST_LINE_H = 32;
+
+/**
+ * Aviso centrado; `top` evita solaparse con el cartel de zona. Si no cabe en una línea se parte en varias (aditivo B20:
+ * los avisos largos, p. ej. los de la Cadena Roja de world/axis, se salían por los lados).
+ */
 function drawToast(g, text, age, top = 8) {
   const skin = menuSkin();
   const b = skinBorders(skin);
-  const w = Math.min(SCREEN_W - 16, textWidth(text) + b.left + b.right + 24);
-  const h = 32 + b.top + b.bottom;
+  const pad = b.left + b.right + 24;
+  const maxW = SCREEN_W - 16;
+  const wrapped = textWidth(text) + pad > maxW ? wrapLines(text, maxW - pad).filter(Boolean) : [];
+  const lines = wrapped.length ? wrapped : [text];
+  const w = Math.min(maxW, Math.max(...lines.map((l) => textWidth(l))) + pad);
+  const h = TOAST_LINE_H * lines.length + b.top + b.bottom;
   const x = Math.round((SCREEN_W - w) / 2);
   const off = slideOffset(age, TOAST_FRAMES, h + 8);
   const y = Math.round(top + off);
@@ -92,6 +101,6 @@ function drawToast(g, text, age, top = 8) {
   g.globalAlpha = alpha;
   drawWindow(g, skin, x, y, w, h);
   const [base, shadow] = messageColors(null, isDarkSkin(skin));
-  drawText(g, text, x + w / 2, y + b.top - 2, { color: base, shadow, align: 'center' });
+  lines.forEach((line, i) => drawText(g, line, x + w / 2, y + b.top - 2 + i * TOAST_LINE_H, { color: base, shadow, align: 'center' }));
   g.restore();
 }

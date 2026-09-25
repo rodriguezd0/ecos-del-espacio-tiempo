@@ -104,6 +104,7 @@ export function resolveTrainer(def, db, id = def?.id || 'trainer') {
       id, name: def.name || 'Entrenador', className: def.class || '', sprite: def.sprite || null,
       bgm: def.bgm || null, victoryBgm: def.victoryBGM || def.victoryBgm || null, format: def.format || null,
       canLose: Boolean(def.canLose), intro: def.intro || null,
+      lastPokemonBgm: def.lastPokemonBgm || null, // aditivo B20: música cuando el rival saca su último Pokémon
     },
   };
 }
@@ -228,6 +229,7 @@ export function buildBattleConfig(request = {}, { db, state = null, getTrainer =
     backdrop,
     bgm: battleBgmFor(request, trainerMeta),
     victoryBgm: trainerMeta?.victoryBgm || (isTrainer ? 'victory_trainer' : 'victory_wild'),
+    lastPokemonBgm: request.lastPokemonBgm || trainerMeta?.lastPokemonBgm || null, // aditivo B20 (Gael B6)
     auto: request.auto || null, // piloto automático (solo desarrollo)
   };
   return { config, meta };

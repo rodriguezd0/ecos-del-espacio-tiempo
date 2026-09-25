@@ -238,3 +238,17 @@ test('ruta forzada: se resuelve al terminar y admite saltos y esperas', async ()
   assert.equal(c.x, 2);
   assert.equal(c.direction, 4);
 });
+
+test('un seguidor nunca se dibuja delante del jugador (el Zygarde grande no lo tapa), aunque vaya por debajo', () => {
+  const map = mapFromRows(['....', '....', '....']);
+  const w = miniWorld(map);
+  const player = new Player(w, { map, x: 1, y: 0 });
+  w.player = player;
+  const below = new Follower(w, { map, x: 1, y: 1 });
+  const beside = new Follower(w, { map, x: 2, y: 0 });
+  const tall = 96;
+  assert.ok(below.screenZ(tall) < player.screenZ(64), 'seguidor una casilla por debajo');
+  assert.ok(beside.screenZ(tall) < player.screenZ(64), 'seguidor en la misma fila');
+  const npc = new Character(w, { map, x: 1, y: 1 });
+  assert.ok(npc.screenZ(64) > player.screenZ(64), 'un NPC por debajo sí va delante');
+});

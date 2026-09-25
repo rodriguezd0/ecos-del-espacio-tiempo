@@ -9,6 +9,8 @@ import { parterreCellEvents } from '../../events/b01_town_cell.js';
 import { villaAlbaStarlyEvents } from '../../events/b02_world.js'; // B02: los Starly vuelven a los tejados tras el P1
 import { b11VillaAlbaEvents } from '../../events/b11_home.js'; // B11: primer regreso a casa tras el P5
 import { b12VillaAlbaEvents } from '../../events/b12_mundo.js'; // B12: temblores nocturnos hasta el P6
+import { b17VillaAlbaEvents, villaAlbaLandings } from '../../events/b17_circulo.js'; // B17: Círculo del Jardín (tras el P8)
+import { b21VillaAlbaEvents } from '../../events/b21_epilogo.js'; // B21: epílogo (Olmedo, Mamá, Alerce, montaje)
 
 export default {
   id: 'villa_alba',
@@ -20,6 +22,8 @@ export default {
   bgm: 'town_start',
   battleback: 'field',
   start: { x: TOWN_DOORS.casa_prota.x, y: TOWN_DOORS.casa_prota.y + 1, dir: 2 },
+  // B17: con el Círculo del Jardín en pie, el Vuelo ofrece aterrizar en casa o en el Círculo (world/zygarde/actions.js).
+  flyLandings: (state) => villaAlbaLandings(state, { x: TOWN_DOORS.casa_prota.x, y: TOWN_DOORS.casa_prota.y + 1, dir: 2 }),
 
   build: buildVillaAlba,
 
@@ -39,5 +43,5 @@ export default {
   ],
 
   // C001 en el parterre central con su escena forzada al salir del laboratorio con la Pokédex (CAMPANA §2.3).
-  events: [...villageEvents(), ...parterreCellEvents(), ...villaAlbaStarlyEvents(), ...b11VillaAlbaEvents(), ...b12VillaAlbaEvents()],
+  events: [...villageEvents(), ...parterreCellEvents(), ...villaAlbaStarlyEvents(), ...b11VillaAlbaEvents(), ...b12VillaAlbaEvents(), ...b17VillaAlbaEvents(), ...b21VillaAlbaEvents()],
 };

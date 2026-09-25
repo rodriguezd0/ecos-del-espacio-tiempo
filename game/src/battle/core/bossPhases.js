@@ -1,5 +1,5 @@
 // Fases de jefe: al quedar debilitado, el combatiente objetivo cambia de forma/tipo/estadísticas y
-// sigue luchando (mecánica genérica; las reglas concretas del combate de Arceus siguen PENDIENTES D23).
+// sigue luchando (mecánica genérica; las reglas del combate de Arceus, D23, están en content/events/b21_arceus_logic.js).
 //
 // config.phases = [ {                 // una entrada por cada transición (fase 2, fase 3…)
 //   form?: número,                    // nueva forma de la especie (p. ej. Tabla de Arceus)
@@ -13,8 +13,12 @@
 //   name?: 'etiqueta',                // nombre interno de la fase (para catchCondition)
 //   faint?: true, messages?: ['…'],   // fase de DIÁLOGO (aditivo B13): muestra los mensajes y el combatiente cae
 //                                     // con normalidad (una escena «a mitad del combate», sin transformarse)
+//   before?: (battle, battler) => {}, // ganchos (aditivo B21): antes de transformarse y al terminar la transición
+//   onEnter?: (battle, battler) => {}, // (mensajes propios, limpiar el campo, curar al equipo del jugador…)
 // }, … ]
 // config.phaseTarget = índice del combatiente jefe (por defecto 1).
+// config.rules.onEndOfRound?: (battle) => {} — gancho al final de cada ronda (aditivo B21; lo llama
+// battleEndOfRound.js mediante pbBossRoundHook) para reglas de jefe que dependen de los PS (p. ej. soltar una Tabla).
 // battle.phaseState = { index, total, target } — `index` es el número de transiciones ya ocurridas.
 import { Battle } from './battle.js';
 import { BATTLE_STATS } from './constants.js';
@@ -30,6 +34,22 @@ Object.assign(Battle.prototype, {
   /** ¿Estamos en la última fase? (útil en rules.catchCondition). */
   bossInFinalPhase() { return this.phaseState.total > 0 && this.phaseState.index >= this.phaseState.total; },
 
+  /** Ejecuta un gancho de fase o de ronda sin romper el combate si falla (aditivo B21). */
+  pbBossHook(fn, ...args) {
+    if (typeof fn !== 'function') return;
+    try {
+      fn(this, ...args);
+    } catch (err) {
+      console.error('[combate] gancho de jefe:', err);
+    }
+  },
+
+  /** Final de ronda: rules.onEndOfRound(battle) (aditivo B21). */
+  pbBossRoundHook() {
+    if (this.decision > 0) return;
+    this.pbBossHook(this.rules?.onEndOfRound);
+  },
+
   /** Llamado desde Battler.pbFaint: si procede, transforma en lugar de debilitar. */
   pbBossPhaseTransition(battler) {
     const st = this.phaseState;
@@ -43,6 +63,7 @@ Object.assign(Battle.prototype, {
       for (const text of lines) this.pbDisplay(text);
       return false;
     }
+    this.pbBossHook(phase.before, battler);
     const pkmn = battler.pokemon;
     if (phase.level) pkmn.level = phase.level;
     if (phase.form !== undefined) {
@@ -81,6 +102,7 @@ Object.assign(Battle.prototype, {
     this.queueEvent('changeForm', battler.view());
     this.queueEvent('animateHP', battler.view(), 0, battler.hp, true);
     this.pbDisplay(phase.message || `¡${battler.pbThis()} se niega a caer y cambia de forma!`);
+    this.pbBossHook(phase.onEnter, battler);
     this.pbClearChoice(battler.index);
     this.pbCalculatePriority(false, [battler.index]);
     return true;

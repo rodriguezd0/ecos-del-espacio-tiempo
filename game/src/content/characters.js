@@ -103,7 +103,7 @@ export const CHARACTERS = Object.freeze({
   }),
   zygarde_core: charset('zygarde_core.png', {
     name: 'Zygarde — Core (acompañante)',
-    note: 'Forma pequeña de núcleo: cuerpo gelatinoso verde, dos antenas, placa hexagonal y núcleo luminoso. Rebote blando al andar.',
+    note: 'Referencia del autor: cabeza redondeada verde con un ojo, aro oscuro y cuerpo oliva en punta (flota); de espaldas, mancha rojiza. Rebote suave.',
   }),
   protagonista_m_back: battleBack('protagonista_m_back.png', {
     name: 'Protagonista (masculino) — combate, espalda',
@@ -127,7 +127,7 @@ export const CHARACTERS = Object.freeze({
   }),
   zygarde_celula: charset('zygarde_celula.png', {
     name: 'Célula de Zygarde',
-    note: 'Gota verde flotante con destellos; las 4 filas son iguales (sirve con cualquier dirección y con "animación en parada").',
+    note: 'Referencia del autor: haba alargada verde lima con centro luminoso, flota con pulso de brillo; las 4 filas son iguales (sprite por defecto de los eventos zygardeCell).',
   }),
   ...campaignEntries({ charset, battleFront, effect }),
 });

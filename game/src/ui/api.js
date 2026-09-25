@@ -99,7 +99,8 @@ export const ui = {
     return open('party', null, opts);
   },
   /**
-   * Mochila. opts: { mode: 'field'|'battle'|'select', filter?: (item)=>bool, message? } → itemId o null.
+   * Mochila. opts: { mode: 'field'|'battle'|'select', filter?: (item)=>bool, message?,
+   * disabled?: (item, id) => motivo|null (aditivo B21: se ve en gris y al elegirlo se muestra el motivo) } → itemId o null.
    * En 'field' los objetos se usan/equipan/tiran dentro; devuelve el ID solo si debe usarse en el mundo.
    */
   async openBag(opts = {}) {

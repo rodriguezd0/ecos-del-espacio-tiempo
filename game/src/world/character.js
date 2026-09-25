@@ -130,6 +130,10 @@ export class Character {
     let z = this.screenYGround();
     if (this.tileId > 0) return z + this.map.priority(this.tileId) * TILE_PX;
     if (spriteHeight > TILE_PX) z += TILE_PX - 1;
+    // Los seguidores (Pokémon acompañante, Core y Zygarde en sus formas grandes) nunca tapan al jugador: si van por
+    // debajo de él en pantalla se dibujan detrás, justo por debajo de su profundidad.
+    const player = this.isFollower ? this.world?.player : null;
+    if (player) z = Math.min(z, player.screenYGround() + TILE_PX - 1);
     return z + (this.isPlayer ? 1 : 0);
   }
 

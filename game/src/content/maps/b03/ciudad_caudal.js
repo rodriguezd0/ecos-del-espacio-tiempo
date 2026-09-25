@@ -12,6 +12,7 @@ import { caudalEvents } from '../../events/b03_caudal.js';
 // entrega el inicial que nadie eligió (content/events/b04_caudal.js; automático con p2_restored). Hasta entonces,
 // Gael evacúa el barrio bajo con sus Pokémon (CAMPANA B04 §3).
 import { thanksEvents, CAUDAL_THANKS, evacuationEvents } from '../../events/b04_caudal.js';
+import { b17CaudalEvents } from '../../events/b17_vigilia.js'; // B17: la Vigilia en la Esclusa mayor
 import { CENTER_ENTRY } from '../../services/pokecenter.js';
 import { SHOP_LAYOUT } from '../../services/shop.js';
 
@@ -60,5 +61,5 @@ export default {
     ...(OPEN.diezmo ? [enter('diezmo', 'molino_diezmo', 7, 10)] : []),
   ],
 
-  events: [...caudalEvents(OPEN), ...thanksEvents(CAUDAL_THANKS, { id: 'b04_gracias_plaza' }), ...evacuationEvents()],
+  events: [...caudalEvents(OPEN), ...thanksEvents(CAUDAL_THANKS, { id: 'b04_gracias_plaza' }), ...evacuationEvents(), ...b17CaudalEvents()],
 };

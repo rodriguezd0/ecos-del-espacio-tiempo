@@ -2,6 +2,7 @@
 // no está escrita en el canon: la casa está vacía (no se inventan personajes). Tileset 4 (Interior1).
 import { houseExit, exitArrows, examineRect } from './common.js';
 import { TOWN_DOORS, INTERIOR_ENTRIES } from './villa_alba_layout.js';
+import { b21CasaGaelEvents } from '../../events/b21_epilogo.js'; // B21: la casa vacía, la nota y el huevo
 
 const ENTRY = INTERIOR_ENTRIES.casa_gael;
 const DOOR_X = ENTRY.x;
@@ -53,5 +54,6 @@ export default {
     ...examineRect('nota', 11, 4, 2, 1, 'Una nota sobre el escritorio, con letra apretada: «Salir temprano. Llegar antes que nadie.»'),
     ...examineRect('mesa', 5, 6, 3, 3, 'Sobre la mesa hay informes abiertos, llenos de anotaciones.'),
     ...examineRect('nevera', 13, 5, 1, 1, 'Es la casa de Gael. Mejor no curiosear.'),
+    ...b21CasaGaelEvents(),
   ],
 };

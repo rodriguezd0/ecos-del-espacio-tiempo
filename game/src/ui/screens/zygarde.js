@@ -189,7 +189,8 @@ class ZygardeScene extends ScreenScene {
     const im = ch ? img(ch.file) : null;
     if (im && form === 'core') {
       const r = frameRect(ch, 2, Math.floor(this.t / 12) % 4, im.width, im.height);
-      g.drawImage(im, r.x, r.y, r.w, r.h, cx - r.w, cy + 44 - r.h * 2, r.w * 2, r.h * 2);
+      // El Core flota (su punta queda en la fila 25 de 32 del frame): +60 lo centra en el hexágono.
+      g.drawImage(im, r.x, r.y, r.w, r.h, cx - r.w, cy + 60 - r.h * 2, r.w * 2, r.h * 2);
       return;
     }
     drawText(g, '?', cx, cy - 14, { color: C.core, shadow: C.coreShadow, align: 'center' });

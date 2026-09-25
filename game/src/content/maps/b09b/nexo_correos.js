@@ -6,6 +6,7 @@ import { exitArrowEvents, furnitureEvents } from '../../services/interior.js';
 import { BUILDINGS } from './nexo_layout.js';
 import { SPEAKER, SPRITE, lines } from '../../events/b09b_common.js';
 import { evaristoT14, evaristoT14When } from '../../events/b16_evaristo.js';
+import { evaristoB17, evaristoB17When, evaristoAfter, evaristoAfterWhen, correosB17Events } from '../../events/b17_t14.js';
 
 const door = BUILDINGS.correos.door;
 const L = SHOP_LAYOUT;
@@ -35,8 +36,10 @@ export default {
         ctx.setSelfSwitch('A', true);
       },
       // B16 (aditivo): tras el P8, la carta sin destino abre la pista T14 (content/events/b16_evaristo.js).
-      pages: [{}, { when: evaristoT14When, script: evaristoT14 }],
+      // B17 (aditivo): con Vuelo, la carta y el acertijo del sobre; tras el reencuentro, con Aurora (b17_t14.js).
+      pages: [{}, { when: evaristoT14When, script: evaristoT14 }, { when: evaristoB17When, script: evaristoB17 }, { when: evaristoAfterWhen, script: evaristoAfter }],
     },
+    ...correosB17Events(),
     ...L.shelves.flatMap((s, i) => furnitureEvents(`casilleros${i}`, s.x, s.y + 2, 4, 'Casilleros de madera llenos de cartas, ordenadas por pueblos. Algunos sobres están amarillos de viejos.')),
     {
       id: 'cartero', x: 3, y: 7, name: 'Cartero', sprite: SPRITE.neighborM, dir: 6, move: 'look',

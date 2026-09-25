@@ -5,6 +5,8 @@ import { momEvent } from '../../events/b01_town_home.js';
 import { TOWN_DOORS, INTERIOR_ENTRIES } from './villa_alba_layout.js';
 import { STAIRS_ARRIVAL as UPSTAIRS_ARRIVAL } from './casa_prota_2f.js';
 import { b11HomeEvents } from '../../events/b11_home.js'; // B11: Mamá entrega el huevo de Togepi
+import { b17HomeEvents } from '../../events/b17_circulo.js'; // B17: Mamá cuenta lo de los Clefairy (tras el P8)
+import { b21CasaEvents } from '../../events/b21_epilogo.js'; // B21: la tele, el carguero y los créditos
 
 const ENTRY = INTERIOR_ENTRIES.casa_prota_1f;
 const DOOR_X = ENTRY.x;
@@ -65,5 +67,7 @@ export default {
     ...examineRect('tele', 7, 4, 2, 1, 'En la tele dan el tiempo: cielo despejado sobre el bosque.'),
     ...examineRect('sofa', 12, 6, 2, 5, 'Un sofá cómodo. Aún conserva la forma de alguien que se ha sentado mucho rato.'),
     ...b11HomeEvents(),
+    ...b17HomeEvents(),
+    ...b21CasaEvents(),
   ],
 };

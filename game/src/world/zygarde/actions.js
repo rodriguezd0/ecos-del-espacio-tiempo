@@ -262,12 +262,30 @@ export async function flyTransition(ctx, dest) {
   back?.remove?.(16);
 }
 
+/**
+ * Aterrizajes alternativos de un destino (aditivo B17): si la definición del mapa declara
+ * `flyLandings(state) → [{ label, x, y, dir }, …]` con dos o más, el jugador elige dónde aterrizar (el Círculo del Jardín
+ * de Villa Alba). Sin la función, o con menos de dos opciones, el destino no cambia. Cancelar = no volar (null).
+ */
+export async function chooseLanding(ctx, dest, { loadDef = loadMapDefinition } = {}) {
+  if (!dest?.map) return dest;
+  let def = null;
+  try { def = await loadDef(dest.map); } catch { return dest; }
+  let options = null;
+  try { options = typeof def?.flyLandings === 'function' ? def.flyLandings(ctx.state) : null; } catch (err) { console.error('[vuelo] flyLandings', err); }
+  if (!Array.isArray(options) || options.length < 2) return dest;
+  const labels = [...options.map((o) => o.label), 'Cancelar'];
+  const i = await ctx.choice(labels, { message: '¿Dónde quieres aterrizar?', cancel: options.length });
+  const o = options[i];
+  return o ? { map: dest.map, x: o.x, y: o.y, dir: o.dir ?? 2 } : null;
+}
+
 /** Vuelo completo: comprueba, abre el mapa regional en modo vuelo y viaja. */
 export async function flyWithZygarde(ctx) {
   if (!ctx.zygarde('fly')) return false;
   if (!canFlyFrom(ctx.world.current?.def)) { await ctx.say(FIELD_TEXT.cantFly); return false; }
   const pick = await ctx.ui.openRegionMap({ fly: true });
-  const dest = await resolveFlyDestination(pick);
+  const dest = await chooseLanding(ctx, await resolveFlyDestination(pick));
   if (!dest) return false;
   await flyTransition(ctx, dest);
   return true;
@@ -319,9 +337,9 @@ export async function runZygardeAction(ctx, action) {
  * Salto de Convergencia (CAMPANA B21 §1): Zygarde adopta a propósito el 10 %, el jugador monta y la red lo
  * lleva al destino entre estelas, espacio estirado y destellos (20–30 s). Desde la segunda vez se puede
  * saltar con A/B (flag zyg_jump_seen). Los diálogos previos son del guion del bloque.
- * opts: { to, x, y, dir = 8, frames = 1500, skippable }
+ * opts: { to, x, y, dir = 8, frames = 1500, skippable, draw } (`draw(g, k, t)`: capa propia encima del salto, aditivo B21)
  */
-export async function convergenceJump(ctx, { to, x, y, dir = 8, frames = 1500, skippable = null } = {}) {
+export async function convergenceJump(ctx, { to, x, y, dir = 8, frames = 1500, skippable = null, draw = null } = {}) {
   if (!to) throw new Error('convergenceJump: falta el mapa de destino "to"');
   const st = ctx.state;
   const world = ctx.world;
@@ -333,7 +351,7 @@ export async function convergenceJump(ctx, { to, x, y, dir = 8, frames = 1500, s
   ctx.se('PRSFX- Teleport');
   await ctx.flash([...GREEN], 16, 160);
   const field = ctx.scene?.zygarde;
-  if (field?.playJump) await field.playJump({ frames, skippable: canSkip });
+  if (field?.playJump) await field.playJump({ frames, skippable: canSkip, draw });
   else await ctx.wait(Math.min(frames, 120));
   st.setFlag('zyg_jump_seen', true);
   await ctx.fade('out', 24, [235, 255, 225]);

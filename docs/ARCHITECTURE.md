@@ -230,7 +230,7 @@ Sprites: ids de `content/characters.js` (arte propio: `protagonista_m/_f`, `gael
 | `climbWall` | `to:[x,y]` con `climb` |
 | `diveSpot` | `to`, `tx`, `ty`, `dir` con `dive` (surfeando) |
 | `rebuildGap` | `tiles:[[x,y,capa,id]…]` con `rebuild` (persiste con `patch`) |
-| `zygardeCell` | `cell` (id único), `text`; brillo verde |
+| `zygardeCell` | `cell` (id único), `text`; sprite `zygarde_celula` flotante + brillo verde |
 
 ### Entrenadores (`content/trainers/index.js`)
 Cada zona exporta `{ id: def }`: `{ name, class, sprite, overworld, party: [{species, level, moves?, ability?, item?,
@@ -410,7 +410,7 @@ Motor puro `battle/core` (sin DOM): `import { Battle, HeadlessBattleUI, normaliz
 `config` (`battleConfig.js`, `normalizeConfig` valida con mensajes claros): `{ db, type: 'wild'|'trainer', format:
 'single'|'double', seed|rng, player: { name, id, party, bag, money, badges, megaRing, expAll, dexCaught,
 caughtSpecies, hasPokedex }, ally?, opponent: {…}|[…] ({ name, trainerType, party, items, skill, baseMoney,
-loseText, winText }), rules: { canRun, canLose, canSwitch, expGain, moneyGain, canCatch, catchCondition(battle)→
+loseText, winText, megaRing, megaRingName }), rules: { canRun, canLose, canSwitch, expGain, moneyGain, canCatch, catchCondition(battle)→
 {allowed, reason}, storageFull, … }, weather: 'None'|'Sun'|'Rain'|'Sandstorm'|'Hail'|…, terrain, environment,
 time: 'day'|'night', battleback, phases, phaseTarget }`. Los equipos se clonan (la entrada no se modifica).
 `ui` = interfaz **BattleUI** (`battleUI.js`, todo async). Obligatorios: `message(text, {brief, paused})`,
@@ -594,7 +594,7 @@ agua, `_dive` (content/characters.js); sin arte, fallback con el seguidor de Añ
 **Tipos de evento** (`world/zygarde/eventTypes.js`, registrados en `world/eventTypes.js`, sustituyen a los básicos):
 | type | propiedades |
 |---|---|
-| `zygardeCell` | `cell` (clave), `text`, `onFound`, `when`; al recogerla comprueba la progresión |
+| `zygardeCell` | `cell` (clave), `text`, `onFound`, `when`, `sprite` (por defecto `zygarde_celula`, que flota con pulso; `''` lo quita) dentro de un brillo hexagonal (`size` 88, `alpha` 0.4); al recogerla comprueba la progresión |
 | `ramRock` | `kind`: `'rock'` o `'log'`, `group` (se rompen juntos), `sprite`/`tileId`; fisura blanca con brillo verde |
 | `roughTerrain` | `kind`: `'mud'`, `'sand'` o `'snow'`; `mounted` (además montado); a pie el jugador se hunde un poco |
 | `gravelSlope` | cuesta de grava: solo montado en el 10 % (ofrece montar) |
@@ -626,7 +626,9 @@ Devuelve `{ type: 'zygarde', action: 'fly' | 'formChanged' }`, que el mapa ejecu
 `enter/enterMap/onConnectionCrossed/refreshFollower/update/updateWhilePaused/drawUI/exit`; efectos Three.js propios
 registrados con `registerEffect(name, factory)` de `render/effects.js` (`zygardeHexBurst`, `zygardeFissure`,
 `zygardeVeins`, `zygardeSocket`, `zygardeWhirl`, `zygardeVent`, `zygardeCurrent`, `zygardeBubble`, `zygardeHeartbeat`,
-`zygardeStrip`), utilizables con `ctx.effect(nombre, opts)`. Seguidor por forma en `content/companion.js`.
+`zygardeStrip`), utilizables con `ctx.effect(nombre, opts)`. Seguidor por forma en `content/companion.js`. Con Zygarde en
+el equipo (B21, D21) `refreshFollower` no lo repite como Pokémon acompañante: camina como compañero de campo y sigue
+el siguiente Pokémon capaz.
 
 **Pruebas**: `tests/zygarde_{data,progress,field,content}.test.mjs` (invariantes 1–3 del grafo, umbrales, escenas,
 montura, obstáculos, detección, Buceo, Vuelo). Mapas `dev_zygarde` (tileset 1: cresta con roca/troncos/grava, barro,
@@ -968,3 +970,100 @@ Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset
 - Pruebas: `tests/b13_{reach,content}.test.mjs`. Recorrido: `node tools/e2e_b13.mjs [--from=<tramo>] [--only=<tramo>]
   [--no-retry]` (conductor `tools/e2e_b13_driver.mjs` con nado y pasos cortos, tramos `tools/e2e_b13_steps.mjs` y
   `tools/e2e_b13_islands.mjs`, ayudantes `tools/e2e_b13_page.mjs`).
+
+## 19. Bloque 17: Interludio 8, Axis en eclipse (propietario: b17; detalle en `content/maps/b17/README.md`)
+
+- **Vacío con panorama** (`content/maps/b17/rim.js`): la Sima y el mar de nubes son casillas con capas 0/1 a 0 y la
+  capa 2 = `VOID_WALL` (503, tile invisible que bloquea); el mapa declara `panorama: { image, parallax, scroll }` y se
+  ve el fondo detrás. `paintVoid` / `paintVoidEdges(b, isVoid, isLand, { faceRows })` pintan el vacío y las caras de
+  roca (capa 1). Tiles de zócalo de Reconstrucción por tileset: `socketTiles(image)`. Stamps horneados como parches de
+  página (ocupación condicional sin tocar el mapa base): `patch.js#stampPatch(baked, name, x, y)` y `barrierLine`.
+- **Aterrizajes del Vuelo por mapa**: una definición puede declarar `flyLandings(state) → [{ label, x, y, dir }] | null`;
+  `world/zygarde/actions.js#chooseLanding(ctx, dest, { loadDef })` pregunta entre las opciones (null = destino normal;
+  cancelar = no vuela). Villa Alba lo usa para el Círculo del Jardín.
+- **Salas de piedras con regla de apoyo** (`content/events/b17_torres_logic.js`): salas ASCII (`#` roca, `E`
+  entrada, `o` peña, `P` plataforma, `X` torre, `s` zócalo, `.` vacío); un zócalo alzado aguanta si está a ≤ `LIMIT`
+  zócalos de roca firme (con la torre encendida). `raise(room, raised, i, px, py, { unlimited })` → `{ ok, raised, reason: 'raised'|'far'|'loose' }`,
+  `solveRoom` y `solutionSockets` para pruebas y E2E. Eventos: `b17_torres.js#towerEvents(t, tiles)`.
+- **Losa usable de frente y pisable**: un evento atravesable con gráfico es «over trigger» (solo se activa estando
+  encima). Para una losa que se pisa y se usa mirándola: dibujo en un evento `through` y disparador en otro sin gráfico
+  con `noOver: true` en la misma casilla (`b17_circulo.js#slabEvents`).
+- Enlaces con bloques posteriores sin romper nada si faltan: conexiones condicionadas a `mapRegistered(id)`
+  (`maps/b17/links.js`) y aviso neutro en las bajadas si `sima_eje` no existe; B19 añade los warps
+  (`b19/links.js#descentWarps`).
+- Pruebas: `tests/b17_{content,reach}.test.mjs` (BFS con la pasabilidad real). Recorrido: `node tools/e2e_b17.mjs
+  [--from=<tramo>] [--only=<tramo>] [--to=<tramo>]` (conductor `tools/e2e_b16_driver.mjs`, tramos
+  `tools/e2e_b17_stages.mjs`; ayudantes `window.__b16`).
+
+## 20. Bloque 19: la Calzada del Rey y la Sima del Eje (propietario: b19; detalle en `content/maps/b19/README.md`)
+
+- **Piedras que aguantan un paso** (reutilizable; T15): reglas puras en `content/events/b19_spans_logic.js` —tramos ASCII
+  (`o` piedra, `P` aguja), `spanCells`/`cellsOf`, máscara de caídas (`isFallen`/`withFallen`), `isGoal` (todas caídas
+  menos la pisada, junto a la aguja), `isStranded`, `solveSpan` (recorridos hamiltonianos) y `solutionSteps` para el
+  E2E— y eventos en `b19_spans.js`: cada piedra es un evento `through` con gráfico que, en pie, escribe un «suelo
+  invisible» pasable en la capa 2 (`PASS_TILE` 391 de Exterior1, parche de página) y al caer vuelve al vacío (503);
+  disparadores `touch` en cada piedra y en la orilla (`onStone`/`onEdge`: cae la anterior, derrumbe con vuelta al borde,
+  reinicio al volver a la orilla); la aguja alza la calzada de verdad con `raiseCalzada(ctx, tiles)` (losas por filas,
+  más rápido que `rebuildStones` para tramos largos) y su página final la reaplica como `patch`.
+- **Plaza de estrado de cualquier tamaño**: `maps/b19/tiles.js#estradoTile(rect, x, y)` (anillos del estrado 6×6 de
+  Exterior1 y ladrillo en el interior); la calzada de 3 de ancho con `CALZADA.v/h/body` y, para recodos y cruces de
+  cualquier forma sin costuras, `roadTileAt(x, y, isRoad)` (bordillo según las vecinas).
+- Enlaces por warps con los bordes de B17 (`maps/b19/links.js#DESCENTS`, `descentWarps(id)`, `simaEdgeWarps()`) y con
+  B20 (`puertaQuinceArrival` en la definición de `sima_eje`).
+- Pruebas: `tests/b19_{content,reach}.test.mjs`. Recorrido: `node tools/e2e_b19.mjs [--from=<tramo>] [--only=<tramo>]
+  [--no-retry]` (ayudantes `tools/e2e_b19_page.mjs`, `window.__b19`).
+
+## 21. Bloque 20: Pilar del Origen (propietario: b20; detalle en `content/maps/b20/README.md`)
+
+- **Senda del Origen**: nueve tramos de 24×18 con el mismo marco (`maps/b20/layout.js`: fuente única de coordenadas;
+  `senda_defs.js#tramoDef`), cada uno eco de un Pilar hecho con las piezas de su bloque (solo lectura): piedras de B02,
+  compuerta de B04, ráfagas y veletas de B06 (`gustEvents`/`vaneEvents`), pesos de B08, losa de recuerdo de B10,
+  espacio imposible de B12, caracola de B14 y Buceo de B13, controles en espejo y caballeros y bribones de B16 y la
+  **tensión de ejes de B18** (`world/axis`: el tramo 9 es una sala ASCII con `axisRoomEvents`, su propia variable de eje
+  `b20_t9_eje`, `passTile` 405 de Cueva1 y `voidBlocks`). Reglas puras en `content/events/b20_logic.js`.
+- **`lastPokemonBgm`** (aditivo en `battle/scene/setup.js` y `sceneUI.js`): un entrenador (o la petición de combate)
+  puede declarar la música que suena cuando le queda su último Pokémon (Gael B6: «Ultimo Pokemon»).
+- **`?tablets=N`** y **`?items=ID[:n],…`** (aditivos en `world/devTools.js`): dan las N primeras Tablillas de campaña y
+  objetos en la Mochila (URL de pruebas; p. ej. `items=REDCHAIN,GLYPHKEY` para el tramo 9).
+- **Avisos de varias líneas** (aditivo en `ui/core/overlay.js`): `ui.toast(texto)` parte en líneas lo que no cabe en el
+  ancho de la pantalla (antes se salía por los lados; p. ej. `AXIS_TEXT` de `world/axis/actions.js`).
+- **Nodo del Origen**: `registerOriginNode(fn)` (`content/events/b20_nucleo.js`) deja a B21 colgar su guion del sello
+  del Núcleo tras la Flauta Azur.
+- Pruebas: `tests/b20_{content,reach}.test.mjs`. Recorrido: `node tools/e2e_b20.mjs [--from=<tramo>] [--only=<tramo>]
+  [--to=<tramo>] [--no-retry]` (conductor de B16 ampliado en `tools/e2e_b20_driver.mjs`, ayudantes `window.__b20`).
+
+## 22. Bloque 18: Pilar de la Convergencia y la tensión de ejes (propietario: b18; detalle en `content/maps/b18/README.md`)
+
+- **Tensión de ejes con la Cadena Roja** (`src/world/axis/`, genérico; lo usan la Cámara del Cruce y el tramo 9 de la
+  Senda del Origen de B20). Una variable de partida guarda el eje tensado (`AXIS_VAR` = `cadena_eje`, o la que se pase
+  en `axisVar`): `'time'` (hacia Dialga: lo que se mueve se congela; los escombros que caen se quedan en el aire y se
+  pisan, las corrientes se vuelven cristal pisable, los pliegues se cierran), `'space'` (hacia Palkia: los pliegues,
+  pares de marcas violetas, conectan casillas lejanas; todo vuelve a moverse) o `null` (sin tensar: todo se mueve).
+  - `logic.js` (puro): salas ASCII (`parseAxisRoom(rows)`; leyenda `AXIS_LEGEND`: `#` muro, `.` suelo, ` ` vacío,
+    `D` escombro, `C` cristal, `E` entrada = punto seguro, `X` salida, `o` objeto, `^ v < >` corriente, `1–9` pliegue),
+    reglas (`walkableAt`, `isVoidAt`, `slideFrom` —una corriente que desemboca en el vacío hace caer—, `stepResult`,
+    `afterTension`, `crystalsNear`), solucionador (`solveAxis`, `solveAxisRoom`, `axisReach`, `planSummary`,
+    `solvableWithout(room, eje)` para exigir un eje) y **trampas** (`axisTraps(room)`: estados alcanzables desde la
+    entrada o una salida, con cualquier eje, sin vuelta a la entrada o sin llegar a la salida; debe ser `[]`). Tono:
+    `axisTone(base, eje)` + caché `setAxisCache`/`cachedAxis` para un `get tone()` del mapa.
+  - `eventTypes.js` (registrados en `world/eventTypes.js`): `axisCrystal` (sólido; A → elegir eje; `requires`
+    'REDCHAIN', `tutorial` + `tutorialFlag`, `onTense`), `axisDebris` (página «cae» con patch capa 2 = 0 y «congelado»
+    con patch capa 2 = `passTile`, por defecto 385, un tile transparente y pasable del tileset), `axisCurrent` (`dir`;
+    `touch` → arrastre) y `axisFold` (`to`; `touch` con el espacio tensado → la otra marca). Todos aceptan `axisVar` y
+    `when(state, ev)`. Arte en `assets/objects/eje_*.png` (`node tools/b18_assets.mjs`).
+  - `roomEvents.js#axisRoomEvents(room, { ox, oy, prefix, axisVar, safe, passTile, crystal, items, when })`: todos los
+    eventos de una sala a partir de su ASCII (misma geometría para el mapa, las pruebas y el E2E).
+  - `actions.js`: `tenseChain(ctx, eje, { axisVar, safe })` (variable, destello, páginas al momento; si la casilla del
+    jugador deja de ser segura cae o la corriente lo arrastra), `rideCurrent`, `crossFold`, `fallToSafe` (caída sin
+    daño: vuelta a la entrada de la sala) y `syncAxis(ctx)` (en el `onEnter` del mapa).
+- **`voidBlocks`** (aditivo en `world/gameMap.js`): con `def.voidBlocks`, una casilla con las tres capas vacías es
+  vacío y no se pisa (`isVoid(x, y)`; `passable`, `playerPassable` y `passableStrict`); sin la opción nada cambia. El
+  abismo se ve por el panorama. **Panorama `sima`** (aditivo en `render/panorama.js`): shader de abismo sin imagen.
+- **Combate del elegido**: `b18_nucleo.js#boundRequest(choice)` (nivel 65, sin huida) y `chainCatchCondition(battle)`
+  (`rules.catchCondition`: captura solo con los PS del rival por debajo del 50 %; motivo en el combate y aviso antes).
+- Enlaces con B17 (Senda del Mirador al norte, Mirador Sur al sur, offset 0) condicionados a `mapRegistered`
+  (`maps/b18/pending_links.js`).
+- Pruebas: `tests/b18_{axis,content,scenes,reach}.test.mjs` (el BFS de la Cámara recorre estados (casilla, eje) con
+  las reglas del motor; ayudantes en `tests/b18_helpers.mjs`). Recorrido: `node tools/e2e_b18.mjs [--from=<tramo>]
+  [--only=<tramo>] [--to=<tramo>] [--no-retry]` (conductor de B16 ampliado en `tools/e2e_b18_driver.mjs`: juega cada
+  sala con el plan del solucionador y comprueba la casilla y el eje tras cada acción; ayudantes `window.__b18`).

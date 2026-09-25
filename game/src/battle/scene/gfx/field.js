@@ -128,6 +128,23 @@ export class BattleField {
     }
   }
 
+  /**
+   * Cambia solo la imagen del fondo a mitad de combate (fase de un jefe, aditivo B21); las bases no se tocan.
+   * → true si se cambió.
+   */
+  async swapBackdrop(backdrop) {
+    if (!backdrop?.file || !this.bgMesh) return false;
+    const img = await engine.assets.tryImage(engine.assets.anil(backdrop.file));
+    if (!img || !this.bgMesh) return false;
+    const tex = rawTexture(img);
+    tex.wrapS = THREE.MirroredRepeatWrapping;
+    tex.wrapT = THREE.MirroredRepeatWrapping;
+    this.ownedTextures.push(tex);
+    this.bgMesh.material.uniforms.map.value = tex;
+    this.bgMesh.material.uniforms.uTone.value.set(...(backdrop.night ? [-0.22, -0.2, -0.04] : [0, 0, 0]));
+    return true;
+  }
+
   setTerrain(t) {
     this.terrain = t || 'None';
   }

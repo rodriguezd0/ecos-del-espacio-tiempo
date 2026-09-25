@@ -51,7 +51,10 @@ function neighborEvents() {
       : ['La gala está a punto de empezar.']), { dir: 2, when: when({ all: [F.galaInvite] }) }),
     npc('estudiante_almacenes', 60, 50, SPRITE.child, 'Chico', ['En la primera planta de los Grandes Almacenes venden piedras evolutivas. ¡Y un cordón rarísimo para las evoluciones por intercambio!'], { dir: 8 }),
     npc('pescadora_estanque', 24, 44, 'anil:pescadoraow', 'Pescadora', ['En el estanque del parque no pica nada. Pero es tan bonito que da igual.'], { dir: 8 }),
-    npc('guarda_mirador', 35, 6, 'anil:asistente', 'Vigilante', ['El camino del Mirador Sur está cerrado. El borde de la Sima se desprende a trozos.'], { dir: 2, move: 'still' }),
+    // B17 (aditivo): el Mirador Sur ya existe; del P8 al P9 lo ocupa el Consorcio.
+    npc('guarda_mirador', 35, 6, 'anil:asistente', 'Vigilante', (s) => (s.flag('p8_restored') && !s.flag('p9_restored')
+      ? ['El Consorcio ha vallado el Mirador Sur para un estudio. Yo solo vigilo que nadie se acerque al borde.']
+      : ['Por aquí se sube al Mirador Sur. No paséis de la barandilla: el borde de la Sima se desprende a trozos.']), { dir: 2, move: 'still' }),
     npc('noche_museo', 30, 29, SPRITE.neighbor, 'Paseante', ['De noche, la fachada del museo parece que respira. Será la luz de las farolas.'], {
       dir: 8, when: (s) => Boolean(s) && isNight(s) && s.flag(F.gala) && !s.flag(F.t06Done),
     }),

@@ -40,6 +40,7 @@ export const EXTERNAL_FLAGS = Object.freeze({
   // restorePillar (content/story/api.js) pone pN_restored con el flag del Fragmento: la lectura estática no lo ve.
   p5_restored: 'B10 (restorePillar(5), Pilar de la Memoria)',
   p6_restored: 'B12 (restorePillar(6), Pilar Invertido)',
+  p8_restored: 'B16 (restorePillar(8), Pilar del Alma); lo leen los eventos de B17 en la casa y en Villa Alba',
 });
 
 /** Estado de partida en el que todos los flags y self switches están activos (historia «terminada»). */

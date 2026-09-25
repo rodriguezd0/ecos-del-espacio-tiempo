@@ -107,7 +107,7 @@ export function caudalNeighbors() {
       { afterP2: ['¡Las ruedas giran como antes! Bueno… todas menos la del Diezmo, que va al revés.'] }),
     neighbor('marinera', 47, 17, 'anil:marinero', 4, 'Barquero',
       ['El río tiene carácter, pero así no lo había visto nunca. Al sur, hacia la Sima, se oye rugir de noche.',
-        'Por eso la Senda del Mirador está cerrada. Nadie baja hasta allí desde los desprendimientos.'],
+        'Por la Senda del Mirador ya casi nadie baja. Desde los desprendimientos, el paso al viejo Puente está cortado.'],
       null),
     neighbor('jardinero_canal', 10, 49, 'anciano', 4, 'Jardinero',
       ['Este jardín se riega con el agua del canal. Con el río así, un día se ahoga y al siguiente se seca.'],

@@ -7,6 +7,7 @@
 // Los guiones reciben `ctx` (script/context.js).
 import { ZYGARDE_EVENT_TYPES } from './zygarde/eventTypes.js';
 import { IMPOSSIBLE_EVENT_TYPES } from './impossible/eventTypes.js'; // B12: anclas, aristas, puentes, cascadas invertidas
+import { AXIS_EVENT_TYPES } from './axis/eventTypes.js'; // B18: tensión de ejes (cristal, escombro, corriente, pliegue)
 
 const notA = (_s, ev) => !ev.selfSwitch('A');
 const isA = (_s, ev) => ev.selfSwitch('A');
@@ -225,6 +226,8 @@ const EXPANDERS = {
   ...ZYGARDE_EVENT_TYPES,
   // Espacio imposible (B12, world/impossible/): ancla, arista, puenteMirada, cascadaInvertida, pulsador.
   ...IMPOSSIBLE_EVENT_TYPES,
+  // Tensión de ejes (B18, world/axis/; B20 la reutiliza): axisCrystal, axisDebris, axisCurrent, axisFold.
+  ...AXIS_EVENT_TYPES,
 };
 
 export const EVENT_TYPES = Object.keys(EXPANDERS);

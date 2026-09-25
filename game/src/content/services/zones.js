@@ -62,7 +62,8 @@ export const MAP_GROUPS = Object.freeze([
   G('mar_boreal', 'Mar Boreal', 'Azul Tema', 'water', ['mar_boreal']),
   G('mar_boreal', 'Fondo del Mar Boreal', 'Emociones', 'Sub', ['mar_boreal_fondo']), // B15: fondo bajo el remolino
   G('ruta_15', 'Ruta 15', 'Azul Tema', 'Playa', ['ruta_15']),
-  G('mar_del_sur', 'Mar del Sur', 'Azul Tema', 'water', ['mar_del_sur']),
+  G('mar_del_sur', 'Mar del Sur', 'Azul Tema', 'water', ['mar_del_sur',
+    ['carguero', { name: 'Carguero', bgm: 'Barco' }]]), // B21: escena del epílogo (Vértice deja Axis por mar)
   G('mar_del_sur', 'Fondo del Mar del Sur', 'Emociones', 'Sub', ['fondo_mar_sur']),
   G('islote_lumbre', 'Islote Lumbre', 'Pokeflauta', null, ['islote_lumbre'], ['lumbre_']), // lumbre_gruta (B13)
   G('volcan_tizon', 'Volcán Tizón', 'MansionQuemada', 'Volcan', ['volcan_tizon'], ['volcan_tizon_', 'tizon_']),
@@ -72,7 +73,8 @@ export const MAP_GROUPS = Object.freeze([
   G('sima_eje', 'Sima del Eje', 'Amenaza', 'Espacio', ['sima_eje']),
   G('senda_mirador', 'Senda del Mirador', 'Amenaza', 'Espacio', ['senda_mirador']),
   G('mirador_sur', 'Mirador Sur', null, 'Espacio', ['mirador_sur', ['grieta_porvenir', { name: 'Grieta del Porvenir' }]]),
-  G('calzada_rey', 'Calzada del Rey', null, 'Espacio', ['calzada_rey']),
+  G('calzada_rey', 'Calzada del Rey', null, 'Espacio', ['calzada_rey',
+    ['calzada_taller', { name: 'Taller del Rey', battleback: 'Cueva' }]]), // B19: el taller de la Peña del Rey
   G('cumbre_azur', 'Columna Lanza', 'Final2', 'ColumnaLanza', ['columna_lanza', ['cumbre_azur', { name: 'Cumbre Azur' }]]),
   G('instalacion_cierzo', 'Instalación Cierzo', null, null, ['instalacion_cierzo'], ['cierzo_']),
 
@@ -87,7 +89,7 @@ export const MAP_GROUPS = Object.freeze([
   G('arrecife_eco', 'Pilar de los Ecos', null, 'Templo', ['fosa_eco'], ['antea_']),
   G('lagos_alma', 'Pilar del Alma', null, 'Templo', ['santuario_alma'], ['santuario_alma_']),
   G('sima_eje', 'Pilar de la Convergencia', null, 'Espacio', ['puente_convergencia', 'camara_cruce']),
-  G('sima_eje', 'Pilar del Origen', null, 'Cielo', ['puerta_quince', 'senda_origen', 'cielo_interior', 'terraza_ultimo_sello', 'nucleo_origen']),
+  G('sima_eje', 'Pilar del Origen', null, 'Cielo', ['puerta_quince', 'senda_origen', 'cielo_interior', 'terraza_ultimo_sello', 'nucleo_origen'], ['senda_origen_']), // B20: tramos senda_origen_1…9 (+ capas)
 ]);
 
 function compile() {

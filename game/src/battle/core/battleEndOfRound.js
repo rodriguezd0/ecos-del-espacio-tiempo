@@ -409,6 +409,7 @@ Object.assign(Battle.prototype, {
       return;
     }
     for (const b of priority) b.pbContinualAbilityChecks();
+    this.pbBossRoundHook?.(); // reglas de jefe al final de la ronda (bossPhases.js, aditivo B21)
     this.resetEndOfRoundEffects();
     this.endOfRound = false;
   },

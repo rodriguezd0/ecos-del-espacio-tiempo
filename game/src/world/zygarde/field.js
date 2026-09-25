@@ -73,7 +73,7 @@ export class ZygardeField {
     this.nextBeat = this.t + 30;
     if (isRiding(this.world) && !mountAllowed(def) && !mountState(this.world).forced) setRiding(this.world, false);
     if (underwaterConfig(def)) this.startDive(def);
-    if (this.state.zygardeForm) {
+    if (this.state.zygardeForm && !this.scene.cinematic) { // sin rótulo en montajes y créditos (aditivo B21)
       const label = cellLabel(this.state, def.id, def);
       if (label) ui.toast(label);
     }
@@ -219,11 +219,14 @@ export class ZygardeField {
   }
 
   // ------------------------------------------------------------ Salto de Convergencia
-  /** Superposición del salto; se resuelve al terminar (o al saltarla con A/B si `skippable`). */
-  playJump({ frames = 1500, skippable = false } = {}) {
+  /**
+   * Superposición del salto; se resuelve al terminar (o al saltarla con A/B si `skippable`). `draw(g, k, t)` (aditivo
+   * B21) dibuja una capa propia del guion encima (p. ej. la escritura Unown que pasa de largo).
+   */
+  playJump({ frames = 1500, skippable = false, draw = null } = {}) {
     return new Promise((resolve) => {
       this.jump?.resolve?.();
-      this.jump = { t: 0, frames: Math.max(60, frames), skippable, resolve, done: false };
+      this.jump = { t: 0, frames: Math.max(60, frames), skippable, resolve, done: false, draw: typeof draw === 'function' ? draw : null };
     });
   }
 
@@ -271,7 +274,18 @@ export class ZygardeField {
       const py = p.realY + 4 + (p.yOffset || 0) - cam.renderY;
       drawDetectArrow(g, px, py, vectorAngle(this.near.dx, this.near.dy), this.t, heartbeatStrength(this.near.dist) || 0.3);
     }
-    if (this.jump) drawJumpOverlay(g, Math.min(1, this.jump.t / this.jump.frames), this.jump.t);
+    if (this.jump) {
+      const k = Math.min(1, this.jump.t / this.jump.frames);
+      drawJumpOverlay(g, k, this.jump.t);
+      if (this.jump.draw) {
+        try {
+          this.jump.draw(g, k, this.jump.t);
+        } catch (err) {
+          console.warn('[zygarde] capa del salto', err);
+          this.jump.draw = null;
+        }
+      }
+    }
   }
 
   dispose() {
