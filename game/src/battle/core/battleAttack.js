@@ -149,9 +149,12 @@ Object.assign(Battle.prototype, {
   pbMegaEvolve(idx) {
     const b = this.battlers[idx];
     if (!b || !b.pokemon || !b.hasMega() || b.mega()) return;
-    const trainerName = this.pbOwnedByPlayer(idx) ? this.player[0].name : trainerFullName(this, this.pbGetOwnerFromBattlerIndex(idx));
+    const owner = this.pbGetOwnerFromBattlerIndex(idx);
+    const trainerName = this.pbOwnedByPlayer(idx) ? this.player[0].name : trainerFullName(this, owner);
+    // `megaRingName` (con artículo: «el aro negro») sustituye al Mega Aro; «a el» se contrae en pbDisplay.
+    const ring = (!this.pbOwnedByPlayer(idx) && owner?.megaRingName) || 'el Mega Aro';
     const oldAbility = b.abilityId;
-    this.pbDisplay(`¡La ${b.itemName()} de ${b.pbThis(true)} está reaccionando al Mega Aro de ${trainerName}!`);
+    this.pbDisplay(`¡La ${b.itemName()} de ${b.pbThis(true)} está reaccionando a ${ring} de ${trainerName}!`);
     this.pbCommonAnimation('MegaEvolution', b);
     makeMega(this.db, b.pokemon);
     b.form = b.pokemon.form;

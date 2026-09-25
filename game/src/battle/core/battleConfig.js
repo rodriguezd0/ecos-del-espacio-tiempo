@@ -8,7 +8,8 @@
 // @property {object} player        { name, id, party: Pokémon[], bag: {ITEM: n}, money, badges, megaRing,
 //                                    expAll, dexCaught, caughtSpecies }
 // @property {object} [ally]        compañero en dobles: { name, party, skill }
-// @property {object|object[]} opponent  { name, trainerType, party, items: [], skill, baseMoney, loseText, winText, megaRing }
+// @property {object|object[]} opponent  { name, trainerType, party, items: [], skill, baseMoney, loseText, winText, megaRing,
+//                                    megaRingName (con artículo: «el aro negro»; por defecto «el Mega Aro») }
 // @property {object} [rules]       { canRun, canLose, canSwitch, expGain, moneyGain, canCatch, catchReason,
 //                                    catchCondition(battle) → {allowed, reason}, storageFull, noMoneyLoss,
 //                                    controlPlayer, disablePokeBalls, defaultWeather }
@@ -49,6 +50,7 @@ function normTrainer(t, defaults) {
     items: [...(t.items || [])],
     skill: t.ai?.skill ?? t.skill ?? defaults.skill,
     megaRing: t.megaRing ?? defaults.megaRing,
+    megaRingName: t.megaRingName || null,
   };
 }
 

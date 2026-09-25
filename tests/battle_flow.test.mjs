@@ -170,6 +170,17 @@ test('megaevolución: Garchomp con Garchompita megaevoluciona y vuelve a su form
   assert.equal(result.playerParty[0].heldItem, 'GARCHOMPITE');
 });
 
+test('megaevolución del rival: nombra su propio aro (megaRingName) o el Mega Aro por defecto', async () => {
+  const battleWith = (extra) => play({
+    type: 'trainer', player: { party: [mon('SNORLAX', 70, ['SPLASH'])] },
+    opponent: { name: 'Gael', party: [mon('ABSOL', 55, ['BITE'], { heldItem: 'ABSOLITE' })], megaRing: true, skill: 100, ...extra },
+  }, { script: [{ action: 'fight', move: 'SPLASH' }], stopAfterScript: true });
+  const black = await battleWith({ megaRingName: 'el aro negro' });
+  assert.ok(black.ui.messages.some((m) => /reaccionando al aro negro de Gael/.test(m)), black.ui.messages.join('\n'));
+  const plain = await battleWith({});
+  assert.ok(plain.ui.messages.some((m) => /reaccionando al Mega Aro de Gael/.test(m)), plain.ui.messages.join('\n'));
+});
+
 test('megaevolución: solo una por combate y bando', async () => {
   const a = mon('GARCHOMP', 60, ['DRAGONCLAW'], { heldItem: 'GARCHOMPITE' });
   const b = mon('ABSOL', 60, ['BITE'], { heldItem: 'ABSOLITE' });

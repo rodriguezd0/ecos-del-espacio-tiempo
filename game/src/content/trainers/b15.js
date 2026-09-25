@@ -133,6 +133,7 @@ export default {
       { species: gaelFinalStarter(state), level: 56 },
     ],
     items: ['HYPERPOTION', 'HYPERPOTION'], ai: 80, money: 60, bgm: 'CombateRival', megaRing: true,
+    megaRingName: 'el aro negro',
     loseText: '…Ya.',
     winText: 'Lo quería saber. Ya lo sé.',
     canLose: true,

@@ -97,6 +97,7 @@ export function resolveTrainer(def, db, id = def?.id || 'trainer') {
       name: def.name || 'Entrenador', trainerType: typeId, id, party,
       items: [...(def.items || [])], skill: aiSkill(def.ai), baseMoney: def.money ?? null,
       loseText: def.loseText || null, winText: def.winText || null, megaRing: Boolean(def.megaRing),
+      megaRingName: def.megaRingName || null,
     },
     trainerType: { [typeId]: { name: def.class || '', baseMoney: def.money ?? 30 } },
     meta: {
