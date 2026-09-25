@@ -15,6 +15,23 @@ export class ScreenFx {
     this.fadeTween = null;
     this.trans = null; // { name, t, tween }
     this.transSeed = Math.random() * 100;
+    this.rotation = 0; // giro de pantalla en rad, sentido horario (aristas del espacio imposible, B12)
+    this.zoom = 1;
+    this.rotTween = null;
+  }
+
+  /** Gira la imagen hasta `angle` rad (horario) con escala `zoom` en `frames` (0 = al instante). */
+  rotateTo(angle = 0, frames = 20, zoom = 1) {
+    this.rotTween?.resolve?.();
+    this.rotTween = null;
+    if (frames <= 0) {
+      this.rotation = angle;
+      this.zoom = zoom;
+      return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      this.rotTween = { ...tween([this.rotation, this.zoom], [angle, zoom], frames, resolve) };
+    });
   }
 
   /** Cambia el tono de pantalla (además del día/noche y el clima) en `frames`. */
@@ -55,7 +72,7 @@ export class ScreenFx {
     this.trans = null;
   }
 
-  get busy() { return Boolean(this.fadeTween || this.trans?.tw || this.flash); }
+  get busy() { return Boolean(this.fadeTween || this.trans?.tw || this.flash || this.rotTween); }
 
   update() {
     const step = (tw, set) => {
@@ -82,6 +99,14 @@ export class ScreenFx {
       const tr = this.trans;
       tr.tw = step(tr.tw, (k) => { tr.t = k; });
     }
+    if (this.rotTween) {
+      const tw = this.rotTween;
+      this.rotTween = step(tw, (k) => {
+        const e = k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2;
+        this.rotation = tw.from[0] + (tw.to[0] - tw.from[0]) * e;
+        this.zoom = tw.from[1] + (tw.to[1] - tw.from[1]) * e;
+      });
+    }
   }
 
   /** Vuelca el estado al compositor. `baseTones` = tonos de día/noche y clima. */
@@ -93,5 +118,6 @@ export class ScreenFx {
     this.comp.setFade(this.fadeColor[0], this.fadeColor[1], this.fadeColor[2], this.fadeAmount);
     if (this.trans) this.comp.setTransition(this.trans.name, this.trans.t, { seed: this.transSeed, center: this.trans.opts.center });
     else this.comp.setTransition(null, 0);
+    this.comp.setRotation?.(this.rotation, this.zoom);
   }
 }

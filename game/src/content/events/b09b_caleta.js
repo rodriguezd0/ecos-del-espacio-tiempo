@@ -15,6 +15,7 @@ import { linkOpen, blockedText } from '../maps/b09b/links.js';
 export const CALETA_TEXT = Object.freeze({
   sign: 'CALETA SONDA\nPueblo de pescadores y buzos. Faro Sonda en la punta.',
   ferrySign: 'EMBARCADERO DE CALETA SONDA\nFerri a Ciudad Nexo. Servicio suspendido por el estado de la mar.',
+  ferrySignOpen: 'EMBARCADERO DE CALETA SONDA\nFerri a Ciudad Nexo. Servicio reanudado: salidas diarias.', // B14 (tras el P7)
   houseLocked: 'La puerta está cerrada. Dentro se oye una radio que da el parte de la mar.',
   netMender: [
     'Remiendo las redes de toda la caleta. Estos días se rompen solas: la marea sube y baja a destiempo.',
@@ -38,7 +39,11 @@ function doorEvents() {
 function signEvents() {
   return [
     { id: 'cartel_caleta', type: 'sign', x: SPOTS.townSign.x, y: SPOTS.townSign.y, text: CALETA_TEXT.sign },
-    { id: 'cartel_ferri_caleta', type: 'sign', x: FERRY.sign.x, y: FERRY.sign.y, text: CALETA_TEXT.ferrySign },
+    {
+      id: 'cartel_ferri_caleta', type: 'sign', x: FERRY.sign.x, y: FERRY.sign.y, text: CALETA_TEXT.ferrySign,
+      // B14: tras el P7 las mareas se calman y el servicio se reanuda.
+      script: async (ctx) => { await ctx.say(ctx.flag(F.p7) ? CALETA_TEXT.ferrySignOpen : CALETA_TEXT.ferrySign, { skin: 'signskin' }); },
+    },
   ];
 }
 

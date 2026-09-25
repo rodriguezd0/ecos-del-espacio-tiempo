@@ -14,8 +14,15 @@ export const BRIDGE_MAX_LENGTH = 48;
 
 const walkable = (map, x, y) => map.valid(x, y) && map.playerPassable(x, y, 0, {});
 
+/**
+ * ¿Se puede nadar en este mapa? `noSwim: true` en la definición lo prohíbe (aditivo B13: la lava de Cueva Volcán
+ * lleva el terrain tag de agua de Añil, pero no se nada en ella).
+ */
+export const swimAllowed = (map) => map?.def?.noSwim !== true;
+
 /** Agua en la que se nada: navegable, no se pisa a pie y sin tile de puente encima. */
 export function isSwimWater(map, x, y) {
+  if (!swimAllowed(map)) return false;
   if (!map.valid(x, y) || !canSurfFreely(map.terrainTagAt(x, y))) return false;
   return !walkable(map, x, y) && !map.terrainTagAt(x, y, 0, true).bridge;
 }
@@ -76,8 +83,9 @@ export function canOfferSwim(world) {
  * nadando, pero una casilla bloqueada junto al agua nunca deja al jugador nadando sin Nadar.
  */
 export function nearestFreeSpot(map, x, y, { canSwim = false } = {}) {
+  const swim = canSwim && swimAllowed(map);
   const ok = (cx, cy) => map.valid(cx, cy)
-    && (map.playerPassable(cx, cy, 0, {}) || (canSwim && canSurfFreely(map.terrainTagAt(cx, cy))));
+    && (map.playerPassable(cx, cy, 0, {}) || (swim && canSurfFreely(map.terrainTagAt(cx, cy))));
   if (ok(x, y)) return { x, y };
   const max = Math.max(map.width, map.height);
   for (let r = 1; r < max; r++) {

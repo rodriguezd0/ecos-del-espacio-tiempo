@@ -86,10 +86,14 @@ export function stormActive(state) {
   return until > 0 && state.playTimeFrames < until;
 }
 
-/** Clima forzado por la tormenta para un mapa exterior (['storm', 6]) o null. Lo consulta MapScene. */
+/**
+ * Clima forzado por la tormenta para un mapa exterior (['storm', 6]) o null. Lo consulta MapScene. Un mapa puede dar
+ * su propia tormenta con `stormWeather: ['blizzard', 6]` (aditivo B15: en el norte, la tormenta es una ventisca).
+ */
 export function stormWeather(state, def) {
   if (!def?.outdoor || def.weatherOverride === false) return null;
-  return stormActive(state) ? [...STORM_WEATHER] : null;
+  if (!stormActive(state)) return null;
+  return Array.isArray(def.stormWeather) && def.stormWeather.length ? [...def.stormWeather] : [...STORM_WEATHER];
 }
 
 /** Aplica el descanso al estado (puro salvo ganchos): hora, curación, contador y tormenta. */

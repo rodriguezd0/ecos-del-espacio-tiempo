@@ -8,6 +8,7 @@
 // `protagonista_<m|f>_fish_offset`, 4 fotogramas de lanzamiento por dirección, como Essentials) se usa; si no,
 // un marcador provisional dibujado por código (caña, sedal y boya que se hunde al picar).
 import { dx, dy } from './gameMap.js';
+import { EncounterSystem } from './encounters.js';
 
 export const RODS = Object.freeze({
   OLDROD: { level: 1, table: 'fish_old' },
@@ -82,6 +83,29 @@ export function fishingType(encounters, rodId, hour = 12) {
   return encounters.resolveType(rod.table, hour);
 }
 
+/**
+ * Tablas de pesca de la casilla de agua (aditivo B16): primero `def.fishingAt(state, x, y)` del mapa (casillas
+ * especiales, p. ej. las de Feebas que cambian cada día: devuelve un objeto de tablas o null), después la zona de
+ * encuentros de la casilla (def.encounterZones) si tiene tabla para esa caña y, si no, las del mapa.
+ */
+export function fishingSystem(world, spot, rodId, { state = null, hour = 12 } = {}) {
+  const def = world?.current?.def;
+  if (typeof def?.fishingAt === 'function') {
+    try {
+      const special = def.fishingAt(state, spot.x, spot.y);
+      if (special) {
+        const sys = new EncounterSystem(special, world.rng || Math.random);
+        if (fishingType(sys, rodId, hour)) return sys;
+      }
+    } catch (err) {
+      console.error('[pesca] fishingAt del mapa', err);
+    }
+  }
+  const zone = world?.encountersAt ? world.encountersAt(spot.x, spot.y) : null;
+  if (zone && zone !== world.encounters && fishingType(zone, rodId, hour)) return zone;
+  return world?.encounters;
+}
+
 // ------------------------------------------------------------ flujo en el mapa
 /**
  * Espera `frames` fotogramas; devuelve true si se pulsa A (o B, salvo onlyA) antes. `tick(frame)` anima.
@@ -110,7 +134,8 @@ async function waitOrPress(ctx, frames, tick = null, onlyA = false) {
 export async function useRod(ctx, rodId, { rng = Math.random } = {}) {
   const spot = fishingSpot(ctx.world);
   if (!RODS[rodId] || !spot.ok) { await ctx.say(FISH_TEXT.cantUse); return false; }
-  const type = fishingType(ctx.world.encounters, rodId, ctx.state.hour);
+  const sys = fishingSystem(ctx.world, spot, rodId, { state: ctx.state, hour: ctx.state.hour });
+  const type = fishingType(sys, rodId, ctx.state.hour);
   const plan = rollFishing(rng, { rodId, hasEncounter: Boolean(type), speedup: fishingSpeedup(ctx.state.party) });
   const anim = await FishingAnim.start(ctx, spot);
   let landed = false;
@@ -140,7 +165,7 @@ export async function useRod(ctx, rodId, { rng = Math.random } = {}) {
     anim.dispose();
   }
   if (landed) {
-    const enc = ctx.world.encounters.choose(type);
+    const enc = sys.choose(type);
     if (enc) await ctx.wildBattle(enc);
   }
   return true;

@@ -5,6 +5,7 @@ import { exitWarps, exitArrowEvents } from '../../services/interior.js';
 import { BUILDINGS, INTERIOR_ENTRIES } from './caleta_layout.js';
 import { F, SPEAKER, SPRITE, lines, zygardeSays, examine } from '../../events/b09b_common.js';
 import { ZYGARDE_LINES } from '../../story/clues.js';
+import { ramonB13, lighthouseEvents } from '../../events/b13_caleta.js';
 
 const E = INTERIOR_ENTRIES.caleta_faro;
 const OUT = BUILDINGS.faro.door;
@@ -22,6 +23,7 @@ export const RAMON_TEXT = Object.freeze({
 });
 
 async function ramonTalk(ctx) {
+  if (await ramonB13(ctx)) return; // B13: segunda pista de T11 con Nadar, la fiesta y después (events/b13_caleta.js)
   if (ctx.flag(F.t11)) { await lines(ctx, SPEAKER.ramon, RAMON_TEXT.after); return; }
   await lines(ctx, SPEAKER.ramon, RAMON_TEXT.intro);
   const status = await ctx.story.openClue('T11');
@@ -60,5 +62,6 @@ export default {
     { id: 'ramon', x: 4, y: 5, name: SPEAKER.ramon, sprite: SPRITE.ramon, dir: 2, move: 'look', script: ramonTalk },
     examine('libro_faro', 2, 3,'El libro del faro. La última anotación: «Luces en el islote. Otra vez. Sin barcas cerca».', { solid: true }),
     examine('catalejo_sonda', 5, 3, 'Por la ventana se ve el islote de enfrente. De día, solo árboles en flor.', { solid: true }),
+    ...lighthouseEvents(), // B13: Lucía, de vuelta en casa
   ],
 };

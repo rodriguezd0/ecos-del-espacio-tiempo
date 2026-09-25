@@ -5,6 +5,8 @@
 //  - Luz: radio 3 alrededor de Zygarde (5 si un Pokémon del equipo conoce Destello).
 // Mapa submarino: `underwater: { shallow: [[x, y, w, h], …] }` en la definición (o `underwater: true`) y
 // `dark` para la oscuridad; eventos `diveVent` (respiradero/bolsa), `diveCurrent` y `diveSpot` con `surface`.
+// Punto equivalente (B13): `dive` en la superficie y `underwater.surface` en el fondo (ver divePoint/surfacePoint);
+// bajo el agua, A sin nada delante ofrece emerger en la casilla equivalente (world/zygarde/actions.js#surfaceHere).
 
 export const DIVE_SEGMENTS = 8;
 export const DIVE_SEGMENT_FRAMES = 300; // 5 s a 60 fps
@@ -47,7 +49,47 @@ export class DiveMeter {
 export function underwaterConfig(def) {
   if (!def?.underwater) return null;
   const cfg = def.underwater === true ? {} : def.underwater;
-  return { shallow: Array.isArray(cfg.shallow) ? cfg.shallow : [] };
+  const out = { shallow: Array.isArray(cfg.shallow) ? cfg.shallow : [] };
+  if (cfg.surface) out.surface = cfg.surface;
+  return out;
+}
+
+// ── Punto equivalente superficie ↔ fondo (aditivo B13; lo reutilizan B14 y los DLC) ─────────────────────────────
+// Mapa de superficie:  `dive: { map: 'fondo_x', dx = 0, dy = 0 }`            (casilla del fondo = x + dx, y + dy)
+// Mapa submarino:      `underwater: { shallow, surface: { map, dx = 0, dy = 0, areas? } }`
+//   `areas` = [[x, y, w, h]…] casillas del FONDO desde las que se puede emerger (agua abierta encima); sin `areas`,
+//   desde cualquiera. Un `diveSpot` sin `to`/`tx`/`ty` usa esta correspondencia; con ellos, el destino fijo.
+const inRects = (rects, x, y) => rects.some(([rx, ry, rw, rh]) => x >= rx && y >= ry && x < rx + rw && y < ry + rh);
+
+/** Casilla del fondo bajo (x, y) de un mapa de superficie → { map, x, y } o null (el mapa no tiene fondo). */
+export function divePoint(def, x, y) {
+  const d = def?.dive;
+  if (!d?.map) return null;
+  return { map: d.map, x: x + (d.dx ?? 0), y: y + (d.dy ?? 0) };
+}
+
+/** Casilla de la superficie sobre (x, y) de un mapa submarino → { map, x, y } o null (tapado o sin superficie). */
+export function surfacePoint(def, x, y) {
+  const s = underwaterConfig(def)?.surface;
+  if (!s?.map) return null;
+  if (Array.isArray(s.areas) && !inRects(s.areas, x, y)) return null;
+  return { map: s.map, x: x - (s.dx ?? 0), y: y - (s.dy ?? 0) };
+}
+
+/**
+ * Destino de un evento `diveSpot` en (ev.x, ev.y) del mapa `def`: el fijo del evento (`to`, `tx`, `ty`) o, si falta
+ * algo, el punto equivalente (divePoint al bajar, surfacePoint con `surface: true`). → { to, tx, ty, dir } o null.
+ */
+export function diveSpotTarget(def, d, x, y) {
+  const up = Boolean(d?.surface);
+  const eq = up ? surfacePoint(def, x, y) : divePoint(def, x, y);
+  const to = d?.to ?? eq?.map ?? null;
+  if (!to) return null;
+  const same = eq && eq.map === to;
+  const tx = d.tx ?? (same ? eq.x : null);
+  const ty = d.ty ?? (same ? eq.y : null);
+  if (!Number.isInteger(tx) || !Number.isInteger(ty)) return null;
+  return { to, tx, ty, dir: d.dir ?? 2 };
 }
 
 /** ¿Es somera la casilla (no gasta resonancia)? */

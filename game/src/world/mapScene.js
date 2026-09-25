@@ -31,10 +31,13 @@ import { createContext } from '../script/context.js';
 import { CrisisSky } from '../content/story/crisisSky.js';
 import { stormWeather } from './rest.js';
 import { ZygardeField } from './zygarde/field.js';
+import { surfaceHere } from './zygarde/actions.js';
 import { openSides } from './seams.js';
 import { nearestFreeSpot } from './waterAccess.js';
 import { eggStep } from './eggs.js'; // B11: pasos de los huevos del equipo y eclosión
 import { daycareStep } from './daycare.js'; // guardería: contador del huevo de la pareja depositada
+import { PanoramaLayer } from '../render/panorama.js'; // B12: fondo de mapa (vacío del Mundo Distorsión)
+import { ImpossibleField } from './impossible/field.js'; // B12: espacio imposible (vacío, anclas, puentes)
 
 export const DEFAULT_MAP = 'dev_test';
 // [PROVISIONAL] Ritmo del reloj de juego: 1 minuto de juego por segundo real (TEC-06; ritmo por decidir).
@@ -56,6 +59,7 @@ export default class MapScene extends Scene {
     this.effects = new EffectsLayer();
     this.weather = new WeatherLayer({ playSE: (n) => engine.audio?.playSE?.(n), flash: (c, a, f) => this.fx.flashScreen(c, a, f) });
     this.camera = new Camera();
+    this.panorama = new PanoramaLayer(); // B12: panorama detrás de los tilemaps (def.panorama)
     this.crisisSky = new CrisisSky(this); // capa de cielo de la crisis (content/story, CAMPANA §3.1)
     this.runner = new ScriptRunner();
     this.world = new World({ state: this.state, input: engine.input, hooks: this.worldHooks() });
@@ -65,6 +69,7 @@ export default class MapScene extends Scene {
     // Sistema de campo de Zygarde: montura, detección, Buceo, Salto (world/zygarde/field.js).
     this.zygarde = new ZygardeField(this);
     this.zygarde.applyDevParams(params);
+    this.impossible = new ImpossibleField(this); // B12: espacio imposible (def.impossible)
     this.world.player.setCharsets(await playerCharsets(this.state.player.gender));
     const saved = this.state.player;
     const resume = !params.map && Boolean(saved.mapId);
@@ -92,6 +97,8 @@ export default class MapScene extends Scene {
     this.uninstallDevKeys?.();
     this.runner.cancelAll();
     this.zygarde?.dispose();
+    this.impossible?.dispose();
+    this.panorama?.dispose();
     this.crisisSky?.dispose();
     this.worldView.dispose();
     this.effects.clear();
@@ -106,9 +113,13 @@ export default class MapScene extends Scene {
       playSE: (name) => engine.audio?.playSE?.(name),
       warp: (w) => { this.pendingWarp = w; },
       encounter: (enc) => { this.pendingEncounter = enc; },
-      encountersEnabled: () => !this.noEncounters && this.state.options.encounterMode !== 'visible',
+      // B12: ningún salvaje al pisar el vacío del espacio imposible (primero se cae).
+      encountersEnabled: () => !this.noEncounters && this.state.options.encounterMode !== 'visible' && !this.impossible?.overVoid?.(),
       followerTalk: (f) => this.runScript((ctx) => (f.talk ? f.talk(ctx, f) : followerTalk(ctx, f)), null, 'seguidor'),
-      fieldHook: (kind) => { if (kind === 'swim') this.runScript(swimHook, null, 'nadar'); },
+      fieldHook: (kind) => {
+        if (kind === 'swim') this.runScript(swimHook, null, 'nadar');
+        else if (kind === 'surface') this.runScript(surfaceHere, null, 'emerger'); // aditivo B13 (Buceo)
+      },
       fieldAnim: (kind, ch, x, y) => this.playFieldAnim(kind, ch, x, y),
       mapChanged: (next, prev, off) => this.onConnectionCrossed(next, prev, off),
       stepTaken: (p) => { this.state.setPosition(this.world.map.id, p.x, p.y, p.direction); eggStep(this); daycareStep(this); },
@@ -171,6 +182,7 @@ export default class MapScene extends Scene {
     this.state.setPosition(id, p.x, p.y, p.direction);
     this.announce(def);
     this.zygarde?.onEnterMap(entry);
+    this.impossible?.onEnterMap(entry);
     this.pendingWarp = null;
     this.pendingEncounter = null;
     if (typeof def.onEnter === 'function') this.runScript(def.onEnter, null, `${id}.onEnter`);
@@ -181,7 +193,10 @@ export default class MapScene extends Scene {
     const keep = [];
     for (const conn of conns) {
       keep.push(conn.to);
-      if (this.world.neighbors.some((n) => n.id === conn.to)) continue;
+      // Un vecino ya cargado se recoloca según la conexión del mapa actual (aditivo B13): con vecinos cuyos bordes
+      // no casan entre sí (el Mar del Sur bajo Caleta, la Ruta 15 y Nexo) el desplazamiento heredado sería otro.
+      const loaded = this.world.neighbors.find((n) => n.id === conn.to);
+      if (loaded) { loaded.offset = connectionOffset(conn, entry.def, loaded.def); continue; }
       try {
         const other = await this.loadEntry(conn.to);
         if (this.world.current !== entry) return;
@@ -223,6 +238,7 @@ export default class MapScene extends Scene {
     const w = this.devWeather || stormWeather(this.state, def) || (def.weather ? [def.weather.type || def.weather, def.weather.power ?? 5] : ['none', 0]);
     if (w[0] !== this.weather.type) await this.weather.set(w[0], Number(w[1] ?? 5)).catch((e) => console.warn(e.message));
     await this.weather.setMapFog(def.fog || null);
+    await this.panorama?.set(def.panorama || null);
     this.darkness = def.dark ? { amount: def.dark.amount ?? 0.94, radius: def.dark.radius ?? PLAYER_LIGHT } : null;
   }
 
@@ -358,6 +374,7 @@ export default class MapScene extends Scene {
     const camX = this.camera.x; const camY = this.camera.y;
     this.world.update(dt);
     this.zygarde?.update(dt);
+    this.impossible?.update(dt);
     this.visible.update();
     this.startParallelEvents();
     if (!this.world.scriptBusy()) {
@@ -374,6 +391,7 @@ export default class MapScene extends Scene {
     this.crisisSky?.update();
     this.camera.update();
     this.weather.update(dt, this.camera.x - camX, this.camera.y - camY);
+    this.panorama?.update(dt, this.camera);
   }
 
   /**
@@ -396,8 +414,10 @@ export default class MapScene extends Scene {
       this.world.inputLocked -= 1;
     }
     this.zygarde?.update(dt, { paused: true });
+    this.impossible?.update(dt, { paused: true });
     this.camera.update();
     this.weather.update(dt, this.camera.x - camX, this.camera.y - camY);
+    this.panorama?.update(dt, this.camera);
   }
 
   doWarp(w) {
@@ -448,7 +468,7 @@ export default class MapScene extends Scene {
     this.compositor.setDarkness(dark ? dark.amount : 0, dark ? this.lights() : []);
     this.compositor.render(
       renderer,
-      (r) => { this.worldView.render(r); this.weather.render(r); },
+      (r) => { this.panorama?.render(r); this.worldView.render(r); this.weather.render(r); },
       (r) => { this.effects.renderWorld(r, this.worldView.camera); this.effects.renderSky(r); },
     );
   }

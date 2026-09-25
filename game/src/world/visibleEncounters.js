@@ -2,6 +2,7 @@
 // tablas del mapa deambulan por la hierba (o por la cueva) y el contacto inicia el combate.
 import { followerSpriteKey } from './follower.js';
 import { SHINY_CHANCE } from '../battle/core/pokemon.js';
+import { isVoidCell } from './impossible/logic.js'; // B12: el vacío del espacio imposible
 
 export const VISIBLE_MAX = 4;
 const SPAWN_EVERY = 90; // fotogramas
@@ -38,6 +39,8 @@ export class VisibleEncounters {
   eligible(x, y, base) {
     const map = this.world.map;
     if (!map.valid(x, y)) return false;
+    // B12: en el espacio imposible el vacío es pasable (se cae), pero ningún salvaje aparece ni camina sobre él.
+    if (this.world.current?.def?.impossible && isVoidCell(map, x, y)) return false;
     const t = map.terrainTagAt(x, y, this.world.bridge);
     if (base === 'grass') return t.landWildEncounters;
     return map.passableStrict(x, y) && !t.canSurf && !t.ledge;

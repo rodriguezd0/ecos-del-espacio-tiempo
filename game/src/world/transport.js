@@ -37,7 +37,7 @@ export const FERRY = Object.freeze({
   stops: Object.freeze([
     stop('nexo', 'Ciudad Nexo', 'ciudad_nexo', { x: 26, y: 40, dir: 2 }), // B09b: embarcadero (nexo_layout.js FERRY_ARRIVAL)
     stop('caleta', 'Caleta Sonda', 'caleta_sonda', { x: 10, y: 26, dir: 2 }), // B09b: embarcadero (caleta_layout.js FERRY_ARRIVAL)
-    stop('boreal', 'Villa Boreal', 'villa_boreal'),
+    stop('boreal', 'Villa Boreal', 'villa_boreal', { x: 3, y: 28, dir: 6 }), // B15: embarcadero (layout_boreal.js ferry.arrival)
   ]),
   routes: Object.freeze([['nexo', 'caleta'], ['nexo', 'boreal']]),
 });

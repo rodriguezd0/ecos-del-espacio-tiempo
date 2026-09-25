@@ -8,13 +8,14 @@
 //   diveSpot      { to, tx, ty, dir, surface? }                 Buceo: remolino (surface: salida al subir)
 //   diveVent      { kind?: 'vent'|'bolsa' }                     respiradero/bolsa de aire (recarga la burbuja)
 //   diveCurrent   { dir, length }                               corriente submarina (empuja)
-//   rebuildGap    { tiles: [[x, y, capa, id]…] }                Reconstrucción en zócalo hexagonal (persiste)
+//   rebuildGap    { tiles: [[x, y, capa, id]…], flag?, when?, tutorial?, onRebuilt? }  Reconstrucción (persiste)
 // Áreas: zygardeArea(type, prefijo, x, y, w, h, extra) crea un evento por casilla (barro, grava…).
 import { FIELD_TEXT } from '../../content/zygarde/texts.js';
 import { TOTAL_CELLS } from '../../content/zygarde/thresholds.js';
 import { isRiding, canRide, setRiding } from './mount.js';
 import { checkZygardeProgress } from './scenes.js';
 import { ramBreak, climbWall, rebuildStones, diveDown, surfaceUp } from './actions.js';
+import { diveSpotTarget } from './dive.js';
 
 const notA = (_s, ev) => !ev.selfSwitch('A');
 const isA = (_s, ev) => ev.selfSwitch('A');
@@ -22,6 +23,8 @@ const YES_NO = ['Sí', 'No'];
 const DIR_NAME = { 2: 'down', 4: 'left', 6: 'right', 8: 'up' };
 /** Flag global: el Core ya explicó una vez que la grava se sube más adelante con la montura. */
 const GRAVEL_HINT_FLAG = 'zyg_gravel_hint';
+/** Flag global: ya se vio el tutorial de Reconstrucción (primer zócalo con `tutorial`). */
+export const REBUILD_TUTORIAL_FLAG = 'zyg_rebuild_tutorial';
 
 async function ask(ctx, message) {
   return (await ctx.choice(YES_NO, { message, cancel: 1 })) === 0;
@@ -168,8 +171,8 @@ export const ZYGARDE_EVENT_TYPES = {
   },
 
   // ---- Buceo: remolino en el agua profunda (nadando) o salida a la superficie (`surface: true`).
+  // Sin `to`/`tx`/`ty`, el destino es el punto equivalente del mapa (`dive` / `underwater.surface`, dive.js).
   diveSpot(d) {
-    if (!d.to) throw new Error(`diveSpot ${d.id}: falta "to"`);
     const up = Boolean(d.surface);
     return {
       ...d,
@@ -177,15 +180,18 @@ export const ZYGARDE_EVENT_TYPES = {
       trigger: 'action',
       glow: d.glow === false ? null : { name: 'zygardeWhirl', up },
       script: async (ctx) => {
+        const ev = ctx.event;
+        const target = diveSpotTarget(ctx.world.current?.def, d, ev?.x ?? d.x, ev?.y ?? d.y);
+        if (!target) { console.warn(`[zygarde] diveSpot ${d.id}: sin destino (ni to/tx/ty ni punto equivalente)`); return; }
         if (up) {
           if (!(await ask(ctx, d.askText ?? FIELD_TEXT.surfaceAsk))) return;
-          await surfaceUp(ctx, d);
+          await surfaceUp(ctx, target);
           return;
         }
         if (!ctx.player.surfing) return;
         if (!ctx.zygarde('dive')) { await ctx.say(d.blockedText ?? FIELD_TEXT.diveBlocked); return; }
         if (!(await ask(ctx, d.askText ?? FIELD_TEXT.diveAsk))) return;
-        await diveDown(ctx, d);
+        await diveDown(ctx, target);
       },
     };
   },
@@ -225,26 +231,42 @@ export const ZYGARDE_EVENT_TYPES = {
   },
 
   // ---- Reconstrucción: zócalo hexagonal señalizado junto a un vacío; las piedras quedan (self switch A + patch).
+  // Opcionales (aditivo B16, primer tutorial de Reconstrucción; lo reutilizan B17, B18 y B20):
+  //   flag        estado «reconstruido» en un flag global en vez del self switch A: varios zócalos del mismo hueco
+  //               (uno a cada lado) lo comparten y otros eventos o mapas lo pueden consultar
+  //   when        (state, ev) => bool: el zócalo solo existe entonces (p. ej. un hueco que se abre en una escena)
+  //   tutorial    líneas que se dicen la primera vez que se reconstruye en la partida (flag zyg_rebuild_tutorial);
+  //               true = las genéricas de FIELD_TEXT.rebuildTutorial
+  //   onRebuilt   async (ctx) => {} tras alzar las piedras (escenas del bloque)
   rebuildGap(d) {
     if (!Array.isArray(d.tiles) || !d.tiles.length) throw new Error(`rebuildGap ${d.id}: falta "tiles"`);
+    const done = d.flag ? (s) => Boolean(s?.flag(d.flag)) : isA;
+    const extra = typeof d.when === 'function' ? d.when : null;
+    const tutorial = d.tutorial === true ? FIELD_TEXT.rebuildTutorial : (Array.isArray(d.tutorial) ? d.tutorial : null);
     return {
       ...d,
       pages: [
         {
-          when: notA,
+          when: (s, ev) => !done(s, ev) && (!extra || Boolean(extra(s, ev))),
           solid: true,
           noOver: true,
           trigger: 'action',
           glow: d.glow === false ? null : { name: 'zygardeSocket' },
           script: async (ctx) => {
             if (!ctx.zygarde('rebuild')) { await ctx.say(d.blockedText ?? FIELD_TEXT.rebuildBlocked); return; }
+            if (tutorial && !ctx.flag(REBUILD_TUTORIAL_FLAG)) {
+              for (const line of tutorial) await ctx.say(line, { telepathy: true });
+            }
             if (!(await ask(ctx, d.askText ?? FIELD_TEXT.rebuildAsk))) return;
             await rebuildStones(ctx, d.tiles);
-            ctx.setSelfSwitch('A', true);
+            if (tutorial) ctx.setFlag(REBUILD_TUTORIAL_FLAG);
+            if (d.flag) ctx.setFlag(d.flag);
+            else ctx.setSelfSwitch('A', true);
             await ctx.say(d.doneText ?? FIELD_TEXT.rebuildDone);
+            if (typeof d.onRebuilt === 'function') await d.onRebuilt(ctx);
           },
         },
-        { when: isA, through: true, patch: d.tiles },
+        { when: (s, ev) => done(s, ev), through: true, patch: d.tiles },
       ],
     };
   },

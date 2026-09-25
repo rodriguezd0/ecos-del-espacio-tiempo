@@ -13,7 +13,8 @@ export const MEMORY_LINES = Object.freeze({
   swim: ['Recuerdo el agua. Súbete.'],
   detect: ['Os oigo mejor. Sé dónde estáis.'],
   dive: ['Mi campo te cubrirá. Podemos bajar.'],
-  complete: ['Estoy entero.'],
+  // Versión corta del hito del P8 al recoger la célula 100 (CAMPANA B16 «Si faltan células»: la misma escena, corta).
+  complete: ['Nada me obliga. El mundo necesita que esté entero, y elijo estarlo.'],
   jump: ['Súbete. Esta forma conoce los caminos viejos.'],
   anchor: ['Puedo sostener lo que se tuerce.'],
 });
@@ -66,12 +67,18 @@ export const FIELD_TEXT = Object.freeze({
   diveBlocked: 'El agua forma un remolino oscuro. Es muy profunda.',
   diveAsk: '¿Quieres sumergirte con Zygarde?',
   surfaceAsk: '¿Quieres subir a la superficie?',
+  surfaceBlocked: 'Encima no hay agua abierta. Por aquí no se puede subir.',
   ventRefill: 'El respiradero renueva el campo de Zygarde.',
   diveDepleted: 'El campo de Zygarde se debilita…',
   diveReturn: 'Zygarde te ha llevado de vuelta al último respiradero.',
   rebuildBlocked: 'Un zócalo de piedra con hexágonos gastados. Al otro lado falta el camino.',
   rebuildAsk: '¿Quieres que Zygarde reconstruya el camino?',
   rebuildDone: 'El camino ha vuelto a su sitio.',
+  // Tutorial genérico de Reconstrucción (rebuildGap con `tutorial: true`; B16 es el primero).
+  rebuildTutorial: Object.freeze([
+    'Donde quede un zócalo con hexágonos gastados, puedo alzar el camino que hubo.',
+    'Ponte delante del zócalo y pídemelo. Las piedras se quedarán.',
+  ]),
   flyAsk: '¿Adónde quieres volar?',
   cantFly: 'Aquí no se puede volar.',
   noArca: 'Hace falta el Arca de Zygarde para cambiar de forma.',

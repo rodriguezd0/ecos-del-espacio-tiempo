@@ -8,6 +8,7 @@ import { canRide, isRiding, setRiding, mountState, syncMount } from './mount.js'
 import { canChooseForm, setForm } from './progression.js';
 import { safeEffect, GREEN } from './scenes.js';
 import { placeById, resolveFlyTarget } from '../../ui/logic/regionMapData.js';
+import { underwaterConfig, surfacePoint } from './dive.js';
 import { loadMapDefinition } from '../../content/maps/index.js';
 
 const WHITE_GREEN = [228, 255, 214];
@@ -161,6 +162,23 @@ export async function surfaceUp(ctx, d) {
   await ctx.fade('out', 18, [180, 230, 255]);
   await ctx.warp(d.to, d.tx, d.ty, d.dir ?? 2, { fade: false });
   await ctx.fade('in', 18);
+}
+
+/**
+ * Bajo el agua, A sin nada delante (world.js → fieldHook 'surface'): si el mapa declara su superficie
+ * (`underwater.surface`, dive.js) y encima hay agua abierta, ofrece emerger en la casilla equivalente.
+ * Devuelve true si emergió. Sin superficie declarada no hace nada; con `areas` que no cubren la casilla, avisa.
+ */
+export async function surfaceHere(ctx) {
+  const def = ctx.world.current?.def;
+  const cfg = underwaterConfig(def);
+  if (!cfg?.surface) return false;
+  const p = ctx.player;
+  const at = surfacePoint(def, p.x, p.y);
+  if (!at) { await ctx.say(FIELD_TEXT.surfaceBlocked); return false; }
+  if ((await ctx.choice(['Sí', 'No'], { message: FIELD_TEXT.surfaceAsk, cancel: 1 })) !== 0) return false;
+  await surfaceUp(ctx, { to: at.map, tx: at.x, ty: at.y, dir: p.direction });
+  return true;
 }
 
 /** La resonancia se agota: fundido y regreso al último respiradero, sin daño ni pérdida (§2.8). */

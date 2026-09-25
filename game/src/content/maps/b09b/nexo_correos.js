@@ -5,6 +5,7 @@ import { shopMap, SHOP_LAYOUT } from '../../services/shop.js';
 import { exitArrowEvents, furnitureEvents } from '../../services/interior.js';
 import { BUILDINGS } from './nexo_layout.js';
 import { SPEAKER, SPRITE, lines } from '../../events/b09b_common.js';
+import { evaristoT14, evaristoT14When } from '../../events/b16_evaristo.js';
 
 const door = BUILDINGS.correos.door;
 const L = SHOP_LAYOUT;
@@ -33,6 +34,8 @@ export default {
         await lines(ctx, SPEAKER.evaristo, seen ? EVARISTO_TEXT.again : EVARISTO_TEXT.first);
         ctx.setSelfSwitch('A', true);
       },
+      // B16 (aditivo): tras el P8, la carta sin destino abre la pista T14 (content/events/b16_evaristo.js).
+      pages: [{}, { when: evaristoT14When, script: evaristoT14 }],
     },
     ...L.shelves.flatMap((s, i) => furnitureEvents(`casilleros${i}`, s.x, s.y + 2, 4, 'Casilleros de madera llenos de cartas, ordenadas por pueblos. Algunos sobres están amarillos de viejos.')),
     {

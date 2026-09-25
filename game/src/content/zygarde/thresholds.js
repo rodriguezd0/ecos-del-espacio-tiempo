@@ -34,6 +34,9 @@ export const MILESTONES = Object.freeze({
 /** Flags de estado global que se fijan al desbloquear cada forma (CAMPANA, convenciones). */
 export const FORM_FLAGS = Object.freeze({ 10: 'zyg_10', 50: 'zyg_50', complete: 'zyg_complete' });
 
+/** Flags globales de capacidades sueltas (CAMPANA B13, «Salida»: `zyg_dive`); se fijan al activarlas (aditivo B13). */
+export const CAPABILITY_FLAGS = Object.freeze({ dive: 'zyg_dive' });
+
 /** Nombres cortos para la rejilla de la pantalla de Zygarde (el nombre completo va en la ayuda). */
 const SHORT_NAMES = {
   terrain: 'Terreno', detect: 'Detección', rebuild: 'Reconstruir', jump: 'Salto', anchor: 'Anclaje',

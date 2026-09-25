@@ -602,7 +602,7 @@ agua, `_dive` (content/characters.js); sin arte, fallback con el seguidor de Añ
 | `diveSpot` | `to, tx, ty, dir`; `surface: true` = salida del fondo |
 | `diveVent` | respiradero verde / `kind: 'bolsa'`: recarga la burbuja y es el punto de regreso |
 | `diveCurrent` | `dir`, `length`: corriente que empuja |
-| `rebuildGap` | `tiles: [[x, y, capa, id]…]` en un zócalo hexagonal; las piedras suben y quedan (self switch A + patch) |
+| `rebuildGap` | `tiles: [[x, y, capa, id]…]` en un zócalo hexagonal; las piedras suben y quedan (self switch A + patch). Aditivo B16: `flag` (estado global compartido por varios zócalos del mismo hueco, en vez del self switch), `when(state, ev)` (el zócalo aparece solo si se cumple), `tutorial` (`true` → `FIELD_TEXT.rebuildTutorial` o lista de líneas telepáticas; se dice la primera vez que se reconstruye con tutorial y marca `REBUILD_TUTORIAL_FLAG` = `zyg_rebuild_tutorial`), `onRebuilt(ctx)`, `blockedText`/`askText`/`doneText` (§17) |
 
 `zygardeArea(type, prefijo, x, y, w, h, extra)` crea un evento por casilla (barro, arena, nieve, grava).
 
@@ -876,3 +876,95 @@ Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset
   `maxRun` para partir las franjas largas de bosque en trozos de alturas variadas.
 - Recorrido: `node tools/e2e_b11.mjs [--from=neblino|ruta10|villa|campamento|t09|cerro] [--only=<tramo>] [--no-retry]`
   (ayudantes en `tools/e2e_b11_page.mjs`).
+
+## 16. Bloque 12: Pilar Invertido, espacio imposible 2D (propietario: b12; detalle en `content/maps/b12/README.md`)
+
+- **Espacio imposible** (reutilizable; B20 reusa aristas y Anclas), `world/impossible/`: reglas puras en `logic.js`
+  (`isVoidCell` = capas 0 y 1 vacías; `rotatePoint`/`rotateDir`/`twinPosition` para mapas gemelos girados 90°;
+  `encodeAnchor`/`decodeAnchor` de la var `ancla_actual` = 'mapa|x|y|dir'; `inGaze`/`bridgeExists` de los puentes de
+  la mirada; salas de dos orientaciones descritas con una rejilla física, `parseFacetRoom`/`facetMasks`, y el grafo
+  `facetNeighbours`/`facetReach` para tests y solucionadores). Tipos de evento (`eventTypes.js`, registrados al final de
+  `world/eventTypes.js`): `ancla` (poste: fija el punto seguro), `arista` (veta: gira la pantalla y carga `twin`),
+  `puenteMirada`, `cascadaInvertida` (ascensor de un sentido; `open(state)`), `pulsador` (flag). Acciones
+  (`actions.js`): `touchAnchor`, `fallToAnchor` (fundido, sin daño ni contador, vuelve al Ancla o a `fallback`),
+  `turnToTwin`, `rideInvertedFall`.
+- Un mapa lo activa con `impossible: { section, sectionMaps, spawn, fallFlag, onFirstFall, reach }`; `MapScene` crea
+  `scene.impossible` (`field.js`, cambio aditivo): cada fotograma actualiza la opacidad de los puentes, detecta el giro
+  encima de uno y el paso al vacío → caída. Al entrar por warp en otra sección, la llegada es el punto seguro. Sin
+  salvajes sobre el vacío: `scene.impossible.overVoid()` corta el encuentro clásico del paso (hook `encountersEnabled`)
+  y `VisibleEncounters#eligible` no hace aparecer ni caminar visibles por él.
+- **Giro de pantalla** (`render/compositor.js#setRotation`, `render/screenFx.js#rotateTo(angle, frames, zoom)`): el
+  pase final gira y escala la imagen; lo usan las aristas (90°) y el aljibe (media vuelta).
+- **Panorama** (`render/panorama.js`, el «panorama» de RMXP): `def.panorama = { shader: 'distorsion' | image, parallax }`
+  se dibuja detrás de los tilemaps y asoma por el vacío; `scene.panorama.silhouette({ url, from, to, frames, … })` cruza
+  una silueta por el fondo (sombra de Giratina) y devuelve una promesa.
+- `item` acepta `when` además de su self-switch. Los `trainer` aceptan `after` como función del estado.
+- Tiles propios del Mundo Distorsión: `node tools/distortion_tiles.mjs [--check] [--preview]` (en `npm run data`,
+  añade filas al atlas de Cueva1 y escribe `content/stamps/distortion.js`); arte: `node tools/b12_assets.mjs`.
+- Pruebas: `tests/b12_{impossible,reach,content}.test.mjs`. Recorrido: `node tools/e2e_b12.mjs [--from=<tramo>]
+  [--only=<tramo>]` (conductor `tools/e2e_b12_driver.mjs`; ayudantes `tools/e2e_b12_page.mjs` con planificadores de La
+  Cara Vuelta y La Mirada).
+
+## 17. Bloque 16: Pilar del Alma y la Forma Completa (propietario: b16; detalle en `content/maps/b16/README.md`)
+
+- **Reconstrucción (API para B17, B18 y B20)**: el tipo `rebuildGap` (§7f) es un zócalo sólido que se usa mirándolo.
+  Un hueco con dos zócalos (uno a cada lado) comparte `flag`; las piedras son `tiles` en capa 2 (patch persistente en
+  la página «hecho», que además se vuelve `through`). Primer uso de un bloque:
+  ```js
+  { id: 'zocalo_x', type: 'rebuildGap', x, y, tiles: [[x, y, 2, id]…], flag: 'b17_hueco', tutorial: true,
+    when: (s) => s.flag('b17_algo'), onRebuilt: async (ctx) => { … } }
+  ```
+  `tutorial: true` dice `FIELD_TEXT.rebuildTutorial` (content/zygarde/texts.js) solo si aún no se vio ningún tutorial
+  (`REBUILD_TUTORIAL_FLAG` de `world/zygarde/eventTypes.js`); B16 usa su propio texto (lista). Sin la capacidad
+  `rebuild` el zócalo solo dice `blockedText`. Para alzar piedras desde una escena: `rebuildStones(ctx, tiles)` de
+  `world/zygarde/actions.js` (lo hace el hito con el primer hueco). Tiles de zócalo: `extraDefs('Exterior1').stamps`
+  `pilar_zocalo` / `pilar_zocalo_vivo` (ver `b16_hito.js#gapTiles`).
+- **Forma Completa en escena propia**: `reachMilestone(ctx, 'complete', { scenes: false, sayMissing: false })` devuelve
+  `{ missing }`; `canBecomeComplete(state)` (`b16_hito.js`). Si faltan células, la célula 100 dispara la escena corta
+  genérica (`checkZygardeProgress` + `MEMORY_LINES.complete`, que ahora es la línea de CAMPANA).
+- **Combate sin Mochila**: `rules.sealedBag` (`true` o texto) en la petición de combate; `battle/core/battleItems.js
+  #pbItemMenu` muestra el texto y vuelve al menú sin abrir la Mochila (no se toca el inventario). Azelf:
+  `b16_querer.js#azelfRequest` + `bossBattle` (reintento inmediato con el equipo curado).
+- **Pesca por casilla** (`world/fishing.js#fishingSystem(world, spot, rodId, { state })`): un mapa puede declarar
+  `fishingAt(state, x, y) → tabla | null` (Feebas: `b16_feebas.js`, 6 casillas por día de juego + descansos); si no, la
+  zona de `encounterZones` con tabla de esa caña, y si no la del mapa.
+- **Controles en espejo**: `def.mirrorControls: true` invierte izquierda/derecha mientras ese mapa esté activo
+  (`b16_recuerdo.js#installMirrorInput`, Proxy sobre `world.input.dir4`; nunca queda invertido fuera). El jugador lleva
+  el aspecto de Gael con `player.setCharsets` y lo recupera al salir (`ensurePlayerLooksLikePlayer`). Antes de ponerle
+  otro aspecto se baja de la montura del 10 % (`b16_recuerdo.js#dismountForMemory`): si no, `syncMount` repone el
+  aspecto guardado del jugador en el primer fotograma del mapa nuevo.
+- Reglas puras con solucionador para pruebas y E2E: `b16_saber_logic.js` (glifos; caballeros y bribones con
+  `consistentExits`), `b16_mirror_logic.js` (salas ASCII del reflejo invertido, `solveMirror`), `b16_wind_logic.js`
+  (pasillo del viento, `corridorPath`). El ritual del Telar publica `window.__b16Ritual` (solo navegador) para el E2E.
+- Pruebas: `tests/b16_{content,reach}.test.mjs`. Recorrido: `node tools/e2e_b16.mjs [--from=<tramo>] [--only=<tramo>]`
+  (conductor `tools/e2e_b16_driver.mjs`, tramos `tools/e2e_b16_stages.mjs`, ayudantes `tools/e2e_b16_page.mjs`).
+
+## 18. Bloque 13: Talasa, Lumbre, Tizón y el Buceo genérico (propietario: b13; detalle en `content/maps/b13/README.md`)
+
+- **Buceo genérico (API para B14 y DLC)**: un mapa de superficie declara su fondo con `dive: { map, dx?, dy? }` y el
+  fondo declara su superficie con `underwater: { shallow, surface: { map, dx?, dy?, areas? } }` (`areas` = rectángulos
+  del fondo con agua abierta encima; sin `areas`, cualquiera). Puras en `world/zygarde/dive.js`: `divePoint(def, x, y)`
+  (fondo bajo una casilla), `surfacePoint(def, x, y)` (superficie sobre una casilla del fondo o `null` si está tapada) y
+  `diveSpotTarget(def, d, x, y)` (destino de un `diveSpot`). Un `diveSpot` sin `to`/`tx`/`ty` baja (o sube con
+  `surface: true`) a la casilla equivalente; con ellos, a un destino fijo (como antes). Bajo el agua, pulsar A sin nada
+  delante ofrece emerger en la casilla equivalente (`world.actionButton` → `fieldHook('surface')` →
+  `surfaceHere` de `world/zygarde/actions.js`; fuera de `areas` dice `FIELD_TEXT.surfaceBlocked`). El cambio de mapa
+  lleva el fundido de `diveDown`/`surfaceUp`. Ejemplo: `estacion_talasa` (`dive`) ↔ `talasa_pilotes` (`underwater`).
+- `def.noSwim: true` impide nadar en un mapa aunque el terrain tag sea agua (`world/waterAccess.js#swimAllowed`): en
+  Cueva Volcán el autotile de lava lleva el tag de agua de Añil.
+- **Fases de diálogo en combate** (`battle/core/bossPhases.js`): una fase `{ faint: true, messages: ['…'] }` muestra
+  los mensajes cuando cae el combatiente `phaseTarget` y deja que se debilite con normalidad (escena «a mitad del
+  combate», sin transformarse). En dobles, `phaseTarget: 1` es el primer puesto rival.
+- `CAPABILITY_FLAGS` (`content/zygarde/thresholds.js`): al activarse el Buceo se pone el flag `zyg_dive`
+  (`progression.js#applyUnlock`). Hito del Buceo: `reachMilestone(ctx, 'dive')` en el muelle de buzos de Caleta.
+- `MapScene.loadNeighbors` recalcula el offset de un vecino ya cargado (costas con mapas de alturas distintas: Caleta,
+  Ruta 15 y Nexo sobre el Mar del Sur de 190 casillas). `tools/validate_content_lib.mjs` cuenta como borde transitable
+  el que se cruza nadando. `tools/gen_registries.mjs` no se rompe si un mapa en obras de otro bloque no importa: conserva
+  su entrada anterior o lo omite con un aviso.
+- Reglas puras con solucionador para pruebas y E2E: `content/events/b13_dance_logic.js` (baile de los Clefairy) y
+  `b13_lava_logic.js` (coladas, bloques de obsidiana y respiraderos; `solveRoom`; las casillas `keep` de llegada de los
+  túneles no admiten bloques y un test recorre todos los estados de cada sala para asegurar que siempre se puede volver a
+  una boca). Arte propio: `node tools/b13_assets.mjs`.
+- Pruebas: `tests/b13_{reach,content}.test.mjs`. Recorrido: `node tools/e2e_b13.mjs [--from=<tramo>] [--only=<tramo>]
+  [--no-retry]` (conductor `tools/e2e_b13_driver.mjs` con nado y pasos cortos, tramos `tools/e2e_b13_steps.mjs` y
+  `tools/e2e_b13_islands.mjs`, ayudantes `tools/e2e_b13_page.mjs`).

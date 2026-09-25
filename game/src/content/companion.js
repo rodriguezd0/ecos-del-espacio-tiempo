@@ -55,6 +55,19 @@ const RULES = [
     when: ({ mapId, flag }) => (mapId === 'villa_zaguan' || mapId === 'explanada_umbral') && !flag('p1_restored'),
     lines: ['Al oeste. Las piedras antiguas llaman.', 'Hay algo viejo cerca. Lo noto.'],
   },
+  // B12 — Pilar Invertido (Monte del Portal y Mundo Distorsión)
+  {
+    when: ({ mapId, flag }) => mapId === 'montana_portal' && flag('b01_left_town') && !flag('p6_restored'),
+    lines: ['Arriba. El aljibe me llama.', 'Aquí me rompí. Lo recuerdo.'],
+  },
+  {
+    when: ({ mapId, flag }) => String(mapId).startsWith('pilar_invertido') && !flag('p6_restored'),
+    lines: ['Sigue. La parte de mí está al fondo.', 'No mires el vacío mucho rato.'],
+  },
+  {
+    when: ({ mapId }) => String(mapId).startsWith('pilar_invertido'),
+    lines: ['La puerta se sostiene sola. Podemos irnos.', 'Aquí ya no falta nada mío.'],
+  },
   {
     when: () => true,
     lines: ['Sigo aquí.', 'Te escucho.', 'Estoy contigo.'],

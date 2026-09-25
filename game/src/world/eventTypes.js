@@ -6,6 +6,7 @@
 //   diveCurrent y SUSTITUYE a las de aquí: ver el final de EXPANDERS).
 // Los guiones reciben `ctx` (script/context.js).
 import { ZYGARDE_EVENT_TYPES } from './zygarde/eventTypes.js';
+import { IMPOSSIBLE_EVENT_TYPES } from './impossible/eventTypes.js'; // B12: anclas, aristas, puentes, cascadas invertidas
 
 const notA = (_s, ev) => !ev.selfSwitch('A');
 const isA = (_s, ev) => ev.selfSwitch('A');
@@ -43,8 +44,9 @@ const EXPANDERS = {
   item(d) {
     if (!d.item) throw new Error(`Evento item ${d.id}: falta "item"`);
     const count = d.count ?? 1;
+    const extra = typeof d.when === 'function' ? d.when : null; // condición extra de aparición (aditivo B12)
     const page = {
-      when: notA,
+      when: (s, ev) => notA(s, ev) && (!extra || Boolean(extra(s, ev))),
       sprite: d.hidden ? '' : (d.sprite ?? 'Object ball'),
       trigger: 'action',
       noOver: true,
@@ -90,7 +92,11 @@ const EXPANDERS = {
       dir: d.dir,
       move: d.move,
       trigger: 'action',
-      script: async (ctx) => { if (d.after) await ctx.say(d.after, { speaker: d.name }); },
+      script: async (ctx) => {
+        // `after` puede depender del estado (B12: la Médium del Neblino tras el P6).
+        const text = typeof d.after === 'function' ? d.after(ctx.state) : d.after;
+        if (text) await ctx.say(text, { speaker: d.name });
+      },
     };
     return { ...d, sight: undefined, pages: [battlePage, afterPage] };
   },
@@ -217,6 +223,8 @@ const EXPANDERS = {
 
   // Sistema de campo de Zygarde (agente zygarde): sustituye a los tipos básicos anteriores y añade los nuevos.
   ...ZYGARDE_EVENT_TYPES,
+  // Espacio imposible (B12, world/impossible/): ancla, arista, puenteMirada, cascadaInvertida, pulsador.
+  ...IMPOSSIBLE_EVENT_TYPES,
 };
 
 export const EVENT_TYPES = Object.keys(EXPANDERS);

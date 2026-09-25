@@ -14,6 +14,9 @@ import t_b09a from './b09a.js';
 import t_b09b from './b09b.js';
 import t_b10 from './b10.js';
 import t_b11 from './b11.js';
+import t_b13 from './b13.js';
+import t_b14 from './b14.js';
+import t_b15 from './b15.js';
 
 export const TRAINERS = {
   ...t_b01_ruta1,
@@ -29,6 +32,9 @@ export const TRAINERS = {
   ...t_b09b,
   ...t_b10,
   ...t_b11,
+  ...t_b13,
+  ...t_b14,
+  ...t_b15,
 };
 
 /** Devuelve la definición resuelta (party evaluada con el estado actual) o lanza un error claro. */

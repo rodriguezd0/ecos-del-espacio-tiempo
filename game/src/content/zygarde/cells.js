@@ -89,7 +89,9 @@ add('memoria', 1, 'archivo_hondo', 'Pilar de la Memoria', 'D', ['Estancia de los
 add('neblino', 1, 'ruta_9_neblino', 'Ruta 9 y Neblino', 'E', ['Copa de un tronco hueco', 'Repisa de cristal']);
 add('ruta_10', 2, 'ruta_10', 'Ruta 10 (alta)', 'E', ['Pared de raíces']);
 add('monte', 1, 'montana_portal', 'Monte del Portal', 'E', ['Explanada quemada', { where: 'Mitad de la escalinata', required: true }]);
-add('invertido', 1, 'pilar_invertido', 'Pilar Invertido', 'E', ['La Cara Vuelta', 'El Sumidero'], { required: true });
+add('invertido', 1, 'pilar_invertido', 'Pilar Invertido', 'E', [
+  { where: 'La Cara Vuelta', map: 'pilar_invertido_cara_2_giro' }, { where: 'El Sumidero', map: 'pilar_invertido_sumidero' },
+], { required: true }); // B12: mapas propios del gemelo girado de la 2.ª sala y del Sumidero
 add('cerro_alba', 1, 'cerro_alba', 'Cerro del Alba', 'E', ['Cornisa']);
 add('garganta', 3, 'garganta_albo', 'Garganta del Albo', 'E', ['Pared']);
 add('ruta_6', 2, 'ruta_6', 'Ruta 6', 'E', ['Pared del cañón']);
@@ -100,7 +102,7 @@ add('talasa', 1, 'estacion_talasa', 'Estación Talasa', 'F', [
   { where: 'Cubiertas (siguen accesibles tras el asalto)', required: true }, 'Cubiertas (siguen accesibles tras el asalto)',
 ]);
 add('mar_sur', 3, 'mar_del_sur', 'Mar del Sur (oeste)', 'F', ['Frente a Caleta Sonda', 'Frente a Caleta Sonda']);
-add('lumbre', 1, 'islote_lumbre', 'Islote Lumbre', 'F', ['Gruta de la luna']);
+add('lumbre', 1, 'lumbre_gruta', 'Islote Lumbre', 'F', ['Gruta de la luna']); // mapa propio de la gruta (B13)
 add('caleta', 1, 'caleta_sonda', 'Caleta Sonda', 'F', ['Muelle de buzos']);
 add('mar_sur', 5, 'mar_del_sur', 'Mar del Sur (este)', 'F', ['Islas de basalto', 'Islas de basalto']);
 add('tizon', 1, 'volcan_tizon', 'Volcán Tizón', 'F', ['Forja fría']);
@@ -119,17 +121,20 @@ add('fondo_sur', 1, 'fondo_mar_sur', 'Fondo del Mar del Sur (centro)', 'G', ['Pr
 add('fondo_sur', 3, 'fondo_mar_sur', 'Fondo del Mar del Sur (oeste)', 'G', ['Bajo el Islote Lumbre', 'Bajo el Islote Lumbre']);
 add('fondo_sur', 5, 'fondo_mar_sur', 'Fosa Abisal (este)', 'G', ['Borde de la Fosa']);
 add('ecos', 1, 'arrecife_eco', 'Pilar de los Ecos (capa presente)', 'G', [
-  'Capa presente (las caracolas siguen funcionando tras P7)', 'Capa presente', 'Capa presente',
+  // B14: capa presente de las Ruinas de Antea (mapas antea_<sala>_presente); las caracolas siguen funcionando tras P7.
+  { where: 'Sala 1, Plaza de la Caracola (capa presente)', map: 'antea_1_presente' },
+  { where: 'Sala 3, terraza alta del Barrio Alto (capa presente)', map: 'antea_3_presente' },
+  { where: 'Sala 4, ante la boca de la Fosa (capa presente)', map: 'antea_4_presente' },
 ], { required: true });
 add('garganta', 5, 'pozo_albo', 'Pozo del Albo', 'G', ['Fondo del pozo']); // mapa submarino propio (B04)
 add('caleta', 2, 'caleta_algas', 'Caleta Sonda', 'G', ['Bosque de algas']); // mapa submarino propio (B09b)
-add('talasa', 3, 'estacion_talasa', 'Estación Talasa', 'G', ['Pilotes']);
+add('talasa', 3, 'talasa_pilotes', 'Estación Talasa', 'G', ['Pilotes']); // mapa submarino propio (B13)
 add('reserva', 3, 'reserva_fondo', 'Reserva del Delta', 'G', ['Fondo de la laguna']); // mapa submarino propio (B09a)
 
 // ---- Etapa H: tras P7 (12)
 add('ruta_11', 1, 'ruta_11', 'Ruta 11', 'H', ['Nieve de la vertiente', 'Nieve de la vertiente']);
 add('ruta_13', 1, 'ruta_13', 'Ruta 13', 'H', ['Nieve profunda', 'Nieve profunda']);
-add('boreal', 1, 'villa_boreal', 'Villa Boreal', 'H', ['Tejado del Observatorio']);
+add('boreal', 1, 'villa_boreal', 'Villa Boreal', 'H', [{ where: 'Tejado del Observatorio', map: 'boreal_observatorio_terraza' }]); // B15: terraza propia
 add('escarcha', 1, 'gruta_escarcha', 'Gruta Escarcha', 'H', ['Lago helado']);
 add('lagos', 1, 'lagos_alma', 'Lagos del Alma', 'H', ['Islote del Lago del Sentir']);
 add('mar_boreal', 1, 'mar_boreal', 'Mar Boreal', 'H', ['Témpano']);

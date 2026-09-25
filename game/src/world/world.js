@@ -353,6 +353,11 @@ export class World {
       this.hooks.fieldHook?.('swim', { x: fx, y: fy });
       return true;
     }
+    // Bajo el agua con superficie declarada: emerger en el punto equivalente (aditivo B13, world/zygarde/dive.js).
+    if (this.current?.def?.underwater?.surface && this.hooks.fieldHook) {
+      this.hooks.fieldHook('surface', { x: p.x, y: p.y });
+      return true;
+    }
     return false;
   }
 

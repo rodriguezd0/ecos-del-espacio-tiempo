@@ -255,7 +255,8 @@ export function edgeSteps(a, b, conn) {
     const bx = ox === 0 ? ax - off : (ox < 0 ? b.width - 1 : 0);
     const by = oy === 0 ? ay - off : (oy < 0 ? b.height - 1 : 0);
     if (!b.valid(bx, by)) continue;
-    if (a.playerPassable(ax, ay, d, {}) && b.playerPassable(bx, by, 10 - d, {})) out.push({ ax, ay, bx, by });
+    // Como stepTarget: a pie, sobre un puente o nadando (aditivo B13: mares conectados solo por agua).
+    if (ENVS.some((env) => a.playerPassable(ax, ay, d, env) && b.playerPassable(bx, by, 10 - d, env))) out.push({ ax, ay, bx, by });
   }
   return out;
 }

@@ -11,6 +11,8 @@
 //   cureStatus?: true, resetStages?: true, clearEffects?: false,
 //   message?: 'texto',                // mensaje de transición (por defecto uno genérico)
 //   name?: 'etiqueta',                // nombre interno de la fase (para catchCondition)
+//   faint?: true, messages?: ['…'],   // fase de DIÁLOGO (aditivo B13): muestra los mensajes y el combatiente cae
+//                                     // con normalidad (una escena «a mitad del combate», sin transformarse)
 // }, … ]
 // config.phaseTarget = índice del combatiente jefe (por defecto 1).
 // battle.phaseState = { index, total, target } — `index` es el número de transiciones ya ocurridas.
@@ -35,6 +37,12 @@ Object.assign(Battle.prototype, {
     if (st.index >= st.total || !battler.pokemon) return false;
     const phase = this.config.phases[st.index];
     st.index += 1;
+    if (phase.faint) {
+      // Fase de diálogo: solo mensajes; el combatiente se debilita con normalidad (return false).
+      const lines = Array.isArray(phase.messages) ? phase.messages : [phase.message].filter(Boolean);
+      for (const text of lines) this.pbDisplay(text);
+      return false;
+    }
     const pkmn = battler.pokemon;
     if (phase.level) pkmn.level = phase.level;
     if (phase.form !== undefined) {

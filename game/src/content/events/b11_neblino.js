@@ -114,8 +114,10 @@ function trainerEvents() {
       id: 'medium_celia', type: 'trainer', trainer: 'b11_medium_celia', name: 'Médium Celia', sprite: 'anil:medium',
       x: 24, y: 14, dir: 6, sight: 3,
       intro: 'Durante semanas la niebla no dejó pasar a nadie… salvo a los espíritus. ¿Tú qué eres?',
-      // Fase 1–2 de la crisis (TABLILLAS T10, CAMPANA §3.1): sombras que bajan del aljibe al Neblino (las arregla el P6).
-      after: 'Desde que se fue la niebla, de noche bajan sombras del Monte. No son espíritus. No sé lo que son.',
+      // Fase 1–2 de la crisis (TABLILLAS T10, CAMPANA §3.1): sombras que bajan del aljibe al Neblino (las arregla el P6, B12).
+      after: (s) => (s?.flag?.('p6_restored')
+        ? 'Las sombras ya no bajan del Monte. Algo se ha cerrado allá arriba, y el bosque lo nota.'
+        : 'Desde que se fue la niebla, de noche bajan sombras del Monte. No son espíritus. No sé lo que son.'),
     },
     {
       id: 'excursionista_ruben', type: 'trainer', trainer: 'b11_excursionista_ruben', name: 'Excursionista Rubén', sprite: 'anil:excursionista',

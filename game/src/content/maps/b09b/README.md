@@ -39,7 +39,7 @@ marcha, 4 parada), `b09b_estaca.png` (fila 2 sin leer; fila 4 patrones 0–3 = l
 | `ciudad_nexo` borde norte | x 30–33 | `ruta_14_reserva` (B09a) `north`, offset 2 | **activo**; la Ruta 14 conecta `south`, −2 (x 28–31) |
 | `ciudad_nexo` borde oeste | filas 20–23 | `ruta_15` `west`, offset 6 | interno (vuelta `east`, −6: filas 14–17 de la Ruta 15) |
 | `ruta_15` borde oeste | filas 12–15 | `caleta_sonda` `west`, offset 2 | interno (vuelta `east`, −2: filas 10–13 de Caleta) |
-| `ciudad_nexo` sur (y 51) y este (x 63, y 38–50) · `ruta_15` sur (y 39) · `caleta_sonda` sur (y 31) y oeste (x 0) | mar abierto | `mar_del_sur` (B13) | **pendiente**: `offset: null` en `links.js`; aviso neutro y un paso atrás hasta que B13 fije el trazado |
+| `ciudad_nexo` sur (y 51) · `ruta_15` sur (y 39) · `caleta_sonda` sur (y 31) | mar abierto | `mar_del_sur` (B13) `south`, offsets −126, −36 y 0 (`links.js`) | **activo** (B13): el mar conecta `north` con 126, 36 y 0 (ver `maps/b13/README.md`). El borde este de Nexo y el oeste de Caleta quedan como límite del mapa |
 | Puertas | empujar desde la casilla de debajo | interiores | Remedios (17,30), familia (29,30); Nexo: estación (8,12), Correos (21,10), Centro (39,11), tienda (48,9), casa del pescador (15,29), astillero (50,30), faro (46,46); Caleta: Centro (30,9), tienda (13,8), faro (4,11), buzos (16,16) |
 | Interiores | felpudo, pulsar ↓ | exterior | una casilla bajo la puerta (test «puertas de ida y vuelta») |
 | `caleta_sonda` remolino | (31,28), Buceo | `caleta_algas` (5,10) | vuelta por la superficie en (5,10) |

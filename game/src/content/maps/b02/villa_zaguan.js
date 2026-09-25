@@ -9,6 +9,7 @@ import { ZAGUAN_ENCOUNTERS } from '../../encounters/b02.js';
 import { zaguanEvents } from '../../events/b02_zaguan.js';
 import { linkIfReady, mapRegistered } from './pending_links.js';
 import { withT01 } from '../../events/b03_t01.js'; // B03: arco T01 de la Arboleda (sustituye banco y campana genéricos)
+import { b12ZaguanEvents } from '../../events/b12_mundo.js'; // B12: Casilda entrega la Lucarita tras el P6
 
 const HAS_RUTA_2 = mapRegistered('ruta_2');
 
@@ -41,5 +42,5 @@ export default {
     ...[linkIfReady('ruta_2')].filter(Boolean),
   ],
 
-  events: withT01(zaguanEvents({ ruta2Open: HAS_RUTA_2 })),
+  events: [...withT01(zaguanEvents({ ruta2Open: HAS_RUTA_2 })), ...b12ZaguanEvents()],
 };

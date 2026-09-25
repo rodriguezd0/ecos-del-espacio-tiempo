@@ -3,7 +3,7 @@
 // sin ctx): las escenas están en ./scenes.js. Acepta un GameState (o su `data`) para leer y usa sus
 // setters para escribir.
 import {
-  CAPABILITIES, capabilityDef, FORM_ORDER, FORM_FLAGS, CORE_IDS, coreFlag, MILESTONES, FORMS, TOTAL_CELLS,
+  CAPABILITIES, capabilityDef, FORM_ORDER, FORM_FLAGS, CAPABILITY_FLAGS, CORE_IDS, coreFlag, MILESTONES, FORMS, TOTAL_CELLS,
 } from '../../content/zygarde/thresholds.js';
 
 /** Capacidades que cambian la forma natural de Zygarde al recuperarse. */
@@ -115,6 +115,7 @@ export function applyUnlock(state, key) {
   if (typeof state?.setZygardeAbility !== 'function') throw new Error('applyUnlock: se esperaba un GameState');
   if (state.zygardeAbility(key)) return { changed: false, formChanged: null };
   state.setZygardeAbility(key, true);
+  if (CAPABILITY_FLAGS[key]) state.setFlag(CAPABILITY_FLAGS[key], true);
   const form = FORM_UNLOCKS[key];
   let formChanged = null;
   if (form) {

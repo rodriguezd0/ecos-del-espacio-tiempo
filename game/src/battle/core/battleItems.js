@@ -95,6 +95,11 @@ Object.assign(Battle.prototype, {
       this.pbDisplay('Aquí no se pueden usar objetos.');
       return false;
     }
+    // Mochila sellada (aditivo B16, Azelf: «combate sin objetos de la mochila»): true o el texto del aviso.
+    if (this.rules.sealedBag) {
+      this.pbDisplay(typeof this.rules.sealedBag === 'string' ? this.rules.sealedBag : 'Un sello impide abrir la Mochila en este combate.');
+      return false;
+    }
     const b = this.battlers[idxBattler];
     for (let attempt = 0; attempt < MAX_ITEM_ATTEMPTS; attempt++) {
       const bag = Object.entries(this.bag).filter(([id, q]) => q > 0 && this.itemData(id) && this.itemData(id).battleUse)

@@ -44,21 +44,21 @@ export const PENDING_LINKS = Object.freeze({
       blocked: 'El camino del delta sigue hacia el norte, pero por ahora no puedes continuar.',
     }),
     mar_del_sur: Object.freeze({
-      dir: 'south', to: 'mar_del_sur', block: 'B13', offset: null,
+      dir: 'south', to: 'mar_del_sur', block: 'B13', offset: -126, // B13: la x 126 del mar queda bajo la x 0 de Nexo
       expect: 'El Mar del Sur (B13) decide su trazado: Nexo tiene mar abierto en su borde sur (x 36–63) y este (y 30–51). Añadir aquí el offset y la conexión simétrica.',
       blocked: 'Mar adentro, las olas rompen desordenadas. Mejor no alejarse de la costa por ahora.',
     }),
   }),
   ruta_15: Object.freeze({
     mar_del_sur: Object.freeze({
-      dir: 'south', to: 'mar_del_sur', block: 'B13', offset: null,
+      dir: 'south', to: 'mar_del_sur', block: 'B13', offset: -36, // B13: la x 36 del mar queda bajo la x 0 de la Ruta 15
       expect: 'El Mar del Sur (B13) decide su trazado: la Ruta 15 tiene mar abierto en todo su borde sur (y 39).',
       blocked: 'Mar adentro, las olas rompen desordenadas. Mejor no alejarse de la costa por ahora.',
     }),
   }),
   caleta_sonda: Object.freeze({
     mar_del_sur: Object.freeze({
-      dir: 'south', to: 'mar_del_sur', block: 'B13', offset: null,
+      dir: 'south', to: 'mar_del_sur', block: 'B13', offset: 0, // B13: Caleta sobre el sector oeste (x 0–35 del mar)
       expect: 'El Mar del Sur (sector oeste, B13) decide su trazado: Caleta tiene mar abierto en su borde sur (y 31) y oeste (x 0). El Arrecife del Eco (B14) se alcanza buceando desde el mar.',
       blocked: 'Más allá de la caleta el mar se vuelve oscuro y revuelto. Mejor no alejarse por ahora.',
     }),

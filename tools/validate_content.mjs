@@ -37,6 +37,9 @@ const B01_DIR = 'game/src/content/maps/b01/';
 export const EXTERNAL_FLAGS = Object.freeze({
   p1_restored: 'B02 (Pilar del Umbral restaurado)',
   prologue_seen: 'content/newgameRules.js (partida nueva)',
+  // restorePillar (content/story/api.js) pone pN_restored con el flag del Fragmento: la lectura estática no lo ve.
+  p5_restored: 'B10 (restorePillar(5), Pilar de la Memoria)',
+  p6_restored: 'B12 (restorePillar(6), Pilar Invertido)',
 });
 
 /** Estado de partida en el que todos los flags y self switches están activos (historia «terminada»). */

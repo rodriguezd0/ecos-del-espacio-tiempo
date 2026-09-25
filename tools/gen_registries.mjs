@@ -23,16 +23,33 @@ function walk(dir) {
 
 const rel = (from, to) => `./${path.relative(from, to).replace(/\\/g, '/')}`;
 
+/** Entradas del índice actual (id ← archivo), para conservar las de un mapa que otro agente está editando. */
+function currentMapEntries(dir) {
+  const file = path.join(dir, 'index.js');
+  const out = new Map();
+  if (!fs.existsSync(file)) return out;
+  for (const m of fs.readFileSync(file, 'utf8').matchAll(/^\s+"([^"]+)": \(\) => import\("([^"]+)"\),$/gm)) {
+    out.set(path.resolve(dir, m[2]), m[1]);
+  }
+  return out;
+}
+
 async function mapsIndex() {
   const dir = path.join(CONTENT, 'maps');
   const entries = [];
+  const previous = currentMapEntries(dir);
   for (const file of walk(dir).sort()) {
     if (path.basename(file) === 'index.js') continue;
     let def;
     try {
       def = (await import(pathToFileURL(file).href)).default;
     } catch (err) {
-      throw new Error(`No se pudo importar ${path.relative(ROOT, file)}: ${err.message}`);
+      // Trabajo en paralelo: un mapa a medio escribir no tumba el registro de todos. Si ya estaba registrado, se
+      // conserva su entrada; si no, se omite con un aviso (vuelve a registrarse cuando importe).
+      const id = previous.get(path.resolve(file));
+      console.warn(`aviso: no se pudo importar ${path.relative(ROOT, file)} (${err.message.split('\n')[0]})${id ? `; se conserva "${id}"` : '; se omite'}`);
+      if (id) entries.push({ id, file });
+      continue;
     }
     if (!def || typeof def !== 'object' || !def.id || !(def.width || def.build || def.layers)) continue;
     entries.push({ id: def.id, file });

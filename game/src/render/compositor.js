@@ -52,10 +52,23 @@ uniform int uTrans;
 uniform float uT;
 uniform vec2 uCenter;
 uniform float uSeed;
+uniform float uRot;
+uniform float uZoom;
 varying vec2 vUv;
 ${TRANSITION_GLSL}
 void main() {
   vec2 p = vec2(vUv.x * ${SCREEN_W}.0, (1.0 - vUv.y) * ${SCREEN_H}.0);
+  // Giro de pantalla (aristas del espacio imposible, B12): la imagen gira uRot rad en sentido horario y escala uZoom.
+  if (uRot != 0.0 || uZoom != 1.0) {
+    vec2 c0 = vec2(${SCREEN_W}.0, ${SCREEN_H}.0) * 0.5;
+    vec2 d = (p - c0) / uZoom;
+    float cs = cos(uRot); float sn = sin(uRot);
+    p = c0 + vec2(cs * d.x + sn * d.y, -sn * d.x + cs * d.y);
+    if (p.x < 0.0 || p.y < 0.0 || p.x >= ${SCREEN_W}.0 || p.y >= ${SCREEN_H}.0) {
+      gl_FragColor = vec4(mix(vec3(0.0), uFade.rgb, uFade.a), 1.0);
+      return;
+    }
+  }
   vec4 c = transitionColor(tFinal, p, uTrans, uT, uCenter, uSeed);
   c.rgb = mix(c.rgb, uFlash.rgb, uFlash.a);
   c.rgb = mix(c.rgb, uFade.rgb, uFade.a);
@@ -108,6 +121,8 @@ export class Compositor {
         uT: { value: 0 },
         uCenter: { value: new THREE.Vector2(SCREEN_W / 2, SCREEN_H / 2) },
         uSeed: { value: 0 },
+        uRot: { value: 0 },
+        uZoom: { value: 1 },
       },
       depthTest: false,
       depthWrite: false,
@@ -133,6 +148,13 @@ export class Compositor {
 
   setFlash(r, g, b, a) { this.finalMat.uniforms.uFlash.value.set(r / 255, g / 255, b / 255, a); }
   setFade(r, g, b, a) { this.finalMat.uniforms.uFade.value.set(r / 255, g / 255, b / 255, a); }
+
+  /** Giro de toda la imagen (radianes, sentido horario) y escala; 0 y 1 = sin efecto (aditivo, B12). */
+  setRotation(angle = 0, zoom = 1) {
+    const u = this.finalMat.uniforms;
+    u.uRot.value = angle;
+    u.uZoom.value = zoom > 0 ? zoom : 1;
+  }
 
   setTransition(name, t, opts = {}) {
     const u = this.finalMat.uniforms;

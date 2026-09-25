@@ -9,6 +9,8 @@ import { PORT_BRUSHES, PORT_STAMPS } from './nexo_pieces.js';
 import { INTERNAL, linkIfReady } from './links.js';
 import { CALETA_SONDA } from '../../encounters/b09b.js';
 import { caletaEvents } from '../../events/b09b_caleta.js';
+import { b13CaletaEvents } from '../../events/b13_caleta.js';
+import { b14CaletaEvents } from '../../events/b14_caleta.js';
 
 const door = (bd) => {
   const e = INTERIOR_ENTRIES[bd.to];
@@ -38,5 +40,7 @@ export default {
     linkIfReady('caleta_sonda', 'mar_del_sur'),
   ].filter(Boolean),
 
-  events: caletaEvents(),
+  // B13: resonancia del Buceo en el muelle de buzos y fiesta de los farolillos (content/events/b13_caleta.js).
+  // B14: Tobías, Carmela y Fausto, el remolino del Arrecife del Eco y las escenas de la playa (content/events/b14_caleta.js).
+  events: [...caletaEvents(), ...b13CaletaEvents(), ...b14CaletaEvents()],
 };

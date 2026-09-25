@@ -50,22 +50,25 @@ export const MAP_GROUPS = Object.freeze([
   G('ruta_8_marisma', 'Ruta 8', 'PuebloLavanda', 'Pradera2', ['ruta_8_marisma'], ['palafitos_']),
   G('ruta_9_neblino', 'Ruta 9', 'PrismaBosqueArcoiris', 'BosqueLila', ['ruta_9_neblino']),
   G('ruta_10', 'Ruta 10', 'BosqueVerde', 'Bosque', ['ruta_10']),
-  G('montana_portal', 'Monte del Portal', 'Intro', 'Monte', ['montana_portal', 'campamento_monte']),
+  G('montana_portal', 'Monte del Portal', 'Intro', 'Monte', ['montana_portal', 'campamento_monte',
+    ['monte_gruta', { name: 'Gruta del Monte', bgm: 'cave', battleback: 'Cueva' }]]), // B12: gruta de la repisa
   G('cerro_del_alba', 'Cerro del Alba', 'Ruta 1', null, ['cerro_alba', 'cerro_del_alba']),
   G('ruta_11', 'Ruta 11', 'PrismaRuta2', 'snow', ['ruta_11']),
-  G('paso_del_norte', 'Paso del Norte', 'PrismaRuta2', 'snow', ['paso_del_norte']),
+  G('paso_del_norte', 'Paso del Norte', 'PrismaRuta2', 'snow', ['paso_del_norte', 'paso_refugio']), // B15: refugio
   G('ruta_12_senda_lazo', 'Ruta 12', 'Transicion', 'CimaNevada', ['ruta_12_senda_lazo']),
   G('ruta_13', 'Ruta 13', 'Ruta 2', 'snow', ['ruta_13']),
-  G('lagos_alma', 'Lagos del Alma', 'VinculoSupremo', 'Agua', ['lagos_alma']),
+  G('lagos_alma', 'Lagos del Alma', 'VinculoSupremo', 'Agua', ['lagos_alma'], ['lagos_']),
   G('gruta_escarcha', 'Gruta Escarcha', 'Cueva', 'CuevaHielo', ['gruta_escarcha'], ['gruta_escarcha_']),
   G('mar_boreal', 'Mar Boreal', 'Azul Tema', 'water', ['mar_boreal']),
+  G('mar_boreal', 'Fondo del Mar Boreal', 'Emociones', 'Sub', ['mar_boreal_fondo']), // B15: fondo bajo el remolino
   G('ruta_15', 'Ruta 15', 'Azul Tema', 'Playa', ['ruta_15']),
   G('mar_del_sur', 'Mar del Sur', 'Azul Tema', 'water', ['mar_del_sur']),
   G('mar_del_sur', 'Fondo del Mar del Sur', 'Emociones', 'Sub', ['fondo_mar_sur']),
-  G('islote_lumbre', 'Islote Lumbre', 'Pokeflauta', null, ['islote_lumbre']),
+  G('islote_lumbre', 'Islote Lumbre', 'Pokeflauta', null, ['islote_lumbre'], ['lumbre_']), // lumbre_gruta (B13)
   G('volcan_tizon', 'Volcán Tizón', 'MansionQuemada', 'Volcan', ['volcan_tizon'], ['volcan_tizon_', 'tizon_']),
   G('estacion_talasa', 'Estación Talasa', 'GuaridaRocket', 'BaseVillano', ['estacion_talasa', ['ruinas_talasa', { name: 'Ruinas de Talasa' }]], ['estacion_talasa_', 'talasa_']),
-  G('arrecife_eco', 'Arrecife del Eco', 'Emociones', 'Sub', ['arrecife_eco']),
+  G('arrecife_eco', 'Arrecife del Eco', 'Emociones', 'Sub', ['arrecife_eco',
+    ['arrecife_campana', { name: 'Campana de dragado', bgm: 'GuaridaRocket', battleback: 'BaseVillano' }]]), // B14: interior de Genesis
   G('sima_eje', 'Sima del Eje', 'Amenaza', 'Espacio', ['sima_eje']),
   G('senda_mirador', 'Senda del Mirador', 'Amenaza', 'Espacio', ['senda_mirador']),
   G('mirador_sur', 'Mirador Sur', null, 'Espacio', ['mirador_sur', ['grieta_porvenir', { name: 'Grieta del Porvenir' }]]),
@@ -82,7 +85,7 @@ export const MAP_GROUPS = Object.freeze([
   G('archivo_hondo', 'Pilar de la Memoria', null, 'Templo', ['archivo_hondo']),
   G('aljibe_portal', 'Pilar Invertido', 'distortion', 'MundoDistorsion', ['aljibe_portal'], ['pilar_invertido']),
   G('arrecife_eco', 'Pilar de los Ecos', null, 'Templo', ['fosa_eco'], ['antea_']),
-  G('lagos_alma', 'Pilar del Alma', null, 'Templo', ['santuario_alma']),
+  G('lagos_alma', 'Pilar del Alma', null, 'Templo', ['santuario_alma'], ['santuario_alma_']),
   G('sima_eje', 'Pilar de la Convergencia', null, 'Espacio', ['puente_convergencia', 'camara_cruce']),
   G('sima_eje', 'Pilar del Origen', null, 'Cielo', ['puerta_quince', 'senda_origen', 'cielo_interior', 'terraza_ultimo_sello', 'nucleo_origen']),
 ]);
