@@ -11,6 +11,7 @@ import { preloadDialogGfx } from '../message/messageScenes.js';
 import { playSE, playME, SE, sfx } from '../core/sound.js';
 import { formatPlayTime, formatDate } from '../logic/format.js';
 import { message, confirm, showCommands, mapName, resolveMapNames } from './common.js';
+import { pickFile } from '../core/filePicker.js';
 
 const L = (n) => UI(`Load/${n}.png`);
 const TEXT = ['#e8e8e8', '#888888'];
@@ -29,17 +30,6 @@ function rememberSlot(slot) {
   try { localStorage.setItem(LAST_SLOT_KEY, String(slot)); } catch { /* sin almacenamiento */ }
 }
 
-/** Pide un archivo .json al usuario (input file). */
-function pickFile() {
-  return new Promise((resolve) => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json,application/json';
-    input.onchange = () => resolve(input.files && input.files[0] ? input.files[0] : null);
-    input.click();
-    setTimeout(() => { if (!input.files || !input.files.length) resolve(null); }, 120000);
-  });
-}
 
 class SaveLoadScene extends ScreenScene {
   constructor(opts) {
@@ -157,7 +147,7 @@ class SaveLoadScene extends ScreenScene {
   }
 
   async importFile() {
-    const file = await pickFile();
+    const file = await pickFile({ accept: '.json,application/json' });
     if (!file) return;
     let state;
     try {
