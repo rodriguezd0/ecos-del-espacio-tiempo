@@ -13,7 +13,7 @@ import {
 } from '../game/src/content/trainerMoney.js';
 
 /** Último bloque cuya regla se exige (súbelo al cerrar cada bloque nuevo). */
-const STRICT_MAX_BLOCK = 16;
+const STRICT_MAX_BLOCK = 21;
 const DIR = new URL('../game/src/content/trainers/', import.meta.url);
 
 /** Número de bloque a partir del nombre del archivo (b01_ruta1.js → 1, b06.js → 6); null si no sigue el patrón. */

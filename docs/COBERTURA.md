@@ -55,20 +55,21 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | Bloque | Contenido | Estado |
 |---|---|---|
 | B01 | Prólogo P-01…P-04 + apertura (Villa Alba, laboratorio, iniciales, señal, sigilo, Core, Gael, Ruta 1) | ✅ E2E completo |
-| B02 | P1 Umbral: Villa Zaguán, Ruinas del Dintel, Casilda, Geodude, 10% | 🟨 oleada B |
-| B03 | Interludio 1: Ruta 2, Ciudad Caudal, T01 | 🟨 oleada B |
-| B04 | P2 Corriente: Ruta 3, Garganta, Escalera de Estanques, Leandro | 🟨 oleada B |
-| B05 | Interludio 2: Molino del Diezmo, Ruta 4, Villa Brontia | 🟨 oleada B |
-| B06 | P3 Impulso: Ruta 5, Meseta, Parque Eólico (N2), Abril | 🟨 oleada B |
-| B07–B08 | Ruta 6, Cantería (Mega Aro) / P4 Masa: Estrato, Mina, Dunas, Fermín | ⬜ |
-| B09–B10 | Lúmina, museo, Reserva, Marisma, Nexo, Caleta / P5 Memoria: Mnemos, Olvido | ⬜ |
-| B11–B12 | Neblino, Monte, regreso a casa / P6 Invertido (Mundo Distorsión, N3) | ✅ B11 (E2E `tools/e2e_b11.mjs`) · ✅ B12 (E2E `tools/e2e_b12.mjs`; `content/maps/b12/README.md`) |
-| B13–B14 | Talasa (N4, combate con Alerce), Lumbre, Tizón / P7 Ecos (Bramaluna Alfa) | ⬜ |
-| B15–B16 | Norte, Villa Boreal (N5, Gael) / P8 Alma (Uxie, Mesprit, Azelf, Cadena Roja, Completa) | ⬜ |
-| B17–B18 | Axis en eclipse / P9 Convergencia (Dialga/Palkia) | ⬜ |
-| B19–B20 | Calzada del Rey / P10 Origen (Trío de las Nubes, Gael, Flauta) | ⬜ |
-| B21 | Columna Lanza: Salto, captura voluntaria de Zygarde, Arceus 3 fases, epílogo | ⬜ |
-| Tablillas | 15 arcos T01–T15 (museo T06) repartidos en B03–B19 | ⬜ |
+| B02 | P1 Umbral: Villa Zaguán, Ruinas del Dintel, Casilda, Geodude, 10% | ✅ E2E + verificación |
+| B03 | Interludio 1: Ruta 2, Ciudad Caudal, T01 | ✅ E2E + verificación |
+| B04 | P2 Corriente: Ruta 3, Garganta, Escalera de Estanques, Leandro | ✅ E2E + verificación |
+| B05 | Interludio 2: Molino del Diezmo, Ruta 4, Villa Brontia | ✅ E2E + verificación |
+| B06 | P3 Impulso: Ruta 5, Meseta, Parque Eólico (N2), Abril | ✅ E2E + verificación |
+| B07–B08 | Ruta 6, Cantería (Mega Aro) / P4 Masa: Estrato, Mina, Dunas, Fermín | ✅ E2E + verificación |
+| B09–B10 | Lúmina, museo, Reserva, Marisma, Nexo, Caleta / P5 Memoria: Mnemos, Olvido | ✅ E2E + verificación |
+| B11–B12 | Neblino, Monte, regreso a casa / P6 Invertido (Mundo Distorsión, N3) | ✅ E2E + verificación |
+| B13–B14 | Talasa (N4, combate con Alerce), Lumbre, Tizón / P7 Ecos (Bramaluna Alfa) | ✅ E2E + verificación |
+| B15–B16 | Norte, Villa Boreal (N5, Gael) / P8 Alma (Uxie, Mesprit, Azelf, Cadena Roja, Completa) | ✅ E2E + verificación |
+| B17–B18 | Axis en eclipse / P9 Convergencia (Dialga/Palkia) | ✅ E2E + verificación |
+| B19–B20 | Calzada del Rey / P10 Origen (Trío de las Nubes, Gael, Flauta) | ✅ E2E + verificación |
+| B21 | Columna Lanza: Salto, captura voluntaria de Zygarde, Arceus 3 fases, epílogo | ✅ E2E + verificación |
+| Tablillas | 15 arcos T01–T15 (museo T06) repartidos en B03–B19 | ✅ con sus bloques |
+| Partida continua | De «Nueva partida» a los créditos sin preajustes (curva de niveles, dinero, banderas) | ⬜ tras el postgame y los DLC |
 | B22 | Postgame del juego base (búsquedas legendarias) | ⬜ |
 | B23 / B24 | DLC 1 «Almenara» (Gael, Hoopa, Mega Zygarde) / DLC 2 Registro de Expediciones | ⬜ |
 
