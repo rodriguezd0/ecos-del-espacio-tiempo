@@ -12,7 +12,8 @@
     "smoke": "node tools/smoke.mjs"
   },
   "dependencies": {
-    "three": "^0.186.0"
+    "three": "^0.186.0",
+    "ws": "^8.21.3"
   },
   "devDependencies": {
     "playwright-core": "^1.63.0",

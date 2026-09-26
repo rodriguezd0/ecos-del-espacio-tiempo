@@ -119,6 +119,11 @@ export class WorldView {
       seen.add(ch.uid);
       this.spriteFor(ch).sync(ch, 0, 0, { visible: ch.visible !== false, shadow: ch.shadow !== false });
     }
+    // Jugadores de la sala online (net/remotePlayers.js), en su mapa (actual o vecino) con el desplazamiento de este.
+    for (const { ch, ox, oy } of world.remote?.renderList() || []) {
+      seen.add(ch.uid);
+      this.spriteFor(ch).sync(ch, ox, oy, { visible: true, shadow: true });
+    }
     for (const [uid, s] of this.sprites) {
       if (!seen.has(uid)) { s.dispose(); this.sprites.delete(uid); }
     }

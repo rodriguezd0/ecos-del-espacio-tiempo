@@ -9,6 +9,7 @@ import os from 'node:os';
 import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
+import { attachMultiplayer } from './server/multiplayer.mjs';
 
 const PROJECT = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(PROJECT, 'game');
@@ -158,6 +159,9 @@ const server = http.createServer((req, res) => {
   }
   send(req, res, target);
 });
+
+// Multijugador: salas online por WebSocket en el mismo puerto (server/multiplayer.mjs).
+attachMultiplayer(server);
 
 server.on('error', (err) => {
   console.error(`No se pudo iniciar el servidor en el puerto ${PORT}: ${err.message}`);

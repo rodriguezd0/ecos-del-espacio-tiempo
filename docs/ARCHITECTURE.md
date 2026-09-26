@@ -1067,3 +1067,34 @@ Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset
   las reglas del motor; ayudantes en `tests/b18_helpers.mjs`). Recorrido: `node tools/e2e_b18.mjs [--from=<tramo>]
   [--only=<tramo>] [--to=<tramo>] [--no-retry]` (conductor de B16 ampliado en `tools/e2e_b18_driver.mjs`: juega cada
   sala con el plan del solucionador y comprueba la casilla y el eje tras cada acción; ayudantes `window.__b18`).
+
+## 23. Multijugador online (salas)
+
+- **Transporte:** WebSocket en el mismo puerto que el juego (ruta `NET_PATH` de `net/protocol.js`).
+  - `server/multiplayer.mjs` usa la librería `ws`, sin compresión y con TCP_NODELAY.
+  - Límite de 90 mensajes por segundo por cliente.
+  - Latido cada 15 s.
+- **Salas:** `server/rooms.mjs`, lógica pura.
+  - Códigos de 4 caracteres, sin O/I/0/1.
+  - Máximo 8 jugadores por sala; una sala vacía desaparece.
+- **Protocolo compartido:** `game/src/net/protocol.js`.
+  - Mensajes JSON cortos.
+  - El servidor valida todo avatar (`sanitizeAvatar`) y reenvía solo los campos conocidos.
+- **Cliente:** `net/netClient.js`, con el singleton `net`, que sobrevive a los cambios de escena.
+  - Ping cada 2 s.
+  - Si se corta, se reconecta sola a la misma sala tras 1, 2, 4 y 8 s.
+- **Mapa:** `net/mapSync.js`, creado por MapScene.
+  - Cada fotograma, después de `world.update`, compara al jugador con lo último enviado.
+  - Manda `st` en el mismo fotograma en que empieza un paso, así que la latencia es solo la de la red.
+  - Manda `at` cuando el jugador está en reposo, gira o cambia de modo.
+  - Dibuja los nombres sobre los avatares y el indicador «Sala · jugadores · ms».
+- **Avatares:** `net/remotePlayers.js`. Son Characters fantasma: `through`, no bloquean, no disparan eventos.
+  - Reproducen cada paso al llegar, a su velocidad.
+  - Con 2 o más pasos pendientes andan a velocidad +1; con más de 6 saltan al último.
+  - Al cruzar a un mapa vecino cargado, su posición se traduce por los desplazamientos, así que la costura es continua.
+  - WorldView los dibuja con el desplazamiento de su mapa (`world.remote.renderList()`).
+- **Menú:** entrada «Online» del menú de pausa (`net/onlineMenu.js`): crear sala, unirse con código, ver jugadores y salir.
+- **Pruebas:**
+  - `tests/net_*.test.mjs`, incluido un servidor real con dos clientes.
+  - `node tools/net_smoke.mjs`: dos Chrome en la Ruta 1.
+- **Pendiente:** combates entre jugadores (fase 2) e intercambios (fase 3), ver `docs/PENDIENTES.md`.

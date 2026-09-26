@@ -14,6 +14,8 @@ import { ui } from '../api.js';
 const PIC = (n) => anil(`Graphics/Pictures/DP Pause Menu/${n}.png`);
 const PANEL_W = 200;
 const ROW_H = 42;
+const PANEL_MAX_H = 376; // la pantalla mide 384: con muchas entradas las filas se aprietan
+const rowHeight = (n) => Math.min(ROW_H, Math.floor((PANEL_MAX_H - 16) / n));
 const TEXT = '#f8f8f8';
 const TEXT_SHADOW = '#303848';
 const TEXT_SEL = '#ffd890';
@@ -26,7 +28,7 @@ function icons(key, female) {
   const map = {
     pokedex: ['pokedexA', 'pokedexB'], party: ['pokemonA', 'pokemonB'], bag: ['bagA', `bagB${g}`],
     zygarde: ['radar', 'radar'], card: ['playercardA', 'playercardB'], save: ['saveA', `saveB${g}`],
-    options: ['optionsA', 'optionsB'], exit: ['exitA', 'exitB'],
+    options: ['optionsA', 'optionsB'], online: ['controlesA', 'controlesB'], exit: ['exitA', 'exitB'],
   };
   return map[key];
 }
@@ -45,6 +47,7 @@ export function pauseEntries(state) {
   list.push({ key: 'card', label: d.player.name || 'Tarjeta' });
   list.push({ key: 'save', label: 'Guardar' });
   list.push({ key: 'options', label: 'Opciones' });
+  list.push({ key: 'online', label: 'Online' });
   list.push({ key: 'exit', label: 'Salir' });
   return list;
 }
@@ -53,7 +56,7 @@ class PauseMenuScene extends UIScene {
   async enter() {
     this.female = engine.state?.player?.gender === 'F';
     const names = ['bgTop', 'bgMid', 'bgBtm', 'selector'];
-    for (const k of ['pokedex', 'party', 'bag', 'zygarde', 'card', 'save', 'options', 'exit']) names.push(...icons(k, this.female));
+    for (const k of ['pokedex', 'party', 'bag', 'zygarde', 'card', 'save', 'options', 'online', 'exit']) names.push(...icons(k, this.female));
     await Promise.all([preload(names.map(PIC)), preloadDialogGfx()]);
     this.entries = pauseEntries(engine.state);
     this.index = Math.min(lastIndex, this.entries.length - 1);
@@ -106,6 +109,7 @@ class PauseMenuScene extends UIScene {
       case 'card': await ui.openTrainerCard(); return null;
       case 'save': await ui.openSave(); return null;
       case 'options': await ui.openOptions(); return null;
+      case 'online': await (await import('../../net/onlineMenu.js')).runOnlineMenu(engine.state); return null;
       default: return null;
     }
   }
@@ -114,17 +118,18 @@ class PauseMenuScene extends UIScene {
     this.drawInfo(g);
     const x = SCREEN_W - PANEL_W - 4;
     const y = 4;
-    const h = this.entries.length * ROW_H + 16;
+    const rowH = rowHeight(this.entries.length);
+    const h = this.entries.length * rowH + 16;
     blit(g, PIC('bgTop'), x, y);
     const mid = PIC('bgMid');
     for (let yy = y + 12; yy < y + h - 12; yy++) blit(g, mid, x, yy);
     blit(g, PIC('bgBtm'), x, y + h - 12);
     this.entries.forEach((e, i) => {
-      const ry = y + 8 + i * ROW_H;
+      const ry = y + 8 + i * rowH;
       const sel = i === this.index;
       if (sel) blit(g, PIC('selector'), x + 8, ry - 5);
       const [a, b] = icons(e.key, this.female);
-      blitCentered(g, PIC(sel ? b : a), x + 38, ry + ROW_H / 2 - 1);
+      blitCentered(g, PIC(sel ? b : a), x + 38, ry + rowH / 2 - 1);
       drawText(g, e.label, x + 68, ry + 5, { color: sel ? TEXT_SEL : TEXT, shadow: TEXT_SHADOW });
     });
   }
