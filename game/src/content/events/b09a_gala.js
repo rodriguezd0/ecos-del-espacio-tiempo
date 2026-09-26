@@ -3,7 +3,7 @@
 // al jugador de parte del mecenas, el Dr. Aurelio Vértice (Fundación Meridiano). Vértice elogia en público el informe
 // de Gael sobre las migraciones de Staravia y se dirige al jugador; Rosalía Quintana, la curadora, le pide que vuelva
 // al museo de noche (pista T06). Gael se despide: le espera en la escalinata del museo (B3, b09a_gael.js).
-import { F, SPEAKER, SPRITE, MUSIC, when, say, lines, core, byGender, npc, pause } from './b09a_common.js';
+import { F, SPEAKER, SPRITE, MUSIC, when, say, lines, byGender, npc, pause } from './b09a_common.js';
 import { innkeeperEvent } from '../services/inn.js';
 import { SPOTS, INTERIOR_ENTRY } from '../maps/b09a/lumina_layout.js';
 
@@ -90,7 +90,6 @@ async function galaScene(ctx) {
     ctx.turnToPlayer(vertice);
   }
   await say(ctx, V, 'Así que tú eres quien lleva a ese… acompañante. Lúmina le debe mucho a la gente que escucha a las piedras.');
-  await core(ctx, 'Nos está midiendo.');
   await say(ctx, V, 'Espero que disfrutes de la ciudad. Tiene mucho que enseñar a quien sabe mirar.');
   if (vertice) {
     await ctx.move(vertice, ['right', 'right', 'right', 'right', 'right', 'right', 'right', 'right', 'up', 'up', 'up', 'up', 'up', 'up', 'up'], { through: true, speed: 3.5 });

@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import { GameState, migrate } from '../game/src/core/state.js';
 import {
   openClueState, advanceClueState, closeClueState, refreshClueQueue, clueStatus, clueNotebook, clueZones,
-  markCluesSeen, syncClueSchedule, zygardeLine, activeCount,
+  markCluesSeen, syncClueSchedule, missingAbilities, activeCount,
 } from '../game/src/content/story/clueLogic.js';
 import {
   openClue, giveTablet, restorePillar, revealVerse, forgeAzureFlute, setCrisisPhase, syncFragmentItem, storyApi,
@@ -89,15 +89,16 @@ test('la Libreta: secciones, «nuevo», zona de la segunda pista y frase de Zyga
   assert.equal(t02.isNew, true);
   assert.equal(t02.steps.length, 2);
   assert.equal(t02.zone, 'ciudad_caudal');
-  assert.equal(t02.zygarde, 'Allí no llego todavía.', 'falta Correr');
+  assert.equal(t02.zygarde, undefined, 'Zygarde no anticipa capacidades en la Libreta (autor, 25-09-2026)');
+  assert.deepEqual(t02.missing, ['Correr']);
   assert.deepEqual(clueZones(st), [{ id: 'T02', zone: 'ciudad_caudal', place: 'Ciudad Caudal' }]);
   assert.equal(nb.notes[0].id, 'nota');
   assert.equal(nb.notes[0].custom, true);
   markCluesSeen(st);
   assert.equal(clueNotebook(st).active.find((r) => r.id === 'T02').isNew, false);
   st.setZygardeAbility('run', true);
-  assert.equal(zygardeLine({ abilities: ['run'] }, st), null);
-  assert.equal(zygardeLine({ abilities: ['swim'] }, st), 'Necesito cruzar agua profunda.');
+  assert.deepEqual(missingAbilities({ abilities: ['run'] }, st), []);
+  assert.deepEqual(missingAbilities({ abilities: ['swim'] }, st), ['swim']);
   const items = clueListItems(st);
   assert.equal(items[0].kind, 'header');
 });

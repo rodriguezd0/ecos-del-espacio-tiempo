@@ -4,7 +4,7 @@
 // y, tras el rescate, la fiesta de los canteros, su denuncia pública y la piedra activadora que Bea monta en un
 // anillo (la escena del Mega Aro está en b07_megaring.js). Coordenadas en maps/b07/layout.js (CANTERIA).
 import {
-  F, V, SPEAKER, SPRITE, OBJ, MUSIC, when, say, lines, zygardeSays, byGender, kid, bossBattle, eventById, examine,
+  F, V, SPEAKER, SPRITE, OBJ, MUSIC, when, say, lines, byGender, kid, bossBattle, eventById, examine,
 } from './b07_common.js';
 import { resetRoomIfUnsolved, roomStart } from './b07_galerias.js';
 import { stageRoute } from './b07_path.js';
@@ -87,7 +87,6 @@ async function arrivalScene(ctx) {
   await ctx.flash([255, 250, 230], 14, 200);
   await ctx.say(CANTERIA_TEXT.blast);
   await ctx.camera.reset(30);
-  await zygardeSays(ctx, 'La piedra se ha quejado. Debajo hay alguien.');
   remove(ctx, ...dust);
   const bea = actor(ctx, 'bea', C.forgeFront.x, C.forgeFront.y, SPRITE.bea, 2);
   await walk(ctx, bea, p.x, p.y + 1, 4.5);
@@ -102,7 +101,6 @@ async function arrivalScene(ctx) {
   ]);
   if (!ctx.story.clueStatus('T04')) await ctx.story.openClue('T04', { direct: true, silent: true });
   await ctx.story.advanceClue('T04', 2);
-  await zygardeSays(ctx, 'Entre capas de piedra. Como decía el Pilar.');
   await lines(ctx, SPEAKER.bea, [
     'Los del Consorcio están delante de la galería, con su camión. Dicen que la zona es suya, que tienen «permiso de estudio».',
     `A mí no me dejan ni acercarme. Pero a lo mejor a ti… Ten cuidado, ${kid(ctx.state)}.`,

@@ -3,7 +3,7 @@
 //   · Cada piedra forzada es un evento que flota sobre el vacío (hoja b19_piedra.png) y, mientras está en pie, escribe
 //     un «suelo invisible» en la capa 2 (se pisa). Al pisar otra casilla, la anterior se agrieta y cae (máscara de
 //     caídas en la variable del tramo).
-//   · Si el jugador se queda sin piedra delante, el tramo se hunde: Zygarde lo sostiene y lo devuelve al borde; el trozo
+//   · Si el jugador se queda sin piedra delante, el tramo se hunde: una red de hexágonos lo sostiene y lo devuelve al borde (narración); el trozo
 //     del Resonador vuelve a alzar las piedras (tramos reiniciables). Volver al borde también las reinicia.
 //   · Con todas caídas menos la que se pisa, junto a la aguja, la aguja despierta: A → la Reconstrucción alza la Calzada
 //     de verdad (parche persistente de calzada_patch.js) y el tramo queda estabilizado (flag b19_tramo_<n>).
@@ -13,7 +13,7 @@ import {
 } from './b19_spans_logic.js';
 import { spanPatch } from '../maps/b19/calzada_patch.js';
 import { PASS_TILE, VOID_BLOCK } from '../maps/b19/tiles.js';
-import { F, V, OBJ, pause, placePlayer, zygardeSays, zygardeLines, fx } from './b19_common.js';
+import { F, V, OBJ, pause, placePlayer, fx } from './b19_common.js';
 import { FIELD_TEXT } from '../zygarde/texts.js';
 
 /** Variable «la aguja está lista» (el jugador está en la meta del tramo). */
@@ -27,10 +27,14 @@ export const SPAN_TEXT = Object.freeze({
   ask: '¿Alzar la Calzada del Rey?',
   rebuilt: 'Las losas de la Calzada suben desde la Sima y encajan una tras otra. Esta vez, se quedan.',
   collapse: '¡La losa se parte bajo tus pies!',
-  collapseFirst: ['Te tengo.', 'Si te quedas sin ninguna piedra delante, se hunden todas. Otra vez desde el borde.'],
-  collapseAgain: 'Otra vez desde el borde.',
+  // Zygarde habla muy poco (autor, 25-09-2026): el rescate y la regla del hundimiento son narración neutra.
+  collapseFirst: [
+    'Una red de hexágonos verdes te sujeta sobre el vacío y te deja otra vez en el borde.',
+    'Sin ninguna piedra delante, el tramo entero se hunde. Hay que empezar otra vez desde el borde.',
+  ],
+  collapseAgain: 'La red de hexágonos verdes te devuelve al borde.',
   reraise: 'Al volver al borde, el trozo del Resonador vuelve a alzar las piedras que habían caído.',
-  readyFirst: 'Ahora. Mira la aguja.',
+  readyFirst: 'La aguja de roca se enciende en verde.',
   before: 'Una aguja de roca sube desde el fondo de la Sima. Entre ella y la orilla no hay más que vacío.',
 });
 
@@ -133,9 +137,9 @@ async function collapse(ctx, n) {
   await ctx.fade('in', 16);
   if (!ctx.flag(F.firstCollapse)) {
     ctx.setFlag(F.firstCollapse);
-    await zygardeLines(ctx, SPAN_TEXT.collapseFirst);
+    for (const t of SPAN_TEXT.collapseFirst) await ctx.say(t);
   } else {
-    await zygardeSays(ctx, SPAN_TEXT.collapseAgain);
+    await ctx.say(SPAN_TEXT.collapseAgain);
   }
 }
 
@@ -158,7 +162,7 @@ export async function onStone(ctx, n, i) {
     st.setVar(spanReadyVar(n), 1);
     ctx.requestRefresh?.();
     ctx.se?.('core_signal', { volume: 70 });
-    await zygardeSays(ctx, SPAN_TEXT.readyFirst);
+    await ctx.say(SPAN_TEXT.readyFirst);
     return;
   }
   if (isStranded(n, m, x, y)) await collapse(ctx, n);
@@ -190,7 +194,7 @@ export async function useNeedle(ctx, n, onRebuilt = null) {
   const m = mask(st, n);
   if (!isGoal(n, m, x, y)) {
     await ctx.say(SPAN_TEXT.needle);
-    await zygardeSays(ctx, foot(st, n) >= 0 || m ? SPAN_TEXT.needleLeft : SPAN_TEXT.needleIdle);
+    await ctx.say(foot(st, n) >= 0 || m ? SPAN_TEXT.needleLeft : SPAN_TEXT.needleIdle);
     return false;
   }
   await ctx.say(SPAN_TEXT.needleReady);

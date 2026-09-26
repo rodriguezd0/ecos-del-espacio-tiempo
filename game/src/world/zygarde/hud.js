@@ -1,6 +1,6 @@
 // HUD del sistema de campo de Zygarde (canvas 2D de la UI, 512×384): medidor de resonancia del Buceo
-// (8 segmentos hexagonales), flecha de Detección mejorada alrededor del jugador y superposición del Salto de
-// Convergencia (estelas, espacio estirado y destellos). Sin cifras en el mundo (CAMPANA §1.1).
+// (8 segmentos hexagonales) y superposición del Salto de Convergencia (estelas, espacio estirado y destellos).
+// Sin cifras en el mundo (CAMPANA §1.1). Sin flecha de Detección (autor, 25-09-2026: detection.js).
 import { SCREEN_W, SCREEN_H } from '../../core/engine.js';
 import { drawHexFilled, drawHexOutline } from '../../ui/message/messageBox.js';
 import { C } from '../../ui/core/colors.js';
@@ -33,26 +33,6 @@ export function drawDiveMeter(g, meter, t) {
       drawHexFilled(g, cx, y, SEG_R - 3, '#ffffff', 0.5);
     }
   }
-  g.restore();
-}
-
-/** Flecha de Detección mejorada: triángulo verde que orbita al jugador apuntando a la célula. */
-export function drawDetectArrow(g, px, py, angle, t, strength = 1) {
-  const r = 30 + Math.sin(t / 10) * 2;
-  const ax = px + Math.cos(angle) * r;
-  const ay = py + Math.sin(angle) * r;
-  g.save();
-  g.translate(Math.round(ax), Math.round(ay));
-  g.rotate(angle);
-  g.globalAlpha = 0.55 + 0.35 * strength;
-  g.fillStyle = C.coreShadow;
-  g.beginPath();
-  g.moveTo(10, 0); g.lineTo(-6, -8); g.lineTo(-2, 0); g.lineTo(-6, 8); g.closePath();
-  g.fill();
-  g.fillStyle = C.core;
-  g.beginPath();
-  g.moveTo(8, 0); g.lineTo(-4, -6); g.lineTo(-1, 0); g.lineTo(-4, 6); g.closePath();
-  g.fill();
   g.restore();
 }
 

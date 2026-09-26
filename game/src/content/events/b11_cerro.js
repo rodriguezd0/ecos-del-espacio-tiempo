@@ -1,7 +1,7 @@
 // Cerro del Alba (docs/CAMPANA.md §1.4 y §2.3 C054): acceso por las raíces del muro este del mirador de la Ruta 1
 // (Correr para subir al mirador, Trepar para el cerro), pared de raíces hasta la cornisa con C054, escalera a la
 // cima y el brasero frío (Ho-Oh, postgame: aquí solo es decorado). Módulo puro salvo los guiones.
-import { F, OBJ, zygardeSays } from './b11_common.js';
+import { F, OBJ } from './b11_common.js';
 import { b11CellEvents } from './b11_cells.js';
 import { CERRO, RUTA1_CERRO } from '../maps/b11/layout.js';
 import { FIELD_TEXT } from '../zygarde/texts.js';
@@ -62,7 +62,7 @@ export function cerroEvents() {
   return [
     {
       id: 'cerro_llegada', x: 0, y: 0, trigger: 'auto', when: (s) => Boolean(s) && !s.flag(F.cerroSeen),
-      script: async (ctx) => { ctx.setFlag(F.cerroSeen); await ctx.say(CERRO_TEXT.arrive); await zygardeSays(ctx, 'Aquí arriba el viento huele a casa.'); },
+      script: async (ctx) => { ctx.setFlag(F.cerroSeen); await ctx.say(CERRO_TEXT.arrive); },
     },
     ...climbEvents(),
     ...b11CellEvents('cerro_alba'),

@@ -2,14 +2,13 @@
 // Genesis mide lo que ve): llegada al collado, el mirador con la columna de luz y dos técnicos de Genesis que la
 // registran (entrenadores), un curioso, el refugio (puerta), carteles y objetos. Coordenadas en
 // content/maps/b15/layout_paso.js.
-import { F, SPRITE, markNorthUnbound, zygardeSays, when } from './b15_common.js';
+import { F, SPRITE, markNorthUnbound, when } from './b15_common.js';
 import { PASO } from '../maps/b15/layout_paso.js';
 
 const P = PASO;
 
 export const PASO_TEXT = Object.freeze({
   arrival: 'Desde el collado se ve, al oeste, una columna de luz clavada sobre la Cumbre Azur. No parpadea.',
-  arrivalZygarde: 'Allí arriba algo espera. No es hoy.',
   signpost: 'PASO DEL NORTE\n↑ Ruta 13 · Villa Boreal   ← Ruta 12 · Senda del Lazo\n↓ Ruta 11 · Villa Brontia',
   mirador: 'MIRADOR DEL PASO\nAl oeste, la Cumbre Azur. La senda que sube es la del Lazo: quien la toma sin guía, vuelve a empezar.',
   bench: 'Un banco helado orientado hacia la columna de luz. Alguien ha dejado un termo vacío.',
@@ -21,8 +20,7 @@ export const PASO_TEXT = Object.freeze({
 async function arrival(ctx) {
   ctx.setFlag(F.pasoIntro);
   markNorthUnbound(ctx);
-  await ctx.say(PASO_TEXT.arrival);
-  await zygardeSays(ctx, PASO_TEXT.arrivalZygarde);
+  await ctx.say(PASO_TEXT.arrival); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 function sceneEvents() {

@@ -4,7 +4,7 @@
 // combate doble con Sol de aliada contra dos técnicos. Al tocar la Losa, Zygarde revela que es una Tablilla (Tabla
 // Fuerte, FISTPLATE). Recompensa: Medichamita. El torneo vuelve cada semana (revanchas tras descansar). Ningún fallo
 // es permanente: perder reinicia el torneo o deja a los técnicos esperando.
-import { F, V, SPEAKER, SPRITE, OBJ, lines, zygardeSays, byGender, isNight, findEvent } from './b08_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, lines, byGender, isNight, findEvent } from './b08_common.js';
 import { bossBattle } from '../common/bossBattle.js';
 import { solAlly } from '../trainers/b08.js';
 import { ESTRATO as E } from '../maps/b08/layout.js';
@@ -19,7 +19,6 @@ const ROUNDS = Object.freeze([
 
 export const T05_TEXT = Object.freeze({
   losa: 'La Losa del Pulso: una losa de piedra con dos huecos gastados por siglos de codos.',
-  losaHint: 'Esta piedra no pesa como las demás.',
   losaAfter: 'La Losa del Pulso. En el centro queda el hueco de la tabla, y los mineros siguen echando pulsos a su alrededor.',
 });
 
@@ -166,19 +165,17 @@ async function defenseBattle(ctx) {
   await lines(ctx, SPEAKER.sol, [
     'Querían llevarse la Losa. ¿Para qué quiere nadie una piedra de echar pulsos?',
   ]);
-  await zygardeSays(ctx, 'No es solo una piedra. Tócala.');
+  // Zygarde habla muy poco (autor, 25-09-2026): narración neutra en lugar de la línea del Core.
+  await ctx.say('La Losa del Pulso sigue vibrando, muy leve.');
 }
 
 async function losaScript(ctx) {
   if (ctx.flag(F.tablet)) { await ctx.say(T05_TEXT.losaAfter); return; }
   if (!ctx.flag(F.defended)) {
     await ctx.say(T05_TEXT.losa);
-    const clue = (ctx.state.clues || []).find((c) => c.id === 'T05');
-    if (clue && clue.status !== 'solved') await zygardeSays(ctx, T05_TEXT.losaHint);
     return;
   }
   await ctx.say('Pones la mano sobre la Losa. Está templada, como si alguien acabara de echar un pulso.');
-  await zygardeSays(ctx, 'Esta piedra no es de aquí. Es una tabla.');
   ctx.se('Rock Smash');
   ctx.shake(3, 6, 20);
   await ctx.flash([255, 230, 200], 16, 160);

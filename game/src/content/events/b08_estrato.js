@@ -4,7 +4,7 @@
 // por el Pilar, no por ellos»), Fermín y Sol eligen una cooperativa minera y Fermín regala los fósiles y da la segunda
 // pista de T05. Vecinos, mercado de minerales (tras el P4), vía y enlaces pendientes. Noche y temblores:
 // b08_estrato_night.js · Torneo del Pulso (T05): b08_t05.js.
-import { F, SPEAKER, SPRITE, OBJ, lines, zygardeSays, byGender, examine, findEvent, blockedLink, rectCells } from './b08_common.js';
+import { F, SPEAKER, SPRITE, OBJ, lines, byGender, examine, findEvent, blockedLink, rectCells } from './b08_common.js';
 import { estratoNightEvents } from './b08_estrato_night.js';
 import { t05Events } from './b08_t05.js';
 import { clerkEvent } from '../services/shop.js';
@@ -34,7 +34,6 @@ async function arrival(ctx) {
   ctx.shake(3, 5, 50);
   await ctx.wait(40);
   await ctx.say('El suelo tiembla bajo tus pies… y vuelve a quedarse quieto. Nadie en la calle parece sorprendido.');
-  await zygardeSays(ctx, 'Aquí la tierra ha olvidado cuánto pesa.');
 }
 
 // ───────────────────────────── La discusión ante la mina ─────────────────────────────
@@ -166,7 +165,6 @@ async function coopScene(ctx) {
     'Los mineros ya han bajado al Paso del Derrumbe de la Ruta 7 a despejarlo. Por fin se podrá ir a Lúmina.',
   ]);
   ctx.setFlag(F.coop);
-  await zygardeSays(ctx, 'Esta ciudad ha vuelto a pesar lo que pesa.');
 }
 
 function coopEvents() {

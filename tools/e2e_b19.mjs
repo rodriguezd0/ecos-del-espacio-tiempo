@@ -320,7 +320,7 @@ async function llegada(d) {
   const C = CAMP.casandra;
   await d.talk(C.x, C.y + 1, 'up', { watch: [{ re: /trozo cayó al Mirador Sur/, name: 'casandra_resonador', delay: 200 }] });
   await d.expectSaid(/lo arrojaron a la Sima/, 'el mito del Rey');
-  await d.expectSaid(/Písalas todas, una sola vez cada una/, 'la explicación de Zygarde');
+  await d.expectSaid(/una sola vez cada una, y terminando junto a la aguja/, 'la regla del tramo (narración)');
   const clue = await d.eval(() => window.__b19.clue('T15'));
   const tadeo = await d.eval(() => window.__b19.eventAlive('tadeo_paso'));
   await d.milestone('casandra', (s) => need(has(s, 'b19_llegada') && has(s, 'b19_casandra_intro') && clue?.step === 2 && !tadeo, `pista ${JSON.stringify(clue)}, Tadeo ${tadeo}`));
@@ -360,7 +360,7 @@ async function tramo3(d) {
   await d.walkTo(S.from[0], S.from[1], { face: 'up' });
   // Derrumbe a propósito: por aquí la última piedra se queda sin salida.
   await d.steps([8, 8, 4, 8, 6], { watch: [{ re: /La losa se parte/, name: 'tramo3_derrumbe', delay: 150 }] });
-  await d.expectSaid(/Te tengo\.|Otra vez desde el borde/, 'Zygarde sosteniendo al jugador');
+  await d.expectSaid(/Una red de hexágonos verdes te sujeta|La red de hexágonos verdes te devuelve/, 'el rescate (narración)');
   await d.milestone('derrumbe', (s) => need(Number(s.vars.b19_derrumbes) >= 1 && s.x === start.x && s.y === start.y, `derrumbes ${s.vars.b19_derrumbes} en (${s.x},${s.y})`));
   await d.walkTo(S.from[0], S.from[1], { face: 'up' });
   await d.steps(S.dirs);

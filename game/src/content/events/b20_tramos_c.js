@@ -8,7 +8,7 @@
 //       Cadena Roja tensada hacia el tiempo, la cascada del canal se para y se sube por ella a la repisa del oeste; hacia
 //       el espacio, el pliegue lleva a la repisa alta, donde la Reconstrucción alza el tramo roto. En la pared, el verso X
 //       y el último mensaje de los Custodios.
-import { F, V, OBJ, SPEAKER, GOLD, zygardeSays, pause, placePlayer, examine, frame, when, lines } from './b20_common.js';
+import { F, V, OBJ, SPEAKER, GOLD, pause, placePlayer, examine, frame, when, lines } from './b20_common.js';
 import { STILL_FRAMES, corridorFloor, corridorLedge, corridorPath, doorExit, doorText, DOOR_RULES, t9Room } from './b20_logic.js';
 import { AXIS_TIME } from '../../world/axis/logic.js';
 import { axisRoomEvents } from '../../world/axis/roomEvents.js';
@@ -31,7 +31,8 @@ export const T7_TEXT = Object.freeze({
   },
   ask: '¿Golpear la caracola?',
   hit: 'Golpeas la caracola con la palma.',
-  firstEcho: 'Esto es un eco de la cisterna, cuando aún estaba seca. Lo que hagamos aquí seguirá en el presente. Al revés, no.',
+  // Zygarde habla muy poco (autor, 25-09-2026): las reglas de los tramos son narración neutra.
+  firstEcho: 'La cisterna está seca: es un eco de cuando aún no tenía agua. Lo que cambie aquí seguirá cambiado en el presente.',
   back: 'El agua vuelve a llenarlo todo. El presente.',
   grateDown: 'Una reja caída tapa el túnel del norte. Está soldada al fondo por el óxido y las algas.',
   grateUp: 'La reja está alzada, clavada en lo alto por el óxido. El túnel queda libre.',
@@ -40,7 +41,6 @@ export const T7_TEXT = Object.freeze({
   crank: 'Una manivela de bronce. Mueve la reja del túnel.',
   crankAsk: '¿Girar la manivela?',
   crankDone: 'Giras la manivela. La reja sube chirriando… y se encaja arriba con un golpe seco.',
-  crankCore: 'Se quedará ahí siglos. En el presente seguirá alzada.',
   crankAgain: 'La manivela no se mueve: la reja está encajada arriba.',
   masonry: 'Piedra recién tallada al fondo del túnel, sin una grieta. En este tiempo el túnel aún no llega más allá.',
 });
@@ -61,7 +61,7 @@ async function strike(ctx, to) {
   await ctx.fade('in', 22);
   if (to === 'eco' && !ctx.flag(F.t7Echo)) {
     ctx.setFlag(F.t7Echo);
-    await zygardeSays(ctx, T7_TEXT.firstEcho);
+    await ctx.say(T7_TEXT.firstEcho);
   } else if (to !== 'eco') {
     await ctx.say(T7_TEXT.back);
   }
@@ -115,7 +115,6 @@ async function turnCrank(ctx) {
   ctx.requestRefresh();
   ctx.se('PRSFX- Iron Defense', { volume: 70 });
   await ctx.say(T7_TEXT.crankDone);
-  await zygardeSays(ctx, T7_TEXT.crankCore);
 }
 
 export function tramo7EchoEvents() {
@@ -149,16 +148,13 @@ export const T8_TEXT = Object.freeze({
     [SPEAKER.sentir, 'Aquí todo se siente al revés.'],
     [SPEAKER.querer, 'Y quien se para, vuelve atrás.'],
   ],
-  core: 'Tres voces a la vez. Hay que seguirlas todas.',
   controls: 'En este tramo, izquierda y derecha se invierten.',
   pushed: 'El viento te devuelve a la última losa clara.',
   door: (n) => `Una puerta de piedra con el numeral ${['I', 'II', 'III'][n - 1]}. Tiene una inscripción:`,
   ask: '¿Cruzar esta puerta?',
   forgot: 'La puerta no se abre. Un soplo cálido te envuelve… y estás otra vez en la entrada. Las inscripciones han cambiado.',
-  forgotCore: 'Olvidar no es perder. Vuelve a leerlas.',
   open: 'La puerta se abre sin ruido.',
   alreadyOpen: 'Esta no se abre. La puerta que dijo la verdad sigue abierta.',
-  openCore: 'Sabías. Sentías. Querías. A la vez.',
 });
 
 const toLocal = (x, y) => [x - INNER.x, y - INNER.y];
@@ -227,7 +223,6 @@ async function doorScript(ctx, n) {
     await pause(ctx, 10);
     await ctx.fade('in', 24);
     await ctx.say(T8_TEXT.forgot);
-    await zygardeSays(ctx, T8_TEXT.forgotCore);
     return;
   }
   ctx.setFlag(F.t8Door);
@@ -235,7 +230,6 @@ async function doorScript(ctx, n) {
   ctx.requestRefresh();
   await pause(ctx, 16);
   await ctx.say(T8_TEXT.open);
-  await zygardeSays(ctx, T8_TEXT.openCore);
   await crossDoor(ctx);
 }
 
@@ -259,7 +253,6 @@ async function voicesScene(ctx) {
   ctx.setFlag(F.t8Intro);
   await pause(ctx, 20);
   for (const [speaker, text] of T8_TEXT.voices) await ctx.say(text, { speaker });
-  await zygardeSays(ctx, T8_TEXT.core);
   await ctx.say(T8_TEXT.controls);
 }
 
@@ -283,30 +276,28 @@ export function tramo8Events() {
 // ───────────────────────────── Tramo 9 ─────────────────────────────
 
 export const T9_TEXT = Object.freeze({
-  // Líneas telepáticas de Zygarde la primera vez que se usa un cristal (el tipo axisCrystal las dice como Core)
+  // Narración neutra la primera vez que se usa un cristal (el tipo axisCrystal las dice como narración)
   tutorial: [
-    'Este cristal late con dos luces: la fría del tiempo y la cálida del espacio. La Cadena Roja lo nota.',
-    'Es un eco de la Cámara del Cruce. Aquí también puedes tensarla hacia uno de los dos.',
+    'El cristal late con dos luces: la fría del tiempo y la cálida del espacio. La Cadena Roja vibra al acercarse.',
+    'Es un eco de la Cámara del Cruce: la Cadena Roja puede tensarse hacia uno de los dos.',
   ],
-  frozenCore: 'La cascada se ha parado a media caída. Ahora es un camino.',
-  foldCore: 'Las marcas violetas se han abierto. Pisa una y estaremos al otro lado.',
+  frozen: 'La cascada se ha parado a media caída. Ahora se puede subir por ella.',
+  fold: 'Las marcas violetas se han abierto. Llevan al otro lado.',
   custodios: [
     'La pared está llena de glifos Unown, más nuevos que los del resto de la Senda. La Clave Glífica los lee:',
     '«Aquí termina el camino que grabamos. Si has llegado, ya sabes quiénes fuimos: los que escucharon, los que rompieron la flauta, los que cerraron el fondo.»',
     '«No te pedimos que despiertes a nadie. Te pedimos que sepas por qué lo haces.»',
   ],
-  custodiosCore: 'Lo último que dejaron escrito. Y debajo, el último verso.',
-  verseCore: 'Alba. El amanecer… o un pueblo.',
   plaqueCustodios: 'El último mensaje de los Custodios.',
   plaqueVerse: 'El décimo verso de la profecía.',
 });
 
-/** Primera vez que se tensa la Cadena hacia cada eje en el tramo: Zygarde lo nombra. */
+/** Primera vez que se tensa la Cadena hacia cada eje en el tramo: la narración describe el cambio. */
 async function t9OnTense(ctx, mode) {
   const flag = mode === AXIS_TIME ? F.t9Frozen : F.t9Fold;
   if (ctx.flag(flag)) return;
   ctx.setFlag(flag);
-  await zygardeSays(ctx, mode === AXIS_TIME ? T9_TEXT.frozenCore : T9_TEXT.foldCore);
+  await ctx.say(mode === AXIS_TIME ? T9_TEXT.frozen : T9_TEXT.fold);
 }
 
 /** Al entrar: el tono del mapa sigue a la tensión guardada de ESTE tramo (world/axis/actions.js#syncAxis). */
@@ -318,9 +309,7 @@ async function wallScene(ctx) {
   ctx.setFlag(F.custodios);
   await pause(ctx, 10);
   for (const t of T9_TEXT.custodios) await ctx.say(t);
-  await zygardeSays(ctx, T9_TEXT.custodiosCore);
   await ctx.story.revealVerse(10);
-  await zygardeSays(ctx, T9_TEXT.verseCore);
 }
 
 /** Casilla de vacío pasable de Cueva1 (transparente, prioridad 0) bajo los escombros detenidos (world/axis). */

@@ -7,7 +7,7 @@
 // Enlace con la Aldea Mnemos (B10): la aldea pone `ikerDoorEvent` en la puerta de la casa de Íker (BUILDINGS.iker) y
 // la casa de té `teaHouseWellEvents` (el Musharna que abre el pozo); las salidas vuelven al punto de entrada (o, si
 // faltara la aldea, al lindero sur del Bosque Neblino). Ver content/maps/b11/README.md.
-import { F, V, SPEAKER, SPRITE, OBJ, when, lines, zygardeSays, pause } from './b11_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, when, lines, pause } from './b11_common.js';
 import { IKER, POZO } from '../maps/b11/layout.js';
 import { mapRegistered } from '../maps/b11/pending_links.js';
 
@@ -67,11 +67,9 @@ export const T09_TEXT = Object.freeze({
   musharnaHouse: 'Un Musharna dormita junto a la cama de Íker, envuelto en su propio humo rosado.',
   teaHouse: 'El Musharna exhala un humo rosado. Bajo las esteras se dibuja, por un instante, una escalera de piedra que baja.',
   teaHouseAsk: '¿Bajar por la escalera de humo?',
-  wellArrive: 'Aquí se guardaba la memoria. Lo noto en la piedra.',
   wellWater: 'Una pila circular de piedra. El agua del fondo está tibia… y huele a té.',
   glyphs: 'Glifos Unown muy gastados. Hablan de dormir y de recordar.',
   plateSeen: 'Sobre el pedestal, una losa rosada late despacio, como si respirara en sueños.',
-  plateZygarde: 'Soñaba por él. Ya puede despertar.',
   exit: 'Subes por la escalera de humo…',
 });
 
@@ -243,18 +241,13 @@ export function ikerHouseEvents() {
 async function takeMindPlate(ctx) {
   await ctx.say(T09_TEXT.plateSeen);
   await ctx.story.giveTablet('MINDPLATE');
-  ctx.setFlag(F.mindPlate);
-  await zygardeSays(ctx, T09_TEXT.plateZygarde);
+  ctx.setFlag(F.mindPlate); // Zygarde habla muy poco (autor, 25-09-2026)
 }
 
 export function wellEvents() {
   const P = POZO;
   const text = (t) => async (ctx) => { await ctx.say(t); };
   return [
-    {
-      id: 'pozo_llegada', x: 0, y: 0, trigger: 'auto', when: when({ none: ['b11_t09_pozo_visto'] }),
-      script: async (ctx) => { ctx.setFlag('b11_t09_pozo_visto'); await pause(ctx, 20); await zygardeSays(ctx, T09_TEXT.wellArrive); },
-    },
     {
       id: 'musharna_pozo', x: P.entry.x + 1, y: P.entry.y - 1, name: 'Musharna',
       pages: [{ sprite: SPRITE.musharna, dir: 4, move: 'still', stepAnime: true, speed: 2, trigger: 'action', light: { radius: 150, intensity: 1 }, script: async (ctx) => { ctx.cry?.('MUSHARNA'); } }],

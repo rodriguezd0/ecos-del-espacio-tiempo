@@ -16,7 +16,6 @@ const coreTile = { x: CORE.x, y: CORE.y };
 /** Textos de la escena (los no literales de CAMPANA son DECIDIDO-DEV y se listan en el README del bloque). */
 export const CORE_TEXT = Object.freeze({
   cycle: 'El agua da la vuelta entera: baja de E1 a E6 y la noria la devuelve arriba. Por los canales corre una luz azul hasta el centro de la sala.',
-  cycleCore: 'Ahora. La corriente llega al centro.',
   cycleLeandro: '…Ha dado la vuelta. La Escalera entera. Mi abuelo decía que eso no lo había visto nadie.',
   bridge: 'Del foso del núcleo suben unas losas de piedra y forman un paso.',
   challenge: (s) => [
@@ -27,7 +26,6 @@ export const CORE_TEXT = Object.freeze({
   win: 'Adelante. El núcleo es tuyo… o del río, qué sé yo.',
   lose: 'Otra vez. Y esta vez mira dónde pisas.',
   wait: 'Cuando quieras, vuelve a hablarme. No me voy a ninguna parte.',
-  coreWake: 'La corriente ha llegado. Despierta.',
   verseCore: '…El agua… olvidará su cauce.',
   verseLeandro: '«El agua olvidará su cauce.» Eso es lo que lleva pasando en Caudal todo el mes. De día se sale y de noche se esconde.',
   river: 'Muy por encima, a través de la roca, el rumor del Albo cambia de tono. Se vuelve hondo y tranquilo.',
@@ -53,7 +51,6 @@ async function cycleScene(ctx) {
   await ctx.flash(BLUE, 24, 160);
   const glow = ctx.effect('softLight', { x: CORE.x, y: CORE.y, radius: 110, color: BLUE, intensity: 0.7, pulse: 0.4, fadeIn: 40 });
   await ctx.say(CORE_TEXT.cycle);
-  await ctx.say(CORE_TEXT.cycleCore, SAY_CORE);
   await ctx.camera.pan(CORE.x, CORE.y - 2, 50);
   ctx.se('Anim/Saint7');
   await ctx.wait(20);
@@ -112,6 +109,7 @@ async function readInscription(ctx, leandro = true) {
 }
 
 async function onRestored(ctx) {
+  // Zygarde habla muy poco (autor, 25-09-2026): solo la lectura del verso II (CAMPANA: «Core y Leandro»).
   await ctx.say(CORE_TEXT.verseCore, SAY_CORE);
   const ev = ctx.world.events.find((e) => e.id === 'leandro_isla');
   if (ev) { ctx.face(ev, coreTile); await ctx.emote(ev, '!'); }
@@ -126,7 +124,6 @@ async function onRestored(ctx) {
 
 export async function restoreScene(ctx) {
   ctx.face('player', coreTile);
-  await ctx.say(CORE_TEXT.coreWake, SAY_CORE);
   const ok = await ctx.story.restorePillar(2, { core: coreTile, onRestored });
   if (!ok) return false;
   await readInscription(ctx, true);

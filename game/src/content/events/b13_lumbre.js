@@ -2,7 +2,7 @@
 // corro de Clefairy baila sobre ocho piedras; el jugador imita la secuencia (b13_dance_logic.js) y se abre la gruta de la
 // luna, donde están Lucía (la nieta de Ramón) y la Tabla Duende. De día el islote está en calma: el banco permite
 // descansar hasta la noche (TABLILLAS §4.8). Si se llega sin la pista, el arco empieza igual (descubrimiento directo).
-import { F, V, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, zygardeSays, isNight, byGender, findEvent, objectPage } from './b13_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, isNight, byGender, findEvent, objectPage } from './b13_common.js';
 import { DANCE, STEPS, danceState, danceStep, stonePitch } from './b13_dance_logic.js';
 import { runRest } from '../services/inn.js';
 import BAKED_PRISMA from '../stamps/baked/ExteriorPrisma.js';
@@ -39,13 +39,8 @@ async function arrival(ctx) {
   // Descubrimiento directo (TABLILLAS §4.2): si la pista no estaba activa, el arco empieza igual.
   const status = ctx.story.clueStatus('T11');
   if (status !== 'active' && status !== 'solved') await ctx.story.openClue('T11', { direct: true });
-  if (isNight(ctx.state)) {
-    await ctx.say(LUMBRE_TEXT.arrivalNight);
-    await zygardeSays(ctx, 'Bailan porque algo los llama. La luna, o lo que hay debajo.');
-  } else {
-    await ctx.say(LUMBRE_TEXT.arrivalDay);
-    await zygardeSays(ctx, 'Aquí no hay nadie ahora. Las luces bailan de noche.');
-  }
+  // Zygarde habla muy poco (autor, 25-09-2026): la llegada es solo narración.
+  await ctx.say(isNight(ctx.state) ? LUMBRE_TEXT.arrivalNight : LUMBRE_TEXT.arrivalDay);
 }
 
 async function benchRest(ctx) {
@@ -127,7 +122,6 @@ async function danceDone(ctx) {
   ctx.setFlag(F.lumDance);
   ctx.setVar(V.dance, STEPS);
   await ctx.camera.reset(30);
-  await zygardeSays(ctx, 'Ahí dentro. Una tabla. Y alguien dormido.');
 }
 
 async function stoneScript(ctx) {
@@ -297,13 +291,11 @@ async function luciaTalk(ctx) {
     await ctx.move(lucia, ['right', 'right', 'down', 'down'], { through: true, speed: 4 });
     ctx.erase('lucia');
   }
-  if (!ctx.flag(F.lumPlate)) await zygardeSays(ctx, 'La tabla del pedestal. No la dejes aquí.');
 }
 
 async function plateTalk(ctx) {
   if (ctx.flag(F.lumPlate)) { await ctx.say(GRUTA_TEXT.pedestal); return; }
   await ctx.say(GRUTA_TEXT.plate);
-  await zygardeSays(ctx, 'La escribieron los que guardaban. Los Clefairy solo la cuidaban.');
   ctx.setFlag(F.lumPlate);
   await ctx.story.giveTablet('PIXIEPLATE');
 }

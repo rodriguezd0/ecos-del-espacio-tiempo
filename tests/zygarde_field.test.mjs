@@ -14,7 +14,7 @@ import {
   playerWeight, combinedMountSprite, resetMount,
 } from '../game/src/world/zygarde/mount.js';
 import {
-  heartbeatInterval, heartbeatStrength, nearestCell, mapCellCount, cellLabel, regionCellMarks, regionPointMarks,
+  nearestCell, mapCellCount, cellLabel, regionCellMarks, regionPointMarks,
   detectionMode, mapCellKeys,
 } from '../game/src/world/zygarde/detection.js';
 import { DiveMeter, DIVE_SEGMENT_FRAMES, isShallow, diveLightRadius, underwaterConfig } from '../game/src/world/zygarde/dive.js';
@@ -206,19 +206,23 @@ test('célula: texto por defecto con el recuento y comprobación de progresión 
     say: async (t, o = {}) => said.push(o.telepathy ? `[T] ${t}` : t), se: () => {}, requestRefresh: () => {},
     flash: async () => {}, wait: async () => {}, effect: () => null, scene: { refreshFollower() {} },
   };
+  const page = ev(world, 'c').page;
+  assert.equal(page.sprite, 'zygarde_celula');
+  assert.ok(!page.stepAnime && !page.walkAnime, 'quieta: sin animación (autor, 25-09-2026)');
+  assert.ok(!page.glow && !page.light, 'sin brillo ni luz alrededor');
   await ev(world, 'c').script(ctx);
   assert.equal(said[0], 'Has encontrado una Célula de Zygarde. (9/100)');
+  assert.ok(!said.some((t) => t.startsWith('[T]')), 'Zygarde no dice nada al recoger una célula');
   assert.equal(state.zygardeAbility('run'), false, 'aún faltan partes');
   state.addCell(others[8].key);
   assert.equal(cellFoundDefault(state), 'Has encontrado una Célula de Zygarde. (10/100)');
 });
 
-test('detección: latido a ≤ 10 casillas, más rápido y fuerte al acercarse; célula más cercana del mapa', () => {
-  assert.equal(heartbeatInterval(11), 0);
-  assert.ok(heartbeatInterval(10) > heartbeatInterval(3));
-  assert.ok(heartbeatInterval(0) > 0);
-  assert.ok(heartbeatStrength(1) > heartbeatStrength(9));
-  assert.equal(heartbeatStrength(12), 0);
+test('detección: sin latido ni flecha (autor, 25-09-2026); célula más cercana del mapa y rótulo', async () => {
+  const det = await import('../game/src/world/zygarde/detection.js');
+  for (const gone of ['heartbeatInterval', 'heartbeatStrength', 'HEARTBEAT_RADIUS', 'vectorAngle']) assert.equal(det[gone], undefined, gone);
+  const fx = await import('../game/src/world/zygarde/fx.js').catch(() => null);
+  if (fx) assert.ok(!fx.ZYGARDE_EFFECTS.includes('zygardeHeartbeat'), 'sin efecto de latido');
   const events = [
     { id: 'a', type: 'zygardeCell', x: 8, y: 0, cell: 'dev_a' },
     { id: 'b', type: 'zygardeCell', x: 3, y: 1, cell: 'dev_b' },

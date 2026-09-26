@@ -89,8 +89,7 @@ async function puerta(d) {
 // ───────────────────────────── Tramos 1–3 ─────────────────────────────
 
 async function t1(d) {
-  await d.settle();
-  await d.expectSaid(/Es el Umbral/, 'el eco del Umbral');
+  await d.settle(); // sin línea de Zygarde al entrar (autor, 25-09-2026)
   await d.walkTo(T1.stele.x, T1.stele.y + 2, { face: 'up' });
   await d.interact();
   await d.expectSaid(/El primero mira al alba/, 'la inscripción');
@@ -280,8 +279,7 @@ async function t9Drive(d, room, goal, what, watch = []) {
 }
 
 async function t9(d) {
-  await d.settle();
-  await d.expectSaid(/Esa cascada no deja subir/, 'la entrada del tramo 9');
+  await d.settle(); // sin línea de Zygarde al entrar (autor, 25-09-2026)
   const stand = t9Local(T9.gap.stand.x, T9.gap.stand.y);
   const atStand = (x, y) => x === stand.x && y === stand.y;
   // Hasta el cristal de la llegada: tiempo (la cascada se para), repisa del oeste: espacio (el pliegue se abre)

@@ -287,7 +287,6 @@ async function ruta7(d) {
   await d.until((s) => s.top === 'MapScene' && s.map === 'ruta_7' && s.ready, { timeout: 30000, what: 'la Ruta 7' });
   await d.settle();
   await d.walkTo(84, 17);
-  await d.expectSaid(/el suelo se acaba/, 'el Core ante la Sima');
   const rubble = await d.eval(() => window.__b09a.eventAlive('derrumbe_76_17'));
   await d.milestone('ruta7_paso_despejado', (s) => (!rubble && s.flags.b09_r7_llegada ? null : 'el derrumbe sigue en pie'));
   // C041 bajo el andén abandonado (barro: Terreno complicado)
@@ -412,7 +411,7 @@ async function t06(d) {
     await d.milestone('t06_error', (s) => (Number(s.vars.b09_t06_intento) === 1 && s.x === 7 && s.y === 13 ? null : `tras el error (${s.x},${s.y})`));
   }
   const o = await d.eval(() => window.__b09a.originalPos());
-  await d.talk(pallets[o][0], pallets[o][1] + 1, 'up', { choose: yes, watch: [{ re: /Es esta\. La siento/, name: 'core_confirma', delay: 200 }] });
+  await d.talk(pallets[o][0], pallets[o][1] + 1, 'up', { choose: yes, watch: [{ re: /Cuarenta años mirándola/, name: 'rosalia_confirma', delay: 200 }] });
   await d.milestone('t06_original', (s) => (s.flags.b09_t06_original && s.flags.b09_t06_persecucion ? null : 'sin la original'));
   // Muelle de carga
   const watch = [{ scene: 'BattleScene', name: 'combate_muelle', delay: 3500 }];

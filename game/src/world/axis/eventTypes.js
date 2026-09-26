@@ -2,7 +2,7 @@
 // los textos por defecto son neutros y se sustituyen con propiedades del evento. Arte: game/assets/objects/eje_*.png
 // (tools/b18_assets.mjs). Todos aceptan `axisVar` (por defecto AXIS_VAR) y `when(state, ev)` (condición extra).
 //   axisCrystal  cristal de cambio (sólido): A → «¿hacia dónde tensas la Cadena?». { safe, requires = 'REDCHAIN',
-//                blockedText, askText, tutorial: [líneas telepáticas la primera vez], tutorialFlag, onTense(ctx, modo) }
+//                blockedText, askText, tutorial: [líneas de narración la primera vez], tutorialFlag, onTense(ctx, modo) }
 //   axisDebris   escombro sobre el vacío: cae en bucle; con el tiempo tensado queda en el aire y se pisa (patch de un
 //                tile transparente y pasable en la capa 2). { passTile = AXIS_PASS_TILE, phase (fotograma inicial) }
 //   axisCurrent  corriente: pisarla arrastra (salvo con el tiempo tensado: cristal pisable). { dir: 2|4|6|8, safe }
@@ -44,7 +44,7 @@ export const AXIS_EVENT_TYPES = {
         return;
       }
       if (Array.isArray(d.tutorial) && d.tutorialFlag && !ctx.flag(d.tutorialFlag)) {
-        for (const line of d.tutorial) await ctx.say(line, { telepathy: true });
+        for (const line of d.tutorial) await ctx.say(line); // narración, no Zygarde (autor, 25-09-2026)
         ctx.setFlag(d.tutorialFlag);
       }
       const now = mode(ctx.state);

@@ -6,7 +6,7 @@
 // Los centinelas giran con un reloj determinista (SENTINELS: dirección = f(fotograma)) para que el ritmo se pueda
 // leer en pantalla y comprobar en las pruebas. Módulo puro salvo los guiones.
 import {
-  F, V, SPEAKER, SPRITE, OBJ, MUSIC, TELEPATHY, when, lines, zygardeSays, byGender, placePlayer, pause, wildBossBattle,
+  F, V, SPEAKER, SPRITE, OBJ, MUSIC, TELEPATHY, when, lines, byGender, placePlayer, pause, wildBossBattle,
 } from './b11_common.js';
 import { sightReach } from './b01_north_stealth.js';
 import { HONCHKROW_ALFA } from '../encounters/b11.js';
@@ -39,19 +39,16 @@ export const T10_TEXT = Object.freeze({
     'Esta ladera está acordonada por el Consorcio. Por su seguridad, vuelva por donde ha venido.',
   ],
   flock: 'Una bandada de Murkrow se lanza en picado desde los pinos y te obliga a retroceder.',
-  firstCaught: 'Nos ven desde las ramas. Que no te miren.',
   crewHello: ['¡Alguien! ¡Por fin!', 'No te acerques al borde. Esos Honchkrow…'],
   crewStuck: 'Subimos por las raíces huyendo de ellos y ahora no sabemos bajar. Mira esa pared.',
   crewNilo: '¿Has visto a Nilo? Corrió ladera abajo. Pensábamos que…',
   crewNiloOk: (who) => `¿Está bien? …Menos mal. Gracias por venir, ${who}.`,
-  crewZygarde: 'Puedo sostenerlos. Que no miren abajo.',
   crewVeins: 'Zygarde tiende vetas verdes por la pared: raíces vivas que sujetan como una escala.',
   crewThanks: 'Gracias. De verdad. Te esperamos abajo.',
   alfaIntro: 'Un Honchkrow enorme vigila el dormidero. A sus pies brilla algo oscuro.',
   alfaBack: 'El Honchkrow Alfa ha vuelto a su dormidero.',
   alfaLost: 'Has tenido que retirarte del dormidero. Tu equipo ha recuperado fuerzas.',
   plateSeen: 'Entre plumas negras y ramitas hay una losa oscura que brilla.',
-  plateZygarde: 'La guardaban como un tesoro. Como si supieran lo que es.',
   descend: 'Bajas de la cornisa. Al pie de la pared te esperan la cuadrilla… y Nilo.',
   desertion: {
     hello: '¡Estáis bien! Pensé que…',
@@ -69,7 +66,6 @@ export const T10_TEXT = Object.freeze({
       'Dicen que abajo, en un tanque de presión, guardan una muestra que llaman «Z-4». Que brilla en verde… como tu compañero.',
       'Tú quizá sí los necesites.',
     ],
-    speechZygarde: 'Una parte de mí. Encerrada, bajo el agua.',
     plans: 'Nilo te ha dado los planos de la Estación Talasa.',
     bye: 'Si alguna vez bajo al sur, será para otra cosa. Cuídate.',
   },
@@ -98,7 +94,6 @@ async function caught(ctx) {
   await placePlayer(ctx, R.safe);
   await pause(ctx, 12);
   await ctx.fade('in', 18);
-  if (n === 1) await zygardeSays(ctx, T10_TEXT.firstCaught);
 }
 
 const CONE = Object.freeze({ name: 'visionCone', reach: (ev) => sightReach(ev, SIGHT), color: [255, 150, 190], width: 26 });
@@ -143,7 +138,6 @@ async function crewTalk(ctx) {
   }
   await ctx.say(T10_TEXT.crewNilo, { speaker: SPEAKER.tecnica });
   if (ctx.flag(F.niloMet)) await ctx.say(T10_TEXT.crewNiloOk(byGender(ctx.state, 'chaval', 'chavala')), { speaker: SPEAKER.tecnica });
-  await zygardeSays(ctx, T10_TEXT.crewZygarde);
   ctx.se?.('core_signal', { volume: 60 });
   await ctx.flash?.([150, 255, 120], 20, 120);
   await ctx.say(T10_TEXT.crewVeins);
@@ -184,8 +178,7 @@ async function alfaFight(ctx) {
 
 async function takePlate(ctx) {
   await ctx.story.giveTablet('DREADPLATE');
-  ctx.setFlag(F.darkPlate);
-  await zygardeSays(ctx, T10_TEXT.plateZygarde);
+  ctx.setFlag(F.darkPlate); // Zygarde habla muy poco (autor, 25-09-2026)
   await maybeDesertion(ctx);
 }
 
@@ -238,7 +231,6 @@ export async function maybeDesertion(ctx) {
     await ctx.say(D.notBack, { speaker: SPEAKER.nilo });
   }
   await lines(ctx, SPEAKER.nilo, D.speech);
-  await zygardeSays(ctx, D.speechZygarde);
   ctx.me?.('key_item_get');
   ctx.state.addClue(PLANS_NOTE.id, PLANS_NOTE.text);
   ctx.setFlag(F.talasaPlans);

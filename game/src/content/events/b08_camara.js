@@ -7,7 +7,7 @@ import {
   PIECES, PIECE_IDS, PANS, PAN_NAMES, SPOTS, CELL, DIR_NAME, cellAt, cellsOf, normalizePuzzle, resetPieces, step, pull,
   settle, isHole, panView, balanceReading,
 } from './b08_balance_logic.js';
-import { F, V, OBJ, TELEPATHY, zygardeSays, findEvent } from './b08_common.js';
+import { F, V, OBJ, findEvent } from './b08_common.js';
 import { isRiding } from '../../world/zygarde/mount.js';
 import { platformPatches } from '../maps/b08/camara_build.js';
 
@@ -176,7 +176,6 @@ async function applyConsequence(ctx, r) {
   if (!ctx.flag(F.fallSeen)) {
     ctx.setFlag(F.fallSeen);
     for (const t of CAMARA_TEXT.fallFirst) await ctx.say(t);
-    await zygardeSays(ctx, 'Juntos pesamos demasiado para ese suelo.');
   } else {
     await ctx.say(r.broke ? CAMARA_TEXT.fall : CAMARA_TEXT.holeFall);
   }
@@ -200,10 +199,6 @@ async function pressPlate(ctx, st) {
   await ctx.wait(20);
   await ctx.say(CAMARA_TEXT.platformUp);
   await ctx.camera.reset(24);
-  if (!ctx.flag(F.plateSeen)) {
-    ctx.setFlag(F.plateSeen);
-    await zygardeSays(ctx, 'Juntos pesamos lo bastante.');
-  }
 }
 
 async function plateScript(ctx) {
@@ -353,11 +348,8 @@ async function leverScript(ctx) {
   if (reading.light) {
     await ctx.say(CAMARA_TEXT.light);
   } else {
+    // Zygarde habla muy poco (autor, 25-09-2026): sin pista de montura; la regla está en la estela.
     await ctx.say(CAMARA_TEXT.tilt(reading.heavy, reading.lightest));
-    // Pista de la montura: con Zygarde debajo, el platillo de la palanca pesaría lo justo.
-    if (!mounted && balanceReading(st, { x: p.x, y: p.y, mounted: true }).solved) {
-      await zygardeSays(ctx, 'Súbete. Contigo encima, este platillo pesa lo que los otros dos.');
-    }
   }
 }
 
@@ -432,7 +424,6 @@ function fixtureEvents() {
   const [px, py] = [SPOTS.plaque.x, SPOTS.plaque.y];
   const readPlaque = async (ctx) => {
     for (const t of CAMARA_TEXT.plaque) await ctx.say(t);
-    if (!ctx.flag(F.balance)) await ctx.say('Esta cámara está hecha para medir lo que pesamos juntos.', TELEPATHY);
   };
   return [
     { id: 'palanca_retorno', x: r.x, y: r.y, name: 'Palanca de retorno', sprite: OBJ.lever, dir: 2, directionFix: true, walkAnime: false, solid: true, trigger: 'action', script: resetScript },

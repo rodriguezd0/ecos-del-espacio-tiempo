@@ -8,7 +8,7 @@ import {
 } from './b04_hydraulics.js';
 import { PONDS, CONTROLS, NORIA, pondParts, cellSet, cellKey, SPOTS } from '../maps/b04/pilar_corriente_layout.js';
 import { POND_PATCHES, bridgePatch } from '../maps/b04/pilar_corriente_tiles.js';
-import { F, SPRITE, AUDIO, SAY_CORE } from './b04_common.js';
+import { F, SPRITE, AUDIO } from './b04_common.js';
 
 const WATER_BLUE = [90, 170, 255];
 const pondIndex = (id) => Number(id.slice(1)) - 1;
@@ -264,7 +264,6 @@ function stelaEvent() {
     await ctx.say('«Las compuertas sueltan el agua cuesta abajo, de E1 a E6. La noria la sube de E6 a E1 si su engranaje está enganchado; la palanca está en el fondo de E4.»');
     await ctx.say('«Cuando el agua da la vuelta entera con todas las compuertas abiertas, la corriente llega al núcleo.»');
     await ctx.say(`Estado de la Escalera:\n${stateText(viewState(ctx.state))}`);
-    if (!flowing(ctx.state)) await ctx.say('La corriente de este lugar está parada. Quiere dar la vuelta.', SAY_CORE);
   };
   return { id: 'estela', x: SPOTS.stelaEvent.x, y: SPOTS.stelaEvent.y, solid: true, trigger: 'action', script };
 }

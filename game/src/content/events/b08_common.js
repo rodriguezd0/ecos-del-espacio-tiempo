@@ -25,7 +25,6 @@ export const F = Object.freeze({
   creakHint: 'b08_cruje', // primer aviso del suelo quebradizo
   fallSeen: 'b08_caida', // primera caída a la galería inferior
   plateHint: 'b08_placa_pista',
-  plateSeen: 'b08_placa_vista',
   balance: 'b08_balanza', // la Gran Balanza cede: baja la losa del núcleo
   ferminChallenged: 'b08_fermin_reto',
   fermin: 'b08_fermin', // Fermín vencido

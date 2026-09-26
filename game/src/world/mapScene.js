@@ -40,6 +40,7 @@ import { PanoramaLayer } from '../render/panorama.js'; // B12: fondo de mapa (va
 import { ImpossibleField } from './impossible/field.js'; // B12: espacio imposible (vacío, anclas, puentes)
 import { MapNetSync } from '../net/mapSync.js'; // multijugador: otros jugadores de la sala online
 import { handleInvite } from '../net/linkFlow.js'; // multijugador: combates online (registra la acción 'online')
+import { installDevMenuKey } from '../dev/devRuntime.js'; // modo desarrollador: F9 (docs/MODO_DESARROLLADOR.md)
 
 export const DEFAULT_MAP = 'dev_test';
 // [PROVISIONAL] Ritmo del reloj de juego: 1 minuto de juego por segundo real (TEC-06; ritmo por decidir).
@@ -89,6 +90,7 @@ export default class MapScene extends Scene {
       await this.enterMap(DEFAULT_MAP);
     }
     if (this.devFx.length) spawnDemoFx(this, this.devFx);
+    this.uninstallDevMenu = installDevMenuKey(this);
     if (engine.debug) {
       this.uninstallDevKeys = installDevKeys(this);
       window.__map = this;
@@ -98,6 +100,7 @@ export default class MapScene extends Scene {
 
   exit() {
     this.uninstallDevKeys?.();
+    this.uninstallDevMenu?.();
     this.net?.dispose();
     this.runner.cancelAll();
     this.zygarde?.dispose();

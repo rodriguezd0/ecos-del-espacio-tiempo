@@ -3,7 +3,7 @@
 // que —con los cables de la subestación reconectados (content/events/b05_t03_station.js)— carga la red y hace que
 // la campana suelte la Tablilla, la horda de Elekid, la Tabla Trueno (ZAPPLATE), la Raichuita X y la luz a medias
 // de Brontia (b05_brontia_luz). Reintento: nada se pierde (la Tablilla espera; la horda vuelve a salir).
-import { F, SPEAKER, SPRITE, say, core, zygardeEmote, isNight } from './b05_common.js';
+import { F, SPEAKER, SPRITE, say, isNight } from './b05_common.js';
 import { strikeFx, applyBlackout } from './b05_brontia_night.js';
 import { ELEKID_HORDE } from '../encounters/b05.js';
 
@@ -137,7 +137,7 @@ export function belfryEvents() {
   out.push({
     id: 'campana', x: B.bell.x, y: B.bell.y, sprite: 'asset:objects/b05_campana.png', dir: 2, directionFix: true, walkAnime: false, solid: true, shadow: false, speed: 4,
     pages: [
-      { script: async (ctx) => { await ctx.say(T.bell); if (!ctx.flag(F.belfry)) { ctx.setFlag(F.belfry); await zygardeEmote(ctx, '!'); await core(ctx, 'Dentro. Algo que no es bronce.'); } } },
+      { script: async (ctx) => { await ctx.say(T.bell); ctx.setFlag(F.belfry); } },
       { when: (s) => s?.flag(F.strike) && !s.flag(F.t03Done), dir: 4, stepAnime: true, light: { radius: 80, intensity: 0.8 }, script: async (ctx) => { await ctx.say(T.bellCharged); } },
       { when: (s) => Boolean(s?.flag(F.t03Done)), dir: 2, script: async (ctx) => { await ctx.say(T.bellDone); } },
     ],
@@ -187,8 +187,8 @@ export function strikeEvents() {
         ? 'El rayo baja por la línea hasta la subestación. Esta vez, ni una farola parpadea.'
         : 'Las farolas de Brontia parpadean… y se encienden. Algunas.');
       await ctx.camera.reset(30);
-      await zygardeEmote(ctx, '!');
-      await core(ctx, 'Arriba. Algo se ha soltado.');
+      // Zygarde habla muy poco (autor, 25-09-2026): narración neutra en lugar de la línea del Core.
+      await ctx.say('En lo alto del campanario, bajo la campana, algo brilla.');
     },
   }];
 }

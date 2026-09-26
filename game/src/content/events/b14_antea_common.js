@@ -1,7 +1,7 @@
 // Piezas comunes de las salas de Antea (docs/CAMPANA.md B14): respiraderos del presente, ecos de los vecinos de Antea
 // (semitransparentes, repiten lo que dijeron aquel día), puertas de casas del eco, corrientes que empujan fuera de un
 // paso y el manantial de curación del eco. Módulo puro salvo los guiones.
-import { F, SPEAKER, OBJ, lines, zygardeSays, byGender } from './b14_common.js';
+import { F, SPEAKER, OBJ, lines, byGender } from './b14_common.js';
 
 /** Respiraderos verdes (solo en el presente). */
 export function ventEvents(prefix, list) {
@@ -11,8 +11,8 @@ export function ventEvents(prefix, list) {
 const ECHO_OPACITY = 150;
 
 /**
- * Vecino del eco: dice sus líneas como si fuera aquel día (no ve del todo al jugador). La primera vez, Zygarde explica
- * qué son. `text` = [líneas] o (state) => [líneas].
+ * Vecino del eco: dice sus líneas como si fuera aquel día (no ve del todo al jugador).
+ * `text` = [líneas] o (state) => [líneas].
  */
 export function echoCitizen(id, x, y, sprite, dir, text, { move = 'still', name = 'Eco' } = {}) {
   return {
@@ -20,10 +20,8 @@ export function echoCitizen(id, x, y, sprite, dir, text, { move = 'still', name 
     script: async (ctx) => {
       const list = typeof text === 'function' ? text(ctx.state) : text;
       await lines(ctx, name, list);
-      if (!ctx.flag(F.echoPeople)) {
-        ctx.setFlag(F.echoPeople);
-        await zygardeSays(ctx, 'Son ecos. Repiten lo que dijeron aquel día. No nos ven… del todo.');
-      }
+      // Zygarde habla muy poco (autor, 25-09-2026): los ecos se entienden solos.
+      if (!ctx.flag(F.echoPeople)) ctx.setFlag(F.echoPeople);
     },
   };
 }
@@ -40,9 +38,9 @@ export function echoDoor(id, x, y) {
 
 /**
  * Corriente que sale de un paso mientras `open(state)`: al pisarla empuja `length` casillas en `dir`. La primera vez
- * (flag `seenFlag`) se explica con `firstText` y una línea de Zygarde.
+ * (flag `seenFlag`) se explica con `firstText` (narración).
  */
-export function outflowCurrent(id, x, y, { dir = 2, length = 4, open, seenFlag, firstText, coreText }) {
+export function outflowCurrent(id, x, y, { dir = 2, length = 4, open, seenFlag, firstText }) {
   const DIR = { 2: 'down', 4: 'left', 6: 'right', 8: 'up' };
   return {
     id, x, y,
@@ -57,7 +55,6 @@ export function outflowCurrent(id, x, y, { dir = 2, length = 4, open, seenFlag, 
         if (seenFlag && !ctx.flag(seenFlag)) {
           ctx.setFlag(seenFlag);
           if (firstText) await ctx.say(firstText);
-          if (coreText) await zygardeSays(ctx, coreText);
         }
       },
     }],

@@ -85,11 +85,11 @@ export async function nodoOrigenScript(ctx) {
     return;
   }
   await ctx.say(JUMP_TEXT.node);
-  await zygardeSays(ctx, JUMP_TEXT.warn);
+  await ctx.say(JUMP_TEXT.warn);
   ctx.setFlag(F.jumpWarned);
   const go = await ctx.choice(['Sí', 'Todavía no'], { message: JUMP_TEXT.ask, cancel: 1 });
   if (go !== 0) {
-    await zygardeSays(ctx, JUMP_TEXT.wait);
+    await ctx.say(JUMP_TEXT.wait);
     return;
   }
   await becomeTenPercent(ctx, { text: JUMP_TEXT.form });

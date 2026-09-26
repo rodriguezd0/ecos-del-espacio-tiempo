@@ -77,7 +77,7 @@ export async function lumbre(d) {
     const link = MAR.LINKS.south.find((l) => l.to === 'islote_lumbre');
     await swimAcross(d, link.offset + LUM.START.x, MAR.H - 1, 'down', 'islote_lumbre');
   }
-  const watch = [{ re: /Las luces bailan de noche/, name: 'lumbre_dia', delay: 200 }];
+  const watch = [{ re: /Cerezos en flor, farolillos apagados/, name: 'lumbre_dia', delay: 200 }];
   await d.swimTo(LUM.START.x, LUM.ISLAND.y + 1, { watch });
   await d.settle({ watch });
   await d.milestone('lumbre_llegada', (st) => need(flag(st, 'b13_t11_islote') && st.clues.some((c) => c.id === 'T11' && c.status === 'active'), 'sin T11 activa'));
@@ -197,7 +197,7 @@ async function cave(d) {
   const E = CUE.EXITS;
   await tunnel(d, E.hallWest.door, 'left', E.hallWest.arrive);
   const p1 = await solveRoomLive(d, 1);
-  await d.expectSaid(/Donde se corta el flujo, la roca se enfría/, 'el Core ante la primera costra');
+  await d.expectSaid(/La costra parece firme\. Se puede pisar\./, 'la primera costra');
   await openVent(d, 1);
   await d.milestone('colada_1', (s) => need(flag(s, 'b13_t12_respiradero_1'), `sala 1 (${p1} movimientos)`));
   await tunnel(d, E.r1North.door, 'up', E.r1North.arrive);
@@ -207,7 +207,7 @@ async function cave(d) {
   await tunnel(d, E.r2North.door, 'up', E.r2North.arrive);
   await solveRoomLive(d, 3);
   await openVent(d, 3);
-  await d.expectSaid(/La montaña vuelve a respirar/, 'los tres respiraderos');
+  await d.expectSaid(/Por las chimeneas del volcán vuelve a subir el calor/, 'los tres respiraderos');
   await d.milestone('respiraderos', (s) => need(flag(s, 'b13_t12_respiraderos'), 'faltan respiraderos'));
   await tunnel(d, E.r3North.door, 'up', E.r3North.arrive, 'tizon_crater');
 }
@@ -244,7 +244,7 @@ export async function tizon(d, { retry = true } = {}) {
     await d.startSwim(MAR.W - 1, 30);
     await swimAcross(d, MAR.W - 1, 30, 'right', 'volcan_tizon');
   }
-  const watch = [{ re: /Como si alguien le tapara la boca/, name: 'tizon_llegada', delay: 200 }];
+  const watch = [{ re: /Un caserío de piedra en la falda del volcán/, name: 'tizon_llegada', delay: 200 }];
   await d.swimTo(7, 30, { watch });
   await d.settle({ watch });
   await d.milestone('tizon_llegada', (st) => need(flag(st, 'b13_t12_llegada') && st.clues.some((c) => c.id === 'T12'), 'sin T12'));

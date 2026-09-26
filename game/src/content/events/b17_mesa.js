@@ -8,7 +8,7 @@
 //     (mesa_vientos_casa, content/events/b17_t14.js).
 // Módulo puro salvo los guiones.
 import {
-  F, SPEAKER, SPRITE, when, lines, zygardeSays, eventById, pause, examine, npc, byGender,
+  F, SPEAKER, SPRITE, when, lines, eventById, pause, examine, npc, byGender,
 } from './b17_common.js';
 import {
   AGUJA_GAP, CLIMB, WISH_ROCK, BUILDINGS, CORRAL, HERD_SPOTS, SPOTS, ITEMS, FLY_POINT,
@@ -26,7 +26,6 @@ export const MESA_TEXT = Object.freeze({
   arrival: [
     'El viento sopla fuerte y limpio. Por debajo del borde solo hay nubes.',
   ],
-  arrivalZygarde: 'Aquí arriba el viento todavía sabe adónde va.',
   brisaMeet: [
     '¿Quién eres tú? Aquí no sube nadie desde las tormentas. Nadie.',
     (s) => `¿Has venido… volando? ¿Con eso? Pues ya puedes volver por donde has venido, ${byGender(s, 'forastero', 'forastera')}.`,
@@ -74,7 +73,7 @@ async function arrivalScene(ctx) {
   ctx.setFlag(F.mesaArrival);
   await pause(ctx, 20);
   for (const t of MESA_TEXT.arrival) await ctx.say(t);
-  await zygardeSays(ctx, MESA_TEXT.arrivalZygarde);
+  // Zygarde habla muy poco (autor, 25-09-2026): sin comentario de llegada ni conteo del rebaño (lo lleva Brisa).
   const brisa = eventById(ctx, 'brisa');
   if (brisa) {
     await ctx.emote(brisa, '!');
@@ -188,8 +187,6 @@ async function herdEncounter(ctx, n) {
     for (let o = 255; o >= 0; o -= 32) { ev.opacity = Math.max(0, o); await pause(ctx, 2); }
   }
   ctx.requestRefresh();
-  const left = 3 - herdCount(ctx.state);
-  if (left > 0) await zygardeSays(ctx, left === 1 ? 'Queda uno.' : 'Quedan dos.');
 }
 
 function herdEvents() {

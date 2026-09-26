@@ -1,7 +1,7 @@
 // Eventos de la Ruta 13 (docs/CAMPANA.md §1.4 «Nieve profunda», Terreno complicado): nieve honda (roughTerrain en
 // cada casilla), células C091–C092, Abomasnowita (POKEDEX §7.7), entrenadores (54–55), un viajero que echa de menos la
 // Torre de Hielo (T13) y el cartel. Coordenadas en content/maps/b15/layout_ruta13.js.
-import { F, SPEAKER, SPRITE, markNorthUnbound, zygardeSays, when } from './b15_common.js';
+import { F, SPEAKER, SPRITE, markNorthUnbound, when } from './b15_common.js';
 import { b15CellEvents } from './b15_cells.js';
 import { zygardeArea } from '../../world/zygarde/eventTypes.js';
 import { RUTA13 } from '../maps/b15/layout_ruta13.js';
@@ -11,7 +11,6 @@ const R = RUTA13;
 export const RUTA13_TEXT = Object.freeze({
   sign: 'RUTA 13\n↑ Villa Boreal · ↓ Paso del Norte\nNieve honda: no se aparte del camino con ventisca.',
   arrival: 'La nieve se hace honda y blanda. Cada paso se hunde hasta la rodilla.',
-  arrivalZygarde: 'Aquí la tierra está dormida bajo la nieve. Pisa donde yo.',
   traveler: [
     'Otros años, desde aquí ya se veía la Torre de Hielo de Boreal. Con ventisca, era lo único que te decía hacia dónde tirar.',
     'Este invierno no la han levantado. Dicen que el hielo del lago no está bien.',
@@ -22,8 +21,7 @@ export const RUTA13_TEXT = Object.freeze({
 async function arrival(ctx) {
   ctx.setFlag(F.r13Intro);
   markNorthUnbound(ctx);
-  await ctx.say(RUTA13_TEXT.arrival);
-  await zygardeSays(ctx, RUTA13_TEXT.arrivalZygarde);
+  await ctx.say(RUTA13_TEXT.arrival); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 function trainerEvents() {

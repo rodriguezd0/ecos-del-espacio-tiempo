@@ -145,12 +145,13 @@ test('el aljibe: nada en el prólogo; en la partida real responde a Zygarde y ba
   const st = entryState();
   const ctx = fakeCtx(st, { map: 'montana_portal', choices: [0] });
   assert.equal(await b12Aljibe(ctx), true);
-  assert.ok(texts(ctx).includes('Se abrirá. Solo por un tiempo.'));
+  // Zygarde habla muy poco (autor, 25-09-2026): una sola línea, imprescindible.
+  assert.deepEqual(ctx.said.filter((l) => l.speaker === 'Zygarde').map((l) => l.text), ['Al otro lado está la parte de mí que se quedó sujetando la puerta.']);
   assert.ok(st.flag(F.aljibeResuena));
   assert.equal(ctx.warps.at(-1).id, 'pilar_invertido');
   const again = fakeCtx(st, { map: 'montana_portal', choices: [1] });
   await b12Aljibe(again);
-  assert.ok(!texts(again).includes('Se abrirá. Solo por un tiempo.'), 'la escena de resonancia solo una vez');
+  assert.ok(!texts(again).includes('Al otro lado está la parte de mí que se quedó sujetando la puerta.'), 'la escena de resonancia solo una vez');
   assert.equal(again.warps.length, 0, 'con «No» no se baja');
 });
 
@@ -165,7 +166,8 @@ test('núcleo: el orden equivocado reabre el sello; veta → ojo → gota restau
   const ctx = fakeCtx(st);
   await touchNucleo(ctx, 'ancla_ojo');
   assert.equal(st.var(V.nucleoOrden, 0), 0);
-  assert.ok(texts(ctx).includes('No. Así se abre más. Otra vez, desde el principio.'));
+  assert.ok(texts(ctx).includes('El sello se abre un poco más y los postes se apagan. Hay que empezar desde el principio.'));
+  assert.ok(!ctx.said.some((l) => l.speaker === 'Zygarde'), 'el aviso es narración, no Zygarde');
   await touchNucleo(ctx, 'ancla_veta');
   assert.equal(st.var(V.nucleoOrden, 0), 1);
   await touchNucleo(ctx, 'ancla_gota');
@@ -182,7 +184,7 @@ test('núcleo: el orden equivocado reabre el sello; veta → ojo → gota restau
   assert.ok(st.zygardeAbility('swim'), 'Nadar');
   assert.equal(st.zygardeForm, '50');
   assert.ok(st.flag('zyg_50'));
-  assert.ok(texts(ctx).includes('…Vuelve.'));
+  assert.ok(!texts(ctx).includes('…Vuelve.'), 'Zygarde habla muy poco');
 });
 
 test('núcleo: con menos de 50 células, N3 se une pero Zygarde dice cuántas partes faltan', async () => {
@@ -212,12 +214,8 @@ test('Respuesta de Zygarde en la explanada interior tras restaurar: «Aquí lo e
   assert.ok(ev.when(st));
   const ctx = fakeCtx(st, { map: 'pilar_invertido' });
   await ev.script(ctx);
-  assert.equal(texts(ctx)[0], 'Aquí lo empujé. Tres noches.');
-  assert.ok(texts(ctx).includes('Me dolía no poder volver a por ella.'), 'dolor');
-  assert.ok(texts(ctx).includes('…No lo olvidaré.'), 'gratitud');
-  // Biblia P-04: Zygarde pierde la cohesión al final de la tercera noche, no «cada vez» durante la batalla.
-  assert.ok(texts(ctx).some((t) => /Cuando por fin cruzó, me deshice/.test(t)), 'la dispersión, al final');
-  assert.ok(!texts(ctx).some((t) => /Cada vez que volvía/.test(t)));
+  // Zygarde habla muy poco (autor, 25-09-2026): solo la línea canónica.
+  assert.deepEqual(texts(ctx), ['Aquí lo empujé. Tres noches.']);
   assert.ok(!ev.when(st), 'una sola vez');
 });
 

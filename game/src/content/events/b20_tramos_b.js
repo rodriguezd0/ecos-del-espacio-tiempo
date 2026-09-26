@@ -4,7 +4,7 @@
 //   5 · Memoria — losa de recuerdo que se sigue (Trepar): al pisar la losa, el eco de un custodio cruza el Suelo Olvidado
 //       por el único camino seguro (piezas de B10) y sube la pared con vetas; pisar fuera devuelve al borde sin daño.
 //   6 · Invertido — arista de giro con Ancla: eventos del mapa base y de su gemelo girado (world/impossible, B12).
-import { F, OBJ, SPRITE, SPEAKER, GOLD, zygardeSays, zygardeLines, pause, placePlayer, eventById, when } from './b20_common.js';
+import { F, OBJ, SPRITE, SPEAKER, GOLD, pause, placePlayer, eventById, when } from './b20_common.js';
 import { platePresses } from './b20_logic.js';
 import { springEvent, steleEvents, tramoId, EXIT_STAND, ARRIVE } from './b20_senda.js';
 import { T4, T5 } from '../maps/b20/layout.js';
@@ -20,7 +20,6 @@ const kitTile = (name, dx = 0, dy = 0) => KIT.find((t) => t.name === name && t.d
 
 export const T4_TEXT = Object.freeze({
   plateHint: 'Una placa de piedra con un hexágono grabado. La pisas… y ni se inmuta. Hará falta más peso.',
-  plateCore: 'Conmigo encima pesas más. Súbete.',
   ride: '¿Montar en Zygarde?',
   press: 'La placa se hunde con un chasquido y se queda encajada.',
   rise: 'Del abismo sube una plataforma de losas y encaja bajo la boca del norte.',
@@ -51,7 +50,6 @@ async function pressPlate(ctx) {
   await pause(ctx, 20);
   await ctx.say(T4_TEXT.rise);
   await ctx.camera?.reset?.(24);
-  await zygardeSays(ctx, 'Juntos pesamos lo bastante.');
 }
 
 async function plateScript(ctx) {
@@ -60,7 +58,6 @@ async function plateScript(ctx) {
   if (!ctx.flag(F.t4Hint)) {
     ctx.setFlag(F.t4Hint);
     await ctx.say(T4_TEXT.plateHint);
-    await zygardeSays(ctx, T4_TEXT.plateCore);
   }
   if (!canRide(ctx.world)) return;
   if ((await ctx.choice(['Sí', 'No'], { message: T4_TEXT.ride, cancel: 1 })) !== 0) return;
@@ -107,9 +104,9 @@ export function tramo4Events() {
 export const T5_TEXT = Object.freeze({
   losa: 'Una losa con anillos grabados. Al pisarla, el aire huele a papel viejo…',
   fall: 'El suelo no estaba ahí. Algo te sujeta en la caída y te devuelve, sin daño, al borde.',
-  fallCore: 'Solo quien lo recuerda sabe dónde pisar. Vuelve a la losa: él lo recuerda por nosotros.',
+  // Zygarde habla muy poco (autor, 25-09-2026): la regla del Suelo Olvidado y la caída son narración neutra.
+  fallHint: 'Solo quien recuerda este suelo sabe dónde pisar. La losa de los anillos guarda ese recuerdo.',
   crossed: 'Has cruzado el Suelo Olvidado. A tu espalda, el camino del custodio queda marcado con glifos tenues.',
-  climbCore: 'Subió por la pared. Nosotros también podemos.',
 });
 
 const GLYPH = kitTile('pilar_glifo');
@@ -136,10 +133,6 @@ async function ecoWalk(ctx) {
     route.push('up', 'up', 'up');
     await ecoMove(ctx, ev, route);
     await ecoVanish(ctx, ev);
-    if (!ctx.flag('b20_t5_eco_visto')) {
-      ctx.setFlag('b20_t5_eco_visto');
-      await zygardeSays(ctx, T5_TEXT.climbCore);
-    }
   });
 }
 
@@ -153,7 +146,7 @@ async function fall(ctx) {
   await ctx.say(T5_TEXT.fall);
   if (!ctx.flag(F.t5Fall)) {
     ctx.setFlag(F.t5Fall);
-    await zygardeSays(ctx, T5_TEXT.fallCore);
+    await ctx.say(T5_TEXT.fallHint);
   }
 }
 
@@ -187,13 +180,13 @@ export function tramo5Events() {
 
 export const T6_TEXT = Object.freeze({
   anchor: 'Un poste de piedra con un anillo tallado. El aire a su alrededor se queda quieto. Si caes, volverás aquí.',
-  firstFall: ['Caímos.', 'Aquí nada se rompe al caer. El poste nos recoge.'],
+  firstFall: 'Caes al vacío… y, sin un rasguño, vuelves a aparecer junto al poste.',
   exit: 'Una grieta dorada en el aire. Al otro lado se oye agua.',
   back: 'Una grieta en el aire. Por ella se vuelve al Suelo Olvidado.',
 });
 
 export async function t6FirstFall(ctx) {
-  await zygardeLines(ctx, T6_TEXT.firstFall);
+  await ctx.say(T6_TEXT.firstFall);
 }
 
 /** Grieta de salida o de vuelta del tramo 6 (portal que se pisa). */

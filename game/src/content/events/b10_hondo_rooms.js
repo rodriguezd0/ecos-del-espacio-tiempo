@@ -4,7 +4,7 @@
 //   5 Sala del Mural: seis paneles que se ordenan según la historia; los errores no penalizan; cada Tablilla que se
 //     tenga añade una pista opcional. Manantial que cura antes de la Guardiana.
 // Reglas puras en b10_hondo_logic.js.
-import { F, V, SPEAKER, SPRITE, OBJ, frame, lines, zygardeSays, eventById, when } from './b10_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, frame, lines, eventById, when } from './b10_common.js';
 import { ecoEvent, ecoAppear, ecoVanish, ecoMove, stepsTo, runEco, gateEvents } from './b10_hondo_eco.js';
 import {
   RELATO, GLYPHS, DOOR_GLYPHS, touchGlyph, relatoPlain,
@@ -91,7 +91,6 @@ async function openGlyphDoor(ctx) {
   ctx.state.addClue('b10_relato', ROOMS_TEXT.relatoNote(relatoPlain()));
   ctx.se('GUI trainer card flip');
   await ctx.say(ROOMS_TEXT.relatoSaved);
-  await zygardeSays(ctx, 'Lo que se escribe no se pierde. Aunque se olvide.');
 }
 
 function lecturaEvents() {
@@ -168,7 +167,6 @@ async function openRollos(ctx) {
   ctx.shake(3, 6, 24);
   await ctx.wait(20);
   await ctx.say(ROOMS_TEXT.rollosDone);
-  await zygardeSays(ctx, 'Allí. Detrás de la losa. Una parte de mí.');
 }
 
 async function cubbyScript(ctx, i) {
@@ -233,7 +231,6 @@ async function panelScript(ctx, slot) {
   if (!ctx.flag(F.muralSeen)) {
     ctx.setFlag(F.muralSeen);
     await ctx.say(ROOMS_TEXT.muralIntro);
-    await zygardeSays(ctx, 'Es la historia de este lugar. Alguien la desordenó para que no se olvidara del todo.');
   }
   await ctx.say(`${panel.name}: ${panel.text}`);
   for (const hint of panelHints(panel, ctx.state.data.tablets || [])) await ctx.say(`Te recuerda a la Libreta. ${hint}`);
@@ -256,7 +253,6 @@ async function muralDone(ctx) {
   ctx.se('Door slide', { volume: 90 });
   ctx.shake(3, 6, 24);
   await ctx.say(ROOMS_TEXT.muralDone);
-  await zygardeSays(ctx, 'Ya está entera. La historia. Abajo, en el centro, alguien nos espera.');
 }
 
 function muralEvents() {

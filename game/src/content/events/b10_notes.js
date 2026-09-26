@@ -3,7 +3,7 @@
 // volver con Olvido con las cinco, ella abre el Archivo (b10_mnemos_story.js). Cada vecino tiene cuatro momentos:
 // antes de conocer a Olvido, con la nota en la mano, ya entregada y tras el P5 (la niebla se levanta).
 // Textos DECIDIDO-DEV (los nombres de los vecinos son de este bloque; ver README).
-import { F, NOTES, SPEAKER, noteFor, notesDelivered, byGender, lines, zygardeSays } from './b10_common.js';
+import { F, NOTES, SPEAKER, noteFor, notesDelivered, byGender, lines } from './b10_common.js';
 import { SINISTEA_GIFT } from '../encounters/b10.js';
 
 /** Texto de cada nota (lo que escribió Olvido) y lo que dice el vecino al leerla. */
@@ -221,6 +221,5 @@ export function pendingNotes(state) {
 export async function notesReminder(ctx) {
   const left = pendingNotes(ctx.state);
   if (!left.length) return;
-  await zygardeSays(ctx, 'Nombres que se caen. Como las partes de mí.');
   await ctx.say(`Notas pendientes: ${left.map((n) => `${n.who} (${n.where})`).join(', ')}.`);
 }

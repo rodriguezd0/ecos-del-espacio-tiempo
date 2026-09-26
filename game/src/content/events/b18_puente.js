@@ -4,7 +4,7 @@
 // B16 con `flag`, `tutorial` y `onRebuilt`), Alerce «desde el borde» de la plataforma, estela, objetos, grietas de las
 // losas y la despedida tras restaurar el P9. Los combates y la escena de Genesis están en b18_genesis.js.
 import {
-  F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, zygardeSays, eventById, objectPage, examine, byGender, pause, walkTo,
+  F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, eventById, objectPage, examine, byGender, pause, walkTo,
   gatherNearPlayer,
 } from './b18_common.js';
 import {
@@ -74,7 +74,8 @@ async function arrivalScene(ctx) {
     'Y lo que la une a los monolitos es una cadena. Una copia de la tuya.',
   ]);
   await ctx.camera.pan(BRIDGE.cx, 22, 50);
-  await zygardeSays(ctx, 'Tres puntos. En los bordes de los huecos quedan hexágonos. Puedo alzar lo que falta.');
+  // Zygarde habla muy poco (autor, 25-09-2026): los huecos los describe la narración.
+  await ctx.say('En el tramo central se abren tres huecos. En sus bordes quedan zócalos con hexágonos gastados.');
   await ctx.camera.reset(50);
   ctx.se('GUI trainer card flip', { volume: 50 });
   await lines(ctx, SPEAKER.alerce, [
@@ -94,7 +95,7 @@ async function arrivalScene(ctx) {
 
 export const ALERCE_LINES = Object.freeze({
   camp: [
-    'Tres puntos en el tramo central. Zygarde ya los ha visto.',
+    'Tres huecos en el tramo central. En los bordes quedan zócalos viejos.',
     'Si te hace falta, déjame ver a tu equipo.',
   ],
   edge: 'Aquí me quedo, en el borde. No te pares por mí.',
@@ -148,13 +149,7 @@ function alerceEvents() {
 
 // ─────────────────────────────── Reconstrucción del tramo central ───────────────────────────────
 
-const GAP_LINES = Object.freeze({
-  1: 'Uno.',
-  2: 'Dos. El último está justo delante de la plataforma.',
-});
-
 async function bridgeWhole(ctx) {
-  await zygardeSays(ctx, 'Tres. El camino vuelve a estar entero.');
   await ctx.camera.pan(BRIDGE.cx, PLATFORM.y0 + 4, 40);
   ctx.se('PRSFX- Charge', { volume: 55 });
   for (const id of ['tecnico_resonador', 'tecnica_cadena', 'casia']) {
@@ -175,8 +170,7 @@ function socketEvents() {
     id: `zocalo_tramo_${g.n}`, type: 'rebuildGap', x: g.socket.x, y: g.socket.y, flag: g.flag, tiles: gapTiles(g), tutorial: true,
     blockedText: PUENTE_TEXT.socket,
     onRebuilt: async (ctx) => {
-      if (g.n < 3) await zygardeSays(ctx, GAP_LINES[g.n]);
-      else await bridgeWhole(ctx);
+      if (g.n >= 3) await bridgeWhole(ctx);
     },
   }));
 }
@@ -264,7 +258,6 @@ async function farewellScene(ctx) {
     'Los nuestros también. Todos a la misma hora, de Caudal a Lúmina.',
     'Nos quedamos con lo que queda de esa máquina. Nadie más va a jugar con cadenas aquí.',
   ]);
-  await zygardeSays(ctx, 'La Sima ya no se abre. El tiempo y el espacio vuelven a cruzarse donde deben.');
   await ctx.say('Cuando quieras, sigue. Yo tengo muchas notas que ordenar.', { speaker: SPEAKER.alerce });
   await sendBack();
 }

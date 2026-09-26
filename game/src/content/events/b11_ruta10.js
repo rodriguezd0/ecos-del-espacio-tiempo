@@ -1,9 +1,9 @@
 // Eventos de la Ruta 10 (docs/CAMPANA.md §1.4 y B11): paredes de raíces (Trepar: la principal y la de la repisa de
 // C049), células C007 (orilla del Albo, etapa A) y C049, carteles, entrenadores del tramo bajo (niveles de la
 // apertura) y del alto (40–42), objetos (Altarianita, POKEDEX_DISTRIBUCION §7.7), una excursionista que habla de
-// la pared, la pista de Zygarde hacia casa (primer regreso, B11 paso 2) y todo el T10 del tramo alto
+// la pared y todo el T10 del tramo alto
 // (content/events/b11_t10.js: centinelas, cuadrilla, dormidero y deserción de Nilo).
-import { F, OBJ, SPEAKER, when, zygardeSays } from './b11_common.js';
+import { OBJ, SPEAKER } from './b11_common.js';
 import { b11CellEvents } from './b11_cells.js';
 import { t10Events } from './b11_t10.js';
 import { RUTA10 } from '../maps/b11/layout.js';
@@ -18,7 +18,6 @@ export const RUTA10_TEXT = Object.freeze({
     '¿Ves esa pared? Las raíces bajan desde la pradera de arriba como una cortina.',
     'Dicen que arriba empieza la subida al Monte del Portal. Yo nunca he sabido trepar por ahí.',
   ],
-  homeHint: 'Por ahí se va a tu casa. Hace mucho que no vuelves.',
   bank: 'La orilla del Albo. El agua baja clara y fría desde el Monte.',
 });
 
@@ -99,21 +98,7 @@ function signEvents() {
   ];
 }
 
-/** Tras el P5, al subir del Neblino, Zygarde recuerda que Villa Alba está al este (primer regreso a casa). */
-function homeHintEvents() {
-  const script = async (ctx) => {
-    ctx.setFlag('b11_pista_casa');
-    await zygardeSays(ctx, RUTA10_TEXT.homeHint);
-  };
-  const out = [];
-  for (let x = R.south.x0; x <= R.south.x1; x++) {
-    out.push({
-      id: `pista_casa_${x}`, x, y: 30, trigger: 'touch', script,
-      when: when({ all: ['p5_restored'], none: [F.homeReturn, 'b11_pista_casa'] }),
-    });
-  }
-  return out;
-}
+// Sin pista de Zygarde hacia casa: Zygarde habla muy poco (autor, 25-09-2026); los carteles ya señalan Villa Alba.
 
 export function ruta10Events() {
   return [
@@ -122,7 +107,6 @@ export function ruta10Events() {
     ...trainerEvents(),
     ...itemEvents(),
     ...signEvents(),
-    ...homeHintEvents(),
     ...t10Events(),
   ];
 }

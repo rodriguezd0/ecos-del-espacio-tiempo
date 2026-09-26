@@ -3,12 +3,12 @@
 //   Pista inicial: calco de la Libreta (la abre B02 con b02_libreta). Segunda pista: el jardinero (el Árbol del
 //   Fundador se seca desde la raíz y la hierba muerta forma una espiral). Problema: el consejo quiere talarlo;
 //   Mirta (9) se ata a él. Puzzle: subir al campanario —la única vista cenital— y ver que el centro de la espiral
-//   está unos pasos más allá, bajo un banco de piedra; el latido del Core lo confirma; se excava y aparece la
+//   está unos pasos más allá, bajo un banco de piedra; el Core reacciona en silencio; se excava y aparece la
 //   Tablilla, que robaba el agua a las raíces. Consecuencia: el árbol se recupera y no se tala; Mirta regala una
 //   Semilla Milagro. Sin estado de fallo. Disponible tras P1 (clues.js: available p1_restored).
 // Coordenadas: ARBOLEDA y CAMPANARIO de maps/b02/villa_zaguan_layout.js (fuente única de B02).
 import * as ZL from '../maps/b02/villa_zaguan_layout.js';
-import { F, SPEAKER, SPRITE, OBJ, objectEvent, say, core, zygardeEmote } from './b03_common.js';
+import { F, SPEAKER, SPRITE, OBJ, objectEvent, say, zygardeEmote } from './b03_common.js';
 
 const DEF_ARBOLEDA = { area: { x: 9, y: 6, w: 8, h: 10 }, founder: { x: 9, y: 8 }, bench: { x: 14, y: 14 } };
 const DEF_CAMPANARIO = { bell: { x: 35, y: 6 } };
@@ -169,7 +169,6 @@ async function belfryView(ctx) {
   ctx.se('core_signal', { volume: 60 });
   await ctx.say('La hierba seca dibuja una espiral. Empieza al pie del Árbol del Fundador…');
   await ctx.say('…y su centro no está en el árbol. Está unos pasos más allá, justo bajo el banco de piedra.');
-  await core(ctx, 'Desde aquí late más fuerte. Allí abajo.');
   for (const h of handles) h?.remove?.(20);
   await ctx.fade('out', 16);
   await ctx.camera.reset(1);
@@ -196,7 +195,6 @@ async function digScene(ctx) {
   ctx.se('core_signal', { volume: 70 });
   await ctx.flash([185, 255, 102], 10, 60);
   await zygardeEmote(ctx, '!');
-  await core(ctx, 'Aquí. Algo late bajo la piedra. No es mío… pero es muy antiguo.');
   if (!(await ctx.confirm('¿Apartar el banco de piedra y cavar debajo?'))) return;
   await ctx.fade('out', 20);
   ctx.setFlag(DIGGING, true);
@@ -217,7 +215,6 @@ async function digScene(ctx) {
   await ctx.flash([200, 255, 170], 20, 140);
   await ctx.shake(2, 4, 20);
   await ctx.say('Un crujido suave recorre la Arboleda. Las raíces del Fundador vuelven a beber.');
-  await core(ctx, 'La hierba ya no tiene sed.');
 }
 
 async function benchTalk(ctx) {

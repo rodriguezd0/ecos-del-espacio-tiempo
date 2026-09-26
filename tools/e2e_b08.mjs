@@ -78,7 +78,6 @@ const hasCell = (s, key) => s.cells.includes(key);
 async function estrato(d) {
   await d.until((s) => s.top === 'MapScene' && s.map === 'ciudad_estrato' && s.ready, { timeout: 30000, what: 'Ciudad Estrato' });
   await d.settle({ watch: [{ re: /El suelo tiembla/, name: 'temblor', delay: 200 }] });
-  await d.expectSaid(/Aquí la tierra ha olvidado cuánto pesa/, 'el Core al llegar');
   await d.milestone('llegada_estrato', (s) => (s.flags[F.arrival] ? null : 'sin b08_llegada'));
   const watch = [{ re: /La oferta sigue en pie/, name: 'discusion', delay: 200 }];
   await d.walkTo(ESTRATO.mine.door.x, ESTRATO.mine.door.y + 2, { watch, stopWhen: (s) => s.flags[F.argument] });
@@ -90,7 +89,6 @@ async function estrato(d) {
 
 async function mina(d) {
   await d.enter(ESTRATO.mine.door.x, ESTRATO.mine.door.y, 'up', 'mina_galena');
-  await d.expectSaid(/La roca de aquí abajo pesa distinto/, 'el Core en la mina');
   // C036, al pie de la veta de cristal (el Minero Rufo la vigila).
   const watch = [{ scene: 'BattleScene', name: 'combate_rufo', delay: 3000 }];
   await d.walkTo(MINA.cell.x, MINA.cell.y, { watch });
@@ -220,7 +218,6 @@ async function movePiece(d, id, target) {
 
 async function camara(d) {
   await d.settle();
-  await d.expectSaid(/Aquí todo pesa\. Hasta el aire/, 'el Core al entrar en la Cámara');
   await d.milestone('camara_contrapesos');
   // La estela de las reglas (lectura de lado).
   await d.walkTo(SPOTS.plaque.x - 1, SPOTS.plaque.y, { face: 'right' });
@@ -246,11 +243,11 @@ async function camara(d) {
   // Las tres piedras suben por la escalinata y la plataforma: B = b1 + o1 + o2, C = o3.
   for (const [id, target] of SOLUTION_TARGETS.slice(3)) await movePiece(d, id, target);
   await d.milestone('piedras_colocadas');
-  // A pie en el hueco del platillo C la Balanza se inclina (pista del Core); montado, cede.
+  // A pie en el hueco del platillo C la Balanza se inclina; montado, cede.
   await goTo(d, SPOTS.leverFrom.x, SPOTS.leverFrom.y, false);
   await d.face('up');
   await d.interact();
-  await d.expectSaid(/Súbete\. Contigo encima/, 'la pista de la montura');
+  await d.expectSaid(/La palanca vuelve sola a su sitio/, 'la Balanza inclinada a pie');
   await d.setMount(true);
   await d.face('up');
   const watch = [{ re: /algo enorme cede/, name: 'balanza_cede', delay: 300 }, { re: /¡La Balanza! Cuarenta años/, name: 'fermin_llega', delay: 200 }];
@@ -358,7 +355,7 @@ async function t05(d) {
   }
   await d.milestone('losa_defendida', (s) => (s.flags[F.defended] && s.battles.some((b) => b.format === 'double' && b.ally) ? null : 'sin defensa o sin combate doble'));
   await d.walkTo(ESTRATO.losa.front.x, ESTRATO.losa.front.y, { face: 'up' });
-  await d.interact({ watch: [{ re: /Es una tabla/, name: 'losa_tablilla', delay: 200 }] });
+  await d.interact({ watch: [{ re: /La costra de piedra se agrieta/, name: 'losa_tablilla', delay: 200 }] });
   const tablets = await d.eval(() => window.__b08.tablets());
   const mega = await d.eval(() => window.__b08.has('MEDICHAMITE'));
   await d.milestone('tabla_fuerte', (s) => (tablets.includes('FISTPLATE') && mega && s.flags[F.tablet] ? null : `tablillas ${tablets} medichamita ${mega}`));

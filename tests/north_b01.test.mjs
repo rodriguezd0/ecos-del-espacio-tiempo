@@ -21,7 +21,7 @@ import { CORE_LINES, POLICE_LINES, coreChoice } from '../game/src/content/events
 import { RUTA1_CELLS, RUTA1_TRAINERS, cellFoundText } from '../game/src/content/events/b01_north_ruta1.js';
 import { RUTA_1 } from '../game/src/content/encounters/b01.js';
 import { TRAINERS } from '../game/src/content/trainers/index.js';
-import { coreLine, coreSpriteKey, coreFollows } from '../game/src/content/companion.js';
+import { coreSilenceLine, coreTalk, coreSpriteKey, coreFollows } from '../game/src/content/companion.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const GUION = fs.readFileSync(path.join(ROOT, 'docs', 'bloques', 'B01_apertura.md'), 'utf8');
@@ -115,11 +115,17 @@ test('Core como compañero: gráfico por forma y solo si hay forma', () => {
   assert.equal(coreFollows(st), true);
 });
 
-test('Core: frase contextual (Ruta 1 con células cerca, laberinto, genérica)', () => {
-  const f = () => false;
-  assert.match(coreLine({ mapId: 'ruta_1', flag: f, cellsLeftHere: 2 }, () => 0), /parte|mío/);
-  assert.match(coreLine({ mapId: 'laberinto_profundidad', flag: f, cellsLeftHere: 0 }, () => 0), /piedras/);
-  assert.ok(coreLine({ mapId: 'otro', flag: f, cellsLeftHere: 0 }, () => 0.99).length > 0);
+test('Core: al hablarle se gira y calla (narración, sin telepatía ni charla; autor 25-09-2026)', async () => {
+  assert.equal(coreSilenceLine('core'), 'El Core te mira un instante. No dice nada.');
+  assert.equal(coreSilenceLine(null), 'El Core te mira un instante. No dice nada.');
+  assert.equal(coreSilenceLine('10'), 'Zygarde te mira un instante. No dice nada.');
+  const said = [];
+  let turned = null;
+  const player = { x: 1, y: 1 };
+  const ctx = { player, state: { data: { zygarde: { form: '50' } } }, say: async (t, o = {}) => { said.push([t, Boolean(o.telepathy)]); } };
+  await coreTalk(ctx, { turnToward: (p) => { turned = p; } });
+  assert.equal(turned, player);
+  assert.deepEqual(said, [['Zygarde te mira un instante. No dice nada.', false]]);
 });
 
 // ----------------------------------------------------------------------------- setos del Laberinto

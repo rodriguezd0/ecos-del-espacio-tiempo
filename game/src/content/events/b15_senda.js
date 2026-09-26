@@ -3,23 +3,21 @@
 // escaleras y rastros en content/maps/b15/layout_senda.js: coronar una escalera falsa (subiendo) devuelve al principio;
 // las huellas de tres garras de los Larvitar llevan a la buena en cada rellano. Encima del mirador, el tramo alto es un
 // bucle que todavía no se puede romper. También los personajes del refugio del Paso (content/maps/b15/paso_refugio.js).
-import { F, V, SPEAKER, SPRITE, OBJ, markNorthUnbound, zygardeSays, lines, byGender, pause, when, fx } from './b15_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, markNorthUnbound, lines, byGender, pause, when, fx } from './b15_common.js';
 import { SENDA, correctStair, wrongTops, trail, topRow } from '../maps/b15/layout_senda.js';
 import { REFUGIO } from '../maps/b15/layout_paso.js';
 
 const S = SENDA;
 export const MAP_ID = 'ruta_12_senda_lazo';
 
+// Zygarde habla muy poco (autor, 25-09-2026): la piedra de los pastores y los vecinos dan las pistas del lazo.
 export const SENDA_TEXT = Object.freeze({
   arrival: 'La Senda del Lazo sube por la ladera de la Cumbre Azur en rellanos de nieve. Allá arriba, la columna de luz.',
   guideStone: 'SENDA DEL LAZO · RUTA 12\nLos pastores subían detrás de los Larvitar: ellos saben por dónde la montaña es de verdad.\nQuien sube sin guía, vuelve a empezar.',
   loop: 'Al coronar la escalera, el aire se dobla como un pliegue de papel…',
   loopBack: '…y estás otra vez junto a la piedra de los pastores.',
-  loopZygarde: 'La senda se dobla sobre sí misma. Aquí el espacio está anudado.',
-  loopHint: 'Los pequeños que viven aquí no se pierden. Míralos.',
   high: 'Más arriba, el camino se pierde entre las nubes…',
   highBack: '…y vuelve a dejarte en el borde del mirador, como si no hubieras dado un paso.',
-  highZygarde: 'Aquí el nudo es más fuerte. Todavía no puedo deshacerlo.',
   top: 'Desde el mirador, la columna de luz parece al alcance de la mano. Abajo, un mar de nubes.',
   topSign: 'MIRADOR DEL LAZO\nMás arriba, la senda vuelve sobre sí misma. No insistáis.',
   printsLarvitar: 'Huellas pequeñas de tres garras en la nieve. Suben decididas.',
@@ -47,12 +45,7 @@ async function loopBack(ctx) {
   await ctx.warp(MAP_ID, L.x, L.y, L.dir, { fade: false });
   await ctx.fade('in', 24);
   await ctx.say(SENDA_TEXT.loopBack);
-  if (!ctx.flag(F.sendaLoopSeen)) {
-    ctx.setFlag(F.sendaLoopSeen);
-    await zygardeSays(ctx, SENDA_TEXT.loopZygarde);
-  } else if (n % 3 === 0) {
-    await zygardeSays(ctx, SENDA_TEXT.loopHint);
-  }
+  if (!ctx.flag(F.sendaLoopSeen)) ctx.setFlag(F.sendaLoopSeen);
 }
 
 /** Coronar la escalera buena de la cara k (subiendo): cuenta el rellano; la última abre el mirador. */
@@ -62,7 +55,6 @@ async function rightStep(ctx, k) {
   if (k === S.pattern.length - 1 && !ctx.flag(F.sendaTop)) {
     ctx.setFlag(F.sendaTop);
     await ctx.say(SENDA_TEXT.top);
-    await zygardeSays(ctx, 'Lo has encontrado siguiendo a los pequeños.');
   }
 }
 
@@ -76,10 +68,7 @@ async function highLoop(ctx) {
   await ctx.warp(MAP_ID, B.x, B.y, B.dir, { fade: false });
   await ctx.fade('in', 30);
   await ctx.say(SENDA_TEXT.highBack);
-  if (!ctx.flag(F.sendaHigh)) {
-    ctx.setFlag(F.sendaHigh);
-    await zygardeSays(ctx, SENDA_TEXT.highZygarde);
-  }
+  if (!ctx.flag(F.sendaHigh)) ctx.setFlag(F.sendaHigh);
 }
 
 function loopEvents() {

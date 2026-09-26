@@ -21,10 +21,7 @@ export const NUCLEO_TEXT = Object.freeze({
 export async function camaraOnEnter(ctx) {
   syncPieces(ctx); // parte síncrona: los contrapesos ya están en su sitio antes del fundido
   if (ctx.flag(F.chamberSeen)) return;
-  ctx.setFlag(F.chamberSeen);
-  await ctx.wait(10);
-  await zygardeSays(ctx, 'Aquí todo pesa. Hasta el aire.');
-  await zygardeSays(ctx, 'Esa balanza de ahí arriba… espera algo. Lee la piedra de la entrada.');
+  ctx.setFlag(F.chamberSeen); // Zygarde habla muy poco (autor, 25-09-2026): la llegada no lleva comentario del Core.
 }
 
 // ───────────────────────────── Fermín ─────────────────────────────
@@ -99,6 +96,7 @@ export function ferminEvents() {
 // ───────────────────────────── Núcleo ─────────────────────────────
 
 async function readVerseTogether(ctx) {
+  // Zygarde habla muy poco (autor, 25-09-2026): solo la lectura del verso IV (CAMPANA: «Core y Fermín»).
   await zygardeSays(ctx, 'La tierra… su peso. Lo había perdido. Como yo.');
   const fermin = findEvent(ctx, 'fermin_camara');
   if (fermin) fermin.turnToward(ctx.player);
@@ -106,7 +104,6 @@ async function readVerseTogether(ctx) {
     '«…y la tierra, su peso.»',
     'Esto lo grabaron hace siglos. Y cuenta lo que nos pasa este año, como si nos hubieran visto venir.',
   ]);
-  await zygardeSays(ctx, 'Las piedras van por delante. Siempre han ido por delante de nosotros.');
 }
 
 async function localEffect(ctx) {
@@ -137,7 +134,6 @@ async function coreScene(ctx) {
     fermin.moveTo(6, 8);
     fermin.direction = 6;
   }
-  await zygardeSays(ctx, 'Aquí. Esto es lo que sostiene la tierra de alrededor.');
   const ok = await ctx.story.restorePillar(4, {
     core: { x: SPOTS.pedestal.x, y: SPOTS.pedestal.y },
     onRestored: async (c) => {
@@ -148,7 +144,6 @@ async function coreScene(ctx) {
   if (!ok) return;
   await ctx.say(NUCLEO_TEXT.t05);
   await ctx.story.openClue('T05');
-  await zygardeSays(ctx, 'La tierra ha recordado su peso. El cielo, todavía no.');
   await ferminFarewell(ctx);
 }
 

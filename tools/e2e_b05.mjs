@@ -406,7 +406,7 @@ async function nightAndBell(d) {
   await d.walkTo(7, 10, { face: 'down' });
   await d.pushInto('down', 'villa_brontia');
   await d.settle({ watch: [{ re: /Ha sonado sola/, name: 't03_rayo', delay: 100 }] });
-  await d.expectSaid(/Algo se ha soltado/, 'la reacción de Zygarde al rayo');
+  await d.expectSaid(/bajo la campana, algo brilla/, 'la narración tras el rayo');
   await d.milestone('t03_luz', (s) => (s.flags.b05_t03_rayo && s.flags.b05_brontia_luz ? null : 'sin rayo o sin luz'));
   await enterTower(d);
   await d.walkTo(8, 4, { stopWhen: (s) => s.x >= 12 });

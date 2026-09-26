@@ -98,7 +98,8 @@ async function deliverDex(ctx) {
   await ctx.giveItem('POKEBALL', 5);
   await say(ctx, A, 'La Pokédex registra a cada Pokémon que veáis o capturéis. Y también me enviará lecturas del terreno.');
   await say(ctx, A, 'Anoche mis instrumentos marcaron una lectura extraña al sur, en las ruinas del \\c[1]Pilar del Umbral\\c[0], pasada la Ruta 1. Nunca había reaccionado así.');
-  await core(ctx, 'Allí. Algo antiguo se ha movido. Y hay partes de mí por el camino.');
+  // B01 §4.7 recortado (autor, 25-09-2026): sin «Y hay partes de mí por el camino» (mecánicas más ocultas).
+  await core(ctx, 'Allí. Algo antiguo se ha movido.');
   await say(ctx, A, 'Id con cuidado. Y \\PN… cuida de él. Creo que él también cuidará de ti.');
   ctx.face('gael', 'left');
   await say(ctx, G, 'Nos vemos allí. Llegaré antes.');

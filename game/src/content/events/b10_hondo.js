@@ -2,7 +2,7 @@
 // (Suelo Olvidado: el eco del custodio cruza el único camino seguro; pisar fuera devuelve al borde), Estancia 2 (Dos
 // Manos: dos custodios dejan dos palancas en posiciones concretas; las palancas se quedan donde se ponen),
 // entrenadores y objetos. Estancias 3–5 en b10_hondo_rooms.js; la Cámara del núcleo en b10_hondo_nucleo.js.
-import { F, V, SPEAKER, SPRITE, OBJ, frame, lines, zygardeSays, placePlayer, eventById, when } from './b10_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, frame, lines, placePlayer, eventById, when } from './b10_common.js';
 import { ecoEvent, ecoAppear, ecoVanish, ecoMove, stepsAlong, stepsTo, footprint, runEco, gateEvents } from './b10_hondo_eco.js';
 import { LEVER_TARGET, LEVER_START, LEVER_NAMES, nextLever, leversSolved, leverPresses } from './b10_hondo_logic.js';
 import { lecturaEvents, rollosEvents, muralEvents } from './b10_hondo_rooms.js';
@@ -15,7 +15,6 @@ export const HONDO_TEXT = Object.freeze({
   enter: 'Una espiral de piedra baja hacia la oscuridad. No hay techo ni suelo más abajo: solo el Archivo, flotando.',
   losa: 'Una losa con anillos grabados. Al pisarla, el aire huele a papel viejo…',
   fall: 'El suelo no estaba ahí. Algo te sujeta en la caída y te devuelve, sin daño, al borde de la estancia.',
-  fallFirst: 'Aquí el suelo se ha olvidado de sí mismo. Solo quien lo recuerda sabe dónde pisar.',
   crossed: 'Has cruzado el Suelo Olvidado. A tu espalda, el camino del custodio queda marcado con glifos tenues.',
   leverSolved: 'La palanca no cede: la losa del dintel ya está abierta.',
   leverPos: (i, p) => `La palanca ${i === 0 ? 'del oeste' : 'del este'} queda ${LEVER_NAMES[p]}.`,
@@ -53,10 +52,7 @@ async function sueloFall(ctx) {
   await ctx.wait(10);
   await ctx.fade('in', 16);
   await ctx.say(HONDO_TEXT.fall);
-  if (!ctx.flag(F.sueloFall)) {
-    ctx.setFlag(F.sueloFall);
-    await zygardeSays(ctx, HONDO_TEXT.fallFirst);
-  }
+  if (!ctx.flag(F.sueloFall)) ctx.setFlag(F.sueloFall); // Zygarde habla muy poco (autor, 25-09-2026)
 }
 
 async function sueloCrossed(ctx) {
@@ -100,7 +96,6 @@ async function openManos(ctx) {
   ctx.shake(3, 6, 24);
   await ctx.wait(20);
   await ctx.say(HONDO_TEXT.manosOpen);
-  await zygardeSays(ctx, 'Dos manos que se ayudaban. Hace mucho.');
 }
 
 async function pullLever(ctx, i) {
@@ -184,7 +179,6 @@ export async function hondoOnEnter(ctx) {
   ctx.setFlag(F.hondoSeen);
   await ctx.wait?.(10);
   await ctx.say(HONDO_TEXT.enter);
-  await zygardeSays(ctx, 'Aquí abajo se guarda lo que el mundo recuerda. Y lo que olvida.');
 }
 
 /** Todos los eventos del Archivo Hondo. */

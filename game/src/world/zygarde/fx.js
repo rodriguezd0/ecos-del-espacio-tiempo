@@ -8,7 +8,7 @@
 //   zygardeVent     {kind}           respiradero verde / bolsa de aire (burbujas que suben)
 //   zygardeCurrent  {dir}            flechas de burbujas de una corriente
 //   zygardeBubble   {target, size}   burbuja de resonancia alrededor del jugador (Buceo)
-//   zygardeHeartbeat {target}        anillo del latido de detección (opts.beatAt, opts.strength)
+// (El latido de proximidad a las células se quitó: DECIDIDO autor, 25-09-2026.)
 // Coordenadas en casillas del mapa actual; los brillos de evento (page.glow) los coloca WorldView.
 import * as THREE from 'three';
 import { registerEffect } from '../../render/effects.js';
@@ -140,15 +140,6 @@ void main() {
   float shine = smoothstep(0.35, 0.0, length(p - vec2(-0.4, -0.45))) * 0.35;
   float a = (edge + fill + hexes + shine) * (0.85 + 0.15 * sin(uTime * 2.0));
   gl_FragColor = vec4(uColor * a * uAlpha, 1.0);
-}`,
-  beat: `uniform float uBeat; uniform float uStrength;
-void main() {
-  vec2 p = (vUv - 0.5) * 2.0;
-  float d = hexDist(p);
-  float k = clamp(uBeat / 0.7, 0.0, 1.0);
-  float ring = smoothstep(0.09, 0.0, abs(d - (0.25 + k * 0.7))) * (1.0 - k);
-  float glow = exp(-d * 4.0) * (1.0 - k) * 0.5;
-  gl_FragColor = vec4(uColor * (ring + glow) * uStrength * uAlpha, 1.0);
 }`,
 };
 
@@ -317,12 +308,6 @@ registerEffect('zygardeWhirl', whirl);
 registerEffect('zygardeVent', vent);
 registerEffect('zygardeCurrent', current);
 registerEffect('zygardeBubble', follow(FRAG.bubble, (o) => o.size ?? 88, new THREE.Color(0.4, 1, 0.55)));
-registerEffect('zygardeHeartbeat', follow(FRAG.beat, (o) => o.size ?? 72, GREEN,
-  () => ({ uBeat: { value: 99 }, uStrength: { value: 0 } }),
-  (m, layer, opts) => {
-    m.material.uniforms.uBeat.value = opts.beatAt === undefined ? 99 : layer.time - opts.beatAt;
-    m.material.uniforms.uStrength.value = opts.strength ?? 0;
-  }));
 
 export const ZYGARDE_EFFECTS = Object.freeze(['zygardeStrip', 'zygardeHexBurst', 'zygardeFissure', 'zygardeVeins', 'zygardeSocket',
-  'zygardeWhirl', 'zygardeVent', 'zygardeCurrent', 'zygardeBubble', 'zygardeHeartbeat']);
+  'zygardeWhirl', 'zygardeVent', 'zygardeCurrent', 'zygardeBubble']);

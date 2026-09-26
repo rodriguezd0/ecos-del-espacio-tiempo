@@ -3,7 +3,7 @@
 // oeste no hay bajada: hay que dejarse caer (sin daño) para volver al último poste. En el vacío mayor cruza UNA vez la
 // sombra de Giratina, al fondo y en paralaje, unos 4 s: el sonido ambiente cae y Zygarde se queda inmóvil.
 // «No mires. No nos busca. Aún.» Sin combate ni cartel.
-import { F, OBJ, ANCHOR_ART, when, zygardeSays, zygardeLines, pause } from './b12_common.js';
+import { F, OBJ, ANCHOR_ART, when, zygardeSays, pause } from './b12_common.js';
 import { SUMIDERO, NUCLEO } from '../maps/b12/layout.js';
 import { IMPOSSIBLE_ART } from '../../world/impossible/eventTypes.js';
 import { isVoidCell } from '../../world/impossible/logic.js';
@@ -14,14 +14,14 @@ export const SUMIDERO_TEXT = Object.freeze({
   closed: 'Una boca de piedra cerrada con una losa grabada. Detrás se oye agua que corre hacia arriba.',
   button: 'La losa se hunde con un chasquido. Lejos, una boca de piedra se abre y el agua empieza a subir.',
   gengar: 'En el rincón, entre dos piedras que flotan del revés, algo brilla con un morado muy oscuro.',
+  noWayDown: 'Desde esta isla no baja ninguna cascada. Solo queda el vacío… y, muy abajo, el poste de piedra.',
 });
 
 const fallById = Object.fromEntries(SUMIDERO.falls.map((f) => [f.id, f]));
 
 async function sumideroArrival(ctx) {
   ctx.setFlag(F.sumideroVisto);
-  await pause(ctx, 16);
-  await zygardeLines(ctx, ['Aquí el agua cae hacia arriba.', 'Busca con qué se abren las bocas.']);
+  await pause(ctx, 16); // Zygarde habla muy poco (autor, 25-09-2026)
 }
 
 /** Tras abrir la cascada del este desde la isla alta: la única bajada es dejarse caer. */
@@ -29,7 +29,7 @@ async function afterThirdButton(ctx) {
   if (ctx.flag(F.caerParaBajar)) return;
   ctx.setFlag(F.caerParaBajar);
   await pause(ctx, 20);
-  await zygardeLines(ctx, ['Desde aquí no hay bajada.', '…Salvo caer. El poste de abajo nos recogerá.']);
+  await ctx.say(SUMIDERO_TEXT.noWayDown); // antes lo decía Zygarde; Zygarde habla muy poco (autor, 25-09-2026)
 }
 
 /** La sombra de Giratina cruza el vacío mayor (una vez). */

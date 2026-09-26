@@ -56,7 +56,7 @@ export const FRESH = new Set(['reaparece']);
 async function puente(d) {
   await d.settle();
   await d.expectSaid(/Olmedo reúne a la Policía Regional en la Senda/, 'a Alerce en la llegada');
-  await d.expectSaid(/Tres puntos\. En los bordes de los huecos quedan hexágonos/, 'a Zygarde');
+  await d.expectSaid(/En el tramo central se abren tres huecos/, 'la narración de los huecos');
   await d.milestone('llegada', (s) => need(has(s, F.arrival), 'sin llegada'));
   for (const g of BRIDGE.gaps) {
     await d.walkTo(g.socket.x, g.socket.y - 1, { face: 'down' });
@@ -121,7 +121,7 @@ async function cruce(d) {
     if (!plan) throw new Error(`${place.name}: sin solución con ${mode}`);
     const end = await d.playRoom(place, plan, { ...place.grid.entry, mode });
     mode = end.mode;
-    if (i === 0) await d.expectSaid(/Este cristal responde a la Cadena Roja/, 'el tutorial del primer cristal');
+    if (i === 0) await d.expectSaid(/El cristal vibra con la Cadena Roja/, 'el tutorial del primer cristal');
     await d.milestone(`sala_${place.name}`, (s) => need(!roomFlags[i] || has(s, roomFlags[i]), `${place.name} sin superar`));
     const next = ROOM_PLACES[i + 1]?.room || NUCLEO.room;
     await d.pushUntil('up', inRect(next), `cruzar la puerta de ${place.name}`);

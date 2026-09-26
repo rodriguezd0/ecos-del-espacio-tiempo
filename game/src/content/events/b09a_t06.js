@@ -5,7 +5,7 @@
 // persecución hasta el muelle de carga y combate contra los dos (nv 35–36). La furgoneta se va vacía. Rosalía entrega la
 // Tabla Acero («El museo no puede protegerla; tú sí.»), Eevee y la pista T08; la ficha de la Laguna Clara queda en el
 // archivo. Reintento sin pérdida en la sala y en el muelle.
-import { F, V, CLUE_BIT, SPEAKER, SPRITE, MUSIC, when, say, lines, core, isNight, scriptedBattle, pause, byGender } from './b09a_common.js';
+import { F, V, CLUE_BIT, SPEAKER, SPRITE, MUSIC, when, say, lines, isNight, scriptedBattle, pause, byGender } from './b09a_common.js';
 import { SLABS, slabAt, isOriginal, describeSlab, hasClue, withClue, scaleTicket, CLUE_NOTES, ORIGINAL_WEIGHT } from './b09a_t06_logic.js';
 import { BASEMENT, HALL } from '../maps/b09a/museo_layout.js';
 
@@ -92,7 +92,6 @@ async function showEdge(ctx, slab) {
 async function solved(ctx, pos) {
   await say(ctx, R, '…');
   await say(ctx, R, 'Sí. Es ella. Cuarenta años mirándola, y he tenido que verla con tus ojos.');
-  await core(ctx, 'Es esta. La siento desde aquí: está escrita, como las otras.');
   ctx.setFlag(F.t06Solved);
   ctx.bgm(MUSIC.grunt, { fadeOutPrevious: 10 });
   await pause(ctx, 20);

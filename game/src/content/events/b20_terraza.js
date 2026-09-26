@@ -31,7 +31,7 @@ export const TERRAZA_TEXT = Object.freeze({
   verse1: '¿«Querrá ser quien llama»? …Eso sí lo entiendo.',
   verse2: 'Yo pedí permiso.',
   said: (t) => `Le repites lo que le dijiste a Mesprit: «${t}»`,
-  zygarde: 'Gael. No respondí contra ti.',
+  zygarde: 'Gael. No respondí contra ti.', // canónica (CAMPANA B20)
   gaelZ: 'Ya. Por eso es peor.',
   leaves: 'Gael se da la vuelta y baja por la pasarela, hacia la Senda. No se lleva nada.',
   block: 'Primero, esto.',

@@ -2,7 +2,7 @@
 // Parque parado, Gael y los dos técnicos del Consorcio en la puerta (combate doble con Gael de aliado:
 // Staravia 24 e inicial evolucionado 25 contra Magnemite 22 y Solosis 22), aerogeneradores (giran tras el P3),
 // entrenadores, Cyclizar (visible fijo nv 24), la segunda oveja perdida y objetos.
-import { F, V, SPEAKER, SPRITE, OBJ, MUSIC, lines, zygardeSays, gaelAllyParty, scriptedBattle, trainerLater } from './b06_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, MUSIC, lines, gaelAllyParty, scriptedBattle, trainerLater } from './b06_common.js';
 import { CYCLIZAR } from '../encounters/b06.js';
 import { woolooStray } from './b06_wooloo.js';
 import { MESETA, PARQUE } from '../maps/b06/layout.js';
@@ -27,7 +27,6 @@ async function introScene(ctx) {
   await ctx.wait(20);
   await ctx.say('Sopla un viento que tumba. Aun así, los aerogeneradores del Parque están quietos.');
   await ctx.camera.reset(40);
-  await zygardeSays(ctx, 'Ahí dentro hay algo mío. Y algo que lo sujeta.');
 }
 
 // ------------------------------------------------------------ combate doble

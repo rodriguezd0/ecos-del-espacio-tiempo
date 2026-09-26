@@ -2,7 +2,7 @@
 // niebla del olvido (capa visual y el muro del camino del norte hasta el P5), enlaces pendientes con la Ruta 8 (B09)
 // y la Ruta 9 (B11), células C045 y C074, árbol de miel, el risco del Santuario (Trepar) con la Losa del Olvido
 // (Spiritomb de noche con la Piedra Espíritu), tres entrenadores, objetos y carteles.
-import { F, V, SPEAKER, SPRITE, OBJ, when, lines, zygardeSays, byGender, placePlayer } from './b10_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, when, lines, byGender, placePlayer } from './b10_common.js';
 import { b10CellEvents } from './b10_cells.js';
 import { olvidoEvents, fogEvent, archivoDoorEvent, arrivalScene, faustaTalk } from './b10_mnemos_story.js';
 import { brunoTalk, panchamTalk, nereaTalk } from './b10_notes.js';
@@ -18,7 +18,6 @@ export const MNEMOS_TEXT = Object.freeze({
   townSign: 'ALDEA MNEMOS\n«Donde se guarda lo que otros olvidan.»',
   plazaSign: 'PLAZA DEL ESTRADO\nNorte: Bosque Neblino (Ruta 9). Noroeste: el Archivo. Noreste: Santuario de los Glifos.',
   fog: 'La niebla se cierra tanto que no ves ni tus pies. Das unos pasos… y, sin saber cómo, vuelves a estar en la aldea.',
-  fogZygarde: 'El camino da vueltas sobre sí mismo. La niebla no nos deja pasar.',
   losa: 'La Losa del Olvido: una piedra alta llena de muescas. En la base hay una hendidura del tamaño de un puño.',
   losaDay: 'De día la hendidura está fría. Dicen que la losa solo contesta de noche.',
   losaNoStone: 'Algo se mueve dentro de la piedra, muy despacio. Haría falta ponerle algo en la hendidura.',
@@ -63,7 +62,6 @@ async function fogLoop(ctx) {
   await ctx.wait(10);
   await ctx.fade('in', 20);
   await ctx.say(MNEMOS_TEXT.fog);
-  await zygardeSays(ctx, MNEMOS_TEXT.fogZygarde);
 }
 
 async function blockedLink(ctx, link, back) {

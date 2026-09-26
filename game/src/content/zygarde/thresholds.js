@@ -81,7 +81,7 @@ export const CAPABILITIES = Object.freeze([
   {
     key: 'detect', name: 'Detección mejorada', form: '50', cells: 60, cores: N123, requires: ['swim'],
     desc: 'Señala la célula más cercana y marca el mapa de la región.',
-    hint: 'Una flecha verde apunta a la célula más cercana del lugar.',
+    hint: 'En el mapa regional se marcan los lugares visitados donde aún quedan células.',
   },
   {
     key: 'dive', name: 'Buceo', form: '50', cells: 70, cores: N1234, milestone: MILESTONES.dive, requires: ['swim'],

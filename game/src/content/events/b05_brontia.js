@@ -4,9 +4,9 @@
 // (vendavales de la Ruta 6 hasta P3, hielo-eco de la Ruta 11 hasta P7, enlaces pendientes) y la noche a oscuras
 // (content/events/b05_brontia_night.js). Coordenadas en content/maps/b05/villa_brontia_layout.js.
 import {
-  F, SPEAKER, SPRITE, say, core, zygardeEmote, blockedLink, examine, blockers, isNight, rectCells, byGender,
+  F, SPEAKER, SPRITE, say, blockedLink, examine, blockers, isNight, rectCells, byGender,
 } from './b05_common.js';
-import { cellsOf, cellEvent, cellById } from './b05_cells.js';
+import { cellsOf, cellEvent } from './b05_cells.js';
 import { nightEvents } from './b05_brontia_night.js';
 import { strikeEvents } from './b05_t03.js';
 import { TOWER, MILLS, PENS, EXITS, BUILDINGS, PLAZA, TOWN_SIGN } from '../maps/b05/villa_brontia_layout.js';
@@ -56,8 +56,7 @@ function arrivalEvents() {
     await say(ctx, SPEAKER.neighbor, 'No te asustes si de noche no ves nada: llevamos semanas a oscuras.');
     await say(ctx, SPEAKER.neighbor, 'El ayuntamiento firmó con el Consorcio el «mantenimiento» del Parque Eólico. Desde entonces, el Parque no produce ni para una bombilla.');
     await say(ctx, SPEAKER.neighbor, 'Y encima, cada noche cae un rayo en el campanario. Sin tormenta. El pobre Sixto ya no duerme.');
-    await zygardeEmote(ctx, '…');
-    await core(ctx, 'Arriba, en la torre, algo late.');
+    // Zygarde habla muy poco (autor, 25-09-2026): la vecina ya señala el campanario.
   };
   const strip = [];
   for (let y = EXITS.west.y0; y <= EXITS.west.y1; y++) {
@@ -172,16 +171,11 @@ function millEvents() {
       script: async (ctx) => {
         if (ctx.flag(F.millDoor)) { await ctx.say(TEXT.millInside); return; }
         await ctx.say(TEXT.millStuck);
-        if (!ctx.zygarde('ram')) { await core(ctx, 'Todavía no sé abrir paso.'); return; }
+        if (!ctx.zygarde('ram')) return;
         if ((await ctx.choice(['Sí', 'No'], { message: TEXT.millAsk, cancel: 1 })) !== 0) return;
         await ramBreak(ctx, ctx.event, []);
         ctx.setFlag(F.millDoor);
         await ctx.say(TEXT.millOpen);
-        const cell = cellById('cell_brontia_1');
-        if (cell && !ctx.state.hasCell(cell.id)) {
-          await zygardeEmote(ctx, '!');
-          await core(ctx, 'Aquí. Una parte de mí.');
-        }
       },
     });
   }

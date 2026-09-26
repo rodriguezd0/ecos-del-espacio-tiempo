@@ -4,7 +4,7 @@
 // (Ramón da la pista del P7, «las luces de la ciudad hundida», y la Clefablita) y Lucía en el faro. Se añaden a los
 // eventos de B09b (maps/b09b/caleta_sonda.js y caleta_faro.js) sin cambiar los suyos.
 import { reachMilestone } from '../../world/zygarde/scenes.js';
-import { F, SPEAKER, SPRITE, OBJ, when, lines, zygardeSays, isNight, findEvent, objectPage, placePlayer } from './b13_common.js';
+import { F, SPEAKER, SPRITE, OBJ, when, lines, isNight, findEvent, objectPage, placePlayer } from './b13_common.js';
 import { DIVERS } from '../maps/b09b/caleta_layout.js';
 
 const R = { speaker: SPEAKER.ramon };
@@ -18,8 +18,8 @@ export const FEAST = Object.freeze({
 });
 
 export const CALETA_B13_TEXT = Object.freeze({
-  hint: 'Aquí el agua baja muy honda. Todavía no puedo seguirla.',
-  here: 'Aquí. El agua es honda y está quieta.',
+  // Zygarde habla muy poco (autor, 25-09-2026): el aviso del muelle es narración neutra del terreno.
+  hint: 'Al final del muelle, el agua baja muy honda y está quieta. No se ve el fondo.',
   diverWow: '¿Eh? ¿Qué es esa luz verde?',
   diverAfter: '¡Una burbuja! Con eso podrías bajar al bosque de algas sin botella. Ahí, donde el remolino.',
   diverWait: 'La luz se apaga… Vuelve cuando quieras. El muelle no se mueve de aquí.',
@@ -31,13 +31,12 @@ export const CALETA_B13_TEXT = Object.freeze({
 
 async function diveHint(ctx) {
   ctx.setFlag(F.diveHint);
-  await zygardeSays(ctx, CALETA_B13_TEXT.hint);
+  await ctx.say(CALETA_B13_TEXT.hint);
 }
 
 async function resonanceScene(ctx) {
   if (ctx.flag(F.diveMilestone)) return;
   ctx.face('player', 'down');
-  await zygardeSays(ctx, CALETA_B13_TEXT.here);
   const diver = findEvent(ctx, 'buzo_muelle');
   if (diver) { ctx.turnToPlayer(diver); await ctx.emote(diver, '!'); }
   await ctx.say(CALETA_B13_TEXT.diverWow, { speaker: SPEAKER.diver });
@@ -106,7 +105,6 @@ async function feastScene(ctx) {
     'Como si ahí abajo hubiera una ciudad con las ventanas encendidas.',
     'Las luces de la ciudad hundida. Así las llamaba mi padre.',
   ]);
-  await zygardeSays(ctx, 'Allí abajo hay algo que se repite. Como un eco.');
   // Cierre: la fiesta termina y Ramón y Lucía vuelven al faro (sus eventos de la playa desaparecen tras el fundido).
   await ctx.fade('out', 30);
   ctx.setFlag(F.lumFeast);

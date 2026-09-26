@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { CLUE_ARCS, clueArc, clueArcForTablet, ABILITY_NAMES, MAX_ACTIVE_CLUES, ZYGARDE_LINES } from '../game/src/content/story/clues.js';
+import { CLUE_ARCS, clueArc, clueArcForTablet, ABILITY_NAMES, MAX_ACTIVE_CLUES } from '../game/src/content/story/clues.js';
 import {
   TABLETS, CAMPAIGN_TABLETS, ARCEUS_TABLETS, RETIRED_TABLET, tabletById, tabletForArc,
 } from '../game/src/content/story/tablets.js';
@@ -67,7 +67,6 @@ test('solo T11 y T12 esperan en cola a Nadar; T08 se abre tras T06', () => {
   assert.deepEqual(queued, ['T11', 'T12']);
   for (const id of queued) assert.deepEqual(clueArc(id).queueUntil, { ability: 'swim' });
   assert.equal(clueArc('T08').after, 'T06');
-  assert.ok(ZYGARDE_LINES.default && ZYGARDE_LINES.swim);
 });
 
 test('18 Tablillas: 17 tablas de tipo + Legendaria, sin BLANKPLATE, todas en items.json', () => {

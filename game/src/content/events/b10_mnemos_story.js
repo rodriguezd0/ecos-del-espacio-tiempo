@@ -1,7 +1,7 @@
 // Historia exterior de Aldea Mnemos (docs/CAMPANA.md B10): llegada con la niebla del olvido (Fausta), Olvido Arrieta
 // en la plaza (fascinación) y su encargo de las cinco notas de nombres, la apertura del Archivo, la niebla como capa
 // visual hasta el P5 y la aldea sin niebla después (onEnter). Los vecinos de las notas están en b10_notes.js.
-import { F, NOTES, SPEAKER, SPRITE, byGender, when, lines, zygardeSays, eventById, notesDelivered } from './b10_common.js';
+import { F, NOTES, SPEAKER, SPRITE, byGender, when, lines, eventById, notesDelivered } from './b10_common.js';
 import { pendingNotes, notesReminder } from './b10_notes.js';
 import { NPC, BUILDINGS } from '../maps/b10/mnemos_layout.js';
 
@@ -36,7 +36,6 @@ export async function arrivalScene(ctx) {
     '¡Hola! ¿Nos conocemos? …Perdona. Últimamente saludo a todo el mundo, por si acaso.',
     'Me llamo… eh… Fausta. Creo. Lo pone en mi delantal, mira.',
   ]);
-  await zygardeSays(ctx, 'Esta niebla no es agua. Se lleva cosas. Nombres.');
   await lines(ctx, SPEAKER.fausta, [
     'Si buscas a alguien que se acuerde de algo, ve a ver a Olvido. Está en la plaza, con sus libretas.',
     'Es la única a la que la niebla no le hace nada. Lo apunta todo antes de que se le escape.',
@@ -65,10 +64,7 @@ async function olvidoFirstMeeting(ctx) {
     'Esta niebla baja del Bosque Neblino desde hace unas semanas. Se lleva los nombres: primero los de las cosas, luego los de la gente.',
     'A mí no me alcanza. Lo escribo todo antes de que se vaya. La tinta del Archivo, en cambio, se está borrando.',
   ]);
-  await zygardeSays(ctx, 'Debajo de esta aldea duerme una parte del orden. Recuerda por todos.');
-  await ctx.emote(ev, '!');
   await lines(ctx, sp, [
-    '¿Quién ha dicho eso? …Ah. Tu acompañante. Fascinante. Absolutamente fascinante.',
     'Hagamos un trato. Tengo cinco notas de nombres para cinco vecinos que ya no se acuerdan. Las piernas no me dan para repartirlas.',
     'Sabina, en la casa de té. Tomé, en el herbolario. Jacinta, en la casa rosa. Amaro, en el Santuario de los Glifos. Y Bruno, el crío del estanque.',
     'Repártelas y te abro el Archivo. Lo que duerme abajo lleva demasiado tiempo sin visitas.',
@@ -198,7 +194,6 @@ export async function mnemosOnEnter(ctx) {
     ctx.setFlag(F.fogLifted);
     await ctx.wait?.(20);
     await ctx.say(STORY_TEXT.lifted);
-    await zygardeSays(ctx, 'El bosque del norte ya no da vueltas. Podemos seguir.');
   }
 }
 

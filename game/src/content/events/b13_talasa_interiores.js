@@ -2,7 +2,7 @@
 // cultivo, la investigadora y la consola que abre la compuerta hacia la cubierta sur) y el despacho de dirección de la
 // torre (la foto enmarcada del «Proyecto Laguna» con el rostro rascado y el cuaderno de tapas verdes; Alerce no se
 // gira; la tarjeta de dirección que abre el laboratorio). Coordenadas propias de cada sala aquí (fuente única).
-import { F, SPEAKER, SPRITE, OBJ, when, lines, zygardeSays, examine, objectPage } from './b13_common.js';
+import { F, SPEAKER, SPRITE, OBJ, when, lines, examine, objectPage } from './b13_common.js';
 
 /** Invernadero: sala de laboratorio 20×15 (suelo y 4–13, felpudo x 9–10 en y 13). */
 export const GREENHOUSE = Object.freeze({
@@ -40,7 +40,6 @@ export const INTERIOR_PIECES = Object.freeze({
 
 export const INTERIOR_TEXT = Object.freeze({
   vat: 'Un tanque de cultivo. Dentro flotan decenas de Solosis pegados al cristal, girando despacio. La etiqueta dice: «Línea Z · resonancia inducida».',
-  vatZygarde: 'Huelen a mí. Llevan un eco de lo que soy… pero no son yo.',
   table: 'Hojas de registro: «Cultivo estable. Crecimiento acelerado en presencia de la Muestra Z-4».',
   consoleAsk: 'CONSOLA DE SERVICIO\nCompuerta de seguridad de la cubierta sur: CERRADA.\n¿Abrirla?',
   consoleOpen: 'Un zumbido recorre la plataforma. Fuera, la compuerta de la cubierta sur se repliega.',
@@ -69,10 +68,6 @@ export const INTERIOR_TEXT = Object.freeze({
 
 async function vatScript(ctx) {
   await ctx.say(INTERIOR_TEXT.vat);
-  if (!ctx.flag('b13_talasa_cultivos_vistos')) {
-    ctx.setFlag('b13_talasa_cultivos_vistos');
-    await zygardeSays(ctx, INTERIOR_TEXT.vatZygarde);
-  }
 }
 
 async function consoleScript(ctx) {

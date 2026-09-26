@@ -2,7 +2,7 @@
 // breve (dos técnicos), la Dra. Casia Varela («No somos un consorcio. Somos Genesis.»), combate, el Colector se
 // rompe (C029–C032 y N2 → Terreno complicado), Casia se retira y Gael se queda mirando las pantallas.
 // Reintento sin pérdida (§2.6): perder contra Casia devuelve a la puerta del Colector con el equipo curado.
-import { F, SPEAKER, SPRITE, OBJ, MUSIC, lines, zygardeSays, trainerUntil, scriptedBattle } from './b06_common.js';
+import { F, SPEAKER, SPRITE, OBJ, MUSIC, lines, trainerUntil, scriptedBattle } from './b06_common.js';
 import { collectColectorCells } from './b06_cells.js';
 import { PARQUE, MESETA } from '../maps/b06/layout.js';
 import { UNLOCK_TEXT, missingPartsLine } from '../zygarde/texts.js';
@@ -28,9 +28,8 @@ async function casiaIntro(ctx) {
     `Villa Alba. Paso rápido. Una forma incompleta que te sigue a menos de un metro. ${n} lecturas de célula a tu alrededor.`,
     'Doctora Casia Varela. No somos un consorcio. Somos Genesis.',
   ]);
-  await zygardeSays(ctx, 'Esa esfera. Hay una parte de mí dentro. No puede salir.');
   await lines(ctx, SPEAKER.casia, [
-    'Ah, lo notas. La muestra Z-2 lleva semanas ahí dentro. El Colector la atrae; a ella y a todo lo que se le parece.',
+    '¿Lo notas? La muestra Z-2 lleva semanas ahí dentro. El Colector la atrae; a ella y a todo lo que se le parece.',
     '¿Te parece mal? Dime una cosa. ¿Quién votó a Dialga? ¿Quién eligió que el tiempo tuviera dueño?',
     'Nadie. Nosotros solo queremos entender lo que otros llaman sagrado. Entender primero. Decidir después.',
     'Pero adelante. Una muestra más nunca sobra.',
@@ -77,13 +76,13 @@ async function joinN2(ctx) {
   const { grantCore } = await import('../../world/zygarde/scenes.js');
   const { unlocked } = await grantCore(ctx, 'N2', { scenes: false });
   if (unlocked.includes('terrain')) {
+    // Zygarde habla muy poco (autor, 25-09-2026): solo la canónica al unirse N2 y «Me faltan N partes».
     await ctx.say('Ahora recuerdo cómo se pisa la tierra blanda.', { telepathy: true });
     await ctx.say(UNLOCK_TEXT(capabilityDef('terrain').name));
     const hint = capabilityDef('terrain').hint;
     if (hint) await ctx.say(hint);
   } else {
     const { missingParts } = await import('../../world/zygarde/progression.js');
-    await ctx.say('Un núcleo más. Recuerdo la tierra blanda, pero todavía no llego.', { telepathy: true });
     const n = missingParts(ctx.state, 'terrain');
     if (n > 0) await ctx.say(missingPartsLine(n), { telepathy: true });
   }

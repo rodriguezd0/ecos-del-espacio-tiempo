@@ -6,7 +6,7 @@
 //     lee entero; «Eres tú.»; Gael estuvo antes; la niebla se levanta; inscripción de T09; Trepar (hito climb);
 //     Alerce, por la Pokédex, calla un momento largo al oír el verso V. Después, Olvido sube con el jugador al Archivo
 //     de papel (informe tachado: b10_archivo.js).
-import { F, SPEAKER, SPRITE, SEPIA, lines, zygardeSays, byGender, scriptedBattle, eventById, when } from './b10_common.js';
+import { F, SPEAKER, SPRITE, SEPIA, lines, byGender, scriptedBattle, eventById, when } from './b10_common.js';
 import { NUCLEO } from '../maps/b10/hondo_layout.js';
 import { ARCHIVO_ROOM } from '../maps/b10/archivo_layout.js';
 import { VERSES } from '../story/verses.js';
@@ -107,7 +107,6 @@ async function afterVerse(ctx) {
   if (ev?.page) ev.turnToward(ctx.player);
   await ctx.wait(30);
   await lines(ctx, sp, ['«…llevando consigo al guardián roto.»', '…Eres tú.']);
-  await zygardeSays(ctx, '……');
   await lines(ctx, sp, [
     'No eres la primera persona que lee este verso. Hace unos días vino un muchacho de Villa Alba. Firmó en mi libro de visitas: Gael.',
     'Le enseñé mis calcos de esta piedra. Leyó el quinto verso dos veces, despacio.',
@@ -140,7 +139,7 @@ async function alerceCall(ctx) {
 }
 
 async function coreScene(ctx) {
-  await zygardeSays(ctx, 'Aquí. La memoria del orden. Me recuerda.');
+  // Zygarde habla muy poco (autor, 25-09-2026): su única línea aquí es el recuerdo de Trepar (memoryScene).
   const ok = await ctx.story.restorePillar(5, {
     core: { x: NUCLEO.pedestal.x, y: NUCLEO.pedestal.y },
     showVerse: false,

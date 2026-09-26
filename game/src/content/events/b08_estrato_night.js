@@ -2,7 +2,7 @@
 // «casas agrietadas»): grietas en el suelo y en las fachadas, piedras que flotan de noche, temblores de vez en cuando
 // y un vigilante que refresca las páginas al caer la noche o al amanecer. Tras el P4 cesan los temblores y las piedras
 // ya no flotan (las grietas quedan: el daño está hecho).
-import { F, OBJ, isNight, zygardeSays } from './b08_common.js';
+import { F, OBJ, isNight } from './b08_common.js';
 
 /** Grietas: [x, y, variante, en fachada]. */
 const CRACKS = Object.freeze([
@@ -18,10 +18,6 @@ const floating = (s) => Boolean(s) && !s.flag(F.restored) && isNight(s);
 
 async function pebbleTalk(ctx) {
   await ctx.say('Una piedra flota a un palmo del suelo, girando despacio. Cuando alargas la mano, se aparta.');
-  if (!ctx.flag('b08_flotantes_vistas')) {
-    ctx.setFlag('b08_flotantes_vistas');
-    await zygardeSays(ctx, 'Las piedras se olvidan de pesar. Algo tira de ellas desde el Cerro.');
-  }
 }
 
 /** Temblor de fondo (sin bloquear): cada cierto tiempo la ciudad cruje. */

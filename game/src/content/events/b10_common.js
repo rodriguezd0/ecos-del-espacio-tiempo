@@ -158,7 +158,7 @@ export async function lines(ctx, speaker, list, extra = {}) {
   for (const text of list) await ctx.say(text, speaker ? { speaker, ...extra } : extra);
 }
 
-/** Línea telepática de Zygarde (solo si acompaña al jugador). */
+/** Línea telepática de Zygarde (solo si acompaña al jugador). Zygarde habla muy poco (autor, 25-09-2026). */
 export async function zygardeSays(ctx, text) {
   if (!ctx.state.data.zygarde?.form) return;
   ctx.se('core_signal', { volume: 45 });

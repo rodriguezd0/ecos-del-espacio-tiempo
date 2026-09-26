@@ -3,7 +3,7 @@
 // bosque). De día queda su vivac entre las raíces, que invita a volver. Pista inicial al encontrarlo y segunda
 // pista («su cuadrilla subió a la Ruta 10 y no ha vuelto») al hablar con él de nuevo. Tras rescatar a la cuadrilla,
 // Nilo sube a la Ruta 10 (la deserción la dirige b11_t10.js). Módulo puro salvo los guiones.
-import { F, SPEAKER, SPRITE, OBJ, TELEPATHY, when, isNight, lines, zygardeSays } from './b11_common.js';
+import { F, SPEAKER, SPRITE, OBJ, when, isNight, lines } from './b11_common.js';
 import { NEBLINO } from '../maps/b11/layout.js';
 
 const N = NEBLINO;
@@ -11,12 +11,12 @@ const ARC = 'T10';
 
 export const NILO_TEXT = Object.freeze({
   camp: 'Un maletín de instrumentos, y al lado una manta hecha un ovillo contra el cristal. En el asa cuelga un guante de trabajo con un emblema bordado: dos tubos de ensayo cruzados sobre un círculo.',
-  campZygarde: 'Quien duerme aquí se esconde. Volverá cuando oscurezca.',
+  // Antes lo decía Zygarde; ahora es narración (Zygarde habla muy poco, autor, 25-09-2026).
+  campHint: 'La manta aún guarda la forma de alguien. Quien duerme aquí se esconde de día: volverá cuando oscurezca.',
   first: [
     '¡No! ¡No me delates, por favor!',
     '…Tú no eres de la base. Perdona. Llevo dos días sin dormir.',
   ],
-  firstZygarde: 'Tiene miedo. No de nosotros.',
   firstAfter: [
     'Me llamo Nilo. Técnico de campo de Genesis. Del «Consorcio», para los de fuera. …O lo era, ya no lo sé.',
     'No puedo volver al campamento. Todavía no. No así.',
@@ -38,7 +38,6 @@ async function niloFirst(ctx) {
   ctx.se('exclaim');
   await ctx.emote('this', '!');
   await lines(ctx, SPEAKER.nilo, NILO_TEXT.first);
-  await zygardeSays(ctx, NILO_TEXT.firstZygarde);
   await lines(ctx, SPEAKER.nilo, NILO_TEXT.firstAfter);
   ctx.setFlag(F.niloMet);
   await ctx.story.openClue(ARC, { direct: true });
@@ -72,7 +71,7 @@ export function niloEvents() {
             await ctx.say(NILO_TEXT.camp);
             if (!ctx.flag('b11_t10_vivac')) {
               ctx.setFlag('b11_t10_vivac');
-              await ctx.say(NILO_TEXT.campZygarde, TELEPATHY);
+              await ctx.say(NILO_TEXT.campHint);
             }
           },
         },

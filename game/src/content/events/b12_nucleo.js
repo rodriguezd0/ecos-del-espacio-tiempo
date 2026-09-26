@@ -3,7 +3,7 @@
 // Sumidero (gota)— mientras el sello se vuelve a formar sin N3. Equivocarse no penaliza: el sello vuelve a abrirse
 // y se empieza de nuevo. Al cerrarse: restorePillar(6) (Fragmento 6 y verso VI), N3 se libera y se une (50 % y Nadar
 // con 50 células; si faltan, «Me faltan N partes») y se abre el portal de regreso a la explanada interior.
-import { F, V, EXT, OBJ, ANCHOR_ART, VIOLET, GREEN, when, zygardeSays, zygardeLines, pause, eventById } from './b12_common.js';
+import { F, V, EXT, OBJ, ANCHOR_ART, VIOLET, GREEN, when, pause, eventById } from './b12_common.js';
 import { NUCLEO, VESTIBULO } from '../maps/b12/layout.js';
 import { portalEvent } from './b12_distorsion.js';
 
@@ -12,6 +12,9 @@ export const NUCLEO_TEXT = Object.freeze({
   sealDone: 'Un sello hexagonal de piedra, entero. Los glifos violetas laten despacio, en calma.',
   anchor: 'Un poste de piedra con un símbolo tallado en la base.',
   local: 'Arriba, muy lejos, el aljibe deja de gemir. Ya no se filtra nada por él.',
+  // Antes lo decía Zygarde; ahora es narración (Zygarde habla muy poco (autor, 25-09-2026)).
+  arrival: 'Alrededor del sello, tres postes con un símbolo tallado en la base. En el anillo roto, unos glifos gastados: «En el orden en que se cruza este lugar, el sello aprende a cerrarse».',
+  wrong: 'El sello se abre un poco más y los postes se apagan. Hay que empezar desde el principio.',
 });
 
 const SYMBOL_NAME = Object.freeze({ veta: 'una veta que dobla', ojo: 'un ojo abierto', gota: 'una gota que sube' });
@@ -21,11 +24,7 @@ const progress = (s) => Number(s?.var?.(V.nucleoOrden, 0)) || 0;
 async function nucleoArrival(ctx) {
   ctx.setFlag(F.nucleoVisto);
   await pause(ctx, 30);
-  await zygardeLines(ctx, [
-    'Ahí. La parte de mí que se quedó sujetando la brecha.',
-    'Si la saco sin más, la puerta se abre otra vez.',
-    'Tres postes. Tócalos en el orden en que cruzamos este lugar. El sello aprenderá a cerrarse sin mí.',
-  ]);
+  await ctx.say(NUCLEO_TEXT.arrival);
 }
 
 async function wrongOrder(ctx) {
@@ -33,7 +32,7 @@ async function wrongOrder(ctx) {
   ctx.se('PRSFX- Shadow Sneak1', { volume: 70 });
   await ctx.flash?.([...VIOLET], 16, 170);
   await ctx.shake?.(4, 7, 24);
-  await zygardeSays(ctx, 'No. Así se abre más. Otra vez, desde el principio.');
+  await ctx.say(NUCLEO_TEXT.wrong);
 }
 
 /** Cierre del sello, restauración del Pilar y liberación de N3. */
@@ -84,7 +83,6 @@ async function freeN3(ctx) {
   } catch { fx = null; }
   ctx.se('core_signal', { volume: 80 });
   await pause(ctx, 50);
-  await zygardeSays(ctx, '…Vuelve.');
   fx?.remove?.(40);
   ctx.se('Mining item get');
   await ctx.flash?.([...GREEN], 24, 200);

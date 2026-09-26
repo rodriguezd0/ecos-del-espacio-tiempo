@@ -2,7 +2,7 @@
 // Ruta 15 y Caleta Sonda (docs/CAMPANA.md B09 parte B; TABLILLAS T08, T11, T12) en navegador real (Chrome headless +
 // playwright-core), con teclas reales. Estado de entrada por URL (ARCHITECTURE §9): P1–P4 restaurados, Correr,
 // Embestida y Terreno complicado (sin Nadar), equipo alto, de día y sin encuentros aleatorios. Recorrido:
-//   Ruta 8 desde Lúmina (golpeteo de las bombas; el Core: «El agua de aquí está enferma») → Palafitos: Doña Remedios
+//   Ruta 8 desde Lúmina (golpeteo de las bombas; el Core calla: Zygarde habla muy poco) → Palafitos: Doña Remedios
 //   (cura y segunda pista de T08) → al salir, Alerce llega e insiste en tomar él las muestras → tres técnicos de
 //   Genesis (derrota simulada contra la primera y reintento) → C044 → seis estacas con la Pokédex → resumen de Alerce →
 //   una poza equivocada (sin penalización) y la del origen → Tabla Tóxica, escena de la tarde (Remedios: «Hace
@@ -266,7 +266,6 @@ async function arrival(d) {
   await d.walkTo(R8.START.x - 2, R8.START.y, { watch: [{ re: /golpeteo sordo/, name: 'marisma_bombas', delay: 200 }] });
   await d.settle();
   await d.expectSaid(/golpeteo sordo/, 'el golpeteo de las bombas');
-  await d.expectSaid(/El agua de aquí está enferma/, 'el Core ante la marisma');
   await d.milestone('marisma_llegada', (s) => (s.flags.b09_marisma_llegada ? null : 'sin b09_marisma_llegada'));
 }
 
@@ -384,7 +383,7 @@ async function nexo(d) {
   await d.milestone('ferri_parado', null);
   const watch = [{ re: /plataforma con grúas/, name: 'plataforma_talasa', delay: 300 }];
   await d.talkTo(NX.PORT.binoculars.x, NX.PORT.binoculars.y, { choose: pick('Mirar'), watch });
-  await d.expectSaid(/Allí… algo me llama/, 'el Core ante la plataforma');
+  await d.expectSaid(/plataforma con grúas/, 'la plataforma del Consorcio');
   await d.milestone('talasa_vista', (s) => (s.flags.b09_nexo_talasa_vista ? null : 'sin ver la plataforma'));
   // Pescador del pantalán: Caña Buena.
   await d.talkTo(NX.PORT.fisher.x, NX.PORT.fisher.y);

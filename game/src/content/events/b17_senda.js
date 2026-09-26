@@ -5,7 +5,7 @@
 // Captación en los espolones y la Policía Regional corta el paso al Puente hasta la Vigilia de Caudal.
 // B18 empieza aquí: el tablero (x 18–22) llega al borde sur y sigue en su Puente de la Convergencia (README del bloque).
 import {
-  F, SPEAKER, SPRITE, when, occupied, lines, zygardeSays, examine, npc,
+  F, SPEAKER, SPRITE, occupied, lines, examine, npc,
 } from './b17_common.js';
 import {
   W, GAP, BRIDGE, DESCENT, TOWERS, SPOTS, ITEMS, ESPLANADE,
@@ -29,13 +29,11 @@ export const SENDA_TEXT = Object.freeze({
     : 'MIRADOR NORTE\nAl sur, la Sima del Eje. Al otro lado, el Mirador Sur y las torres de Ciudad Lúmina.'),
   plankSign: 'Al espolón del este. Borde inestable: no pasar de la barandilla.',
   gapBlocked: 'El paso hacia la vieja Cabeza del Puente se ha derrumbado. En el borde quedan zócalos hexagonales, muy gastados.',
-  arrivalCrisis: 'La Sima respira. Se abre un poco más cada noche.',
-  arrivalTowers: 'Algo tira de la tierra aquí. Hacia esas torres del borde.',
+  // Zygarde habla muy poco (autor, 25-09-2026): sin comentarios de llegada ni en el fin del tablero.
   stele: (s) => (s.hasItem?.('GLYPHKEY') || s.hasKeyItem?.('GLYPHKEY')
     ? ['Una estela de glifos Unown muy gastados. Con la Clave Glífica se distinguen dos palabras: «tiempo» y «espacio».']
     : ['Una estela de glifos Unown muy gastados.']),
   bridgeEnd: 'El tablero sigue sobre la Sima, pero un poco más allá el Puente de la Convergencia se ha hundido. Por aquí no se puede seguir.',
-  bridgeEndZygarde: 'Aquí hubo un camino. Lo siento debajo, muy hondo.',
   hiker: (s) => (s.flag(P8)
     ? ['Antes venía a ver la Sima los domingos. Ahora vengo a ver si sigue en su sitio.', 'Cada mañana hay un palmo menos de borde. No os acerquéis a la barandilla.']
     : ['El Albo se despeña en la Sima un poco más abajo. Dicen que nadie ha visto dónde cae.', 'Desde el mirador, en días claros, se ve el Mirador Sur al otro lado.']),
@@ -124,7 +122,6 @@ function bridgeEndEvents() {
   const e = BRIDGE.south;
   const script = async (ctx) => {
     await ctx.say(SENDA_TEXT.bridgeEnd);
-    if (ctx.state.zygardeAbility('rebuild')) await zygardeSays(ctx, SENDA_TEXT.bridgeEndZygarde);
   };
   const out = [];
   for (let x = e.x0; x <= e.x1; x++) out.push({ id: `fin_tablero_${x}`, x, y: e.y, trigger: 'action', noOver: true, solid: true, script });
@@ -141,18 +138,6 @@ function descentEvents() {
   }));
 }
 
-function arrivalEvents() {
-  return [{
-    id: 'senda_llegada_crisis', x: 0, y: 0, trigger: 'auto',
-    when: when({ all: [P8], none: ['b17_senda_llegada'] }),
-    script: async (ctx) => {
-      ctx.setFlag('b17_senda_llegada');
-      await zygardeSays(ctx, SENDA_TEXT.arrivalCrisis);
-      if (occupied(ctx.state)) await zygardeSays(ctx, SENDA_TEXT.arrivalTowers);
-    },
-  }];
-}
-
 function items() {
   return ITEMS.map((it) => ({ id: it.id, type: 'item', x: it.x, y: it.y, item: it.item, count: it.count || 1, hidden: Boolean(it.hidden) }));
 }
@@ -166,7 +151,6 @@ export function sendaEvents() {
     ...cordonEvents(),
     ...bridgeEndEvents(),
     ...descentEvents(),
-    ...arrivalEvents(),
     ...towerEvents({ ...TOWERS.viento, image: 'Exterior1' }, tiles),
     ...towerEvents({ ...TOWERS.tormenta, image: 'Exterior1' }, tiles),
     ...items(),

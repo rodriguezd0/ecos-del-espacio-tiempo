@@ -2,7 +2,7 @@
 // vía del tren, Paso del Derrumbe (cascotes hasta p4_restored, mineros antes y después), apeadero abandonado con
 // C041 bajo el andén (barro: Terreno complicado), entrenadores, hierba que se agita (Audino 33), objetos, carteles
 // y enlaces pendientes (Ciudad Estrato, B08; Mirador de la Calzada, B19).
-import { F, V, SPEAKER, SPRITE, when, core, examine, blockedLink, npc } from './b09a_common.js';
+import { F, V, SPEAKER, SPRITE, when, examine, blockedLink, npc } from './b09a_common.js';
 import { railEvents } from './b09a_rail.js';
 import { rustleEvents } from './b09a_wild.js';
 import { b09aCellEvents, b09aCellTiles } from './b09a_cells.js';
@@ -117,8 +117,7 @@ function trainerEvents() {
 // ------------------------------------------------------------ llegada, carteles, objetos y enlaces
 async function arrival(ctx) {
   if (ctx.flag(F.r7Arrival)) return;
-  ctx.setFlag(F.r7Arrival);
-  await core(ctx, 'Al norte, el suelo se acaba. Muy hondo.');
+  ctx.setFlag(F.r7Arrival); // Zygarde habla muy poco (autor, 25-09-2026): la llegada ya no tiene línea
 }
 
 function detailEvents(open) {

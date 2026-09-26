@@ -1,7 +1,7 @@
 // Mundo Distorsión, espacios comunes del Pilar Invertido (docs/CAMPANA.md B12): la explanada interior (llegada por el
 // aljibe, encuentros de «Pilar Invertido», el portal a La Cara Vuelta y, tras restaurar, la «Respuesta» de Zygarde:
 // «Aquí lo empujé. Tres noches.») y La Mirada (puentes que solo existen mientras se miran). Portales entre secciones.
-import { F, EXT, OBJ, ANCHOR_ART, MUSIC, VIOLET, when, zygardeLines, pause } from './b12_common.js';
+import { F, EXT, OBJ, ANCHOR_ART, MUSIC, VIOLET, when, zygardeSays, pause } from './b12_common.js';
 import { VESTIBULO, MIRADA, SUMIDERO, MONTE, segment } from '../maps/b12/layout.js';
 import { roomEntry, firstFallHint } from './b12_cara.js';
 import { isVoidCell } from '../../world/impossible/logic.js';
@@ -36,12 +36,7 @@ export function portalEvent(id, x, y, to, { flag = null, when: cond = null, text
 
 async function interiorArrival(ctx) {
   ctx.setFlag(F.interiorVisto);
-  await pause(ctx, 30);
-  await zygardeLines(ctx, [
-    'Estamos dentro.',
-    'Aquí arriba es abajo, y las piedras flotan sobre nada. No te acerques a los bordes sin mirar.',
-    'La parte de mí que falta está al fondo. La noto tirar.',
-  ]);
+  await pause(ctx, 30); // Zygarde habla muy poco (autor, 25-09-2026)
 }
 
 /**
@@ -68,7 +63,7 @@ async function stageZygardeBeside(ctx) {
   ctx.face?.('player', playerFaces);
 }
 
-/** Respuesta de Zygarde al volver, ya restaurado el Pilar (CAMPANA B12 «Respuesta»): dolor y gratitud. */
+/** Respuesta de Zygarde al volver, ya restaurado el Pilar (CAMPANA B12 «Respuesta»). */
 async function respuestaScene(ctx) {
   ctx.setFlag(F.respuestaP6);
   await pause(ctx, 30);
@@ -79,13 +74,8 @@ async function respuestaScene(ctx) {
   }
   // Biblia P-03/P-04: la batalla acaba en la tercera noche y SOLO entonces Zygarde pierde la cohesión; N3 fue
   // arrastrado al aljibe y se fundió con el sello para taponar la brecha (CAMPANA §2.4).
-  await zygardeLines(ctx, [
-    'Aquí lo empujé. Tres noches.',
-    'Cuando por fin cruzó, me deshice. Una parte de mí cayó con él hasta la puerta y se quedó sujetándola.',
-    'Me dolía no poder volver a por ella.',
-    'Tú has vuelto.',
-    '…No lo olvidaré.',
-  ]);
+  // Zygarde habla muy poco (autor, 25-09-2026): solo la línea canónica.
+  await zygardeSays(ctx, 'Aquí lo empujé. Tres noches.');
 }
 
 async function aljibeBack(ctx) {
@@ -137,11 +127,7 @@ export function vestibuloEvents() {
 
 async function miradaArrival(ctx) {
   ctx.setFlag(F.miradaVista);
-  await pause(ctx, 16);
-  await zygardeLines(ctx, [
-    'Aquí los caminos solo están mientras los miras.',
-    'Gira solo sobre piedra firme.',
-  ]);
+  await pause(ctx, 16); // Zygarde habla muy poco (autor, 25-09-2026)
 }
 
 /** Casillas de puente de La Mirada (todas las de los segmentos de MIRADA.bridges). */

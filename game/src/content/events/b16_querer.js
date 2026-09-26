@@ -4,7 +4,7 @@
 //   · Cámara de Azelf: combate contra Azelf nivel 58 SIN OBJETOS DE LA MOCHILA (la interfaz explica el sello antes y el
 //     motor lo impone: rules.sealedBag), con estadísticas normales, sin equipo a 1 PS ni transformaciones. Al perder se
 //     cura el equipo y se reintenta al momento. Premio: la Hebra del Querer.
-import { F, V, SPEAKER, SPRITE, OBJ, TRIO_COLORS, lines, zygardeSays } from './b16_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, TRIO_COLORS, lines } from './b16_common.js';
 import { STILL_FRAMES, isFloor, isLedge, corridorPath, CORRIDOR_ROWS } from './b16_wind_logic.js';
 import { QUERER, PATIO, floorTop, windCell } from '../maps/b16/santuario_layout.js';
 import { AZELF_TRIAL } from '../encounters/b16.js';
@@ -142,8 +142,7 @@ async function azelfBattle(ctx) {
   ctx.se('PRSFX- Heal Bell');
   await ctx.flash([...TRIO_COLORS.querer], 16, 160);
   await ctx.giveItem('WILLTHREAD', 1);
-  ctx.setFlag(F.querer);
-  await zygardeSays(ctx, 'Azul. …Una más.');
+  ctx.setFlag(F.querer); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 function azelfEvents() {

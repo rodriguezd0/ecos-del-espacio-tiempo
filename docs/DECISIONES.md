@@ -137,6 +137,29 @@ Gael, postgame y DLC), `docs/TABLILLAS.md` (T01–T15, museo, Crónica, Libreta)
 - **Rendirse y desconexiones:** se puede rendir. Si el otro jugador se desconecta, en el 1 contra 1 ganas tú; en el doble en equipo pierden los dos.
 - **Pendientes pedidos por el usuario:** intercambios, chat y emotes.
 
+**X34 — Tono de Zygarde y células** (DECIDIDO (autor, 25-09-2026); prevalece sobre CAMPANA §2.2, §3.2 «voces» y
+B01 §4.8). Palabras del autor: «quiero que las mecánicas sean más ocultas, no que Zygarde te diga que vas a tener tal
+mecánica en tal momento. Zygarde es un legendario serio… No le importas de nada. Si habla tanto pierde lo imponente».
+
+- **Zygarde habla muy poco.** Solo conserva sus líneas canónicas (literales de CAMPANA y del guion B01 §4.6) y, como
+  mucho, una o dos imprescindibles de trama por bloque. Fuera: comentarios de ambiente, direcciones, agradecimientos,
+  cariño, complicidad, conteos, pistas de puzle y **cualquier anuncio de capacidades futuras** (p. ej. «Cuando recupere
+  más de mí…» en la grava de la Ruta 1). Los bloqueos por capacidad se explican solo describiendo el terreno. Las
+  reglas de puzle necesarias pasan a narración neutra o a un NPC; los tutoriales de Reconstrucción y de los cristales de
+  eje (`tutorial` de `rebuildGap`/`axisCrystal`) son narración, no telepatía. La Libreta ya no muestra «Zygarde: «Allí
+  no llego todavía.»».
+- **Al hablarle** fuera de un hito: se gira y calla («El Core te mira un instante. No dice nada.»). Si un hito espera
+  células, solo dice la canónica «Me faltan N partes.». Escenas genéricas de «recuerdo»: solo las líneas canónicas
+  (Embestida, Terreno, Trepar, Forma Completa, Salto); el resto se activa con el aviso del sistema.
+- **Al recoger una célula:** sonido de obtención, texto con el contador y destello breve. Sin reacción ni gratitud (se
+  quita «Una parte de mí. Gracias.»). Se mantiene «Aquí. Una parte de mí.» en la escena de C001 (CAMPANA, literal).
+- **Sin pitido/latido de proximidad** (ni brillo en el Core ni flecha): no es una mecánica de Zygarde en el lore y
+  molesta junto a células aún inalcanzables. La **Detección mejorada** (60 células) queda como marcas discretas y
+  silenciosas en el mapa regional de los lugares visitados (y la crisis del P8, como antes); se mantiene el rótulo
+  «Células: n/m».
+- **Célula en el mapa:** solo el sprite original del autor (`zygarde_celula`), quieta y apoyada en el suelo: sin
+  animación, sin flotar, sin brillo hexagonal ni luz propia, con opacidad 210/255 para que se vea sin llamar la atención.
+
 **Nota técnica detectada (propuesta TEC-07):** `tools/extract_data.mjs` descarta los campos vacíos de `Evolutions`, por
 lo que `species.json` pierde o desalinea las evoluciones con parámetro vacío (`Happiness`, `Trade`: Golbat, Buneary,
 Chansey, Cleffa, Pichu, Munchlax, Riolu, Azurill, Togepi, Pawmo, Kadabra, Graveler, Machoke, Haunter, Gurdurr, Eevee).

@@ -5,7 +5,7 @@
 //   · Tras el P5: Genesis se ha ido con sus copias; la tinta ha vuelto a todas las páginas menos a un nombre. Olvido
 //     enseña el Informe del incidente de la Laguna Clara: «Los tachones también son memoria.» Nadie dice un nombre.
 //     Entrega la Piedra Espíritu (ODDKEYSTONE) para la Losa del Olvido.
-import { F, SPEAKER, SPRITE, lines, zygardeSays, eventById, when, byGender } from './b10_common.js';
+import { F, SPEAKER, SPRITE, lines, eventById, when, byGender } from './b10_common.js';
 import { trainerUntil } from './b06_common.js';
 import { ARCHIVO_ROOM as A } from '../maps/b10/archivo_layout.js';
 
@@ -57,7 +57,6 @@ async function casiaScene(ctx) {
     'La escalera del fondo baja al Archivo Hondo. Yo bajo por mi camino, que no se enseña.',
     'Te espero abajo, donde duerme la piedra. Si llegas.',
   ]);
-  await zygardeSays(ctx, 'Esa mujer huele a las máquinas del Parque. Pero no busca células. Busca palabras.');
   if (olvido) {
     await ctx.move(olvido, ['up', 'up', 'up', 'left', 'left', 'left', 'left'], { through: true, speed: 3.5 });
     ctx.erase(olvido);
@@ -85,7 +84,6 @@ async function informeScene(ctx) {
     'Alguien no quería que se supiera quién calibró.',
     'Los tachones también son memoria.',
   ]);
-  await zygardeSays(ctx, 'La marisma del sur. Allí la tierra aún tiene miedo.');
   ctx.setFlag(F.informe);
   await lines(ctx, SPEAKER.olvido, [
     'Y toma esto. La encontré al pie del risco del Santuario cuando tenía tu edad. Rodó desde arriba, de la Losa del Olvido.',

@@ -2,7 +2,7 @@
 // (el aljibe filtra lo que viene del otro lado); tras restaurarlo cesan. «Al volver a Zaguán, Casilda entrega la
 // Lucarita (LUCARIONITE): "Mi marido la encontró hace años. Ahora sé para quién era."»
 // Se añaden a villa_alba (B01) y villa_zaguan (B02) con una línea cada uno (ediciones mínimas y aditivas).
-import { F, EXT, SPEAKER, SPRITE, when, isNight, lines, zygardeSays, pause, eventById } from './b12_common.js';
+import { F, EXT, SPEAKER, SPRITE, when, isNight, lines, eventById } from './b12_common.js';
 import { stageRoute } from './b07_path.js';
 
 // ───────────────────────────── Villa Alba: temblores nocturnos antes del P6 ─────────────────────────────
@@ -17,13 +17,7 @@ async function nightTremor(ctx) {
   scene.__b12Tremor = TREMOR_EVERY;
   ctx.se('PRSFX- Earthquake', { volume: 35 });
   ctx.shake(2, 4, 50);
-  if (!ctx.flag(F.temblorAlba)) {
-    ctx.setFlag(F.temblorAlba);
-    await scene.runScript(async (c) => {
-      await pause(c, 30);
-      await zygardeSays(c, 'Tiembla otra vez. Viene del Monte, del aljibe.');
-    }, null, 'b12:temblor');
-  }
+  if (!ctx.flag(F.temblorAlba)) ctx.setFlag(F.temblorAlba); // Zygarde habla muy poco (autor, 25-09-2026): el temblor basta
 }
 
 export function b12VillaAlbaEvents() {

@@ -1,5 +1,5 @@
 // Textos del Bloque 21 (docs/CAMPANA.md B21, D21–D24). Módulo PURO. Las líneas marcadas «canon» son literales de
-// CAMPANA; el resto se redactó respetando las voces fijadas (Zygarde sobrio y telepático; Arceus mide y reconoce al
+// CAMPANA; el resto se redactó respetando las voces fijadas (Zygarde casi mudo: solo sus canónicas, autor 25-09-2026; Arceus mide y reconoce al
 // jugador, nunca malvado; Alerce sobrio y sin confesión; Vértice cortés e irónico) y está en el informe del bloque
 // para que el autor lo revise. Las funciones reciben el estado para respetar el género del protagonista.
 import { byGender } from './b21_common.js';
@@ -8,9 +8,10 @@ export const JUMP_TEXT = Object.freeze({
   // B20 describe el sello del suelo; CAMPANA B21 §1, el Nodo como «hexágono del suelo»: el hexágono está en su centro.
   node: 'En el centro del sello, un hexágono grabado late despacio, con una luz verde que no es de ninguna antorcha.',
   noJump: 'El hexágono late despacio, pero no pasa nada.',
-  warn: 'No podrás volver hasta terminar lo que empiece allí. Prepárate cuanto quieras.', // canon
+  // Zygarde habla muy poco (autor, 25-09-2026): el aviso y la espera son narración; solo «Súbete…» es de Zygarde.
+  warn: 'No podrás volver hasta terminar lo que empiece allí. Prepárate cuanto quieras.', // canon (aviso previo, narración)
   ask: '¿Saltar a Columna Lanza?',
-  wait: 'El nodo espera.', // canon (CAMPANA: «El nodo espera»)
+  wait: 'El nodo espera.', // canon (CAMPANA: «El nodo espera»), narración
   ride: 'Súbete. Esta forma sabe correr por los caminos viejos.', // canon
   form: 'Zygarde se deshace en células y se recompone, ligero: la \\c[3]Forma 10 %\\c[0].',
 });
@@ -18,7 +19,6 @@ export const JUMP_TEXT = Object.freeze({
 export const ARRIVAL_TEXT = Object.freeze({
   place: 'Sobre las nubes, el cielo no es azul: arde en colores que no tienen nombre.',
   form: 'Las células se recogen. Zygarde vuelve a su \\c[3]Forma Completa\\c[0].',
-  zygarde: 'Arriba. Duerme.',
   // El centro del hexágono (pieza pilar_camara_nucleo) se ve verde: brilla, pero no responde.
   noReturn: 'El hexágono del suelo aún brilla, pero no responde. No hay vuelta hasta terminar.',
 });
@@ -26,11 +26,11 @@ export const ARRIVAL_TEXT = Object.freeze({
 export const ZYGARDE_TEXT = Object.freeze({
   ask: 'Antes de despertarlo… llévame contigo. No como parte del camino. Como parte del combate.', // canon
   choices: Object.freeze(['Sí', 'Todavía no']), // canon
-  later: 'Esperaré.',
+  later: 'Zygarde se aparta y espera.', // narración (Zygarde habla muy poco, autor, 25-09-2026)
   ball: '\\PN saca una Honor Ball. No la lanza: la tiende en la palma de la mano.',
   touch: 'Zygarde se acerca y la toca.',
   joined: '¡Zygarde se ha unido a tu equipo!',
-  after: 'Aunque algún día me guardes, seguiré contigo en el camino.',
+  after: 'Las capacidades de campo de Zygarde siguen contigo aunque esté en el PC.', // narración (CAMPANA B21 §2)
   full: 'Tu equipo está completo. El Arca de Zygarde se abre: hay que dejarle sitio.',
   pick: '¿A quién envías al PC?',
   mustPick: 'El Arca sigue abierta. Elige a quién enviar al PC.',
@@ -96,12 +96,9 @@ export const RESOLUTION_TEXT = Object.freeze({
   },
   sky: 'La aurora se apaga. La luna vuelve a su tamaño. El cielo de Axis recupera su ritmo.',
   stays: 'Arceus se tiende otra vez sobre el gran hexágono. Esta vez no duerme: vigila.',
-  zygarde: 'Está hecho.',
-  home: 'Volvamos. Esta forma sabe correr por los caminos viejos.', // canon (la línea del Salto)
 });
 
 export const EPILOGUE_TEXT = Object.freeze({
-  labyrinth: 'Aquí te esperé. Aquí empezó todo.', // eco de B01 §4.6: «Te he estado esperando.»
   olmedo: Object.freeze([
     'Otra vez tú.', // canon
     '…Anda, pasa. Tu madre lleva toda la tarde en la puerta.',
@@ -147,7 +144,6 @@ export const EPILOGUE_TEXT = Object.freeze({
     (s) => `Anda, sube a descansar. Te lo has ganado, ${byGender(s, 'hijo', 'hija')}.`,
   ]),
   wake: 'Entra la luz de la mañana.',
-  zygardeStays: 'Sigo entero. Nada me obliga ya. Me quedo.',
   formNote: 'Zygarde conserva la Forma Completa. El Arca solo cambia sus formas; el vínculo no.',
   postgame: 'Axis está en calma. Aún quedan lugares y leyendas por descubrir.',
   save: '¿Quieres guardar la partida?',

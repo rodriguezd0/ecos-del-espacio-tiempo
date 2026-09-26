@@ -375,6 +375,8 @@ test('Salto: Zygarde toma la Forma 10 % ANTES de «Súbete. Esta forma…» y ll
   assert.ok(iForm >= 0 && iForm < forms.indexOf(ride), 'la transformación se narra antes de la frase');
   assert.deepEqual(warps, [['columna_lanza', 14, 31]]);
   assert.ok(st.flag(F.jumpDone));
+  // Zygarde habla muy poco (autor, 25-09-2026): el aviso es narración; Zygarde solo dice la canónica del Salto.
+  assert.deepEqual(ctx.said.filter((l) => l.speaker === 'Zygarde').map((l) => l.text), [ride[0]]);
 });
 
 test('«Reintentar fase» dentro del combate: la instantánea deshace la Megaevolución y devuelve el objeto inicial', async () => {

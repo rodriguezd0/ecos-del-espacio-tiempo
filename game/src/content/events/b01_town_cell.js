@@ -31,7 +31,7 @@ export async function parterreScene(ctx) {
   if (route?.length) await ctx.move('player', route, { through: false });
   else if (route === null) await ctx.movePlayerTo(cell.x, cell.y, { through: false });
   ctx.face('player', 'down');
-  await collectCell(ctx, cell.id, { react: false });
+  await collectCell(ctx, cell.id);
 }
 
 /** Eventos de Villa Alba: la célula (visible con la Pokédex) y el director de la escena (auto, una vez). */

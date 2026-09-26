@@ -4,7 +4,7 @@
 import { HONDA, MINA } from './layout.js';
 import { caveKit, cells } from './cave_kit.js';
 import { MINA_HONDA } from '../../encounters/b08.js';
-import { F, OBJ, SPEAKER, SPRITE, zygardeSays } from '../../events/b08_common.js';
+import { F, OBJ, SPEAKER, SPRITE } from '../../events/b08_common.js';
 
 const kit = caveKit('_arcilla');
 const R = HONDA.room;
@@ -35,9 +35,7 @@ export default {
   warps: [{ x: HONDA.ladder.x, y: HONDA.ladder.y - 1, to: 'mina_galena', tx: MINA.liftArrival.x, ty: MINA.liftArrival.y, dir: 2 }],
   onEnter: async (ctx) => {
     if (ctx.flag(F.honda)) return;
-    ctx.setFlag(F.honda);
-    await ctx.wait(8);
-    await zygardeSays(ctx, 'Aquí abajo la roca está tranquila. Por primera vez.');
+    ctx.setFlag(F.honda); // Zygarde habla muy poco (autor, 25-09-2026): sin comentario del Core al llegar.
   },
   events: [
     ...[[8, 9, 0], [9, 13, 1], [14, 8, 2], [21, 13, 3], [12, 18, 1], [24, 18, 0]].map(([x, y, v]) => ({

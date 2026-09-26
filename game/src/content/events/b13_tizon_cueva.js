@@ -2,7 +2,7 @@
 // que se enfrían al taponar su boca, los tres respiraderos que alimentan la forja y el reinicio de las salas sin
 // resolver al salir de ellas. Las REGLAS están en b13_lava_logic.js (puras y probadas); aquí se animan y se guardan
 // (var b13_colada_<sala>). Técnica de la perforación en el vestíbulo.
-import { F, V, SPRITE, OBJ, zygardeSays, objectPage } from './b13_common.js';
+import { F, V, SPRITE, OBJ, objectPage } from './b13_common.js';
 import { ROOMS, ROOM_IDS, roomStart, roomState, isSolved, push } from './b13_lava_logic.js';
 import { EXITS, TECH, ITEMS, roomAt } from '../maps/b13/tizon_cueva_layout.js';
 
@@ -92,7 +92,8 @@ async function dammed(ctx, n, flow, ev) {
   await ctx.say(CUEVA_TEXT.cooled);
   if (!ctx.flag('b13_t12_primera_costra')) {
     ctx.setFlag('b13_t12_primera_costra');
-    await zygardeSays(ctx, 'Donde se corta el flujo, la roca se enfría. Ya podemos pisarla.');
+    // Zygarde habla muy poco (autor, 25-09-2026): la regla del puzle queda como narración.
+    await ctx.say('La costra parece firme. Se puede pisar.');
   }
   if (isSolved(n, readRoom(ctx.state, n)) && ROOMS[n].flows.r && ROOMS[n].flows.l) {
     await ctx.say('La fuente del centro sigue viva, pero ya no tiene por dónde correr.');
@@ -163,7 +164,6 @@ async function ventScript(ctx) {
     ctx.setFlag(F.tizVents);
     ctx.shake(3, 4, 30);
     await ctx.say(CUEVA_TEXT.allVents);
-    await zygardeSays(ctx, 'La montaña vuelve a respirar.');
   }
 }
 

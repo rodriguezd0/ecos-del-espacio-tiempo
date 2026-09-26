@@ -7,7 +7,7 @@
 // cuanto quedan menos de 3 y su condición de cola se cumple (T11/T12 esperan a Nadar). El descubrimiento
 // directo (llegar al lugar sin la pista) la activa aunque se supere el límite. Las pistas sueltas anotadas con
 // state.addClue (sin arco) se muestran como notas y no ocupan hueco.
-import { CLUE_ARCS, clueArc, MAX_ACTIVE_CLUES, ZYGARDE_LINES, ABILITY_NAMES } from './clues.js';
+import { CLUE_ARCS, clueArc, MAX_ACTIVE_CLUES, ABILITY_NAMES } from './clues.js';
 
 export const STATUS = Object.freeze({ ACTIVE: 'active', QUEUED: 'queued', SOLVED: 'solved' });
 
@@ -159,19 +159,12 @@ export function missingAbilities(arc, state) {
   return (arc?.abilities || []).filter((k) => !state.zygardeAbility(k));
 }
 
-/** Frase de Zygarde si falta una capacidad (o null). */
-export function zygardeLine(arc, state) {
-  const missing = missingAbilities(arc, state);
-  if (!missing.length) return null;
-  return ZYGARDE_LINES[missing[0]] || ZYGARDE_LINES.default;
-}
-
 function rowFor(state, c) {
   const status = entryStatus(c);
   const arc = clueArc(c.id);
   const isNew = !c.seen && c.seen !== undefined;
   if (!arc) {
-    return { id: c.id, custom: true, status, step: 1, title: 'Nota', isNew, steps: [{ label: 'Nota', by: '', text: c.text }], place: null, zone: null, zygarde: null, missing: [] };
+    return { id: c.id, custom: true, status, step: 1, title: 'Nota', isNew, steps: [{ label: 'Nota', by: '', text: c.text }], place: null, zone: null, missing: [] };
   }
   const step = Math.max(1, Math.min(arc.steps.length, Number(c.step) || 1));
   const steps = arc.steps.slice(0, status === STATUS.SOLVED ? Math.max(step, 1) : step);
@@ -181,7 +174,7 @@ function rowFor(state, c) {
     steps,
     place: step >= 2 || status === STATUS.SOLVED ? arc.place : null,
     zone: step >= 2 && status === STATUS.ACTIVE ? arc.zone : null,
-    zygarde: status === STATUS.SOLVED ? null : zygardeLine(arc, state),
+    // Sin frase de Zygarde que anticipe capacidades (DECIDIDO autor, 25-09-2026: mecánicas más ocultas).
     missing: missingAbilities(arc, state).map((k) => ABILITY_NAMES[k] || k),
   };
 }

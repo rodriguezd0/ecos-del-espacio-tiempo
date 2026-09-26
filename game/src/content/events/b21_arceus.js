@@ -6,7 +6,7 @@
 //   · Resolución: Terrax, Terror y Legendaria (las dieciocho), la confirmación de la profecía, el eje que no se eligió
 //     en el P9 reparado y el fin de la crisis (game_cleared). Arceus capturado → arceus_caught; debilitado en la fase 3
 //     → sigue en Columna Lanza para el postgame (CAMPANA §8.1, B22).
-import { F, V, SPEAKER, MUSIC, GOLD, zygardeSays, pause, placePlayer, eventById } from './b21_common.js';
+import { F, V, SPEAKER, MUSIC, GOLD, pause, placePlayer, eventById } from './b21_common.js';
 import { FLUTE_TEXT, PHASE_TEXT, BATTLE_TEXT, RESOLUTION_TEXT, ZYGARDE_TEXT } from './b21_texts.js';
 import { arceusRequest, reachedPhase, clampPhase, stateSnapshot } from './b21_arceus_logic.js';
 import { syncBag } from '../../battle/scene/results.js';
@@ -213,6 +213,5 @@ export async function resolutionScene(ctx) {
   glow?.remove?.(60);
   if (!ctx.flag(F.gameCleared)) await clearSky(ctx);
   if (!caught) await ctx.say(RESOLUTION_TEXT.stays);
-  await zygardeSays(ctx, RESOLUTION_TEXT.zygarde);
   ctx.setFlag(F.finalResolved);
 }

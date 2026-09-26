@@ -6,7 +6,7 @@
 import { room } from './b07_strata_rooms.js';
 import { stratumOf, canBreak, remainingRocks } from './b07_strata_logic.js';
 import {
-  F, V, SPEAKER, SPRITE, OBJ, TIMBURR_FLAGS, lines, zygardeSays, alerceCall, byGender, kid, eventById, routeTo,
+  F, V, SPEAKER, SPRITE, OBJ, TIMBURR_FLAGS, lines, alerceCall, byGender, kid, eventById, routeTo,
 } from './b07_common.js';
 import { FIELD_TEXT } from '../zygarde/texts.js';
 import { GALERIAS, CANTERIA } from '../maps/b07/layout.js';
@@ -116,8 +116,6 @@ async function collapse(ctx, n, rock) {
       'Esa roca sostenía otra. Si dos rocas se tocan, la de la capa de abajo aguanta a la de arriba.',
       'Mira los colores antes de embestir: ocre, gris, roja, negra. Siempre de arriba abajo, aunque haya que dar la vuelta.',
     ]);
-  } else {
-    await zygardeSays(ctx, 'Arriba primero.');
   }
 }
 
@@ -159,7 +157,6 @@ async function tabletScene(ctx) {
   });
   await ctx.wait(20);
   await ctx.say('Bajo la última capa de pizarra asoma una losa de piedra tallada. Brilla con luz propia.');
-  await zygardeSays(ctx, 'Las capas la guardaban. Por eso nadie la encontró.');
   ctx.world.removeEvent?.(tab);
   await ctx.story.giveTablet('STONEPLATE');
   ctx.setFlag(F.tablilla);
@@ -169,7 +166,8 @@ async function tabletScene(ctx) {
   await ctx.say('En la pared de al lado se enciende una veta de piedras de todos los colores.');
   glow?.remove?.(60);
   if (ctx.flag(F.quino)) await stoneAndExit(ctx);
-  else await zygardeSays(ctx, 'Queda alguien bajo las capas del oeste.');
+  // Zygarde habla muy poco (autor, 25-09-2026): la indicación pasa a narración neutra.
+  else await ctx.say('Al oeste, bajo las capas, alguien sigue golpeando la roca.');
 }
 
 /** Quino arranca un trozo de la veta y saca al jugador por el pozo de ventilación (con Quino y la Tablilla). */
@@ -215,7 +213,6 @@ async function rescueTimburr(ctx, n, k) {
   const all = TIMBURR_FLAGS[n].every((fl) => ctx.flag(fl));
   if (n === 1) {
     await ctx.say('Con la viga, el Timburr aparta los tablones que tapaban un pozo junto a la entrada. Luego sale corriendo hacia la luz.');
-    await zygardeSays(ctx, 'Abajo hay más. Los oigo.');
   } else if (all) {
     await ctx.say('Los dos Timburr apartan juntos los tablones del pozo que baja a la última galería y se van hacia la salida.');
   } else {
@@ -361,7 +358,8 @@ async function descend(ctx, n) {
     ctx.shake(1, 6, 10);
     await ctx.say('Tac… tac… Alguien golpea la roca al oeste de la galería.');
     await ctx.say('¡¿Hay alguien?! ¡Aquí, detrás de la roca roja! ¡Estoy bien, pero no puedo salir!', Q);
-    await zygardeSays(ctx, 'Ahí. Y al fondo, bajo la piedra negra, algo más viejo que la cantera.');
+    // Zygarde habla muy poco (autor, 25-09-2026): lo que se ve pasa a narración neutra.
+    await ctx.say('Al fondo, bajo la piedra negra, algo brilla débilmente.');
   }
 }
 
@@ -399,12 +397,11 @@ function detailEvents() {
 
 const xy = ([x, y]) => ({ x, y });
 
-/** Primera vez en las galerías: el polvo reciente y la voz de Zygarde. */
+/** Primera vez en las galerías: el polvo reciente (Zygarde habla muy poco, autor, 25-09-2026). */
 export async function galeriasOnEnter(ctx) {
   if (ctx.flag(F.galerias)) return;
   ctx.setFlag(F.galerias);
   await ctx.say('La galería huele a polvo reciente. Más abajo se oye picar la roca, muy despacio.');
-  await zygardeSays(ctx, 'Yo empujo. Tú eliges dónde.');
 }
 
 export function galeriasEvents() {

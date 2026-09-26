@@ -3,7 +3,7 @@
 // de las salas ASCII (b18_cruce_rooms.js) con world/axis/roomEvents.js; las reglas son las genéricas de world/axis.
 // Aquí: llegada, tutorial del primer cristal, rótulos de las salas, marcas de sala superada, estela del vestíbulo,
 // warps entre salas y el atajo del vestíbulo al núcleo (se abre al llegar al núcleo por primera vez).
-import { F, SPEAKER, lines, zygardeSays, when, examine } from './b18_common.js';
+import { F, SPEAKER, lines, when, examine } from './b18_common.js';
 import { ROOM_ITEMS, ROOM_NAMES } from './b18_cruce_rooms.js';
 import { VESTIBULO, CAIDA, RIO, CRUCE, NUCLEO, SHORTCUT, ROOM_PLACES } from '../maps/b18/cruce_layout.js';
 import { MOUTH } from '../maps/b18/puente_layout.js';
@@ -20,9 +20,9 @@ export const CRUCE_TEXT = Object.freeze({
   roomDone: (n) => `Sala ${n} superada.`,
 });
 
-/** Tutorial telepático del primer cristal (Zygarde). */
+/** Tutorial del primer cristal: narración neutra (Zygarde habla muy poco, autor, 25-09-2026). */
 export const CRYSTAL_TUTORIAL = Object.freeze([
-  'Este cristal responde a la Cadena Roja. Tira de ella hacia uno de los dos, y el Pilar obedece.',
+  'El cristal vibra con la Cadena Roja. Si se tensa hacia uno de los dos, el Pilar obedece.',
   'Hacia Dialga, lo que se mueve se queda quieto. Hacia Palkia, las marcas violetas se abren y lo que se movía vuelve a moverse.',
 ]);
 
@@ -66,7 +66,6 @@ export function cruceEvents() {
 async function arrivalScene(ctx) {
   ctx.setFlag(F.chamberIn);
   for (const t of CRUCE_TEXT.arrive) await ctx.say(t);
-  await zygardeSays(ctx, 'Aquí dentro el tiempo y el espacio tiran cada uno hacia su lado. Siento a los dos más abajo.');
 }
 
 // ─────────────────────────────── warps ───────────────────────────────

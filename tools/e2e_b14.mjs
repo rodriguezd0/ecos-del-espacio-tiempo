@@ -92,7 +92,6 @@ async function caleta(d) {
   await d.settle({ watch: [{ re: /¡Otra vez la marea!/, name: 'caleta_tobias', delay: 150 }] });
   await d.expectSaid(/¡Otra vez la marea!/, 'a Tobías');
   await d.expectSaid(/A mí la marea me ha quitado a mi hijo/, 'a Carmela');
-  await d.expectSaid(/Esas mareas vienen de abajo/, 'al Core');
   const coins = await d.eval(() => window.__b14.items('RELICCOPPER'));
   await d.milestone('caleta_intro', (s) => need(has(s, 'b14_caleta_intro') && coins >= 1, `intro ${has(s, 'b14_caleta_intro')}, monedas ${coins}`));
   await d.swimTo(4, 28);
@@ -104,14 +103,13 @@ async function caleta(d) {
 
 async function arrecife(d) {
   await d.walkTo(22, 29);
-  await d.expectSaid(/Aquí abajo el agua suena a voces/, 'la llegada al arrecife');
   await d.milestone('arrecife', (s) => need(s.dive && s.map === 'arrecife_eco', 'sin burbuja de buceo'));
   await d.faceEvent('buceador_casimiro');
   await d.interact({ watch: [{ scene: 'BattleScene', name: 'buceador', delay: 2500 }] });
   await d.walkTo(22, 6, { face: 'up' });
   await d.interact();
   await d.expectSaid(/cabezal de una draga enorme/, 'la draga');
-  await d.expectSaid(/tapan la entrada/, 'la pista del Core');
+  await d.expectSaid(/se pierde hacia el oeste, hasta una campana/, 'la pista de la campana');
   await d.milestone('draga', (s) => need(has(s, 'b14_draga_vista') && s.battles.includes('b14_buceador_casimiro'), 'sin draga o sin Casimiro'));
   // La campana de dragado de Genesis.
   await d.walkTo(8, 13, { stopWhen: (s) => s.map === 'arrecife_campana' });
@@ -142,14 +140,12 @@ async function arrecife(d) {
 
 async function sala1(d) {
   await d.walkTo(16, 17);
-  await d.expectSaid(/Una ciudad\. Bajo el agua/, 'la entrada a Antea');
   await d.milestone('c082', (s) => need(s.cells.includes('cell_ecos_1'), 'sin C082'));
   await d.walkTo(16, 5, { face: 'up' });
   await d.interact();
   await d.expectSaid(/estatua caída tapa la boca/, 'la estatua caída');
   await d.caracola({ x: 16, y: 14, dir: 8 }, 'Golpearla', 'antea_1_antea');
-  await d.expectSaid(/guarda el sonido de lo que fue/, 'el tutorial de la caracola');
-  await d.expectSaid(/Esto es un eco/, 'el primer eco');
+  await d.expectSaid(/Es un eco de la ciudad/, 'el primer eco');
   await d.milestone('antea_s1', (s) => need(has(s, 'b14_primer_eco'), 'sin primer eco'));
   await d.walkTo(15, 6, { face: 'left' });
   await d.interact({ watch: [{ re: /Empujas con el hombro/, name: 'estatua', delay: 100 }] });
@@ -176,7 +172,7 @@ async function sala2(d) {
   await d.faceEvent('fausto_eco');
   d.want = ['La compuerta del aljibe'];
   await d.interact();
-  await d.expectSaid(/Está atrapado en un día que ya pasó/, 'el Core sobre Fausto');
+  await d.expectSaid(/Juraría que esto ya te lo he dicho/, 'Fausto repite su día');
   await d.expectSaid(/Eso no toca ahora/, 'el día que vuelve a empezar');
   await d.milestone('fausto_reinicio', (s) => need(Number(s.vars.b14_fausto || 0) === 0, `parada ${s.vars.b14_fausto}`));
   for (const [label, stop] of [['El puesto de redes', 1], ['La compuerta del aljibe', 2], ['La caracola del muelle', 3]]) {
@@ -216,7 +212,7 @@ async function provokeCharge(d, cells) {
 
 async function sala3(d) {
   await d.caracola({ x: 16, y: 19, dir: 8 }, 'La era primigenia', 'antea_3_primigenia');
-  await d.expectSaid(/Mucho antes de la ciudad/, 'la llegada a la era primigenia');
+  await d.expectSaid(/Helechos gigantes y aire tibio/, 'la llegada a la era primigenia');
   await d.milestone('primigenia_s3', () => null);
   await provokeCharge(d, [[21, 17], [21, 18], [12, 17], [12, 18]]);
   await d.expectSaid(/el eco te devuelve junto a la caracola/, 'la vuelta a la caracola');
@@ -271,7 +267,6 @@ async function sala4(d) {
 
 async function fosa(d) {
   await d.settle();
-  await d.expectSaid(/Su nido\. Y debajo, el núcleo/, 'la llegada a la Fosa');
   const inFosa = (s) => s.map !== 'fosa_eco' || has(s, 'b14_bramaluna_eco');
   if (RETRY) {
     await d.walkTo(15, 16, { stopWhen: inFosa });
@@ -312,7 +307,7 @@ async function regreso(d) {
   await d.settle({ watch: [{ re: /ferri vuelve a salir/, name: 'ferri', delay: 150 }] });
   await d.expectSaid(/ha subido cuando tocaba/, 'las mareas a su hora');
   await d.expectSaid(/Lo has arreglado, ¿verdad\?/, 'a Fausto de vuelta');
-  await d.expectSaid(/el hielo del eco se ha retirado/, 'el norte');
+  await d.expectSaid(/el hielo raro del norte se ha retirado/, 'el norte (el marinero)');
   await d.milestone('caleta_final', (s) => need(has(s, 'b14_caleta_final'), 'sin escena final'));
   await d.faceEvent('b14_fausto');
   await d.interact();

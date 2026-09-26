@@ -3,7 +3,7 @@
 // en Antea está de pie junto a la puerta alta, sobre una peana con ruedas que corre por una ranura. Si se empuja hasta
 // la hornacina, en el presente aparece caída allí y la boca queda libre (var b14_estatua). Módulo puro salvo guiones.
 import { ROOMS, ROOM1 } from '../maps/b14/layout.js';
-import { F, V, SPRITE, OBJ, lines, zygardeSays, byGender, eventById } from './b14_common.js';
+import { F, V, SPRITE, OBJ, lines, byGender, eventById } from './b14_common.js';
 import { ventEvents, echoCitizen, echoDoor, itemEvents, bigSprite } from './b14_antea_common.js';
 import { caracolaEvents } from './b14_caracolas.js';
 import { cellEvent } from './b01_cells.js';
@@ -11,16 +11,14 @@ import { cellEvent } from './b01_cells.js';
 const S = ROOM1.statue;
 const moved = (s) => Number(s?.var(V.statue, 0)) === 1;
 
+// Zygarde habla muy poco (autor, 25-09-2026): la sala se resuelve con la narración y las pistas del lugar.
 export const SALA1_TEXT = Object.freeze({
-  entryCore: 'Una ciudad. Bajo el agua. La oigo… como si aún hablara.',
   fallenGate: 'Una estatua caída tapa la boca del pasadizo. Pesa demasiado para moverla.',
-  fallenGateCore: 'En el eco de esta plaza estaba de pie. Allí quizá se pueda mover.',
   fallenNiche: 'La estatua caída descansa en la hornacina, cubierta de coral. Justo donde la dejaste… hace siglos.',
   statue: 'Una figura de piedra se lleva una caracola a los labios. La peana tiene ruedas de bronce encajadas en una ranura del suelo.',
   statueHint: 'La ranura sigue hacia el oeste, hasta una hornacina en la muralla. Habría que empujarla desde el otro lado.',
   statueAsk: '¿Empujar la estatua hacia la hornacina?',
   statuePush: 'Empujas con el hombro. Las ruedas chirrían y la estatua se desliza por la ranura hasta la hornacina.',
-  statueCore: 'Se quedará ahí mil años. Donde la dejes, allí caerá.',
   statueMoved: 'La estatua descansa en su hornacina, mirando a la plaza.',
   gate: 'La puerta alta de Antea: dos hojas de bronce con espirales de caracola. Está cerrada por dentro.',
   plinth: 'Una losa de piedra al pie de la muralla: la hornacina de la estatua.',
@@ -33,10 +31,7 @@ function fallenStatueEvents() {
   const [nl, nc, nr] = ROOM1.fallenNiche;
   const gateScript = async (ctx) => {
     await ctx.say(SALA1_TEXT.fallenGate);
-    if (!ctx.flag(F.statueSeen)) {
-      ctx.setFlag(F.statueSeen);
-      await zygardeSays(ctx, SALA1_TEXT.fallenGateCore);
-    }
+    if (!ctx.flag(F.statueSeen)) ctx.setFlag(F.statueSeen);
   };
   return [
     ...bigSprite('estatua_caida_boca', gc[0], gc[1], OBJ.fallen, 2, [], {
@@ -49,7 +44,6 @@ function fallenStatueEvents() {
 async function entryScene(ctx) {
   if (ctx.flag(F.anteaIn)) return;
   ctx.setFlag(F.anteaIn);
-  await zygardeSays(ctx, SALA1_TEXT.entryCore);
 }
 
 export function sala1PresenteEvents() {
@@ -91,7 +85,6 @@ async function statueTalk(ctx) {
   ctx.setVar(V.statue, 1);
   ctx.requestRefresh();
   await ctx.say(SALA1_TEXT.statuePush);
-  await zygardeSays(ctx, SALA1_TEXT.statueCore);
 }
 
 function statueEvents() {

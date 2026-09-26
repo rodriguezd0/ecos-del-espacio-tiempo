@@ -8,7 +8,7 @@ import { storyApi } from '../game/src/content/story/api.js';
 import {
   SPAN_DEFS, cellsOf, solveSpan, spanFlag, spanMaskVar, spanFootVar, stoneAt,
 } from '../game/src/content/events/b19_spans_logic.js';
-import { onStone, onEdge, useNeedle, spanReadyVar, resetSpan } from '../game/src/content/events/b19_spans.js';
+import { onStone, onEdge, useNeedle, spanReadyVar, resetSpan, SPAN_TEXT } from '../game/src/content/events/b19_spans.js';
 import { spanPatch } from '../game/src/content/maps/b19/calzada_patch.js';
 import { isLand, isChasm, TRAINERS, ITEMS, EXITS } from '../game/src/content/maps/b19/calzada_layout.js';
 import { F, V } from '../game/src/content/events/b19_common.js';
@@ -121,7 +121,7 @@ test('tramos: la aguja no responde fuera de la meta; quedarse sin salida hunde e
   assert.equal(st.var(spanMaskVar(3)), 0, 'tras el derrumbe las piedras no vuelven a alzarse');
   assert.equal(st.var(spanFootVar(3)), -1);
   assert.equal(st.var(V.collapses), 1);
-  assert.ok(st.flag(F.firstCollapse) && ctx.said.some((t) => /Te tengo/.test(t)), 'Zygarde no sostiene al jugador');
+  assert.ok(st.flag(F.firstCollapse) && ctx.said.some((t) => t === SPAN_TEXT.collapseFirst[0]) && !ctx.said.some((t) => t.startsWith('Zygarde:')), 'sin la narración del rescate (Zygarde no habla, autor 25-09-2026)');
 });
 
 test('tramos: volver a la orilla con piedras caídas las vuelve a alzar', async () => {

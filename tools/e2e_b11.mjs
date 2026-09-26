@@ -2,7 +2,7 @@
 // playwright-core), con teclas reales. Estado de entrada por URL (ARCHITECTURE §9): P1–P5 restaurados (Fragmentos
 // F01–F05), Correr, Embestida, Terreno y Trepar, 46 células, N1+N2, equipo alto y sin encuentros aleatorios.
 //   neblino    llegada sin niebla · Nilo de noche (T10: pista y segunda pista) · C047 trepando a la loma
-//   ruta10     pista de Zygarde hacia casa · pared de raíces · C049 · alarma de un centinela (vuelta al punto seguro)
+//   ruta10     pared de raíces · C049 · alarma de un centinela (vuelta al punto seguro)
 //              · sigilo resuelto con el reloj de los centinelas · cuadrilla · Honchkrow Alfa · Tabla Oscura · deserción
 //              de Nilo (planos de Talasa)
 //   villa      primer regreso a Villa Alba · Mamá y el huevo de Togepi · eclosión por pasos · Gael frente a Alerce
@@ -296,10 +296,9 @@ async function neblino(d) {
 }
 
 async function ruta10(d) {
-  // Pista de Zygarde hacia casa (franja y 30 del sendero del Neblino).
+  // Sin pista de Zygarde hacia casa (Zygarde habla muy poco): se sube del sendero del Neblino.
   const s0 = await d.snapState();
   if (s0.y > 30) await d.walkTo(21, 29);
-  await d.expectSaid(/Por ahí se va a tu casa/, 'la pista de Zygarde hacia casa');
   await d.climb(30, 17, 'up', [30, 13]);
   await d.milestone('ruta10_alto');
   // C049 en la repisa de la pared de raíces.
@@ -356,7 +355,7 @@ async function villa(d) {
   await d.walkTo(14, 0);
   await d.crossEdge('up', 'villa_alba');
   await d.settle();
-  await d.expectSaid(/Tu pueblo\. Desde aquí se ve el Monte/, 'el primer regreso a casa');
+  await d.milestone('regreso_casa', (s) => (s.flags.b11_regreso ? null : 'sin b11_regreso'));
   // Casa: Mamá y el huevo de Togepi.
   await d.walkTo(10, 26);
   await d.exitTo('up', 'casa_prota_1f');
@@ -400,7 +399,6 @@ async function campamento(d) {
   ];
   await d.walkTo(34, 7, { watch, stopWhen: (s) => s.flags.b11_gael_b4 });
   await d.settle({ watch });
-  await d.expectSaid(/Se llevan algo que estuvo conmigo aquellas noches/, 'la reacción de Zygarde');
   await d.expectSaid(/Cuando vuelvas, cuéntame qué hay\./, 'la frase de Gael');
   await d.expectSaid(/…No\. Da igual\./, 'el final de Gael');
   await d.milestone('gael_b4', (s) => {

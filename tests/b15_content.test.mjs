@@ -245,7 +245,9 @@ test('Senda del Lazo: coronar una escalera falsa subiendo devuelve al principio;
   await lazo.script(up);
   assert.deepEqual(up.warps[0].slice(0, 3), ['ruta_12_senda_lazo', SENDA.loopStart.x, SENDA.loopStart.y]);
   assert.equal(s.var(V.loops), 1);
-  assert.match(text(up), /anudado/);
+  assert.match(text(up), /otra vez junto a la piedra de los pastores/);
+  // Zygarde habla muy poco (autor, 25-09-2026): el lazo se cuenta solo con narración.
+  assert.ok(!up.said.some((l) => l.telepathy), 'Zygarde comenta el lazo');
   const side = mockCtx(s, { player: { x: lazo.x, y: lazo.y, direction: 4 } });
   await lazo.script(side);
   assert.equal(side.warps.length, 0, 'el lazo salta al pasar de lado');
@@ -292,6 +294,8 @@ for (const outcome of ['win', 'lose']) {
     const t = text(ctx);
     for (const line of [GAEL_TEXT.challenge, GAEL_TEXT.deaf]) assert.ok(t.includes(line), `falta «${line}»`);
     assert.ok(ctx.said.some((l) => l.text === 'Gracias, Gael.' && l.telepathy), 'Zygarde no da las gracias a Gael');
+    // Zygarde habla muy poco (autor, 25-09-2026): en la terraza solo dice la canónica.
+    assert.deepEqual(ctx.said.filter((l) => l.telepathy).map((l) => l.text), ['Gracias, Gael.'], 'Zygarde habla de más en la terraza');
     assert.ok(t.includes(outcome === 'win' ? GAEL_TEXT.won : GAEL_TEXT.lost), 'frase de Gael según el resultado');
     assert.ok(s.flag(F.n5) && s.flag(F.gaelB5) && s.flag('zyg_core_5'), 'sin N5 o sin la salida del bloque');
     assert.equal(Boolean(s.flag(F.gaelWon)), outcome === 'win');

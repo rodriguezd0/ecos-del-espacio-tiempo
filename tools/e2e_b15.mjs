@@ -348,7 +348,7 @@ async function senda(d) {
   // La pauta de los Larvitar: ninguna escalera falsa hasta el mirador.
   const M = SENDA.mirador;
   await d.walkTo(M.stone.x, M.stone.y + 1, { face: 'up', avoid: AVOID_SENDA });
-  await d.expectSaid(/Lo has encontrado siguiendo a los pequeños/, 'el mirador');
+  await d.expectSaid(/Desde el mirador, la columna de luz/, 'el mirador');
   await d.interact();
   const tyr = await d.eval(() => window.__b15.items('TYRANITARITE'));
   await d.milestone('senda_mirador', (s) => need(has(s, 'b15_senda_mirador') && tyr === 1, `mirador ${has(s, 'b15_senda_mirador')}, Tyranitarita ${tyr}`));

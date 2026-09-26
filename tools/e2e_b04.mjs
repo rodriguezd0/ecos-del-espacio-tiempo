@@ -1,7 +1,7 @@
 // Recorrido E2E del Bloque 4 — Pilar de la Corriente (docs/CAMPANA.md B04) en navegador real (Chrome headless +
 // playwright-core), con teclas reales y piloto automático en los combates (installBattle de tools/e2e_b01_page.mjs):
 //   Caudal (estado de entrada por URL) → Ruta 3 montado en el 10 % por las cuestas de grava (C016–C018, entrenadores)
-//   → Garganta (el Core nota las balizas, técnicos y tres balizas retiradas, C020, C019 por la repisa) → choque de
+//   → Garganta (técnicos y tres balizas retiradas, C020, C019 por la repisa) → choque de
 //   Gael y Leandro, que abre la puerta → Pilar: reto de Leandro → Escalera de Estanques con la solución de referencia
 //   EXACTA de CAMPANA (4 fases, comprobando el agua tras cada una; C021–C023 en los fondos) → la corriente llega al
 //   núcleo → combate con Leandro → restauración (Fragmento 2, verso II, p2_restored) e inscripción (T02 paso 2, T03)
@@ -233,8 +233,7 @@ async function ruta3(d) {
 }
 
 async function garganta(d) {
-  await d.settle({ watch: [{ re: /Más arriba hay algo que zumba/, name: 'core_balizas', delay: 200 }] });
-  await d.expectSaid(/Más arriba hay algo que zumba/, 'el aviso del Core');
+  await d.settle(); // Zygarde habla muy poco (autor, 25-09-2026): la llegada ya no lleva aviso del Core.
   await d.milestone('garganta', needFlags('b04_garganta_llegada'));
   await d.mount();
   const watch = [{ scene: 'BattleScene', name: 'combate_tecnico', delay: 3500 }];

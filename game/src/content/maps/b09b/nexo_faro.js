@@ -2,7 +2,7 @@
 // Consorcio mar adentro (Estación Talasa, B13). Tileset 4 (Interior1).
 import { exitWarps, exitArrowEvents } from '../../services/interior.js';
 import { BUILDINGS, INTERIOR_ENTRIES } from './nexo_layout.js';
-import { F, SPRITE, lines, zygardeSays, examine } from '../../events/b09b_common.js';
+import { F, SPRITE, lines, examine } from '../../events/b09b_common.js';
 
 const E = INTERIOR_ENTRIES.nexo_faro;
 const OUT = BUILDINGS.faro.door;
@@ -16,7 +16,6 @@ async function telescope(ctx) {
     'Parpadean luces magenta. En un costado, pintado en grande: «Consorcio Meridiano».',
   ]);
   ctx.setFlag(F.talasaSeen);
-  await zygardeSays(ctx, 'Allí… algo me llama. Muy lejos. Todavía no.');
 }
 
 export default {

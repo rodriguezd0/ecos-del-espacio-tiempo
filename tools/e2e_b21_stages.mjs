@@ -6,7 +6,7 @@ import { DEV_NODE } from '../game/src/content/maps/b21/dev_nodo_origen.js';
 import { EPI } from '../game/src/content/events/b21_epilogo.js';
 import { F } from '../game/src/content/events/b21_common.js';
 import { MONTAGE_SHOTS } from '../game/src/content/events/b21_cine.js';
-import { RESOLUTION_TEXT, BATTLE_TEXT, EPILOGUE_TEXT, ZYGARDE_TEXT } from '../game/src/content/events/b21_texts.js';
+import { RESOLUTION_TEXT, BATTLE_TEXT, ZYGARDE_TEXT } from '../game/src/content/events/b21_texts.js';
 
 const need = (cond, msg) => (cond ? null : msg);
 const has = (s, f) => Boolean(s.flags[f]);
@@ -156,7 +156,7 @@ async function final(d) {
     { name: 'carguero', re: /Juraría que lo llevaba encima/ },
     { name: 'creditos', when: (s) => s.cinematic && !['carguero', 'casa_prota_1f', 'villa_alba'].includes(s.map), delay: 1200 },
     { name: 'creditos_pueblo', when: (s) => s.cinematic && s.map === 'villa_alba', delay: 400 },
-    { name: 'despertar', re: /Sigo entero/ },
+    { name: 'despertar', re: /Zygarde conserva la Forma Completa/ },
   ] };
   await d.pushUntil(8, (s) => s.map !== 'villa_alba', 'entrar en casa', opts);
   await d.settle(opts);
@@ -166,7 +166,7 @@ async function final(d) {
       || need(has(s, F.creditsDone) && has(s, F.epilogueEnd) && has(s, F.tvNews), 'faltan flags del final')
       || need(z.form === 'complete' && z.anchor, `Zygarde: ${JSON.stringify(z)}`);
   });
-  await d.expectSaid(new RegExp(EPILOGUE_TEXT.zygardeStays), 'Zygarde se queda en Forma Completa');
+  await d.expectSaid(/Zygarde conserva la Forma Completa/, 'Zygarde se queda en Forma Completa (narración)');
 }
 
 async function retirada(d) {

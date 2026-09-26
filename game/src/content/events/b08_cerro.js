@@ -1,7 +1,7 @@
 // Cerro Plomo (docs/CAMPANA.md B08, paso 2–3): las galerías de la familia Galena bajo el cerro, la verja con su
 // candado y la puerta del Pilar de la Masa. Fermín espera en la verja tras el pozo lateral de la Mina Galena (flag
-// b08_fermin_cerro) y la abre; sin él, la verja sigue cerrada (descubrimiento: el Core nota el Pilar detrás).
-import { F, SPEAKER, SPRITE, OBJ, lines, zygardeSays, examine, findEvent } from './b08_common.js';
+// b08_fermin_cerro) y la abre; sin él, la verja sigue cerrada.
+import { F, SPEAKER, SPRITE, OBJ, lines, examine, findEvent } from './b08_common.js';
 import { CERRO } from '../maps/b08/layout.js';
 
 export const CERRO_TEXT = Object.freeze({
@@ -14,10 +14,7 @@ export const CERRO_TEXT = Object.freeze({
 async function gateTalk(ctx) {
   if (ctx.flag(F.gateOpen)) { await ctx.say(CERRO_TEXT.gateOpen); return; }
   await ctx.say(CERRO_TEXT.gateLocked);
-  if (!ctx.flag(F.ferminCerro)) {
-    await zygardeSays(ctx, 'Detrás hay algo mío. Algo muy pesado.');
-    return;
-  }
+  if (!ctx.flag(F.ferminCerro)) return;
   await ferminOpens(ctx);
 }
 
@@ -83,9 +80,7 @@ function doorEvent() {
 
 export async function cerroOnEnter(ctx) {
   if (ctx.flag(F.cerroSeen)) return;
-  ctx.setFlag(F.cerroSeen);
-  await ctx.wait(8);
-  await zygardeSays(ctx, 'Este cerro pesa más de lo que debería. Lo noto desde aquí.');
+  ctx.setFlag(F.cerroSeen); // Zygarde habla muy poco (autor, 25-09-2026): sin comentario del Core al llegar.
 }
 
 export function cerroEvents() {

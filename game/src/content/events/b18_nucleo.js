@@ -9,7 +9,7 @@
 // reaparece tras descansar (var rest_count), tantas veces como haga falta. Si el jugador pierde, vuelve a la entrada de
 // la Cámara con el equipo curado (helper común bossBattle) y la elección se conserva.
 import {
-  F, V, SPEAKER, SPRITE, OBJ, MUSIC, CHOICES, ORB_OF_UNCHOSEN, OTHER, SILVER, when, lines, zygardeSays, eventById, pause,
+  F, V, SPEAKER, SPRITE, OBJ, MUSIC, CHOICES, ORB_OF_UNCHOSEN, OTHER, SILVER, when, lines, eventById, pause,
   objectPage, chosenWaiting,
 } from './b18_common.js';
 import { NUCLEO, ENTRY } from '../maps/b18/cruce_layout.js';
@@ -25,6 +25,7 @@ const ORB_FRAME = Object.freeze({ ADAMANTORB: 4, LUSTROUSORB: 6 }); // fila de b
 export const NUCLEO_TEXT = Object.freeze({
   arrive: 'Una sala blanca partida en dos: una mitad azul y quieta, otra lila y temblorosa. En el cruce, un hexágono tallado late con luz plata.',
   standoff: 'Dialga y Palkia se miran desde cada lado del núcleo. Cada vez que uno ruge, la sala entera se inclina hacia él.',
+  shortcut: 'Muy arriba, en el vestíbulo, una puerta de piedra se abre con un chasquido.',
   core: 'El núcleo del Pilar. Sus hexágonos tiemblan como una cuerda tensada desde dos lados.',
   coreAfter: 'El núcleo late en calma. Las dos mitades de la sala se han quedado quietas.',
   choose: '¿A quién atarás con la Cadena Roja?',
@@ -86,8 +87,8 @@ async function arrivalScene(ctx) {
     await pause(ctx, 16);
   }
   await ctx.say(NUCLEO_TEXT.standoff);
-  await zygardeSays(ctx, 'Están atrapados en el cruce. Cada uno tira hacia su lado, y el Pilar se rompe entre los dos.');
-  await zygardeSays(ctx, 'He abierto el paso del vestíbulo. Si tienes que salir, volverás aquí sin dar la vuelta.');
+  // Zygarde habla muy poco (autor, 25-09-2026): el atajo lo cuenta la narración.
+  await ctx.say(NUCLEO_TEXT.shortcut);
   await ctx.camera.reset(30);
 }
 
@@ -95,7 +96,6 @@ async function arrivalScene(ctx) {
 
 async function chooseAxis(ctx) {
   if (!ctx.flag(F.verse)) await ctx.story.revealVerse(9);
-  await zygardeSays(ctx, 'Donde el tiempo y el espacio se cruzan… Atar a uno y dejar marchar al otro. El núcleo lo pide.');
   const i = await ctx.choice([...NUCLEO_TEXT.options], { message: NUCLEO_TEXT.choose, cancel: 2 });
   const choice = i === 0 ? CHOICES.DIALGA : i === 1 ? CHOICES.PALKIA : null;
   if (!choice) return null;
@@ -180,7 +180,6 @@ async function onRestored(ctx, choice) {
   await ctx.say(NUCLEO_TEXT.tempered);
   // Cambio en el mundo (CAMPANA B18): los relojes se sincronizan y la Sima deja de ensancharse
   await ctx.flash([...SILVER], 20, 150);
-  await zygardeSays(ctx, 'Los relojes de arriba vuelven a marcar la misma hora. Y la Sima ha dejado de abrirse.');
   // Inscripción del núcleo: pista T15
   await ctx.say(NUCLEO_TEXT.inscription);
   await ctx.say(NUCLEO_TEXT.t15);

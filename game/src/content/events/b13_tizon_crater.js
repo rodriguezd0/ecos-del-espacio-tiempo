@@ -3,7 +3,7 @@
 // son del postgame). La jefa Maite y su sonda junto al lago de lava (combate de guion sin pérdida); cuando la sonda se
 // retira y los tres respiraderos respiran, la vieja fragua de piedra del cráter vuelve a calentarse y deja ver la
 // Tabla Llama (Crónica XII: «Las fraguas del rey se apagaron. Con su hierro hicimos cerrojos, no espadas.»).
-import { F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, zygardeSays, byGender, bossBattle, findEvent, objectPage } from './b13_common.js';
+import { F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, byGender, bossBattle, findEvent, objectPage } from './b13_common.js';
 
 export const CRATER = Object.freeze({
   width: 40, height: 50,
@@ -56,7 +56,8 @@ async function chiefBattle(ctx) {
   await ctx.wait(10);
   await ctx.fade('in', 24);
   await ctx.say('El equipo de perforación desmonta la sonda y baja por la ladera con las cajas.');
-  if (vents) await zygardeSays(ctx, 'Ya nadie le tapa la boca a la montaña. Mira la vieja fragua.');
+  // Zygarde habla muy poco (autor, 25-09-2026): lo que antes señalaba él lo cuenta la narración.
+  if (vents) await ctx.say('Por las chimeneas de la vieja fragua del cráter empieza a subir calor.');
 }
 
 async function chiefIntro(ctx) {
@@ -94,10 +95,9 @@ async function hearthScript(ctx) {
   await ctx.say(CRATER_TEXT.hearthLit);
   ctx.se('Anim/Fire1', { volume: 70 });
   await ctx.flash([255, 150, 60], 14, 110);
-  await zygardeSays(ctx, 'Una tabla de los que guardaban. La escondieron donde se apagó un fuego.');
   ctx.setFlag(F.tizPlate);
   await ctx.story.giveTablet('FLAMEPLATE');
-  await zygardeSays(ctx, 'Vuelve al caserío. Allí ya arde otra vez.');
+  await ctx.say('Ladera abajo, sobre el caserío, se ve subir el humo de la forja.');
 }
 
 export function craterEvents() {

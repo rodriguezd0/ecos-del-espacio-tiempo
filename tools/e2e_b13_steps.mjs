@@ -29,7 +29,7 @@ export async function mar(d) {
   const r = CL.DIVERS.resonance;
   await d.walkTo(r.x, r.y);
   await d.settle();
-  await d.expectSaid(/Aquí el agua baja muy honda\. Todavía no puedo seguirla\./, 'el aviso del Core antes de N4');
+  await d.expectSaid(/Al final del muelle, el agua baja muy honda/, 'el aviso del muelle antes de N4');
   await d.milestone('muelle_aviso', (s) => need(flag(s, 'b13_buceo_pista') && !flag(s, 'b13_dive_resonance'), 'sin el aviso del muelle'));
   await d.turn('down');
   await d.interact({ choose: prefer('Sí') });
@@ -39,7 +39,6 @@ export async function mar(d) {
   await d.settle({ watch });
   await d.expectSaid(/Me ha escrito un tal Nilo/, 'los planos de Nilo en la llamada');
   await d.expectSaid(/No entres (solo|sola) en esa estación/, 'el aviso de Alerce');
-  await d.expectSaid(/Algo mío late bajo el agua/, 'el Core');
   await d.milestone('mar_llamada', (s) => need(flag(s, 'b13_mar_llamada') && s.map === 'mar_del_sur', 'sin la llamada'));
   for (const c of [MAR.CELLS.c061, MAR.CELLS.c062, MAR.CELLS.c057, MAR.CELLS.c058]) {
     await d.swimTo(c.x, c.y);
@@ -161,7 +160,7 @@ export async function caleta(d) {
     await d.walkTo(r.x, r.y, { watch });
     await d.settle({ watch });
   }
-  await d.expectSaid(/Aquí\. El agua es honda y está quieta\./, 'el Core en el muelle');
+  await d.expectSaid(/El campo verde de Zygarde te envuelve/, 'la resonancia del muelle');
   await d.milestone('buceo_resonancia', (st) => need(flag(st, 'b13_dive_resonance') && st.abilities.dive === true && flag(st, 'zyg_dive'),
     `hito ${flag(st, 'b13_dive_resonance')}, Buceo ${st.abilities.dive}, células ${st.cellCount}`));
   await d.expectSaid(/Con eso podrías bajar al bosque de algas/, 'el buzo tras la burbuja');

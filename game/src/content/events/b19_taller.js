@@ -3,13 +3,12 @@
 // Draco en su hornacina (API de historia: giveTablet → Crónica XV y cierre de la pista T15), la reacción de Casandra,
 // la Salamencita y el cambio en el mundo: se apaga el Resonador y parte de los Peregrinos se queda a cuidar la
 // Calzada. Módulo puro salvo los guiones.
-import { F, SPEAKER, SPRITE, OBJ, when, lines, zygardeSays, pause } from './b19_common.js';
+import { F, SPEAKER, SPRITE, OBJ, when, lines, pause } from './b19_common.js';
 import { chronicleFor } from '../story/chronicle.js';
 import { NICHE, PIECES, CASANDRA } from '../maps/b19/taller_layout.js';
 
 export const TALLER_TEXT = Object.freeze({
   enter: 'Una sala excavada en la roca de la Peña. El aire huele a polvo de piedra muy viejo.',
-  enterZygarde: 'Aquí trabajó alguien durante mucho tiempo.',
   look: Object.freeze({
     cama: 'Una cama tallada en la roca, con una manta que el tiempo ha vuelto de piedra. Es estrecha y dura.',
     banco: 'Un banco de piedra lleno de cinceles gastados hasta el mango. Alguien los usó durante años.',
@@ -19,9 +18,9 @@ export const TALLER_TEXT = Object.freeze({
     herramientas: 'Un martillo, una escuadra y una cuerda cuelgan de la pared, como si su dueño fuera a volver mañana.',
   }),
   niche: 'En la hornacina del fondo descansa una tabla de piedra azul oscuro. Tiene grabado un dragón.',
-  nicheZygarde: 'Esta es la última.',
   casandraSees: '¿Eso es… lo que guardaba?',
-  chronicleIntro: 'La tabla está grabada. Zygarde traduce en voz baja:',
+  // Zygarde habla muy poco (autor, 25-09-2026): la inscripción se lee como narración (Clave Glífica).
+  chronicleIntro: 'La tabla está grabada. La Clave Glífica traduce:',
   casandra: [
     '«Cuidando el puente que había roto.»',
     'No lo tiraron. Nadie lo traicionó.',
@@ -35,7 +34,6 @@ export const TALLER_TEXT = Object.freeze({
     'Ya no sé lo que es. Sé que tú sabrás usarla mejor que nosotros.',
     'Algunos volverán a casa. Yo me quedo: alguien tendrá que cuidar esta Calzada. Como él.',
   ],
-  zygardeEnd: 'Ahora la Crónica llega hasta el fondo. Ya sé por dónde se baja.',
   emptyNiche: 'La hornacina está vacía. En la piedra queda la marca de la tabla.',
   casandraInside: 'Pasa. Llevamos toda la vida esperando a ver esto.',
 });
@@ -44,28 +42,25 @@ async function onEnter(ctx) {
   ctx.setFlag(F.tallerSeen);
   await pause(ctx, 10);
   await ctx.say(TALLER_TEXT.enter);
-  await zygardeSays(ctx, TALLER_TEXT.enterZygarde);
 }
 
 /** La Tabla Draco: Crónica XV, Casandra, Salamencita y el cambio en el mundo. */
 export async function takeTablet(ctx) {
   const withCasandra = ctx.flag(F.casandraBeaten);
   await ctx.say(TALLER_TEXT.niche);
-  await zygardeSays(ctx, TALLER_TEXT.nicheZygarde);
   if (withCasandra) await ctx.say(TALLER_TEXT.casandraSees, { speaker: SPEAKER.casandra });
   await ctx.story.giveTablet('DRACOPLATE');
   ctx.setFlag(F.tablet);
   ctx.requestRefresh?.();
   const entry = chronicleFor('DRACOPLATE');
   await ctx.say(TALLER_TEXT.chronicleIntro);
-  await ctx.say(`«${entry?.text || ''}»`, { telepathy: true });
+  await ctx.say(`«${entry?.text || ''}»`);
   if (withCasandra) await lines(ctx, SPEAKER.casandra, TALLER_TEXT.casandra);
   await ctx.giveItem('SALAMENCITE', 1);
   ctx.setFlag(F.salamencite);
   if (withCasandra) await lines(ctx, SPEAKER.casandra, TALLER_TEXT.casandraAfterGift);
   ctx.setFlag(F.resonatorOff);
   ctx.setFlag(F.caretakers);
-  await zygardeSays(ctx, TALLER_TEXT.zygardeEnd);
 }
 
 function pieceEvents() {

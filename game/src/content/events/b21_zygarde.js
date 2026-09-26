@@ -5,7 +5,7 @@
 // con Agrupamiento, Mil Flechas, Mil Temblores, Fuerza Telúrica y Danza Dragón. Con el equipo lleno, el Arca abre un
 // menú obligatorio (sin cancelar) para enviar a un Pokémon al PC. Las capacidades de campo no dependen de dónde esté.
 import { createPokemon, displayName } from '../../battle/core/pokemon.js';
-import { F, SPRITE, GREEN, zygardeSays, pause } from './b21_common.js';
+import { F, SPRITE, GREEN, pause } from './b21_common.js';
 import { ZYGARDE_TEXT } from './b21_texts.js';
 
 export const ZYGARDE_LEVEL = 70;
@@ -123,7 +123,7 @@ export async function captureZygarde(ctx) {
   await ctx.say(ZYGARDE_TEXT.joined);
   ctx.setFlag(F.zygardeJoined);
   ctx.scene?.refreshFollower?.();
-  await zygardeSays(ctx, ZYGARDE_TEXT.after);
+  await ctx.say(ZYGARDE_TEXT.after);
   await ctx.say(ZYGARDE_TEXT.reorder);
   return true;
 }
@@ -138,7 +138,7 @@ export async function zygardeQuestion(ctx) {
   await ctx.say(ZYGARDE_TEXT.ask, { telepathy: true });
   const pick = await ctx.choice([...ZYGARDE_TEXT.choices], { cancel: 1 });
   if (pick !== 0) {
-    await zygardeSays(ctx, ZYGARDE_TEXT.later);
+    await ctx.say(ZYGARDE_TEXT.later);
     return false;
   }
   return captureZygarde(ctx);

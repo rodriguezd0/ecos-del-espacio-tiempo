@@ -1,7 +1,7 @@
 // Patio central del Santuario del Alma (docs/CAMPANA.md B16): la bienvenida del trío, el manantial que cura, el
 // hexágono sellado del Telar (se abre con las tres Hebras) y las estatuas. Las alas y el Telar tienen su archivo:
 // b16_saber.js, b16_sentir.js, b16_querer.js y b16_telar.js.
-import { F, SPEAKER, OBJ, TRIO_COLORS, zygardeSays, when, examine, frame, hasAllThreads, pause } from './b16_common.js';
+import { F, SPEAKER, OBJ, TRIO_COLORS, when, examine, frame, hasAllThreads, pause } from './b16_common.js';
 import { PATIO, TELAR } from '../maps/b16/santuario_layout.js';
 
 export const PATIO_TEXT = Object.freeze({
@@ -20,8 +20,7 @@ async function introScene(ctx) {
   await ctx.say('Quien entra aquí trae lo que ha visto. Veremos si lo recuerda.', { speaker: SPEAKER.uxie });
   await ctx.say('Y lo que ha sentido. Y lo que otros sintieron a su lado.', { speaker: SPEAKER.mesprit });
   await ctx.say('Y lo que quiere, aunque el viento sople en contra.', { speaker: SPEAKER.azelf });
-  await zygardeSays(ctx, 'Las tres guardan el octavo. Pide paso a cada una. El orden no importa.');
-  await ctx.say(PATIO_TEXT.seal);
+  await ctx.say(PATIO_TEXT.seal); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 async function openSeal(ctx) {

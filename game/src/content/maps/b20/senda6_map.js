@@ -6,7 +6,7 @@ import { facetMasks } from '../../../world/impossible/logic.js';
 import { paintPlatform, floatingDebris } from '../b12/paint.js';
 import { T6, tramoId } from './layout.js';
 import { facetRoom6 } from '../../events/b20_logic.js';
-import { F, OBJ, zygardeLines, pause } from '../../events/b20_common.js';
+import { F, OBJ, pause } from '../../events/b20_common.js';
 import { T6_TEXT, T6_LINKS, t6FirstFall, t6Portal } from '../../events/b20_tramos_b.js';
 import { tramoOnEnter } from '../../events/b20_senda.js';
 import { tramoTone } from './senda_defs.js';
@@ -92,7 +92,8 @@ export function senda6Def(orient) {
         if (ctx.flag('b20_t6_giro_aviso')) return;
         ctx.setFlag('b20_t6_giro_aviso');
         await pause(ctx, 10);
-        await zygardeLines(ctx, ['Donde brilla la veta, el suelo dobla. Lo que ahora es pared será suelo.']);
+        // Regla del giro: narración neutra (Zygarde habla muy poco, autor, 25-09-2026).
+        await ctx.say('Donde brilla la veta, el suelo dobla. Lo que ahora es pared puede ser suelo.');
       }),
     }),
   };

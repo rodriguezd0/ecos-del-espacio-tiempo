@@ -32,7 +32,8 @@ test('Puente: llegada con Alerce; los zócalos piden Reconstrucción y alzan su 
   await runEvent(ctx, 'escena_llegada');
   assert.ok(t.state.flag(F.arrival) && !liveEvent(t.w, 'escena_llegada'));
   assert.ok(ctx.said.some((l) => l.speaker === SPEAKER.alerce && /Olmedo reúne a la Policía Regional/.test(l.text)), 'Alerce no menciona a Olmedo');
-  assert.ok(ctx.said.some((l) => l.speaker === 'Zygarde' && /Tres puntos/.test(l.text)), 'Zygarde no señala los tres puntos');
+  // Zygarde habla muy poco (autor, 25-09-2026): los huecos los describe la narración.
+  assert.ok(ctx.said.some((l) => l.speaker === null && /tres huecos/.test(l.text)), 'la narración no señala los tres huecos');
   const [g1] = BRIDGE.gaps;
   t.state.setZygardeAbility('rebuild', false);
   t.p.moveTo(g1.socket.x, g1.socket.y - 1);
@@ -48,6 +49,7 @@ test('Puente: llegada con Alerce; los zócalos piden Reconstrucción y alzan su 
   assert.ok(t.state.flag(F.bridge), 'el tercer tramo no deja el puente entero');
   assert.ok(ctx.said.some((l) => l.speaker === SPEAKER.casia && /Es el portador/.test(l.text)), 'Genesis no reacciona al puente');
   assert.ok(liveEvent(t.w, 'alerce_borde') && !liveEvent(t.w, 'alerce_campamento'), 'Alerce no pasa al borde de la plataforma');
+  assert.ok(!ctx.said.some((l) => l.speaker === 'Zygarde'), 'Zygarde habla en el Puente');
 });
 
 // ───────────────────────────── Genesis ─────────────────────────────
@@ -141,7 +143,7 @@ test('Despedida tras el P9: Alerce y Olmedo notan los relojes sincronizados', as
   await runEvent(ctx, 'escena_despedida');
   assert.ok(t.state.flag(F.farewell));
   assert.ok(saidLine(ctx, 'Mi reloj y el de Olmedo marcan lo mismo. Por primera vez en semanas.', SPEAKER.alerce));
-  assert.ok(ctx.said.some((l) => l.speaker === 'Zygarde' && /La Sima ya no se abre/.test(l.text)));
+  assert.ok(!ctx.said.some((l) => l.speaker === 'Zygarde'), 'Zygarde habla en la despedida (autor, 25-09-2026)');
 });
 
 test('Llegada por cualquier casilla del borde norte: Alerce se acerca por el tablero, nunca por el vacío', async () => {
@@ -185,7 +187,7 @@ test('Despedida desde el campamento: Alerce y Olmedo se acercan y vuelven a la b
 
 // ───────────────────────────── Cámara del Cruce ─────────────────────────────
 
-test('Cámara: llegada, tutorial del primer cristal (Zygarde), tensiones y cristal sin Cadena Roja', async () => {
+test('Cámara: llegada, tutorial del primer cristal (narración), tensiones y cristal sin Cadena Roja', async () => {
   const t = await fieldWorld('camara_cruce', { flags: [F.scene] });
   const ctx = fieldCtx(t, { choices: [0, 2, 1] });
   await runEvent(ctx, 'escena_camara');
@@ -194,7 +196,8 @@ test('Cámara: llegada, tutorial del primer cristal (Zygarde), tensiones y crist
   assert.ok(c >= 0, 'el cristal junto a la entrada del vestíbulo no está');
   t.p.moveTo(VESTIBULO.ox + 6, VESTIBULO.oy + 5);
   await runEvent(ctx, `vestibulo_cristal_${c}`);
-  assert.ok(t.state.flag(F.tutorial) && saidLine(ctx, CRYSTAL_TUTORIAL[0], 'Zygarde'), 'sin tutorial del cristal');
+  assert.ok(t.state.flag(F.tutorial) && saidLine(ctx, CRYSTAL_TUTORIAL[0], null), 'sin tutorial del cristal (narración)');
+  assert.ok(!ctx.said.some((l) => l.speaker === 'Zygarde'), 'Zygarde habla en la Cámara');
   assert.equal(t.state.var(AXIS_VAR, null), AXIS_TIME);
   const before = ctx.said.length;
   await runEvent(ctx, `vestibulo_cristal_${c}`); // «Dejarla así»

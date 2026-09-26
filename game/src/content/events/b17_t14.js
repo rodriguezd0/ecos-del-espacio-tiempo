@@ -2,13 +2,13 @@
 // de los Vientos. B16 abre la pista (Don Evaristo enseña la carta tras el P8). Aquí:
 //   1. Con Vuelo, Don Evaristo confía la carta al jugador y lee el acertijo del sobre (segunda pista): «Entre el rayo y
 //      la sal, donde el sol de las cinco no hace sombra.» Entre los dos lo descifran (Brontia, las salinas de Estrato,
-//      la Meseta) y Zygarde reconoce el sitio: la Mesa aparece en el mapa de Vuelo (state.unlockFlyPoint).
+//      la Meseta) y Don Evaristo da con el sitio: la Mesa aparece en el mapa de Vuelo (state.unlockFlyPoint).
 //   2. En la Mesa (b17_mesa.js) hay que recuperar el rebaño para que los cuidadores confíen.
 //   3. Aurora (86), la hermana, lee la carta en su cabaña y el jugador la lleva volando a Nexo.
 //   4. Los hermanos se reencuentran en Correos: Aurora entrega su «Piedra del Cielo» (Tabla Cielo, SKYPLATE; Crónica XIV)
 //      y Don Evaristo, la Staraptorita. Aurora se queda unos días en Nexo.
 // Reintento: sin estado de fallo (las preguntas del acertijo se repiten sin castigo). Módulo puro salvo los guiones.
-import { F, SPEAKER, SPRITE, MUSIC, lines, zygardeSays, eventById, pause } from './b17_common.js';
+import { F, SPEAKER, SPRITE, MUSIC, lines, eventById, pause } from './b17_common.js';
 import { maybeAlerceCall } from './b17_vigilia.js';
 import { BUILDINGS as NEXO } from '../maps/b09b/nexo_layout.js';
 
@@ -40,10 +40,8 @@ export const T14_TEXT = Object.freeze({
   ],
   riddleRead: `Lees el reverso del sobre: ${RIDDLE}`,
   salt: '¿«La sal»? En mis tiempos, las salinas de Estrato daban sal a medio Axis. Ya no queda nada de ellas.',
-  zygarde: [
-    'Sobre la Meseta hay una mesa de roca más alta que todo lo que la rodea. A las cinco, nada le quita el sol.',
-    'La he visto desde arriba. Puedo llevarte.',
-  ],
+  // Zygarde habla muy poco (autor, 25-09-2026): el sitio lo deduce Don Evaristo.
+  mesa: 'Sobre la Meseta hay una mesa de roca más alta que todo lo que la rodea. A las cinco, nada le quita el sol. Tiene que ser allí.',
   unlocked: 'La Mesa de los Vientos aparece ahora en el mapa de Vuelo.',
   evaristoGo: 'Ve, ve. Y dile… no, no le digas nada. Dale la carta y ya está.',
   waiting: ['La carta la llevas tú. Yo me quedo aquí, que es lo que sé hacer.'],
@@ -99,7 +97,7 @@ async function solveRiddle(ctx) {
   if (!(await askQuestion(ctx, RIDDLE_QUESTIONS[0]))) return;
   await ctx.say(T14_TEXT.salt, { speaker: SPEAKER.evaristo });
   if (!(await askQuestion(ctx, RIDDLE_QUESTIONS[1]))) return;
-  for (const t of T14_TEXT.zygarde) await zygardeSays(ctx, t);
+  await ctx.say(T14_TEXT.mesa, { speaker: SPEAKER.evaristo });
   ctx.state.unlockFlyPoint('mesa_vientos');
   ctx.setFlag(F.riddle);
   ctx.se('Mining item get');

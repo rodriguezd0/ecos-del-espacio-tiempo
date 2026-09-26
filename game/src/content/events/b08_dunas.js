@@ -1,7 +1,7 @@
 // Dunas de Ceniza (docs/CAMPANA.md B08, paso 2: «Cruzar las Dunas (arena profunda, Terreno) hasta el Cerro Plomo»):
 // la ceniza honda (Terreno complicado) corta el paso por tres vados de la cresta y cubre los dos campos de las
 // células C037 y C038; entrenadores del desierto, las ruinas de zócalos (Sigilyph) y la Cueva de las Dunas.
-import { F, SPEAKER, zygardeSays, examine } from './b08_common.js';
+import { F, SPEAKER, examine } from './b08_common.js';
 import { b08CellEvents } from './b08_cells.js';
 import { zygardeArea } from '../../world/zygarde/eventTypes.js';
 import { DUNAS, DUNAS_CUEVA } from '../maps/b08/layout.js';
@@ -69,27 +69,11 @@ function caveEvent() {
   };
 }
 
-/** Primera vez ante la ceniza honda: el Core recuerda el Terreno complicado. */
-function firstAshHint() {
-  const [ford] = DUNAS.fords;
-  return [ford.y0, ford.y0 + 1, ford.y0 + 2, ford.y0 + 3].map((y) => ({
-    id: `pista_ceniza_${y}`, x: ford.x0 - 1, y,
-    pages: [{
-      when: (s) => Boolean(s) && !s.flag('b08_ceniza_vista'), through: true, trigger: 'touch',
-      script: async (ctx) => {
-        ctx.setFlag('b08_ceniza_vista');
-        await zygardeSays(ctx, 'Ceniza honda. Aquí me hundo… pero sé cómo pisarla.');
-      },
-    }],
-  }));
-}
-
 export function dunasEvents() {
   return [
     ...ashEvents(),
     ...b08CellEvents('dunas_ceniza'),
     caveEvent(),
-    ...firstAshHint(),
     examine('cartel_dunas', 4, 18, DUNAS_TEXT.sign, { solid: true }),
     examine('zocalos_ruinas', 44, 43, DUNAS_TEXT.ruins, { solid: true }),
     {

@@ -2,7 +2,7 @@
 // tres pulsaciones). No hay herrero.» · «El trío presta su poder, recita el verso VIII y vuelve a sus alas»; §3.0 verso
 // VIII; restauración con la API de historia). C100 está en la única casilla desde la que se alcanza el Telar, así que
 // se recoge ANTES del núcleo: la Forma Completa llega al salir (b16_hito.js), nunca aquí dentro.
-import { F, V, SPEAKER, SPRITE, OBJ, TRIO_COLORS, PINK, lines, zygardeSays, when, pause } from './b16_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, TRIO_COLORS, PINK, lines, when, pause } from './b16_common.js';
 import { TELAR, PATIO } from '../maps/b16/santuario_layout.js';
 import { VERSES } from '../story/verses.js';
 import { pilarTone } from '../stamps/pilar.js';
@@ -90,8 +90,7 @@ async function trioRecites(ctx) {
   await ctx.say('Sabrá,', { speaker: SPEAKER.uxie });
   await ctx.say('sentirá', { speaker: SPEAKER.mesprit });
   await ctx.say('y querrá,', { speaker: SPEAKER.azelf });
-  await ctx.say('…y el guardián volverá a ser entero.');
-  await zygardeSays(ctx, 'Entero. …Me lo dicen a mí.');
+  await ctx.say('…y el guardián volverá a ser entero.'); // Zygarde habla muy poco (autor, 25-09-2026).
   return v;
 }
 
@@ -119,7 +118,7 @@ async function telarScene(ctx) {
   await trioRecites(ctx);
   const ok = await ctx.story.restorePillar(8, { core: { x: TELAR.loom.x, y: TELAR.loom.y }, onRestored });
   if (!ok) return;
-  await zygardeSays(ctx, 'Afuera. Algo se está rompiendo. Lo noto en todas mis partes.');
+  await ctx.say('Desde fuera del santuario llega un crujido largo, como de hielo que se parte.');
 }
 
 function loomEvents() {

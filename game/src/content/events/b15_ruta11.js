@@ -2,7 +2,7 @@
 // restos del hielo-eco y la montañera cuyo Snover ya no la reconoce (fija el estado del mundo b15_desvinculacion),
 // células C089 (nieve honda, Terreno) y C090 (repisa alta tras una roca nevada, Embestida), entrenadores (52–54),
 // objetos y carteles. Coordenadas en content/maps/b15/layout_ruta11.js.
-import { F, SPEAKER, SPRITE, OBJ, isNorthUnbound, markNorthUnbound, zygardeSays, lines, pause, when } from './b15_common.js';
+import { F, SPEAKER, SPRITE, OBJ, isNorthUnbound, markNorthUnbound, lines, pause, when } from './b15_common.js';
 import { b15CellEvents } from './b15_cells.js';
 import { zygardeArea } from '../../world/zygarde/eventTypes.js';
 import { RUTA11 } from '../maps/b15/layout_ruta11.js';
@@ -16,7 +16,6 @@ export const RUTA11_TEXT = Object.freeze({
   signTop: 'PASO DEL NORTE ↑\nRefugio de montaña abierto todo el año.',
   remains: 'Un resto del hielo-eco. Se va deshaciendo en agua clara, sin un solo crujido.',
   arrival: 'Donde la ruta empieza a subir, el hielo-eco que cerraba la vertiente se está deshaciendo en agua clara.',
-  arrivalZygarde: 'El hielo se ha ido. Algo que unía se ha soltado con él. Lo noto más al norte.',
   call: ['¡Escarcha! Ven aquí, bonito… Soy yo.'],
   callAgain: '…Escarcha.',
   woman: [
@@ -44,8 +43,7 @@ async function unboundScene(ctx) {
   await ctx.say(RUTA11_TEXT.callAgain, { speaker: SPEAKER.montanera });
   await ctx.camera?.reset?.(30);
   ctx.face('montanera_escarcha', 'down');
-  await lines(ctx, SPEAKER.montanera, RUTA11_TEXT.woman);
-  await zygardeSays(ctx, RUTA11_TEXT.arrivalZygarde);
+  await lines(ctx, SPEAKER.montanera, RUTA11_TEXT.woman); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 function sceneEvents() {

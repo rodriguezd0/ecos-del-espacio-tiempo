@@ -2,7 +2,7 @@
 // precalculadas como mapas gemelos (content/maps/b12/rooms.js y facet_map.js). Las vetas violetas marcan aristas: al
 // pisar una la pantalla gira 90° y se carga el gemelo (tipo de evento `arista`, world/impossible/). Los controles
 // siguen referidos a la pantalla. Anclas en cada sala; caer al vacío devuelve a la última sin daño ni contador.
-import { F, ANCHOR_ART, OBJ, zygardeLines, pause } from './b12_common.js';
+import { F, ANCHOR_ART, OBJ } from './b12_common.js';
 import { facetRoom, facetMapId, MARGIN, FACET_ROOM_IDS } from '../maps/b12/rooms.js';
 import { facetMasks, rotateDir } from '../../world/impossible/logic.js';
 import { MIRADA } from '../maps/b12/layout.js';
@@ -11,11 +11,12 @@ import { b12CellEvents } from './b12_cells.js';
 export const CARA_TEXT = Object.freeze({
   anchor: 'Un poste de piedra con un anillo tallado. Al tocarlo, el aire a su alrededor se queda quieto. Si caes, volverás aquí.',
   exit: 'Una grieta violeta en el aire. Al otro lado, más piedra flotando.',
+  firstFall: 'Caes al vacío… y, sin un rasguño, vuelves a aparecer junto al último poste.',
 });
 
-/** Primera vez que se cae al vacío en el Mundo Distorsión (lo usa `impossible.onFirstFall` de cada mapa). */
+/** Primera vez que se cae al vacío en el Mundo Distorsión (lo usa `impossible.onFirstFall` de cada mapa). Narración neutra: Zygarde habla muy poco (autor, 25-09-2026). */
 export async function firstFallHint(ctx) {
-  await zygardeLines(ctx, ['Caímos.', 'No pasa nada: aquí nada se rompe al caer. El último poste nos recoge.']);
+  await ctx.say(CARA_TEXT.firstFall);
 }
 
 /** Entrada a una sala: casilla de llegada en el mapa base (orientación 0). → { map, x, y, dir } */
@@ -33,22 +34,13 @@ export function nextAfter(roomId) {
 }
 
 const ENTRY_FLAG = { cara_1: F.caraEntrada1, cara_2: F.caraEntrada2, cara_3: F.caraEntrada3 };
-const ENTRY_LINES = {
-  cara_1: ['Aquí la piedra tiene dos caras.', 'Donde brilla la veta, el suelo dobla. Lo que ahora es pared será suelo.'],
-  cara_2: ['Mira las paredes antes de pisar la veta. Alguna es un camino.'],
-  cara_3: ['Cuatro vetas.', 'Cada tramo, al revés que el anterior.'],
-};
 
 function entryEvent(roomId, x, y) {
   const flag = ENTRY_FLAG[roomId];
   return {
     id: 'b12_cara_entrada', x, y, through: true, trigger: 'auto',
     when: (s) => Boolean(s) && !s.flag(flag),
-    script: async (ctx) => {
-      ctx.setFlag(flag);
-      await pause(ctx, 16);
-      await zygardeLines(ctx, ENTRY_LINES[roomId]);
-    },
+    script: async (ctx) => { ctx.setFlag(flag); }, // Zygarde habla muy poco (autor, 25-09-2026): sin pistas al entrar
   };
 }
 

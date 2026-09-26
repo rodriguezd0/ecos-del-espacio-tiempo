@@ -3,7 +3,7 @@
 // §4.7), Arceus en la cima, sobre el gran hexágono (despertar, combate por fases y resolución) y el regreso por el
 // Salto (epílogo). En los textos no se habla de «altar» (DESCARTADO en la biblia). Topes invisibles en el borde del
 // vacío (el panorama asoma alrededor) y cara de roca bajo los bordes sur.
-import { F, SPRITE, GREEN, GOLD, when, zygardeSays, pause } from './b21_common.js';
+import { F, SPRITE, GREEN, GOLD, when, pause } from './b21_common.js';
 import { ARRIVAL_TEXT, STELE_TEXT, FLUTE_TEXT } from './b21_texts.js';
 import { COLUMNA, SOCKETS, ARCEUS_SOCKET_KS, COLUMNA_PANORAMA, edgeCells, undersideDrips } from '../maps/b21/layout.js';
 import { TABLETS, ARCEUS_TABLETS, tabletById } from '../story/tablets.js';
@@ -43,7 +43,6 @@ async function arrivalScene(ctx) {
   await landFromJump(ctx, { formText: ARRIVAL_TEXT.form });
   ctx.setFlag(F.lanzaArrival);
   await ctx.say(ARRIVAL_TEXT.place);
-  await zygardeSays(ctx, ARRIVAL_TEXT.zygarde);
 }
 
 // ─────────────────────────────── Piezas ───────────────────────────────

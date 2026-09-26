@@ -9,7 +9,7 @@
 //     al perder, el equipo se cura y se vuelve al puente de antes de la terraza (bossBattle).
 //   · La pregunta «¿Para qué lo despiertas?» (tres respuestas válidas); Zygarde Completo responde por el protagonista;
 //     si se apagaron torres del Anillo (B17), Landorus lo dice. El Trío se retira al cielo (búsqueda en el postgame).
-import { F, V, SPRITE, SPEAKER, OBJ, MUSIC, byGender, zygardeSays, zygardeLines, pause, eventById, placePlayer, bossBattle, lines } from './b20_common.js';
+import { F, V, SPRITE, SPEAKER, OBJ, MUSIC, byGender, zygardeSays, pause, eventById, placePlayer, bossBattle, lines } from './b20_common.js';
 import { trioRequest, TRIO_ANSWERS, ringTowersOff } from './b20_logic.js';
 import { springEvent } from './b20_senda.js';
 import { CIELO, LINKS } from '../maps/b20/layout.js';
@@ -20,7 +20,6 @@ export const CIELO_TEXT = Object.freeze({
     'Al salir de la Senda, la roca se abre… y hay cielo. Un cielo entero, azul, con nubes que no vienen de ningún sitio.',
     'Islas de piedra flotan sobre él, unidas por pasarelas estrechas.',
   ],
-  arrivalCore: ['Aquí no sopla el viento de fuera. Este cielo lo guardan otros.', 'Tres. Nos están mirando desde que salimos de la roca.'],
   tornadus: [
     [SPEAKER.tornadus, 'Otro humano con la flauta en el bolsillo. Rota, esta vez.'],
     [SPEAKER.tornadus, 'Los que grabaron las tablas nos pidieron una cosa: interponernos si alguien volvía a llamar.'],
@@ -42,6 +41,7 @@ export const CIELO_TEXT = Object.freeze({
   gather: 'Los tres bajan de las nubes y se posan delante de ti.',
   question: '¿Para qué lo despiertas?',
   zygardeSteps: 'Zygarde se pone a tu lado. Entero, más alto que los tres.',
+  // Canónica (CAMPANA B20). Zygarde habla muy poco (autor, 25-09-2026): en el Cielo solo dice esta línea.
   vouch: (s) => byGender(s, 'Yo respondo por él.', 'Yo respondo por ella.'),
   silence: 'Los tres se miran. Durante un momento largo, nadie dice nada.',
   towers: [SPEAKER.landorus, 'Alguien apagó las torres. Lo sentimos.'],
@@ -52,7 +52,6 @@ export const CIELO_TEXT = Object.freeze({
   }),
   release: [SPEAKER.landorus, 'El sello se aparta. Que no tengamos que volver a interponernos.'],
   retire: 'El Trío de las Nubes se eleva, cada uno por su lado, y se pierde en el cielo.',
-  retireCore: 'No se van lejos. El viento, la tormenta y la tierra siempre vuelven.',
   gateShut: 'Un arco de luz dorada sobre la última isla. No se abre mientras el sello siga en pie.',
   gate: 'Un arco de luz dorada. Al otro lado, una terraza de piedra.',
 });
@@ -144,7 +143,6 @@ async function councilScene(ctx) {
   for (const ev of spawned) ctx.world.removeEvent?.(ev);
   ctx.requestRefresh();
   await ctx.say(CIELO_TEXT.retire);
-  await zygardeSays(ctx, CIELO_TEXT.retireCore);
 }
 
 function trioEvents() {
@@ -199,7 +197,6 @@ export async function cieloOnEnter(ctx) {
   ctx.setFlag(F.skyArrival);
   await pause(ctx, 24);
   for (const t of CIELO_TEXT.arrival) await ctx.say(t);
-  await zygardeLines(ctx, CIELO_TEXT.arrivalCore);
 }
 
 export function cieloEvents() {

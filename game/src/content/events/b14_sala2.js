@@ -9,7 +9,7 @@
 //     compuerta siga abierta en Antea; cerrada, el aljibe es una bolsa de aire y deja pasar a la sala 3.
 // Módulo puro salvo los guiones.
 import { ROOM2 } from '../maps/b14/layout.js';
-import { F, V, SPEAKER, SPRITE, OBJ, lines, zygardeSays, byGender, eventById, placePlayer, pause } from './b14_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, lines, byGender, eventById, placePlayer, pause } from './b14_common.js';
 import { ventEvents, echoCitizen, echoDoor, itemEvents, outflowCurrent, bigSprite } from './b14_antea_common.js';
 import { caracolaEvents } from './b14_caracolas.js';
 
@@ -17,21 +17,17 @@ const STOPS = ROOM2.stops;
 const step = (s) => Math.max(0, Math.min(3, Number(s?.var(V.fausto, 0)) || 0));
 const closed = (s) => Boolean(s?.flag(F.cistern));
 
+// Zygarde habla muy poco (autor, 25-09-2026): Fausto, los ecos y la narración cuentan lo necesario.
 export const FAUSTO_TEXT = Object.freeze({
   first: [
     '¡Buenos días! ¿Eres de otro barrio? Hoy voy con prisa.',
     'Antes de que suba la marea hay que cerrar la compuerta del aljibe. La red, en cuanto le lleve el agua a madre. Y la caracola del muelle, siempre la última, al caer la tarde.',
     '…Qué raro. Juraría que esto ya te lo he dicho.',
   ],
-  firstCore: [
-    'Está atrapado en un día que ya pasó. Lo repite sin darse cuenta.',
-    'Si lo acompañas por su día, en su orden, quizá despierte.',
-  ],
   ask: '¿Me acompañas? ¿Adónde tocaba ir ahora?',
   notYet: 'Todavía no',
   later: 'Pues no te entretengo. ¡Que se me va el día!',
   wrong: '…No. Eso no toca ahora. Me he liado.',
-  wrongCore: 'El día ha vuelto a empezar.',
   restart: 'Buenos días otra vez… ¿o era la primera? Voy a por el agua de madre.',
   arrive: {
     redes: ['La red del puesto. Madre la remendó anoche… ¿o fue hace mucho?', 'Ya está. Ahora, antes de la marea…'],
@@ -40,7 +36,6 @@ export const FAUSTO_TEXT = Object.freeze({
     caracola: ['Y la caracola del muelle, al caer la tarde. Como siempre.'],
   },
   wheel: 'Giráis la rueda entre los dos. La compuerta baja con un golpe sordo y el agua deja de entrar en el aljibe.',
-  wheelCore: 'El agua ya no entra en el aljibe. Allí abajo, en el presente, se notará.',
   wheelAlone: 'La rueda de la compuerta está agarrotada. Sola no se mueve.',
   wheelClosed: 'La compuerta del aljibe está cerrada. El aljibe queda estanco.',
   wake: [
@@ -55,13 +50,9 @@ export const FAUSTO_TEXT = Object.freeze({
     'Toma. Lo cogí en la fuente, en este día que no se acaba. No quiero llevarme nada de aquí.',
   ],
   bye: (s) => `Gracias, ${byGender(s, 'amigo', 'amiga')}. Nos vemos en la caleta.`,
-  gone: 'Su eco ya no lo retiene. Volverá a su casa.',
   gear: 'Unas aletas y unas gafas de buceo, enredadas en una columna. En la goma, escrito a mano: «FAUSTO».',
-  gearCore: 'Estuvo aquí. Su rastro sigue en el eco de esta calle.',
   cistern: 'Una corriente violenta sale del aljibe y te empuja hacia atrás.',
-  cisternCore: 'El mar entra ahí por algún sitio… y sale con fuerza. En el eco de esta calle, quizá se pueda cerrar.',
   dry: 'El aljibe está seco: una bolsa de aire llena la sala. Huele a piedra vieja.',
-  dryCore: 'Lo cerrasteis antes de que la ciudad se hundiera. El aire se quedó dentro.',
 });
 
 // ───────────────────────────── Fausto (Antea) ─────────────────────────────
@@ -83,7 +74,6 @@ async function resetDay(ctx) {
   await ctx.say(FAUSTO_TEXT.wrong, { speaker: SPEAKER.fausto });
   ctx.setVar(V.fausto, 0);
   await travel(ctx, 0);
-  await zygardeSays(ctx, FAUSTO_TEXT.wrongCore);
   await ctx.say(FAUSTO_TEXT.restart, { speaker: SPEAKER.fausto });
 }
 
@@ -95,7 +85,6 @@ async function doCompuerta(ctx) {
   await ctx.say(FAUSTO_TEXT.wheel);
   ctx.setFlag(F.cistern);
   ctx.requestRefresh();
-  await zygardeSays(ctx, FAUSTO_TEXT.wheelCore);
 }
 
 async function wakeUp(ctx) {
@@ -117,7 +106,6 @@ async function wakeUp(ctx) {
   ctx.requestRefresh();
   await pause(ctx, 20);
   await ctx.fade('in', 24);
-  await zygardeSays(ctx, FAUSTO_TEXT.gone);
 }
 
 async function faustoTalk(ctx) {
@@ -125,7 +113,6 @@ async function faustoTalk(ctx) {
   if (!ctx.flag(F.faustoMet)) {
     ctx.setFlag(F.faustoMet);
     await lines(ctx, sp, FAUSTO_TEXT.first);
-    for (const t of FAUSTO_TEXT.firstCore) await zygardeSays(ctx, t);
   }
   const cur = step(ctx.state);
   const options = STOPS.map((s, i) => ({ i, label: s.label })).filter((o) => o.i !== cur);
@@ -200,7 +187,7 @@ function gearEvent() {
       sprite: OBJ.gear, dir: 2, directionFix: true, walkAnime: false, solid: true, trigger: 'action',
       script: async (ctx) => {
         await ctx.say(FAUSTO_TEXT.gear);
-        if (!ctx.flag(F.gearFound)) { ctx.setFlag(F.gearFound); await zygardeSays(ctx, FAUSTO_TEXT.gearCore); }
+        if (!ctx.flag(F.gearFound)) ctx.setFlag(F.gearFound);
       },
     }],
   };
@@ -209,7 +196,7 @@ function gearEvent() {
 function cisternEvents() {
   const open = (s) => !closed(s);
   const currents = ROOM2.currents.map((c, i) => outflowCurrent(`corriente_aljibe_${i}`, c.x, c.y, {
-    dir: 2, length: c.length, open, seenFlag: F.cisternSeen, firstText: FAUSTO_TEXT.cistern, coreText: FAUSTO_TEXT.cisternCore,
+    dir: 2, length: c.length, open, seenFlag: F.cisternSeen, firstText: FAUSTO_TEXT.cistern,
   }));
   const inner = ROOM2.cistern.inner;
   return [
@@ -219,7 +206,7 @@ function cisternEvents() {
       id: 'aljibe_seco', x: 16, y: ROOM2.cistern.door.y - 1,
       pages: [{
         when: (s) => closed(s) && !s.flag(F.cisternDry), through: true, trigger: 'touch', lock: false,
-        script: async (ctx) => { ctx.setFlag(F.cisternDry); await ctx.say(FAUSTO_TEXT.dry); await zygardeSays(ctx, FAUSTO_TEXT.dryCore); },
+        script: async (ctx) => { ctx.setFlag(F.cisternDry); await ctx.say(FAUSTO_TEXT.dry); },
       }],
     },
   ];

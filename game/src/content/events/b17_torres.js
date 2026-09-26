@@ -10,14 +10,14 @@
 //     alzada para siempre y en la caja de suministros hay una Restauración Total y un Caramelo Raro.
 // Las torres solo existen mientras Genesis ocupa el Mirador (del P8 al P9). Módulo puro salvo los guiones.
 import {
-  F, V, SPEAKER, SPRITE, OBJ, MUSIC, MAGENTA, occupied, towersOff, zygardeSays, eventById, pause, frame,
+  F, V, SPEAKER, SPRITE, OBJ, MUSIC, MAGENTA, occupied, towersOff, eventById, pause, frame,
 } from './b17_common.js';
 import { parseRoom, decodeRaised, encodeRaised, raise as raiseRule, solutionSockets } from './b17_torres_logic.js';
 import { bossBattle } from '../common/bossBattle.js';
 import { FIELD_TEXT } from '../zygarde/texts.js';
 
 const FLAG_OF = Object.freeze({ viento: F.towerViento, tormenta: F.towerTormenta, temblor: F.towerTemblor });
-const RULE_FLAG = 'b17_torres_regla'; // Zygarde ya explicó la regla de las piedras
+const RULE_FLAG = 'b17_torres_regla'; // la regla de las piedras ya se ha contado
 const techFlag = (id) => `b17_torre_${id}_tecnicos`;
 /** Caja de suministros de cada torre (una vez): se abre al apagarla o, si el P9 llega antes, con la torre abandonada. */
 export const crateFlag = (id) => `b17_torre_${id}_caja`;
@@ -39,11 +39,12 @@ export const TOWER_TEXT = Object.freeze({
   }),
   towerOff: 'La torre está apagada. Solo se oye el viento de la Sima.',
   towerIdle: 'Una torre de celosía abandonada. Ya no zumba.',
+  // Zygarde habla muy poco (autor, 25-09-2026): la regla del puzle y el aviso son narración neutra.
   rule: [
-    'La torre tira de la tierra hacia sí. Me cuesta sostener lo que alzo.',
-    'Aquí una piedra solo aguanta cerca de la roca firme: tres piedras, no más. Busca dónde apoyarte.',
+    'La torre tira de la tierra hacia sí. Los zócalos del espolón vibran.',
+    'Con la torre encendida, una piedra alzada solo aguantaría cerca de la roca firme: tres piedras, no más.',
   ],
-  loose: 'Esa quedaría demasiado lejos de la roca firme. Con la torre tirando, no aguantaría.',
+  loose: 'Esa piedra quedaría demasiado lejos de la roca firme. Con la torre tirando, no aguantaría.',
   standing: 'Esa piedra está bajo tus pies.',
   consoleOn: (active) => `Una consola de Genesis. En la pantalla parpadea: «OPERACIÓN CONVERGENCIA — CAPTACIÓN ACTIVA — ANILLO ${active}/3 — DESTINO: RESONADOR».`,
   consoleAsk: '¿Apagar la torre?',
@@ -56,9 +57,9 @@ export const TOWER_TEXT = Object.freeze({
 
 /** Lo que devuelve cada torre al apagarse (efecto local, tono sobrio). */
 const RELEASE = Object.freeze({
-  viento: { text: 'Del fondo de la Sima sube una corriente de aire que llevaba días sin soplar.', zygarde: 'El viento vuelve a su camino.' },
-  tormenta: { text: 'Un trueno lejano retumba sobre la Sima. Por fin suena como una tormenta de verdad.', zygarde: 'La tormenta ya no se desvía hacia aquí.' },
-  temblor: { text: 'La roca deja de vibrar bajo los pies. Muy abajo, algo se asienta.', zygarde: 'La tierra ha dejado de tirar de sí misma.' },
+  viento: { text: 'Del fondo de la Sima sube una corriente de aire que llevaba días sin soplar.' },
+  tormenta: { text: 'Un trueno lejano retumba sobre la Sima. Por fin suena como una tormenta de verdad.' },
+  temblor: { text: 'La roca deja de vibrar bajo los pies. Muy abajo, algo se asienta.' },
 });
 
 const TECH_TEXT = Object.freeze({
@@ -109,14 +110,14 @@ export function towerEvents(t, tiles) {
   }
   events.push(...towerStructure(t, room));
   events.push(...technicianEvents(t, room));
-  // Primera vez en el borde del espolón con la torre encendida: Zygarde explica la regla.
+  // Primera vez en el borde del espolón con la torre encendida: la narración describe la regla.
   const e = at(t, room.entry);
   events.push({
     id: `torre_${id}_regla`, x: e.x, y: e.y, through: true, trigger: 'touch',
     when: (st) => draining(st, id) && !st.flag(RULE_FLAG) && Boolean(st.zygardeAbility('rebuild')),
     script: async (ctx) => {
       ctx.setFlag(RULE_FLAG);
-      for (const line of TOWER_TEXT.rule) await zygardeSays(ctx, line);
+      for (const line of TOWER_TEXT.rule) await ctx.say(line);
     },
   });
   return events;
@@ -128,7 +129,7 @@ async function raiseSocket(ctx, t, room, i, tiles) {
   const raised = raisedOf(ctx.state, t.id);
   const r = raiseRule(room, raised, i, p.x - t.ox, p.y - t.oy, { unlimited: !draining(ctx.state, t.id) });
   if (!r.ok) {
-    if (r.reason === 'loose') await zygardeSays(ctx, TOWER_TEXT.loose);
+    if (r.reason === 'loose') await ctx.say(TOWER_TEXT.loose);
     return;
   }
   if ((await ctx.choice(['Sí', 'No'], { message: FIELD_TEXT.rebuildAsk, cancel: 1 })) !== 0) return;
@@ -204,12 +205,8 @@ export async function shutdownTower(ctx, t) {
   await ctx.say(TOWER_TEXT.shutdown);
   ctx.se('PRSFX- Gust', { volume: 70 });
   await ctx.say(RELEASE[id].text);
-  await zygardeSays(ctx, RELEASE[id].zygarde);
   await ctx.say(TOWER_TEXT.crate);
   await lootCrate(ctx, id);
-  const n = towersOff(ctx.state);
-  if (n === 3) await zygardeSays(ctx, 'Las tres calladas. El Anillo ya no tira de nada.');
-  else await zygardeSays(ctx, n === 1 ? 'Una menos. Quedan dos.' : 'Dos calladas. Queda una.');
 }
 
 // ───────────────────────────── técnicos ─────────────────────────────

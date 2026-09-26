@@ -11,7 +11,7 @@
 //      la laguna, con aparatos como ese.» Alerce: «Son aparatos corrientes.»
 // Reintentos (§2.6): los técnicos se reintentan sin pérdida; las mediciones se repiten; las pozas equivocadas no
 // penalizan. Coordenadas: content/maps/b09b/ruta_8_layout.js.
-import { F, V, SPEAKER, SPRITE, OBJ, MUSIC, lines, zygardeSays, bossBattle, trainerRequest, routeTo } from './b09b_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, MUSIC, lines, bossBattle, trainerRequest, routeTo } from './b09b_common.js';
 import { STAKES, POOLS, PUMPS, SPOTS, FOAM, HOUSES, readingLevel, READING_WORDS } from '../maps/b09b/ruta_8_layout.js';
 
 const A = { speaker: SPEAKER.alerce };
@@ -52,7 +52,6 @@ export const T08_TEXT = Object.freeze({
   alercePumpsOn: 'Pero mientras esas bombas remuevan el lodo, las lecturas bailarán. Habrá que pararlas.',
   alercePumpsOff: 'Las bombas ya están paradas. Mejor: sin ellas el lodo se asienta y las lecturas valdrán algo.',
   alerceWhere: 'Estaré en el islote grande, junto al agua.',
-  zygardeBelow: 'Debajo del barro hay algo que no es barro.',
   stakeBefore: 'Una estaca de madera con una cinta blanca, recién clavada en el barro.',
   stakeMeasure: 'Acercas la Pokédex a la estaca. El lector zumba un momento…',
   stakeNoisy: 'La aguja salta de un lado a otro. Con las bombas en marcha, el lodo no para de moverse.',
@@ -64,7 +63,6 @@ export const T08_TEXT = Object.freeze({
     5: 'La aguja se clava arriba del todo. Concentración muy alta.',
   }),
   allReadings: 'Ya tienes las seis lecturas. Donde más sube la aguja, más cerca está lo que envenena el agua.',
-  zygardeReadings: 'El lodo más espeso. Allí donde la aguja no cabe.',
   pumpRunning: 'Una bomba del Consorcio golpea el lodo sin parar. Por un tubo sube un agua turbia y violácea.',
   pumpStopped: 'La bomba está parada. El lodo de alrededor empieza a asentarse.',
   pumpsAllOff: 'La Pokédex vibra: sin las bombas, el lodo se asienta. Las lecturas ya serán fiables.',
@@ -79,7 +77,6 @@ export const T08_TEXT = Object.freeze({
   poolHole: 'El hueco donde estaba la losa se ha llenado de un agua todavía turbia, pero quieta.',
   dig: 'Zygarde hunde las patas en el lodo más espeso y lo aparta a un lado.',
   tabletSeen: 'Bajo el lodo asoma una losa violeta. El barro de alrededor burbujea como si respirara.',
-  zygardeTablet: 'Era esto. El agua amarga venía de aquí.',
   evening: 'Esa tarde, en los Palafitos…',
   finaleAlerce: [
     'Las bombas, paradas. Y la losa, fuera del lodo.',
@@ -163,7 +160,6 @@ async function alerceArrival(ctx) {
   ctx.setFlag(F.alerce);
   await ctx.move(alerce, ['right', 'right', 'right', 'right', 'right'], { through: true, speed: 4 });
   ctx.erase(alerce);
-  await zygardeSays(ctx, T08_TEXT.zygardeBelow);
   ctx.requestRefresh();
 }
 
@@ -323,7 +319,6 @@ async function stakeScript(ctx, stake) {
   if (allReadings(ctx.state) && !ctx.flag(F.readings)) {
     ctx.setFlag(F.readings);
     await ctx.say(T08_TEXT.allReadings);
-    await zygardeSays(ctx, T08_TEXT.zygardeReadings);
   }
 }
 
@@ -413,7 +408,6 @@ async function digSource(ctx) {
   await ctx.story.giveTablet('TOXICPLATE');
   ctx.setFlag(F.tablet);
   ctx.requestRefresh();
-  await zygardeSays(ctx, T08_TEXT.zygardeTablet);
   await finaleScene(ctx);
 }
 

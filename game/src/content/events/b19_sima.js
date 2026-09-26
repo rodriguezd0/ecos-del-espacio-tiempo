@@ -3,39 +3,30 @@
 // sendero del oeste (Reconstrucción), la Calzada del Rey que se corta ante el vacío hasta que la última Crónica
 // (Tabla Draco) completa el camino, el Umbral (salida del bloque: b19_calzada) y el warp a la Puerta de las Quince
 // (B20). Enlaces con la Senda del Mirador y el Mirador Sur (B17) por los bordes. Módulo puro salvo los guiones.
-import { F, SPEAKER, when, zygardeSays, zygardeLines, pause } from './b19_common.js';
+import { F, SPEAKER, when, pause } from './b19_common.js';
 import {
   GAP_W, GAP_ALCOVE, GAP_FINAL, UMBRAL, REPISA_STELE, EXITS, ITEMS, TRAINERS, ARRIVALS,
 } from '../maps/b19/sima_layout.js';
 import { CALZADA as CALZADA_TILES, ZOCALO } from '../maps/b19/tiles.js';
 import { blockedText, mapRegistered, PUERTA_QUINCE } from '../maps/b19/links.js';
-import { missingCampaignTablets, hasTablet } from '../story/tablets.js';
 import { itemEvents, trainerEvents } from './b19_calzada.js';
 
 export const SIMA_TEXT = Object.freeze({
   arrival: 'Nada bajo los pies más que roca y vacío. Desde muy abajo sube un rumor, como de agua lejana.',
-  arrivalZygarde: 'Aquí se abrió todo. Lo noto en las piedras.',
+  // Zygarde habla muy poco (autor, 25-09-2026): el fin de la Calzada lo describe la narración.
   stele: [
     'Una estela partida en dos, con glifos Unown.',
     'Con la Clave Glífica se lee: «QUIEN BAJE, QUE LO HAGA CON TODAS».',
   ],
-  steleZygarde: 'Todas las tablas. Lo decía la Crónica.', // con la Crónica XIII (Tabla Helada, T13)
-  steleZygardeNoXIII: 'Todas… ¿Todas las tablas?', // sin la Tabla Helada aún (la Sima se visita desde el P8)
-  deadEnd: [
-    'La Calzada sigue… pero no sé por dónde. Las piedras de abajo no me lo dicen.',
-    'Falta un trozo del camino. Está escrito en algún sitio que aún no hemos leído.',
-  ],
+  deadEnd: 'La Calzada del Rey se corta ante el vacío. Desde aquí no se ve por dónde sigue.',
   socketBefore: 'Un zócalo hexagonal, gastado, al borde del vacío. Enfrente no se ve adónde lleva.',
   finalSocket: 'El zócalo del borde del vacío brilla en verde. La última Crónica dice por dónde sigue la Calzada.',
   finalAsk: '¿Alzar el último tramo de la Calzada del Rey?',
-  finalZygarde: 'Aquí. El camino que grabaron en las tablas termina justo aquí.',
   finalDone: 'Las últimas losas de la Calzada suben desde el fondo y encajan contra el Umbral.',
   umbral: [
     'Aquí termina la Calzada del Rey: ante una roca con una puerta labrada.',
     'Sobre el dintel hay quince huecos tallados en fila.',
   ],
-  umbralZygarde: 'La Puerta de las Quince. Detrás, el Origen.',
-  umbralMissing: 'Faltan tablas. La puerta no se abrirá sin todas.',
   umbralStele: [
     'Una estela con letras Unown, nítidas como si las hubieran grabado ayer.',
     '«AQUÍ TERMINA LA CALZADA. EL CAMINO SIGUE CON LAS QUINCE.»',
@@ -51,12 +42,10 @@ async function arrival(ctx) {
   ctx.setFlag(F.simaIntro);
   await pause(ctx, 12);
   await ctx.say(SIMA_TEXT.arrival);
-  await zygardeSays(ctx, SIMA_TEXT.arrivalZygarde);
 }
 
 async function readRepisaStele(ctx) {
   for (const t of SIMA_TEXT.stele) await ctx.say(t);
-  await zygardeSays(ctx, hasTablet(ctx.state, 'ICICLEPLATE') ? SIMA_TEXT.steleZygarde : SIMA_TEXT.steleZygardeNoXIII);
 }
 
 // ───────────────────────────── Reconstrucción ─────────────────────────────
@@ -88,14 +77,14 @@ function finalGapEvents() {
     {
       id: 'sima_zocalo_final', type: 'rebuildGap', x: S.x, y: S.y, flag: F.finalGap, when: hasTablet,
       tiles: estradoRow(GAP_FINAL.cells), askText: SIMA_TEXT.finalAsk,
-      doneText: SIMA_TEXT.finalDone, onRebuilt: (ctx) => zygardeSays(ctx, SIMA_TEXT.finalZygarde),
+      doneText: SIMA_TEXT.finalDone,
     },
     ...GAP_FINAL.deadEnd.map(([x, y], k) => ({
       id: `sima_fin_calzada_${k}`, x, y,
       pages: [
         {
           when: when({ none: [F.tablet, F.simaDeadEnd] }), through: true, lock: false, trigger: 'touch',
-          script: async (ctx) => { ctx.setFlag(F.simaDeadEnd); await zygardeLines(ctx, SIMA_TEXT.deadEnd); },
+          script: async (ctx) => { ctx.setFlag(F.simaDeadEnd); await ctx.say(SIMA_TEXT.deadEnd); },
         },
         {
           when: when({ all: [F.tablet], none: [F.finalGap, F.simaWayKnown] }), through: true, lock: false, trigger: 'touch',
@@ -111,8 +100,6 @@ function finalGapEvents() {
 async function reachUmbral(ctx) {
   ctx.setFlag(F.exit);
   for (const t of SIMA_TEXT.umbral) await ctx.say(t);
-  await zygardeSays(ctx, SIMA_TEXT.umbralZygarde);
-  if (missingCampaignTablets(ctx.state).length) await zygardeSays(ctx, SIMA_TEXT.umbralMissing);
 }
 
 /** Warp del Umbral a la Puerta de las Quince (B20), solo si su mapa ya existe (si no, la puerta no se abre). */

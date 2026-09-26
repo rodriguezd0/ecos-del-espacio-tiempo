@@ -5,7 +5,7 @@
 // irrumpen en la Cámara del Cruce; Gael rechaza a Vértice; Vértice se retira en el aerodeslizador y pierde el cuaderno;
 // Olmedo detiene a Casia y a Garrido; Gael recoge el cuaderno y se marcha.
 import {
-  F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, zygardeSays, eventById, pause, walkTo, objectPage, byGender,
+  F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, eventById, pause, walkTo, objectPage, byGender,
   freeSpotNearPlayer,
 } from './b18_common.js';
 import { CAST, STRIPS, RETRY, RESONATOR, CHAIN, HOVER, MOUTH, PLATFORM } from '../maps/b18/puente_layout.js';
@@ -209,7 +209,6 @@ async function irruptionStep(ctx) {
   await ctx.flash([255, 255, 255], 24, 200);
   rift?.remove?.(60);
   await ctx.camera.reset(30);
-  await zygardeSays(ctx, 'Dialga. Palkia. Los ha arrastrado hasta aquí a la fuerza. Están furiosos… y están dentro.');
   await ctx.say('Magnífico.', { speaker: SPEAKER.vertice });
   if (v) ctx.face(v, 'down');
 }
@@ -342,7 +341,7 @@ async function notebookStep(ctx, gaelEv, olmedo) {
 
 /** Cierre: la boca de la Cámara queda abierta y Alerce baja hasta ella. */
 async function finishStep(ctx) {
-  await zygardeSays(ctx, 'Abajo. Nos están llamando los dos. No se van a calmar solos.');
+  // Zygarde habla muy poco (autor, 25-09-2026): sin comentarios en la irrupción ni en el cierre.
   await ctx.fade('out', 14);
   ctx.setFlag(F.scene); // la boca de la Cámara queda abierta; Alerce y la policía, en su sitio
   await pause(ctx, 8);

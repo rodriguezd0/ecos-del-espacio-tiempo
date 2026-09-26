@@ -125,7 +125,6 @@ async function bellsSolved(ctx) {
   await ctx.say(NUCLEO_TEXT.bellsDone);
   ctx.se('PRSFX- Tailwind', { volume: 80 });
   await ctx.say(NUCLEO_TEXT.bellsCalm);
-  await zygardeSays(ctx, 'Lo han despertado. Está en el centro.');
   await abrilClimbs(ctx);
 }
 
@@ -173,6 +172,7 @@ async function localEffect(ctx) {
 }
 
 async function readVerseTogether(ctx) {
+  // Zygarde habla muy poco (autor, 25-09-2026): solo la lectura del verso III (CAMPANA: «Core y Abril»).
   await zygardeSays(ctx, 'El viento… su camino. Lo había perdido. Como yo.');
   const abril = ctx.world.events.find((e) => e.id === 'abril_sala' && e.page);
   if (abril) abril.turnToward(ctx.player);
@@ -203,7 +203,6 @@ async function abrilFarewell(ctx) {
 /** Escena del núcleo: Fragmento 3, verso III, efecto local, pista T04 y despedida de Abril. */
 async function coreScene(ctx) {
   const pos = at(CAMPANAS.pedestal.at);
-  await zygardeSays(ctx, 'Aquí. El centro del viento.');
   const ok = await ctx.story.restorePillar(3, {
     core: pos,
     onRestored: async (c) => {
@@ -214,7 +213,6 @@ async function coreScene(ctx) {
   if (!ok) return;
   await ctx.say(NUCLEO_TEXT.t04);
   await ctx.story.openClue('T04');
-  await zygardeSays(ctx, 'El viento ha vuelto a su sitio. El cielo, todavía no.');
   await abrilFarewell(ctx);
 }
 

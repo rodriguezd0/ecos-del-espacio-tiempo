@@ -4,7 +4,7 @@
 // Antea (flag b14_draga_apartada): los planos de la corona ya han subido. Tras el P7 la campana está abandonada.
 // Módulo puro salvo los guiones.
 import { CAMPANA_INT } from '../maps/b14/layout.js';
-import { F, SPEAKER, SPRITE, OBJ, lines, zygardeSays, byGender, onlyWhen } from './b14_common.js';
+import { F, SPEAKER, SPRITE, OBJ, lines, byGender, onlyWhen } from './b14_common.js';
 import { bossBattle } from '../common/bossBattle.js';
 import { crateEvents } from '../maps/b14/paint.js';
 
@@ -26,7 +26,6 @@ export const CAMPANA_TEXT = Object.freeze({
     'Una cosa más. Hace tres días vimos a un chico bajar a las ruinas, siguiendo nuestras luces de trabajo. La marea del eco se lo llevó.',
     'Nosotros no podemos entrar ahí. Usted, por lo visto, sí.',
   ],
-  jefaCore: 'Los planos de una corona que quería obedecer al Eje. No me gusta que los tengan ellos.',
   moved: 'Adela teclea en la consola. Afuera, algo pesado se desplaza sobre el lecho con un zumbido.',
   jefaAfter: ['El cabezal ya no le estorba. Suerte ahí dentro: los registros de sonar de esas ruinas no tienen ningún sentido.'],
   console: 'La consola de la draga. En la pantalla, el sonar dibuja la muralla de Antea… y algo que late bajo ella.',
@@ -51,8 +50,7 @@ async function jefaTalk(ctx) {
   ctx.se('PRSFX- Metal Sound', { volume: 70 });
   ctx.shake(2, 4, 30);
   await ctx.say(CAMPANA_TEXT.moved);
-  ctx.setFlag(F.dredgeAside);
-  await zygardeSays(ctx, CAMPANA_TEXT.jefaCore);
+  ctx.setFlag(F.dredgeAside); // sin línea de Zygarde (autor, 25-09-2026)
 }
 
 export function campanaEvents() {

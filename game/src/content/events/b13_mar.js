@@ -2,7 +2,7 @@
 // (la plataforma del Consorcio), nadadores y marineros (entrenadores), células C057–C058, C061–C062 y C065–C066,
 // objetos de los bancos, boyas-farolillo hacia el Islote Lumbre, el aviso del Arrecife del Eco (B14) y aves.
 import { cellEvent } from './b01_cells.js';
-import { F, SPEAKER, SPRITE, OBJ, when, lines, zygardeSays, isNight, byGender, mapRegistered } from './b13_common.js';
+import { F, SPEAKER, SPRITE, OBJ, when, lines, isNight, byGender, mapRegistered } from './b13_common.js';
 import { CELLS, TRAINERS, ITEMS, BUOYS, BIRDS, REEF_SIGN, WHIRLPOOLS } from '../maps/b13/mar_layout.js';
 
 const A = { speaker: SPEAKER.alerce };
@@ -40,7 +40,7 @@ async function alerceCall(ctx) {
     'Salgo de Nexo en barca. Llegaré antes de que te canses de nadar.',
   ]);
   ctx.se('GUI pokedex open');
-  await zygardeSays(ctx, 'Al sur. Algo mío late bajo el agua, encerrado.');
+  // Zygarde habla muy poco (autor, 25-09-2026): la llamada basta para saber adónde ir.
 }
 
 function callEvent() {

@@ -3,7 +3,7 @@
 
 /** Flags del bloque (orden del guion). `p2_restored` lo pone content/story (restorePillar). */
 export const F = Object.freeze({
-  gargantaArrival: 'b04_garganta_llegada', // el Core nota las balizas al entrar en la Garganta
+  gargantaArrival: 'b04_garganta_llegada', // llegada a la Garganta (ya sin comentario del Core)
   beacons: 'b04_balizas_retiradas', // las tres balizas del Consorcio retiradas
   clash: 'b04_choque', // Gael y Leandro chocan a la puerta del Pilar (y Leandro la abre)
   dare: 'b04_reto', // Leandro reta al jugador dentro del Pilar («ver si sabe dónde pisa»)

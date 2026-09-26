@@ -73,7 +73,7 @@ export const inStairs = (x, y) => STAIRS.some((s) => x >= s.x && x <= s.x + 2 &&
 export const GAP_FINAL = Object.freeze({
   cells: Object.freeze(rect(25, 41, 26, 43)),
   socket: P(27, 42, 4),
-  /** Llegada al tercer rellano (fin de la Calzada): sin la Tablilla, Zygarde nota que el camino sigue y no sabe por dónde. */
+  /** Llegada al tercer rellano (fin de la Calzada): sin la Tablilla, la narración dice que la Calzada se corta ante el vacío. */
   deadEnd: Object.freeze([[31, 40], [32, 40], [33, 40]]),
 });
 

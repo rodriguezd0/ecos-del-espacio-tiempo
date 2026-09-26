@@ -4,7 +4,7 @@
 // la envejece: coral y óxido). Llegada y salida por el remolino de Caleta Sonda; paso al Fondo del Mar del Sur por el
 // este. Módulo puro salvo los guiones.
 import { ARRECIFE, CALETA, ROOMS, roomMap } from '../maps/b14/layout.js';
-import { F, OBJ, SPRITE, zygardeSays, lines } from './b14_common.js';
+import { F, OBJ, SPRITE, lines } from './b14_common.js';
 import { ventEvents, itemEvents, bigSprite } from './b14_antea_common.js';
 import { coralEvents, crateEvents } from '../maps/b14/paint.js';
 
@@ -13,9 +13,9 @@ const aside = (s) => Boolean(s?.flag(F.dredgeAside));
 const restored = (s) => Boolean(s?.flag(F.restored));
 
 export const ARRECIFE_TEXT = Object.freeze({
-  arrive: ['Aquí abajo el agua suena a voces. Muchas. Muy antiguas.', 'Al norte hay una muralla. Una ciudad entera, dormida.'],
   dredge: 'El cabezal de una draga enorme, con el emblema de los tubos cruzados, remueve el lecho justo delante de la puerta de la muralla.',
-  dredgeCore: 'Están cavando la ciudad… y tapan la entrada. Los que la manejan estarán cerca: esa campana, al oeste.',
+  // Zygarde habla muy poco (autor, 25-09-2026): la pista de la campana es narración de lo que se ve.
+  dredgeHose: 'Del cabezal sale un tubo grueso que se pierde hacia el oeste, hasta una campana de trabajo anclada al fondo.',
   dredgeAside: 'El cabezal de la draga, apartado de la puerta. Sigue girando y escupiendo arena.',
   dredgeAged: 'El cabezal de la draga, cubierto de coral y de óxido como si llevara siglos aquí. No se mueve.',
   bell: 'Una campana de trabajo de Genesis, anclada al fondo. Por la escotilla de abajo sale el aire en burbujas.',
@@ -37,7 +37,7 @@ function dredgeEvents() {
       ...p,
       script: async (ctx) => {
         await ctx.say(ARRECIFE_TEXT.dredge);
-        if (!ctx.flag(F.dredgeSeen)) { ctx.setFlag(F.dredgeSeen); await zygardeSays(ctx, ARRECIFE_TEXT.dredgeCore); }
+        if (!ctx.flag(F.dredgeSeen)) { ctx.setFlag(F.dredgeSeen); await ctx.say(ARRECIFE_TEXT.dredgeHose); }
       },
     })),
   }));
@@ -64,8 +64,7 @@ function bellEvents() {
 
 async function arrive(ctx) {
   if (ctx.flag(F.reefArrival)) return;
-  ctx.setFlag(F.reefArrival);
-  for (const t of ARRECIFE_TEXT.arrive) await zygardeSays(ctx, t);
+  ctx.setFlag(F.reefArrival); // sin línea de Zygarde (autor, 25-09-2026)
 }
 
 export function arrecifeEvents() {

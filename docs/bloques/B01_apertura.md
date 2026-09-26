@@ -159,7 +159,7 @@ En el laboratorio (auto): Alerce, ayudante, Gael, policía.
   - "La Pokédex registra a cada Pokémon que veáis o capturéis. Y también me enviará lecturas del terreno."
   - "Anoche mis instrumentos marcaron una lectura extraña al sur, en las ruinas del **Pilar del Umbral**, pasada la
     Ruta 1. Nunca había reaccionado así."
-  - **Core** (telepathy): "Allí. Algo antiguo se ha movido. Y hay partes de mí por el camino."
+  - **Core** (telepathy): "Allí. Algo antiguo se ha movido." (recortado: DECISIONES X34, autor 25-09-2026)
   - Alerce: "Id con cuidado. Y \PN… cuida de él. Creo que él también cuidará de ti."
   - Gael: "Nos vemos allí. Llegaré antes." (sale)
 - Flags `b01_gael_duel_done`, `b01_dex_received`. La mamá, al volver a casa, cura y da un regalo cotidiano
@@ -167,8 +167,9 @@ En el laboratorio (auto): Alerce, ayudante, Gael, policía.
 
 ### 4.8 Ruta 1
 - Hierba alta con encuentros (tabla abajo), 2–3 entrenadores de nivel 3–6, objetos en el suelo.
-- **Primeras células de Zygarde** (colocación PROVISIONAL, D10): brillos verdes en el mapa; al tocarlas: sonido,
-  "Has encontrado una Célula de Zygarde. (n/100)" y el Core reacciona: "Una parte de mí. Gracias."
+- **Primeras células de Zygarde** (colocación PROVISIONAL, D10): la célula quieta en el suelo, sin brillo; al tocarlas:
+  sonido, "Has encontrado una Célula de Zygarde. (n/100)" y un destello breve. El Core no reacciona ni da las gracias
+  (DECISIONES X34, autor 25-09-2026).
 - Cartel final: "Pilar del Umbral — Ruinas antiguas. Se ruega respeto." (fin del bloque 1; bloque 2 empieza aquí).
 
 ## 5. Encuentros Ruta 1 (provisional, especies del inventario Axis)

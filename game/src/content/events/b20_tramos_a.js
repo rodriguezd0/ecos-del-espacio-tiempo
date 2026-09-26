@@ -5,7 +5,7 @@
 //       vacía por el dique y su fondo lleva a la salida.
 //   3 · Impulso — ráfagas con veleta (Embestida): la veleta del canal está tapada por una roca agrietada; girada dos
 //       veces, el canal sopla hacia el norte y sube al jugador por encima de la cinta de ráfagas fuertes.
-import { F, V, OBJ, GOLD, zygardeSays, zygardeLines, pause, examine, frame, when, strip } from './b20_common.js';
+import { F, V, OBJ, GOLD, zygardeLines, pause, examine, frame, when, strip } from './b20_common.js';
 import { STONES, stoneDirOf, nextDir, STONE_DIR_NAME, ROTATION, WIND_ROOM } from './b20_logic.js';
 import { steleEvents } from './b20_senda.js';
 import { T1, T2, T3, INNER } from '../maps/b20/layout.js';
@@ -19,7 +19,6 @@ export const T1_TEXT = Object.freeze({
     'Una estela con glifos Unown. La Clave Glífica los lee sin esfuerzo:',
     '«El primero mira al alba. El segundo, al agua que no se va. El tercero, a quien entra.»',
   ],
-  inscriptionCore: 'Las mismas palabras que en el Umbral. Aquí abajo se guardan todas.',
   stoneIntro: 'Una piedra redonda sobre un zócalo, con una ranura tallada. Gira sobre su eje.',
   notches: { 1: 'En el zócalo hay grabada una sola muesca.', 2: 'En el zócalo hay grabadas dos muescas.', 3: 'En el zócalo hay grabadas tres muescas.' },
   lit: 'La ranura se enciende con una luz dorada.',
@@ -67,7 +66,6 @@ async function openSlab(ctx) {
   ctx.setFlag(F.t1Slab);
   await ctx.say(T1_TEXT.slabOpen);
   await ctx.camera?.reset?.(24);
-  await zygardeSays(ctx, 'El Umbral nos deja pasar. Otra vez.');
 }
 
 function stoneEvent(st) {
@@ -99,11 +97,7 @@ export function tramo1Events() {
   return [
     ...STONES.map(stoneEvent),
     ...slabEvents(),
-    ...steleEvents('t1_estela', T1.stele, T1_TEXT.inscription, async (ctx) => {
-      if (ctx.flag('b20_t1_estela')) return;
-      ctx.setFlag('b20_t1_estela');
-      await zygardeSays(ctx, T1_TEXT.inscriptionCore);
-    }),
+    ...steleEvents('t1_estela', T1.stele, T1_TEXT.inscription),
     {
       id: 't1_cristal', x: T1.crystal.x, y: T1.crystal.y + 1, trigger: 'action', solid: true, noOver: true,
       glow: { name: 'softLight', radius: 70, intensity: 0.8, pulse: 0.3, color: [255, 236, 190] },
@@ -128,7 +122,6 @@ export const T2_TEXT = Object.freeze({
   leverDone: 'El volante está girado a tope. La compuerta sigue abierta.',
   drain: 'La compuerta se levanta. El estanque entero se vacía hacia el dique con un rugido…',
   drained: '…y el fondo queda al aire: losas mojadas y un camino hacia el norte.',
-  core: 'El agua ya no se queda. Ahora sí sigue su cauce.',
 });
 
 const drained = (s) => Boolean(s?.flag(F.t2Gate));
@@ -166,7 +159,6 @@ async function pullLever(ctx) {
   await ctx.fade('in', 24);
   await ctx.say(T2_TEXT.drained);
   await ctx.camera?.reset?.(24);
-  await zygardeSays(ctx, T2_TEXT.core);
 }
 
 export function tramo2Events() {
@@ -195,7 +187,8 @@ export function tramo2Events() {
 // ───────────────────────────── Tramo 3 ─────────────────────────────
 
 export const T3_TEXT = Object.freeze({
-  hint: 'La veleta manda sobre el canal del este. Y alguien le ha echado una roca delante.',
+  // Pista del tramo: narración neutra (Zygarde habla muy poco, autor, 25-09-2026).
+  hint: 'La veleta manda sobre el canal del este. Alguien le ha echado una roca delante.',
   stele: ['Una estela con glifos Unown:', '«El viento no se vence: se le cambia el rumbo.»'],
 });
 
@@ -225,7 +218,7 @@ export function tramo3Events() {
     },
     ...strip('t3_pista', t3HintCells(), {
       when: t3HintPending,
-      script: async (ctx) => { if (ctx.flag(F.t3Hint)) return; ctx.setFlag(F.t3Hint); await zygardeSays(ctx, T3_TEXT.hint); },
+      script: async (ctx) => { if (ctx.flag(F.t3Hint)) return; ctx.setFlag(F.t3Hint); await ctx.say(T3_TEXT.hint); },
     }),
     ...steleEvents('t3_estela', T3.stele, T3_TEXT.stele),
     { id: 't3_objeto', type: 'item', x: T3.item.x, y: T3.item.y, item: T3.item.item },

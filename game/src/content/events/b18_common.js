@@ -31,7 +31,7 @@ export const F = Object.freeze({
   heal3: 'b18_cura_3',
   // Cámara del Cruce
   chamberIn: 'b18_camara_llegada',
-  tutorial: 'b18_cristal_tutorial', // Zygarde explica el primer cristal
+  tutorial: 'b18_cristal_tutorial', // la narración describe el primer cristal
   room1: 'b18_sala_1', room2: 'b18_sala_2', room3: 'b18_sala_3', // salida de cada sala alcanzada por primera vez
   nucleus: 'b18_nucleo_visto', // primera llegada al núcleo (se abre el atajo del vestíbulo)
   verse: 'verse_9', // global (content/story/verses.js)

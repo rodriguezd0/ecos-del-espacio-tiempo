@@ -1,4 +1,4 @@
-// Eventos de la Garganta del Albo (docs/CAMPANA.md B04): el Core nota las balizas al llegar, tres técnicos del
+// Eventos de la Garganta del Albo (docs/CAMPANA.md B04): tres técnicos del
 // Consorcio Meridiano (nv 15–17) con sus balizas de resonancia (se retiran: objeto de historia RESONANCEBEACON),
 // Leandro en la esclusa de cabecera, el choque con Gael a la puerta del Pilar («Nadie te ha pedido nada, chaval.» /
 // «Por eso lo hago yo.»), la puerta del Pilar (la abre Leandro), el molino abandonado, células C019, C020, C055
@@ -8,8 +8,7 @@ import {
 } from '../maps/b04/garganta_albo_layout.js';
 import { POZO_ARRIVAL } from '../maps/b04/pozo_albo.js';
 import { floodEvent, riverFishingEvent } from './b04_flood.js';
-import { coreCellReaction } from '../companion.js';
-import { F, V, SPEAKER, SPRITE, SAY_CORE, kid } from './b04_common.js';
+import { F, V, SPEAKER, SPRITE, kid } from './b04_common.js';
 
 const GREEN = [185, 255, 102];
 const MAGENTA = [176, 58, 140];
@@ -57,10 +56,8 @@ async function removeBeacon(ctx, i) {
   ctx.setVar(V.beacons, n);
   ctx.me('key_item_get');
   await ctx.say('Has retirado la baliza de resonancia.');
-  if (n === 1) await ctx.say('Mejor. El agua respira.', SAY_CORE);
   if (n < 3) return;
   ctx.setFlag(F.beacons);
-  await ctx.say('Ya no zumba nada. Solo queda el río.', SAY_CORE);
   if (onTerrace(ctx.player)) await clashScene(ctx);
 }
 
@@ -139,7 +136,6 @@ export async function clashScene(ctx) {
   await ctx.say('Entra tú. A mí no me va a escuchar. Yo vuelvo al barrio: el agua sigue subiendo.', GS);
   await ctx.move(gael, ['down', 'right', 'down', 'down', 'down', 'down'], { through: true, speed: 4.5 });
   ctx.erase(gael);
-  await ctx.say('La puerta respira. Dentro hay agua que no se mueve.', SAY_CORE);
 }
 
 function leandroEvents() {
@@ -165,7 +161,6 @@ function doorEvents() {
       when: (s) => !s.flag(F.clash), solid: true, trigger: 'action',
       script: async (ctx) => {
         await ctx.say('Una puerta de piedra bajo el dintel, con una cerradura en forma de rueda de esclusa. Está cerrada.');
-        await ctx.say('Detrás se oye agua. Agua que no corre.', SAY_CORE);
       },
     }],
   }];
@@ -212,17 +207,13 @@ function sluiceEvents() {
 
 // ───────────────────────────── Llegada, células, objetos, carteles ─────────────────────────────
 
+// Zygarde habla muy poco (autor, 25-09-2026): la llegada ya no lleva comentario del Core.
 async function arrivalScene(ctx) {
   ctx.setFlag(F.gargantaArrival);
-  if (!ctx.state.data.zygarde?.form) return;
-  await ctx.wait(20);
-  await ctx.say('El agua de aquí no suena bien.', SAY_CORE);
-  await ctx.say('Más arriba hay algo que zumba. No es de este lugar.', SAY_CORE);
 }
 
 async function afterCell(ctx) {
   await ctx.flash(GREEN, 12, 90);
-  await coreCellReaction(ctx);
 }
 
 function cellEvents() {

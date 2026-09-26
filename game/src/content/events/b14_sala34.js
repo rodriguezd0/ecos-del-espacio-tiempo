@@ -3,7 +3,7 @@
 // presente» (el aliviadero de Antea deja sin corriente la boca de la Fosa). La Bramaluna Alfa patrulla la era
 // primigenia de ambas salas (b14_bramaluna.js). Módulo puro salvo los guiones.
 import { ROOMS, ROOM3, ROOM4 } from '../maps/b14/layout.js';
-import { F, SPRITE, OBJ, lines, zygardeSays } from './b14_common.js';
+import { F, SPRITE, OBJ, lines } from './b14_common.js';
 import { ventEvents, echoCitizen, itemEvents, outflowCurrent, springEvent } from './b14_antea_common.js';
 import { caracolaEvents } from './b14_caracolas.js';
 import { bramalunaPatrolEvents } from './b14_bramaluna.js';
@@ -16,11 +16,11 @@ export const FERN_ROOMS = Object.freeze({
   4: Object.freeze({ sprout: F.sprout4, fern: F.fern4, R: ROOM4 }),
 });
 
+// Zygarde habla muy poco (autor, 25-09-2026): inscripciones y narración bastan para el puzle.
 export const SALA34_TEXT = Object.freeze({
   soil: 'Tierra húmeda y blanda al pie del risco. Aquí agarraría cualquier cosa que se plantara.',
   soilAsk: '¿Plantar el brote de helecho?',
   plant: 'Hundes las raíces del brote en la tierra húmeda y la aprietas con las manos.',
-  plantCore: 'Crecerá. Mucho. Durante más tiempo del que puedes imaginar.',
   planted: 'El brote que plantaste. Parece que ya ha echado raíz.',
   sprout: 'Entre los helechos gigantes asoma un brote joven, con su raíz entera.',
   sproutTake: 'Arrancas con cuidado el brote de helecho, con su raíz.',
@@ -28,17 +28,13 @@ export const SALA34_TEXT = Object.freeze({
   wall: 'Un muro alto y liso. No hay nada a lo que agarrarse.',
   rootAlive: 'Una raíz gruesa como un tronco trepa por el muro. Por ella se puede subir.',
   rootPetrified: 'Una raíz petrificada sube por el muro y se parte a media altura. En el eco estaba entera.',
-  rootCore: 'La raíz del helecho que plantaste. Ha tenido siglos para crecer.',
   lever: 'Una palanca de bronce con una inscripción: «ALIVIADERO». Abre o cierra el paso del mar hacia la Fosa.',
   leverAsk: '¿Bajar la palanca?',
   leverDone: 'La palanca baja con un chasquido. Abajo, el rumor del agua que corría hacia la Fosa se apaga.',
-  leverCore: 'El mar ya no entra en la Fosa. En el presente, su boca quedará en calma.',
   leverClosed: 'La palanca está bajada. El aliviadero, cerrado.',
   fosaCurrent: 'De la boca de la Fosa sale una corriente que te arrastra hacia atrás.',
-  fosaCore: 'El mar entra y sale de la Fosa por algún conducto. En el eco del templo lo controlaban.',
   fosaGate: 'La Puerta de la Fosa: bronce macizo, sellado con plomo. En esta época nadie baja ahí.',
   pit: 'Una sima inundada, oscura y fría. Del fondo sube un rumor, como una respiración.',
-  pitCore: 'Ahí abajo está su nido. Y el núcleo. Lo siento.',
 });
 
 // ───────────────────────────── helecho y raíz ─────────────────────────────
@@ -60,7 +56,6 @@ function soilEvent(room) {
           ctx.setFlag(fern);
           ctx.setFlag(sprout, false);
           ctx.requestRefresh();
-          await zygardeSays(ctx, SALA34_TEXT.plantCore);
         },
       },
       {
@@ -113,7 +108,7 @@ function rootEvents(room) {
       id: `raiz_aviso_s${room}`, x: r.from.x, y: r.from.y,
       pages: [{
         when: (st) => grown(st) && !st.flag(`b14_raiz_vista_${room}`), through: true, trigger: 'touch', lock: false,
-        script: async (ctx) => { ctx.setFlag(`b14_raiz_vista_${room}`); await ctx.say(SALA34_TEXT.rootAlive); await zygardeSays(ctx, SALA34_TEXT.rootCore); },
+        script: async (ctx) => { ctx.setFlag(`b14_raiz_vista_${room}`); await ctx.say(SALA34_TEXT.rootAlive); },
       }],
     },
   ];
@@ -199,7 +194,6 @@ function leverEvent() {
           ctx.setFlag(F.spillway);
           ctx.requestRefresh();
           await ctx.say(SALA34_TEXT.leverDone);
-          await zygardeSays(ctx, SALA34_TEXT.leverCore);
         },
       },
       { when: (s) => s.flag(F.spillway), sprite: OBJ.wheel, dir: 4, directionFix: true, walkAnime: false, solid: true, trigger: 'action', script: async (ctx) => { await ctx.say(SALA34_TEXT.leverClosed); } },
@@ -220,7 +214,7 @@ export function sala4Events(era) {
       petrifiedRoot(4),
       springEvent('manantial_s4', sp.x, sp.y, era),
       ...ROOM4.currents.map((c, i) => outflowCurrent(`corriente_fosa_${i}`, c.x, c.y, {
-        dir: 2, length: c.length, open: spillwayOpen, seenFlag: F.spillwaySeen, firstText: SALA34_TEXT.fosaCurrent, coreText: SALA34_TEXT.fosaCore,
+        dir: 2, length: c.length, open: spillwayOpen, seenFlag: F.spillwaySeen, firstText: SALA34_TEXT.fosaCurrent,
       })),
       { id: 'bolsa_boca_fosa', x: 17, y: 6, when: (s) => s.flag(F.spillway), type: 'diveVent', kind: 'bolsa' },
       cellEvent({ id: 'cell_ecos_3', x: ROOM4.cell.x, y: ROOM4.cell.y }),
@@ -254,7 +248,7 @@ export function sala4Events(era) {
     ...bramalunaPatrolEvents('antea_4_primigenia'),
     {
       id: 'sima_primigenia', x: 16, y: 8, solid: true, noOver: true, trigger: 'action',
-      script: async (ctx) => { await ctx.say(SALA34_TEXT.pit); await zygardeSays(ctx, SALA34_TEXT.pitCore); },
+      script: async (ctx) => { await ctx.say(SALA34_TEXT.pit); },
     },
     ...bigFernEvents('helecho_s4', [
       [24, 12, 2], [27, 12, 4], [28, 15, 6], [23, 14, 8], [3, 14, 2], [10, 13, 4], [21, 21, 6], [4, 20, 2],

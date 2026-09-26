@@ -82,7 +82,6 @@ async function columnScript(ctx) {
   await ctx.say('Una columna hueca en el centro del hexágono tallado.');
   await coreToColumn(ctx);
   await ctx.wait(10);
-  await core(ctx, '…');
   const ok = await ctx.story.restorePillar(1, { core: { ...NUCLEO.column }, showVerse: false, onRestored });
   if (!ok && !ctx.flag(F.nucleo)) {
     // restorePillar no vuelve a actuar si p1_restored ya estaba (p. ej. partida de prueba): la escena termina igual.

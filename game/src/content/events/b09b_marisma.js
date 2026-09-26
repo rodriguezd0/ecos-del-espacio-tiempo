@@ -6,7 +6,7 @@
 import { EncounterSystem } from '../../world/encounters.js';
 import { clerkEvent } from '../services/shop.js';
 import { cellEvent } from './b01_cells.js';
-import { F, SPEAKER, SPRITE, lines, zygardeSays, blockedLink, blockers, examine, MUSIC } from './b09b_common.js';
+import { F, SPEAKER, SPRITE, lines, blockedLink, blockers, examine, MUSIC } from './b09b_common.js';
 import { t08Events, t08FinaleScene } from './b09b_t08.js';
 import {
   W, H, terrainGrid, SPOTS, ITEMS, SIGNS, CELLS, HOUSES, EXITS, STILTS,
@@ -18,7 +18,6 @@ const healed = (s) => Boolean(s) && s.flag(F.healed);
 
 export const MARISMA_TEXT = Object.freeze({
   arrival: 'Un golpeteo sordo llega desde la marisma, una y otra vez. Huele a hierro y a agua parada.',
-  zygardeArrival: 'El agua de aquí está enferma.',
   signLumina: 'RUTA 8 · MARISMA TURBIA\n← Palafitos · Aldea Mnemos   → Ciudad Lúmina',
   signMnemos: 'RUTA 8 · MARISMA TURBIA\n↑ Aldea Mnemos   ↓ Palafitos · Ciudad Lúmina',
   signPalafitos: 'LOS PALAFITOS\nCasa de Doña Remedios, curandera. Puesto de hierbas.',
@@ -39,7 +38,6 @@ async function arrivalScene(ctx) {
   ctx.se('Anim/Earth1', { volume: 55 });
   await ctx.say(MARISMA_TEXT.arrival);
   await ctx.camera.reset(40);
-  await zygardeSays(ctx, MARISMA_TEXT.zygardeArrival);
 }
 
 function arrivalEvents() {

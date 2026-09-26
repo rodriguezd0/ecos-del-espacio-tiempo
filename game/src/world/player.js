@@ -48,7 +48,8 @@ export class Player extends Character {
         this.characterName = cs.surf || cs.walk;
         break;
       case 'running':
-        if (!this.moveRouteForcing) this.setMoveSpeed(this.world?.runSpeed?.() || RUN_SPEED);
+        // world.devRunBoost (modo desarrollador, «carrera ×2»): +1 de velocidad = el doble de rápido.
+        if (!this.moveRouteForcing) this.setMoveSpeed((this.world?.runSpeed?.() || RUN_SPEED) + (this.world?.devRunBoost || 0));
         this.characterName = cs.run || cs.walk;
         break;
       case 'ice':

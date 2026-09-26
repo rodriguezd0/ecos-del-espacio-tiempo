@@ -81,7 +81,6 @@ async function lagos(d) {
   await d.walkTo(ARRIVAL.x, ARRIVAL.y - 3, { stopWhen: (s) => has(s, F.arrival) });
   await d.settle();
   await d.expectSaid(/Tres lagos quietos bajo la nieve/, 'la llegada');
-  await d.expectSaid(/El octavo\. Tres voces lo guardan/, 'al Core');
   await d.milestone('llegada', (s) => need(has(s, F.arrival), 'sin llegada'));
   await d.faceEvent('marta');
   await d.interact();
@@ -358,7 +357,7 @@ async function telar(d) {
   const st = await d.eval(() => ({ chain: window.__b16.items('REDCHAIN'), threads: ['KNOWLEDGETHREAD', 'EMOTIONTHREAD', 'WILLTHREAD'].map((i) => window.__b16.items(i)), fragments: window.__b16.fragments(), crisis: window.__b16.vars().crisis_phase }));
   await d.milestone('p8_restaurado', (s) => need(has(s, F.restored) && has(s, 'verse_8') && st.chain === 1 && st.threads.every((n) => n === 0) && st.fragments.includes('F08') && st.crisis === 2 && Number(s.vars[V.weaves]) === 3,
     `P8 ${has(s, F.restored)}, ${JSON.stringify(st)}, hebras tejidas ${s.vars[V.weaves]}`));
-  await d.expectSaid(/Afuera\. Algo se está rompiendo/, 'el aviso del Core');
+  await d.expectSaid(/Desde fuera del santuario llega un crujido largo/, 'el crujido de fuera');
   const ex = TELAR.entry.exits[1];
   await d.leave(ex.x, ex.y, 'down', inRoom(PATIO.room), 'bajar al patio');
 }
@@ -373,7 +372,7 @@ async function hito(d) {
       { re: /El cielo se abre/, name: 'cielo_roto', delay: 400 },
       { re: /El tramo de la orilla se hunde/, name: 'puente_hundido', delay: 150 },
       { re: /Forma Completa/, name: 'forma_completa', delay: 150 },
-      { re: /El otro hueco es tuyo/, name: 'hueco_a_alzado', delay: 150 },
+      { re: /Junto a la orilla queda otro hueco/, name: 'hueco_a_alzado', delay: 150 },
     ],
   });
   const z = await zyg(d);
@@ -382,7 +381,7 @@ async function hito(d) {
     `zygarde ${JSON.stringify(z)}, hierve ${boiling}, crisis ${s.vars.crisis_phase}`));
   const B = BRIDGE.sockets.B[0];
   await d.walkTo(B.x, B.y - 1, { face: 'down' });
-  await d.interact({ watch: [{ re: /Ese hueco es tuyo/, name: 'tutorial_reconstruccion', delay: 150 }, { re: /Aquí Leandro, en Caudal/, name: 'radio', delay: 150 }] });
+  await d.interact({ watch: [{ re: /zócalo con hexágonos gastados/, name: 'tutorial_reconstruccion', delay: 150 }, { re: /Aquí Leandro, en Caudal/, name: 'radio', delay: 150 }] });
   await d.expectSaid(/¡Me reconoce otra vez!/, 'a Marta y su Snorunt');
   await d.expectSaid(/Abril, desde la Meseta/, 'la radio de Abril');
   await d.expectSaid(/Fermín\. Apuntalo la mina/, 'la radio de Fermín');
@@ -422,11 +421,11 @@ async function variante(d) {
   await d.walkTo(CELL_LAGOS.x, CELL_LAGOS.y);
   await d.settle();
   await d.expectSaid(/elijo estarlo/, 'la Forma Completa (versión corta)');
-  await d.expectSaid(/El puente\. Ahora puedo alzarlo/, 'el aviso del puente');
+  await d.expectSaid(/Los zócalos del puente roto siguen en su sitio/, 'el aviso del puente (narración)');
   await landOnSpit(d);
   const b1 = BRIDGE.sockets.B[1];
   await d.walkTo(b1.x, b1.y + 1, { face: 'up' });
-  await d.interact({ watch: [{ re: /Ese hueco es tuyo/, name: 'variante_tutorial', delay: 150 }] });
+  await d.interact({ watch: [{ re: /zócalo con hexágonos gastados/, name: 'variante_tutorial', delay: 150 }] });
   const a1 = BRIDGE.sockets.A[1];
   await d.walkTo(a1.x, a1.y + 1, { face: 'up' });
   await d.interact();

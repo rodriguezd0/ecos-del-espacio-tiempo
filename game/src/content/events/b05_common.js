@@ -12,7 +12,6 @@ export const F = Object.freeze({
   // Salida del bloque (CAMPANA B05)
   brontia: 'b05_brontia',
   // Ruta 4
-  r4Tutorial: 'b05_r4_roca_vista', // el Core ha comentado la roca agrietada
   // Villa Brontia
   millDoor: 'b05_molino_puerta', // puerta atascada del molino abierta con Embestida (C027)
   // T02 «El Molino del Diezmo»

@@ -54,6 +54,9 @@ export const HITO_TEXT = Object.freeze({
   boiling: 'El agua hierve. Por ahí no se puede nadar.',
   flyHint: 'Elige «Volar» en la pantalla de Zygarde (menú de pausa) para ir a un lugar que ya conozcas.',
   steam: 'El vapor se disipa poco a poco. El cielo, no.',
+  // Zygarde habla muy poco (autor, 25-09-2026): lo que antes indicaba él es narración neutra.
+  otherGap: 'Junto a la orilla queda otro hueco en el puente. Al borde, un zócalo con hexágonos gastados.',
+  sockets: 'Los zócalos del puente roto siguen en su sitio, con sus hexágonos gastados.',
 });
 
 // ─────────────────────────────── Vecinos en el puente ───────────────────────────────
@@ -95,19 +98,14 @@ async function villagersCross(ctx) {
 
 // ─────────────────────────────── Zócalos y tramo hundido ───────────────────────────────
 
-const TUTORIAL = Object.freeze([
-  'Ese hueco es tuyo. Donde queda un zócalo con hexágonos gastados, puedo alzar el camino que hubo.',
-  'Ponte delante del zócalo y pídemelo. Las piedras se quedarán.',
-]);
-
 function socketEvents() {
   const S = BRIDGE.sockets;
   return [
     ...S.A.map((p, i) => ({
-      id: `zocalo_a_${i}`, type: 'rebuildGap', x: p.x, y: p.y, flag: F.bridgeA, tiles: gapTiles('A'), tutorial: TUTORIAL,
+      id: `zocalo_a_${i}`, type: 'rebuildGap', x: p.x, y: p.y, flag: F.bridgeA, tiles: gapTiles('A'), tutorial: true,
     })),
     ...S.B.map((p, i) => ({
-      id: `zocalo_b_${i}`, type: 'rebuildGap', x: p.x, y: p.y, flag: F.bridgeB, tiles: gapTiles('B'), tutorial: TUTORIAL,
+      id: `zocalo_b_${i}`, type: 'rebuildGap', x: p.x, y: p.y, flag: F.bridgeB, tiles: gapTiles('B'), tutorial: true,
       when: (s) => s.flag(F.bridgeBroken),
       onRebuilt: async (ctx) => { if (!ctx.flag(F.milestone)) await finishMilestone(ctx, { partial: false }); },
     })),
@@ -186,12 +184,11 @@ async function completeForm(ctx) {
   await ctx.say(HITO_TEXT.holds);
   await ctx.say('¡No se hunde! ¡Algo lo está sujetando!', { speaker: SPEAKER.kid });
   // Demostración: el hueco del islote (A) se alza solo.
-  await zygardeSays(ctx, 'Mira.');
   await ctx.camera.pan(BRIDGE.cx, BRIDGE.gapA.y0, 30);
   const { rebuildStones } = await import('../../world/zygarde/actions.js');
   await rebuildStones(ctx, gapTiles('A'));
   ctx.setFlag(F.bridgeA);
-  await zygardeSays(ctx, 'El otro hueco es tuyo. Acércate al zócalo y pídemelo. Yo sostengo el resto.');
+  await ctx.say(HITO_TEXT.otherGap);
   net?.remove?.(60);
   for (let f = 20; f >= 0; f--) { if (giant) giant.opacity = Math.round((255 * f) / 20); await pause(ctx, 1); }
   if (giant) ctx.world.removeEvent?.(giant);
@@ -258,11 +255,8 @@ async function finishMilestone(ctx, { partial }) {
   ctx.setFlag(F.milestone);
   ctx.bgm(MUSIC.lakes, { fadeOutPrevious: 30 });
   if (!partial && ctx.state.zygardeAbility('fly')) {
-    await zygardeSays(ctx, 'Ahora puedo llevarte a donde ya hayas estado. Solo tienes que llamarme.');
     await ctx.say(HITO_TEXT.flyHint);
     ctx.setFlag(F.flyHint);
-  } else {
-    await zygardeSays(ctx, 'Cuando esté entero, alzaré este puente. Te lo prometo.');
   }
 }
 
@@ -287,10 +281,10 @@ export async function milestoneScene(ctx) {
   await finishMilestone(ctx, { partial: true });
 }
 
-/** Aviso de Zygarde al volver con la Forma Completa si el puente sigue roto (variante sin células). */
+/** Aviso (narración) al volver con la Forma Completa si el puente sigue roto (variante sin células). */
 async function bridgeReminder(ctx) {
   ctx.setFlag('b16_puente_aviso');
-  await zygardeSays(ctx, 'El puente. Ahora puedo alzarlo.');
+  await ctx.say(HITO_TEXT.sockets);
 }
 
 export function hitoEvents() {

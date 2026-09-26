@@ -3,8 +3,7 @@
 // Nadar. La segunda pista (su nieta Lucía) y la pista del P7 las da en B13/B14. Tileset 4 (Interior1).
 import { exitWarps, exitArrowEvents } from '../../services/interior.js';
 import { BUILDINGS, INTERIOR_ENTRIES } from './caleta_layout.js';
-import { F, SPEAKER, SPRITE, lines, zygardeSays, examine } from '../../events/b09b_common.js';
-import { ZYGARDE_LINES } from '../../story/clues.js';
+import { F, SPEAKER, SPRITE, lines, examine } from '../../events/b09b_common.js';
 import { ramonB13, lighthouseEvents } from '../../events/b13_caleta.js';
 
 const E = INTERIOR_ENTRIES.caleta_faro;
@@ -26,9 +25,8 @@ async function ramonTalk(ctx) {
   if (await ramonB13(ctx)) return; // B13: segunda pista de T11 con Nadar, la fiesta y después (events/b13_caleta.js)
   if (ctx.flag(F.t11)) { await lines(ctx, SPEAKER.ramon, RAMON_TEXT.after); return; }
   await lines(ctx, SPEAKER.ramon, RAMON_TEXT.intro);
-  const status = await ctx.story.openClue('T11');
-  ctx.setFlag(F.t11);
-  if (status === 'queued' && !ctx.state.zygardeAbility('swim')) await zygardeSays(ctx, ZYGARDE_LINES.swim);
+  await ctx.story.openClue('T11');
+  ctx.setFlag(F.t11); // Zygarde habla muy poco (autor, 25-09-2026). Sin anunciar Nadar.
 }
 
 export default {

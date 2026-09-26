@@ -5,7 +5,7 @@
 //     la noche; por la radio de los Guardianes, cada uno desde su Pilar; Olmedo cuenta lo del Consorcio; Alerce: «Van a
 //     intentarlo por la fuerza.». La Policía Regional abrirá al jugador el paso al Puente (Senda del Mirador).
 // Módulo puro salvo los guiones.
-import { F, SPEAKER, SPRITE, MUSIC, vigilReady, lines, zygardeSays, eventById, pause } from './b17_common.js';
+import { F, SPEAKER, SPRITE, MUSIC, vigilReady, lines, eventById, pause } from './b17_common.js';
 import { minutesUntil } from '../../world/rest.js';
 
 /** Grupo de la Vigilia en el Paseo del Albo, delante de la Casa de las Esclusas (content/maps/b03/caudal_layout.js). */
@@ -45,12 +45,12 @@ export const VIGIL_TEXT = Object.freeze({
   key: 'Van a intentarlo por la fuerza.',
   leandroAsk: '¿Intentar qué?',
   alerceAnswer: [
-    'Tienen una cadena copiada y un anillo que la hace sonar. Si el Pilar no les responde, harán que responda.',
+    'Tienen una cadena copiada y un anillo que la hace sonar. Si el noveno Pilar, el del Puente, no les responde, harán que responda.',
     'O lo que haya dentro del Pilar.',
   ],
   olmedoPlan: 'Mis agentes te dejarán pasar al Puente, en la Senda del Mirador. Yo subiré con ellos en cuanto amanezca.',
   alercePlan: 'Estaré en el borde norte. Si tus Pokémon lo necesitan, allí me tendrás.',
-  zygarde: 'El noveno Pilar está en ese puente. Lo siento despierto. Y asustado.',
+  // Zygarde habla muy poco (autor, 25-09-2026): dónde está el noveno Pilar lo dice Alerce.
   leandroAfter: ['Vete. Las compuertas son cosa mía.', 'Y vuelve. Aquí te esperamos todos.'],
   leandroLater: ['El Albo ha vuelto a su cauce. Esta vez sin que yo haga nada.'],
 });
@@ -123,7 +123,6 @@ export async function vigilScene(ctx) {
   await lines(ctx, SPEAKER.alerce, VIGIL_TEXT.alerceAnswer);
   await ctx.say(VIGIL_TEXT.olmedoPlan, { speaker: SPEAKER.olmedo });
   await ctx.say(VIGIL_TEXT.alercePlan, { speaker: SPEAKER.alerce });
-  await zygardeSays(ctx, VIGIL_TEXT.zygarde);
   ctx.setFlag(F.vigil);
   if (!ctx.flag(F.alerceCall)) ctx.setFlag(F.alerceCall);
   // Olmedo y Alerce se van hacia el sur (la Senda); Leandro se queda en la esclusa.

@@ -7,7 +7,6 @@ import { SLOPES, CELL_SPOTS, FLOOD, EAST_EXIT, rect } from '../maps/b04/ruta_3_l
 import { PENDING_LINKS, linkIfReady, mapRegistered } from '../maps/b04/pending_links.js';
 import { floodEvent, riverFishingEvent } from './b04_flood.js';
 import { thanksEvents } from './b04_caudal.js';
-import { coreCellReaction } from '../companion.js';
 import { F } from './b04_common.js';
 
 const GREEN = [185, 255, 102];
@@ -47,7 +46,6 @@ const TEXT = Object.freeze({
 
 async function afterCell(ctx) {
   await ctx.flash(GREEN, 12, 90);
-  await coreCellReaction(ctx);
 }
 
 function cellEvents() {

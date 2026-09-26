@@ -14,17 +14,16 @@ import { FLUTE_ITEM } from '../story/fragments.js';
 
 export const NUCLEO_TEXT = Object.freeze({
   enter: ['Una sala dorada, en silencio. En el suelo, un gran sello hexagonal late despacio, como un corazón dormido.'],
-  enterCore: 'Aquí. El último.',
   core: 'El sello del suelo late despacio.',
   coreCold: 'El sello del suelo guarda un calor tranquilo.',
   rise: 'Los Fragmentos Azur salen solos de tu Mochila y se elevan sobre el sello. Zygarde resuena, y ellos le responden…',
   join: '…giran cada vez más deprisa, se acercan… y se unen en una sola pieza.',
-  noArtisan: 'Nadie los ha forjado. Se han reconocido.',
   prophecyIntro: 'Con la Flauta en la mano, los diez versos se leen de corrido, como una sola frase:',
   calm: [
     'Arriba, muy lejos, algo se cierra: las grietas del cielo, una tras otra.',
     'Pero la luna no se encoge. Y el cielo zumba, como una cuerda demasiado tensa.',
   ],
+  // Canónica (CAMPANA B20, falsa calma): la única línea de Zygarde en el núcleo (autor, 25-09-2026).
   calmCore: 'El Eje está entero. Pero quien lo sostiene duerme.',
   node: 'El sello del suelo late con una luz verde y dorada. Zygarde lo mira en silencio.',
 });
@@ -87,13 +86,11 @@ async function onRestored(ctx) {
   await fragmentsRise(ctx);
   ctx.bgm(MUSIC.flute, { fadeOutPrevious: 20 });
   await ctx.story.forgeAzureFlute();
-  await zygardeSays(ctx, NUCLEO_TEXT.noArtisan);
   await readProphecy(ctx);
   await falseCalm(ctx);
 }
 
 async function coreScene(ctx) {
-  await zygardeSays(ctx, NUCLEO_TEXT.enterCore);
   const C = NUCLEO.core;
   const ok = await ctx.story.restorePillar(10, { core: { x: C.x, y: C.y }, onRestored, showVerse: false, bgmAfter: null });
   if (!ok) return;

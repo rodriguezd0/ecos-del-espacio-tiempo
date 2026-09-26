@@ -3,7 +3,7 @@
 // llega a nada: la cámara rechaza las perforadoras porque el peso crece». Combate (Gurdurr 31, Rhyhorn 31,
 // Houndoom 32; reintento sin pérdida). Después Fermín cuenta que al Pilar se entra por el Cerro Plomo, cruzando las
 // Dunas, y va a esperar a la verja de la familia. Montacargas a la galería honda: abierto tras el P4.
-import { F, SPEAKER, SPRITE, OBJ, MUSIC, lines, zygardeSays, examine, findEvent } from './b08_common.js';
+import { F, SPEAKER, SPRITE, OBJ, MUSIC, lines, examine, findEvent } from './b08_common.js';
 import { b08CellEvents } from './b08_cells.js';
 import { bossBattle } from '../common/bossBattle.js';
 import { MINA, HONDA } from '../maps/b08/layout.js';
@@ -147,7 +147,6 @@ async function ferminConfronts(ctx) {
     ctx.erase(who);
   }
   ctx.setFlag(F.ferminCerro);
-  await zygardeSays(ctx, 'Arriba. El Pilar está arriba, bajo ese cerro.');
 }
 
 function shaftEvents() {
@@ -232,9 +231,7 @@ function minerEvents() {
 
 export async function minaOnEnter(ctx) {
   if (ctx.flag(F.mineSeen)) return;
-  ctx.setFlag(F.mineSeen);
-  await ctx.wait(8);
-  await zygardeSays(ctx, 'La roca de aquí abajo pesa distinto. Como si algo tirase de ella hacia el centro.');
+  ctx.setFlag(F.mineSeen); // Zygarde habla muy poco (autor, 25-09-2026): sin comentario del Core al llegar.
 }
 
 export function minaEvents() {

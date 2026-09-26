@@ -288,7 +288,7 @@ async function zaguan(d) {
   await d.milestone('t01_campanario', (s) => (s.flags.b03_t01_vista ? null : 'sin b03_t01_vista'));
   // Excavación bajo el banco de piedra
   const bench = await d.eval(() => window.__e2e.eventPos('t01_banco_1'));
-  const dig = [{ re: /Algo late bajo la piedra/, name: 't01_latido' }, { re: /tabla de piedra verdosa/, name: 't01_excavacion', delay: 300 }];
+  const dig = [{ re: /Apartar el banco de piedra/, name: 't01_banco' },{ re: /tabla de piedra verdosa/, name: 't01_excavacion', delay: 300 }];
   await d.useFrom(bench.x, bench.y, bench.x, bench.y + 1, { watch: dig });
   await d.expectSaid(/Tabla Pradal/, 'la Tabla Pradal');
   await d.milestone('t01_tabla_pradal', async (s) => {

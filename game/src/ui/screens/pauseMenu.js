@@ -10,6 +10,7 @@ import { preloadDialogGfx } from '../message/messageScenes.js';
 import { playSE, SE, sfx } from '../core/sound.js';
 import { formatClock, formatMoney } from '../logic/format.js';
 import { ui } from '../api.js';
+import { DEV_MODE, DEV_KEY_LABEL } from '../../dev/devConfig.js';
 
 const PIC = (n) => anil(`Graphics/Pictures/DP Pause Menu/${n}.png`);
 const PANEL_W = 200;
@@ -28,7 +29,7 @@ function icons(key, female) {
   const map = {
     pokedex: ['pokedexA', 'pokedexB'], party: ['pokemonA', 'pokemonB'], bag: ['bagA', `bagB${g}`],
     zygarde: ['radar', 'radar'], card: ['playercardA', 'playercardB'], save: ['saveA', `saveB${g}`],
-    options: ['optionsA', 'optionsB'], online: ['controlesA', 'controlesB'], exit: ['exitA', 'exitB'],
+    options: ['optionsA', 'optionsB'], online: ['controlesA', 'controlesB'], dev: ['vial', 'vial'], exit: ['exitA', 'exitB'],
   };
   return map[key];
 }
@@ -48,6 +49,7 @@ export function pauseEntries(state) {
   list.push({ key: 'save', label: 'Guardar' });
   list.push({ key: 'options', label: 'Opciones' });
   list.push({ key: 'online', label: 'Online' });
+  if (DEV_MODE) list.push({ key: 'dev', label: 'Desarrollador' }); // modo desarrollador (docs/MODO_DESARROLLADOR.md)
   list.push({ key: 'exit', label: 'Salir' });
   return list;
 }
@@ -56,7 +58,7 @@ class PauseMenuScene extends UIScene {
   async enter() {
     this.female = engine.state?.player?.gender === 'F';
     const names = ['bgTop', 'bgMid', 'bgBtm', 'selector'];
-    for (const k of ['pokedex', 'party', 'bag', 'zygarde', 'card', 'save', 'options', 'online', 'exit']) names.push(...icons(k, this.female));
+    for (const k of ['pokedex', 'party', 'bag', 'zygarde', 'card', 'save', 'options', 'online', 'dev', 'exit']) names.push(...icons(k, this.female));
     await Promise.all([preload(names.map(PIC)), preloadDialogGfx()]);
     this.entries = pauseEntries(engine.state);
     this.index = Math.min(lastIndex, this.entries.length - 1);
@@ -110,6 +112,8 @@ class PauseMenuScene extends UIScene {
       case 'save': await ui.openSave(); return null;
       case 'options': await ui.openOptions(); return null;
       case 'online': return (await import('../../net/onlineMenu.js')).runOnlineMenu(engine.state);
+      // Modo desarrollador: devuelve { type: 'dev', run } (teletransporte, saltos de bloque) que el mapa ejecuta.
+      case 'dev': return (await import('../../dev/devPages.js')).runDevMenu();
       default: return null;
     }
   }
@@ -147,6 +151,7 @@ class PauseMenuScene extends UIScene {
     const clock = formatClock(s.data.clock?.minutes ?? 0);
     drawText(g, `${clock}  ${s.isDay() ? 'Día' : 'Noche'}`, 4 + b.left + 2, 4 + b.top - 2, { color: base, shadow });
     drawText(g, formatMoney(s.player.money), 4 + w - b.right - 2, 4 + b.top + 30, { color: base, shadow, align: 'right' });
+    if (DEV_MODE) drawText(g, `${DEV_KEY_LABEL}: modo desarrollador`, 8, 4 + h + 4, { font: 'small', color: TEXT, shadow: TEXT_SHADOW });
   }
 }
 

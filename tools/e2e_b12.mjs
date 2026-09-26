@@ -1,8 +1,8 @@
 // Recorrido E2E del Bloque 12 — Pilar Invertido (P6) (docs/CAMPANA.md B12) en navegador real (Chrome headless +
 // playwright-core), con teclas reales. Estado de entrada por URL (ARCHITECTURE §9): B11 terminado (Gael B4, EXP-03),
 // P1–P5 (F01–F05), Correr, Embestida, Terreno y Trepar, 49 células, N1+N2, equipo alto y sin encuentros aleatorios.
-//   alba      Villa Alba de noche antes del P6: vuelven los temblores (Zygarde lo nota)
-//   monte     llegada de día (Zygarde reconoce la piedra) · pozos de sondeo · C050 · repisa (Trepar) y gruta · C051 ·
+//   alba      Villa Alba de noche antes del P6: vuelven los temblores
+//   monte     llegada de día · pozos de sondeo · C050 · repisa (Trepar) y gruta · C051 ·
 //             sensores de Genesis · el aljibe responde y se baja al Mundo Distorsión (media vuelta de pantalla)
 //   cara      Ancla de la explanada interior · La Cara Vuelta: Ancla, caída al vacío (sin daño, vuelta al poste), tres
 //             salas resueltas con el giro de 90° (controles de pantalla) · C052 en la repisa girada · objetos
@@ -92,18 +92,6 @@ const atAnchor = (s) => {
 
 // ───────────────────────────── utilidades de tramo ─────────────────────────────
 
-/** Espera a que se diga `re` (atendiendo mensajes mientras tanto). */
-async function waitSaid(d, re, { timeout = 60000, what = String(re), watch = [] } = {}) {
-  const end = Date.now() + timeout;
-  while (Date.now() < end) {
-    if ((await d.log()).some((l) => re.test(l.text))) return d.settle({ watch });
-    const s = await d.snapState();
-    if (s.busy || s.top !== 'MapScene') await d.settle({ watch });
-    else await d.wait(400);
-  }
-  throw new Error(`Tiempo agotado esperando que se diga ${what}`);
-}
-
 /** Pasos de La Cara Vuelta hacia `goal` hasta que done(s) o el planificador diga «ya está». */
 async function facetRun(d, goal, done, watch = []) {
   for (let n = 0; n < 300; n++) {
@@ -186,13 +174,12 @@ async function dropIntoVoid(d, from = null) {
 
 async function alba(d) {
   await d.milestone('alba_noche', (s) => (s.map === 'villa_alba' ? null : `mapa ${s.map}`));
-  await waitSaid(d, /Tiembla otra vez\. Viene del Monte/, { timeout: 90000, what: 'el temblor nocturno', watch: [{ re: /Tiembla otra vez/, name: 'alba_temblor', delay: 100 }] });
+  await d.until((s) => has(s, 'b12_temblor_visto'), { timeout: 90000, what: 'el temblor nocturno' });
   await d.milestone('alba_temblores', (s) => (has(s, 'b12_temblor_visto') ? null : 'sin b12_temblor_visto'));
 }
 
 async function monte(d) {
-  await d.settle({ watch: [{ re: /piedra donde me rompí/, name: 'monte_llegada', delay: 100 }] });
-  await d.expectSaid(/Esta es la piedra donde me rompí\./, 'la llegada al Monte');
+  await d.settle();
   await d.milestone('monte_de_dia', (s) => (has(s, 'b12_monte_llegada') ? null : 'sin llegada'));
   // Pozos de sondeo de Genesis (tras EXP-03).
   const [hx, hy] = MONTE.drillHoles[1];
@@ -228,18 +215,17 @@ async function monte(d) {
   await d.milestone('c051', (s) => cellsHas(s, 'cell_monte_2'));
   await d.approach(MONTE.sensor.x, MONTE.sensor.y);
   await d.interact();
-  await d.expectSaid(/Midieron desde fuera/, 'los sensores de Genesis');
+  await d.expectSaid(/Lectura desde el perímetro/, 'los sensores de Genesis');
   // El aljibe responde a Zygarde: se baja al Mundo Distorsión.
   await d.walkTo(MONTE.aljibeFront.x, MONTE.aljibeFront.y, { face: 'up' });
   const watch = [
-    { re: /Me reconoce/, name: 'aljibe_responde', delay: 150 },
+    { re: /sujetando la puerta/, name: 'aljibe_responde', delay: 150 },
     { fn: (s) => Math.abs(s.rot) > 1.2, name: 'aljibe_media_vuelta' },
-    { re: /Estamos dentro/, name: 'mundo_distorsion', delay: 150 },
   ];
   await d.interact({ watch });
   await d.arrive('pilar_invertido', 'bajar por el aljibe');
-  await d.expectSaid(/Me reconoce\./, 'la respuesta del aljibe');
-  await d.expectSaid(/Aquí arriba es abajo/, 'la llegada al Mundo Distorsión');
+  await d.expectSaid(/Al otro lado está la parte de mí que se quedó sujetando la puerta\./, 'la respuesta del aljibe');
+  await d.settle();
   const pano = await d.eval(() => window.__b12.panorama());
   await d.milestone('explanada_interior', (s) => (s.rot === 0 && pano && has(s, 'b12_interior_visto') ? null : `giro ${s.rot}, panorama ${pano}`));
 }
@@ -250,7 +236,6 @@ async function cara(d) {
   await d.milestone('ancla_explanada', (s) => (String(s.anchor).startsWith('pilar_invertido|') ? null : `Ancla ${s.anchor}`));
   await d.walkTo(VESTIBULO.portalCara.x, VESTIBULO.portalCara.y, { stopWhen: (s) => s.map !== 'pilar_invertido' });
   await d.arrive(facetMapId('cara_1', 0), 'entrar en La Cara Vuelta');
-  await d.expectSaid(/Aquí la piedra tiene dos caras\./, 'la entrada a la primera sala');
   // Ancla de la sala y caída al vacío: vuelve al poste, sin daño.
   const room = facetRoom('cara_1');
   const m0 = facetMasks(room, 0, MARGIN);
@@ -283,7 +268,6 @@ async function cara(d) {
 
 async function mirada(d) {
   await d.settle();
-  await d.expectSaid(/Aquí los caminos solo están mientras los miras\./, 'la llegada a La Mirada');
   const anchor = MIRADA.anchors[0];
   await gazeRun(d, anchor.x, anchor.y, { adj: true });
   const s0 = await d.snapState();
@@ -312,7 +296,6 @@ async function mirada(d) {
 
 async function sumidero(d) {
   await d.settle();
-  await d.expectSaid(/Aquí el agua cae hacia arriba\./, 'la llegada al Sumidero');
   const [a0, a1] = SUMIDERO.anchors;
   const [W1, W2, W3] = SUMIDERO.falls;
   const [p1, p2, p3] = SUMIDERO.buttons;
@@ -358,11 +341,11 @@ async function sumidero(d) {
 
 async function nucleo(d) {
   await d.settle();
-  await d.expectSaid(/Tres postes\. Tócalos en el orden/, 'la llegada al núcleo');
+  await d.expectSaid(/En el orden en que se cruza este lugar/, 'la inscripción del núcleo');
   const [veta, ojo, gota] = NUCLEO.anchors;
   // Orden equivocado: el sello se abre más y se empieza de nuevo (sin castigo).
   await d.bump(ojo.x, ojo.y);
-  await d.expectSaid(/No\. Así se abre más\./, 'el aviso del orden equivocado');
+  await d.expectSaid(/El sello se abre un poco más/, 'el aviso del orden equivocado');
   const order0 = await d.eval(() => window.__b12.vars().b12_nucleo_orden ?? 0);
   if (order0 !== 0) throw new Error(`El orden no se reinició: ${order0}`);
   await d.bump(veta.x, veta.y);
@@ -373,7 +356,6 @@ async function nucleo(d) {
   });
   const watch = [
     { scene: 'VerseScene', name: 'verso_vi', delay: 1500 },
-    { re: /…Vuelve\./, name: 'n3_libre', delay: 200 },
   ];
   await d.bump(gota.x, gota.y, { watch });
   await d.expectSaid(/Arriba, muy lejos, el aljibe deja de gemir/, 'el efecto local del Pilar');
@@ -391,13 +373,12 @@ async function regreso(d) {
   await d.arrive('pilar_invertido', 'volver a la explanada interior');
   await d.settle({ watch: [{ re: /Aquí lo empujé/, name: 'respuesta', delay: 150 }] });
   await d.expectSaid(/Aquí lo empujé\. Tres noches\./, 'la Respuesta de Zygarde');
-  await d.expectSaid(/Tú has vuelto\./, 'la gratitud de Zygarde');
   await d.milestone('respuesta', (s) => (has(s, 'b12_respuesta') ? null : 'sin b12_respuesta'));
   // Aljibe de vuelta al Monte.
   await d.approach(VESTIBULO.aljibe.x, VESTIBULO.aljibe.y);
   await d.interact();
   await d.arrive('montana_portal', 'subir al Monte');
-  await d.expectSaid(/La puerta ya no necesita a nadie dentro/, 'el regreso al Monte');
+  await d.expectSaid(/la puerta se sostiene sola/, 'el regreso al Monte');
   await d.milestone('monte_tras_p6', (s) => (has(s, 'b12_regreso') ? null : 'sin b12_regreso'));
   // Puerta anclada: se puede volver a bajar (X16) y subir otra vez.
   await d.walkTo(MONTE.aljibeFront.x, MONTE.aljibeFront.y, { face: 'up' });
@@ -456,12 +437,11 @@ async function zaguan(d) {
   await d.eval(() => window.__b12.setHour(22));
   await d.eval(() => window.__b12.warp('villa_alba', 22, 30, 2));
   await d.arrive('villa_alba', 'volver a Villa Alba');
-  const before = (await d.log()).filter((l) => /Tiembla otra vez/.test(l.text)).length;
+  // El temblor ya no tiene línea de Zygarde (habla muy poco): basta con que el evento no esté activo.
   const alive = await d.eval(() => window.__b12.eventAlive('b12_temblor_nocturno'));
   await d.wait(15000);
   await d.settle();
-  const after = (await d.log()).filter((l) => /Tiembla otra vez/.test(l.text)).length;
-  await d.milestone('alba_sin_temblores', () => (!alive && after === before ? null : `temblor activo ${alive}, textos ${before}→${after}`));
+  await d.milestone('alba_sin_temblores', () => (!alive ? null : `temblor activo ${alive}`));
 }
 
 const STAGES = { alba, monte, cara, mirada, sumidero, nucleo, regreso, nadar, zaguan };

@@ -4,7 +4,7 @@
 // estela del Mirador y los objetos y entrenadores del mapa. Tras la Crónica XV, parte de los Peregrinos se quedan a
 // cuidar la Calzada (flag b19_cuidadores). Módulo puro salvo los guiones.
 import {
-  F, SPEAKER, SPRITE, OBJ, when, lines, zygardeSays, zygardeLines, byGender, pause, pilgrimsForcing,
+  F, SPEAKER, SPRITE, OBJ, when, lines, byGender, pause, pilgrimsForcing,
 } from './b19_common.js';
 import { CAMP, NPC, MIRADOR, ARRIVAL_STRIP, ITEMS, TRAINERS } from '../maps/b19/calzada_layout.js';
 import { openMart, shopStock } from '../services/shop.js';
@@ -51,15 +51,15 @@ export const CAMP_TEXT = Object.freeze({
       'Hace cantar a las piedras de la Calzada, y las piedras suben. Tramo a tramo, volvemos a cruzar.',
       'Cuando lleguemos a su taller, todo Axis sabrá lo que le hicieron.',
     ],
-    zygarde: 'Esa cosa tira de las piedras sin preguntarles. No aguantarán.',
     letPass: [
       'Si quieres ver la Peña con tus propios ojos, cruza. Pero pisa con cuidado: cada piedra aguanta lo justo.',
       '¡Tadeo! Deja pasar.',
     ],
+    // Regla del tramo: narración neutra (Zygarde habla muy poco, autor, 25-09-2026).
     tutorial: [
-      'Esas piedras no son la Calzada. Son su sombra: las sostiene ese trozo de metal, y cada una aguanta un solo paso.',
-      'La de verdad sigue ahí abajo, entera. Pero no encaja mientras las forzadas ocupen su sitio.',
-      'Písalas todas, una sola vez cada una, y acaba junto a la aguja. Entonces podré alzarla.',
+      'Las piedras forzadas no son la Calzada: las sostiene el trozo de metal, y cada una aguanta un solo paso.',
+      'Debajo se adivina la Calzada verdadera, entera. No encajará mientras las forzadas ocupen su sitio.',
+      'Pisadas todas, una sola vez cada una, y terminando junto a la aguja, dejarían sitio a la Calzada verdadera.',
     ],
     again: 'El Rey nos abre el camino. Lo noto en cada piedra que sube.',
     doubt: ['…Esa luz verde.', 'Las piedras que alzas tú no se caen. Las nuestras no aguantan ni un paso.'],
@@ -99,7 +99,6 @@ export const CAMP_TEXT = Object.freeze({
   },
   resonator: {
     on: 'Un trozo de metal oscuro, rajado, sobre un trípode de madera. Vibra con un zumbido que se nota en los dientes.',
-    onZygarde: 'Tira de las piedras igual que la máquina de Vértice tiraba del Puente.',
     off: 'El trozo del Resonador está apagado. Alguien le ha echado una manta encima.',
   },
   banner: 'Un estandarte de los Peregrinos del Rey: una corona dorada sobre fondo azul.',
@@ -111,7 +110,6 @@ export const CAMP_TEXT = Object.freeze({
   ],
   // Visita temprana (la Ruta 7 abre el Mirador desde el P4): sin la Clave Glífica (P5) no se lee.
   steleNoKey: 'Una estela antigua con letras Unown muy gastadas. No sabes leerlas.',
-  steleAfter: 'Lo decía desde el principio.',
   sign: 'MIRADOR DE LA CALZADA\nAl norte, la Peña del Rey. Nadie pisa las piedras sin permiso de la guía.',
 });
 
@@ -128,7 +126,6 @@ async function welcome(ctx) {
   // Descubrimiento directo (TABLILLAS §4.2): si la pista aún no estaba abierta, el arco empieza aquí.
   await ctx.story.openClue(ARC, { direct: true });
   await lines(ctx, SPEAKER.leocadia, back ? CAMP_TEXT.leocadia.welcomeBack : CAMP_TEXT.leocadia.welcome);
-  await zygardeSays(ctx, 'Al otro lado. Siento algo que tira de las piedras… y no es mío.');
 }
 
 function arrivalEvents() {
@@ -147,7 +144,6 @@ async function casandraIntro(ctx) {
   await lines(ctx, SPEAKER.casandra, CAMP_TEXT.casandra.intro);
   await ctx.story.openClue(ARC, { direct: true, silent: true });
   await ctx.story.advanceClue(ARC, 2);
-  await zygardeSays(ctx, CAMP_TEXT.casandra.zygarde);
   await lines(ctx, SPEAKER.casandra, CAMP_TEXT.casandra.letPass);
   await ctx.fade('out', 12);
   ctx.setFlag(F.intro);
@@ -156,7 +152,7 @@ async function casandraIntro(ctx) {
   await ctx.say(CAMP_TEXT.tadeo.moves, { speaker: SPEAKER.tadeo });
   if (!ctx.flag(F.spanTutorial)) {
     ctx.setFlag(F.spanTutorial);
-    await zygardeLines(ctx, CAMP_TEXT.casandra.tutorial);
+    for (const t of CAMP_TEXT.casandra.tutorial) await ctx.say(t);
   }
 }
 
@@ -170,7 +166,6 @@ async function resonatorLook(ctx) {
   if (ctx.flag(F.resonatorOff)) { await ctx.say(CAMP_TEXT.resonator.off); return; }
   ctx.se?.('PRSFX- Stealth Rocks', { volume: 40 });
   await ctx.say(CAMP_TEXT.resonator.on);
-  await zygardeSays(ctx, CAMP_TEXT.resonator.onZygarde);
 }
 
 function casandraCampEvents() {
@@ -272,7 +267,6 @@ function campEvents() {
         script: async (ctx) => {
           if (!ctx.state.hasItem?.('GLYPHKEY')) { await ctx.say(F_.steleNoKey); return; }
           for (const t of F_.stele) await ctx.say(t);
-          if (ctx.flag(F.tablet)) await zygardeSays(ctx, F_.steleAfter);
         },
       }],
     },

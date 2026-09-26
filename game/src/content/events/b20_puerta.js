@@ -5,7 +5,7 @@
 //     (nombra las Tablillas que faltan y la Libreta marca su zona) y nada se pierde: lo colocado queda colocado.
 //   · En el umbral, un zócalo: la Reconstrucción (Forma Completa) alza las quince piedras del camino proyectado.
 // La Flauta NO se exige (biblia §6.10).
-import { F, V, OBJ, GOLD, zygardeSays, zygardeLines, pause, examine, frame, when, lines } from './b20_common.js';
+import { F, V, OBJ, GOLD, zygardeLines, pause, examine, frame, when, lines } from './b20_common.js';
 import { nicheLit, nicheTablet, placeableNiches, doorRequirements, nichesLitCount, ALL_NICHES } from './b20_logic.js';
 import { steleEvents } from './b20_senda.js';
 import { PUERTA } from '../maps/b20/layout.js';
@@ -20,12 +20,10 @@ export const PUERTA_TEXT = Object.freeze({
     'El fondo de la Sima del Eje. No sopla el viento. El frío es seco, como dentro de una piedra.',
     'Al norte, un muro de roca cierra el paso. En su cara hay nichos tallados, uno junto a otro. En el centro, una losa.',
   ],
-  arrivalCore: 'Aquí abajo se guarda el último. Lo siento debajo de nosotros.',
   wall: 'Un muro de roca viva, tallado con nichos del tamaño de una Tablilla.',
   niche: (t) => `Un nicho vacío. En su repisa hay grabado un signo: el de la ${t.name}.`,
   nicheLit: (t) => `La ${t.name} encaja en su nicho y brilla. Su luz se tiende sobre el vacío.`,
   arceus: 'Tres nichos más, en el centro, sobre la losa. Están oscuros. Ninguna de tus Tablillas encaja en ellos.',
-  arceusCore: 'Esos no son para nosotros. Todavía.',
   slab: 'Una losa enorme cierra el paso. Tiene grabada una banda de hexágonos y un sello en el centro.',
   vibrate: 'Las Tablillas de tu Mochila vibran. La losa las reconoce.',
   place: 'Colocas cada Tablilla en su nicho. Una a una se encienden, y de cada nicho sale un haz que dibuja un trozo de camino en el vacío.',
@@ -34,10 +32,9 @@ export const PUERTA_TEXT = Object.freeze({
   missingNote: (n) => (n === 1 ? 'La Libreta anota dónde buscarla.' : 'La Libreta anota dónde buscarlas.'),
   missingFragments: 'La luz de los nichos tiembla y no llega a la losa. Le falta la resonancia de:',
   missingComplete: 'Más allá de la losa el camino tendrá que alzarse sobre el vacío.',
-  missingCompleteCore: 'Todavía no estoy entero para alzarlo.',
   open: 'Las quince luces se juntan en el sello de la losa… y la losa se hunde en el suelo, despacio.',
-  openCore: '«Para que solo quien las reuniera todas pudiera bajar.» Las reunimos.',
-  pathCore: 'El camino está ahí. Solo hay que alzar sus piedras.',
+  // Zygarde habla muy poco (autor, 25-09-2026): la losa abierta la describe la narración.
+  opened: 'La losa está hundida en el suelo. Más allá, la luz de los nichos dibuja un camino sobre el vacío.',
   rebuildAsk: '¿Quieres que Zygarde alce las piedras del camino?',
   rebuilt: 'Las quince piedras suben del vacío una tras otra, siguiendo la luz de los nichos.',
   stele: [
@@ -92,7 +89,6 @@ async function checkDoor(ctx) {
   await openDoor(ctx);
   if (!req.complete) {
     await ctx.say(PUERTA_TEXT.missingComplete);
-    await zygardeSays(ctx, PUERTA_TEXT.missingCompleteCore);
   }
   return true;
 }
@@ -112,14 +108,12 @@ async function openDoor(ctx) {
   ctx.requestRefresh();
   await ctx.camera?.pan?.(P.path[7][0], P.path[7][1], 40);
   await pause(ctx, 30);
-  await zygardeSays(ctx, PUERTA_TEXT.openCore);
-  await zygardeSays(ctx, PUERTA_TEXT.pathCore);
   await ctx.camera?.reset?.(30);
 }
 
 /** Guion de la losa y de los nichos: coloca las Tablillas que lleve el jugador y comprueba la puerta. */
 export async function doorScript(ctx) {
-  if (doorOpen(ctx.state)) { await ctx.say(PUERTA_TEXT.openCore); return; }
+  if (doorOpen(ctx.state)) { await ctx.say(PUERTA_TEXT.opened); return; }
   await ctx.say(PUERTA_TEXT.slab);
   const list = placeableNiches(ctx.state, mask(ctx.state));
   if (list.length) await placeTablets(ctx, list);
@@ -157,7 +151,6 @@ function slabEvents() {
     if (!ctx.flag('b20_puerta_centro')) {
       ctx.setFlag('b20_puerta_centro');
       await ctx.say(PUERTA_TEXT.arceus);
-      await zygardeSays(ctx, PUERTA_TEXT.arceusCore);
     }
     await doorScript(ctx);
   };
@@ -191,7 +184,6 @@ function pathEvents() {
       // Este camino nunca estuvo en pie: sin el genérico «ha vuelto a su sitio»
       askText: PUERTA_TEXT.rebuildAsk,
       doneText: PUERTA_TEXT.rebuilt,
-      onRebuilt: async (ctx) => { await zygardeSays(ctx, 'Ahora sí. Bajemos.'); },
     },
   ];
 }
@@ -200,7 +192,6 @@ async function arrivalScene(ctx) {
   ctx.setFlag(F.arrival);
   await pause(ctx, 20);
   for (const t of PUERTA_TEXT.arrival) await ctx.say(t);
-  await zygardeSays(ctx, PUERTA_TEXT.arrivalCore);
 }
 
 /**

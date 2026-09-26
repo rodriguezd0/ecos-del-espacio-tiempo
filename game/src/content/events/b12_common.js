@@ -1,6 +1,6 @@
 // Constantes y utilidades del Bloque 12 — Pilar Invertido (docs/CAMPANA.md B12). Módulo puro (se importa en Node
 // desde las definiciones de mapa): flags, variables, hablantes, gráficos, música y ayudas de guion.
-// Voz de Zygarde: sobria, breve y telepática (CAMPANA §3.2). En el P6 no hay Guardián ni combate de jefe.
+// Voz de Zygarde: sobria, breve y telepática (CAMPANA §3.2). Zygarde habla muy poco (autor, 25-09-2026). En el P6 no hay Guardián ni combate de jefe.
 import { getCharacter } from '../characters.js';
 
 /**
@@ -9,12 +9,12 @@ import { getCharacter } from '../characters.js';
  */
 export const F = Object.freeze({
   // Monte del Portal
-  monteLlegadaP6: 'b12_monte_llegada', // primera llegada a la explanada de día (Zygarde reconoce el lugar)
+  monteLlegadaP6: 'b12_monte_llegada', // primera llegada a la explanada de día
   aljibeResuena: 'b12_aljibe_abierto', // el aljibe responde a Zygarde por primera vez
   repisaCascada: 'b12_repisa_vista', // lo alto del macizo de la cascada
   // Mundo Distorsión
   interiorVisto: 'b12_interior_visto', // primera llegada a la explanada interior
-  primeraCaidaP6: 'b12_caida_vista', // primera caída al vacío (Zygarde explica lo justo)
+  primeraCaidaP6: 'b12_caida_vista', // primera caída al vacío (narración neutra)
   primeraAnclaP6: 'b12_ancla_vista', // primer poste tocado
   caraEntrada1: 'b12_cara_1_vista',
   caraEntrada2: 'b12_cara_2_vista',

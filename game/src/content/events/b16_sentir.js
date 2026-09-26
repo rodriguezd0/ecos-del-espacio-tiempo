@@ -4,7 +4,7 @@
 //     Fermín, el miedo de Fausto. La losa de eco devuelve el reflejo frente al jugador; los señuelos se deshacen.
 //   · El último espejo: el recuerdo de Gael (mapa santuario_alma_recuerdo, b16_recuerdo.js).
 //   · Cámara de Mesprit: «¿Qué le dirías?» (var b16_mesprit_respuesta, la usa B20) y la Hebra del Sentir.
-import { F, V, SPEAKER, SPRITE, OBJ, TRIO_COLORS, MESPRIT_ANSWERS, lines, zygardeSays, when, eventById } from './b16_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, TRIO_COLORS, MESPRIT_ANSWERS, lines, when, eventById } from './b16_common.js';
 import { MIRROR_ROOMS, MIRROR_DIR, MIRROR_X, ROOM_H, MIRROR_EMOTIONS, mirrorX } from './b16_mirror_logic.js';
 import { SENTIR, PATIO, floorTop, mirrorCell } from '../maps/b16/santuario_layout.js';
 import { RECUERDO_START, dismountForMemory } from './b16_recuerdo.js';
@@ -76,7 +76,6 @@ async function capture(ctx, m) {
   if (ghost) ctx.world.removeEvent?.(ghost);
   ctx.setFlag(FLAGS[n - 1]);
   await ctx.say(n < 3 ? 'Mesprit se escurre por el cristal hacia la sala siguiente. La puerta del fondo se abre.' : 'Mesprit se escurre hacia el último espejo. La puerta del fondo se abre.');
-  if (n === 1) await zygardeSays(ctx, 'Lo que sienten los demás también se guarda aquí.');
 }
 
 /** Guion paralelo del reflejo: sigue los pasos del jugador en espejo; al llegar a Mesprit, la captura. */
@@ -228,8 +227,7 @@ async function mespritQuestion(ctx) {
   ctx.se('PRSFX- Heal Bell');
   await ctx.flash([...TRIO_COLORS.sentir], 16, 160);
   await ctx.giveItem('EMOTIONTHREAD', 1);
-  ctx.setFlag(F.sentir);
-  await zygardeSays(ctx, 'Gael. …Otra hebra. Rosa.');
+  ctx.setFlag(F.sentir); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 function mespritEvents() {

@@ -5,7 +5,7 @@
 // hora, el ferri, el hielo-eco del norte). Se añaden al mapa con `...b14CaletaEvents()` (edición mínima en B09b).
 // Módulo puro salvo los guiones.
 import { CALETA, ARRECIFE } from '../maps/b14/layout.js';
-import { F, SPEAKER, SPRITE, lines, zygardeSays, byGender, placePlayer, pause } from './b14_common.js';
+import { F, SPEAKER, SPRITE, lines, byGender, placePlayer, pause } from './b14_common.js';
 
 const C = CALETA;
 const onLand = (ev) => !ev?.world?.player?.surfing;
@@ -22,7 +22,6 @@ export const CALETA_B14_TEXT = Object.freeze({
       'Fausto bajó al arrecife hace tres días, a buscar unas luces verdes junto a la muralla hundida. No ha vuelto.',
       'Los buzos dicen que ahí abajo el agua ya no se porta como agua. Que la marea se lleva a la gente… a otro día.',
     ],
-    core: 'Esas mareas vienen de abajo. De un Pilar. Lo siento desde aquí.',
     tobias2: (s) => `¿Vas a bajar, ${byGender(s, 'chaval', 'chavala')}? Toma, por si te trae suerte. A mí no me la ha traído.`,
     carmela2: 'El remolino del arrecife está al suroeste, pasado el embarcadero. Si lo encuentras… dile que vuelva a casa.',
   },
@@ -43,8 +42,11 @@ export const CALETA_B14_TEXT = Object.freeze({
     tobias: '¡La marea! Esta mañana ha subido cuando tocaba, ni un minuto antes ni un minuto después.',
     fausto: 'Tú… Lo has arreglado, ¿verdad? Lo he notado: las campanas de aquella ciudad se han callado.',
     carmela: 'Gracias. De verdad.',
-    sailor: '¡Eh, la playa! ¡Con la mar en calma, el ferri vuelve a salir! ¡A Nexo y, desde allí, al norte!',
-    core: 'Al norte, el hielo del eco se ha retirado. El camino de Brontia hacia las montañas está libre.',
+    // Zygarde habla muy poco (autor, 25-09-2026): la pista del norte la da el marinero.
+    sailor: [
+      '¡Eh, la playa! ¡Con la mar en calma, el ferri vuelve a salir! ¡A Nexo y, desde allí, al norte!',
+      'Y dicen que el hielo raro del norte se ha retirado. El camino de Brontia hacia las montañas vuelve a estar libre.',
+    ],
   },
   whirl: 'Un remolino oscuro gira sobre el arrecife. Desde abajo sube un rumor de voces.',
 });
@@ -57,7 +59,6 @@ async function introScene(ctx) {
   await ctx.fade('in', 16);
   await lines(ctx, SPEAKER.tobias, T.tobias1);
   await lines(ctx, SPEAKER.carmela, T.carmela);
-  await zygardeSays(ctx, T.core);
   await ctx.say(T.tobias2(ctx.state), { speaker: SPEAKER.tobias });
   if (!ctx.flag(F.coinsGift)) {
     await ctx.giveItem('RELICCOPPER', 1);
@@ -77,8 +78,7 @@ async function finalScene(ctx) {
   await ctx.say(T.fausto, { speaker: SPEAKER.fausto });
   await ctx.say(T.carmela, { speaker: SPEAKER.carmela });
   ctx.se('Anim/Water1', { volume: 50 });
-  await ctx.say(T.sailor, { speaker: SPEAKER.sailor });
-  await zygardeSays(ctx, T.core);
+  await lines(ctx, SPEAKER.sailor, T.sailor);
   ctx.setFlag(F.caletaFinal);
 }
 

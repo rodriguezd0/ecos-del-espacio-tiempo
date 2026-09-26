@@ -16,7 +16,6 @@ export const GAEL_TEXT = Object.freeze({
   found: 'Cayó aquí, al norte. Se quedó atrapado en ese hielo raro. Cuando el hielo se fue, lo encontré en la ladera.',
   talked: 'Llevo días hablándole.',
   nothing: 'Nada.',
-  zygarde: 'Es parte de mí. Lo oigo muy débil, como desde el fondo del hielo.',
   challenge: 'Si me ganas, es tuyo. Si no… también. Pero quiero saberlo.',
   ring: 'Gael se sube la manga del abrigo. En la muñeca lleva un aro negro con una piedra violeta engastada.',
   won: 'Lo quería saber. Ya lo sé.',
@@ -84,7 +83,7 @@ async function gaelScene(ctx) {
   await ctx.say(GAEL_TEXT.talked, G);
   await pause(ctx, 30);
   await ctx.say(GAEL_TEXT.nothing, G);
-  await zygardeSays(ctx, GAEL_TEXT.zygarde);
+  // Zygarde habla muy poco (autor, 25-09-2026): su única línea aquí es la canónica «Gracias, Gael.».
   await ctx.say(GAEL_TEXT.challenge, G);
   await ctx.say(GAEL_TEXT.ring);
   const outcome = await bossBattle(ctx, { trainer: 'b15_gael_b5' }, null);

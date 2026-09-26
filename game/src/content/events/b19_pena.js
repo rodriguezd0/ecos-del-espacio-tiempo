@@ -3,7 +3,7 @@
 // bossBattle: perder no es derrota general), la estela del taller, el Salamence Alfa de la cima (captura opcional,
 // reaparece al descansar) y Alerce ante la Bajada tras la Tablilla («Si ves a Gael…»). Módulo puro salvo los guiones.
 import {
-  F, V, SPEAKER, SPRITE, MUSIC, when, lines, zygardeSays, pause, bossBattle, alfaPresent,
+  F, V, SPEAKER, SPRITE, MUSIC, when, lines, pause, bossBattle, alfaPresent,
 } from './b19_common.js';
 import { PENA, DUEL, ALERCE } from '../maps/b19/calzada_layout.js';
 import { SALAMENCE_ALFA } from '../encounters/b19.js';
@@ -13,7 +13,6 @@ export const PENA_TEXT = Object.freeze({
     [SPEAKER.tadeo, '¡Casandra! ¡Mira el primer tramo!'],
     [SPEAKER.casandra, '…Esas losas no las ha alzado el Resonador.'],
   ],
-  span1Zygarde: 'Esta sí aguanta.',
   span2: [[SPEAKER.peregrino, '¿Qué… qué es esa luz verde? ¡La Calzada entera, de una pila a otra!']],
   arrival: 'Un chillido cruza la Sima. Una sombra alada pasa sobre el último tramo y se posa en la Peña.',
   casandra: [
@@ -41,7 +40,6 @@ export const PENA_TEXT = Object.freeze({
     'Una estela con letras Unown muy gastadas, junto a la boca del taller.',
     'Solo se lee entera una palabra: «TRABAJÓ».',
   ],
-  steleZygarde: 'Aquí. Lo decía la inscripción del Pilar.',
   steleBajada: [
     'Una estela junto a la boca de la roca. Las letras Unown están casi borradas por el viento de la Sima.',
     'Se lee: «LA CALZADA SIGUE HACIA EL FONDO».',
@@ -76,8 +74,7 @@ async function sayPairs(ctx, pairs) {
 /** Escena del bloque tras alzar el tramo n (b19_spans.js#useNeedle). */
 export async function onSpanRebuilt(ctx, n) {
   if (n === 1) {
-    await sayPairs(ctx, PENA_TEXT.span1);
-    await zygardeSays(ctx, PENA_TEXT.span1Zygarde);
+    await sayPairs(ctx, PENA_TEXT.span1); // Zygarde habla muy poco (autor, 25-09-2026)
   } else if (n === 2) {
     await sayPairs(ctx, PENA_TEXT.span2);
   } else if (n === 3) {
@@ -154,7 +151,6 @@ function casandraPenaEvents() {
 
 async function readStele(ctx) {
   for (const t of PENA_TEXT.stele) await ctx.say(t);
-  if (!ctx.flag(F.tablet)) await zygardeSays(ctx, PENA_TEXT.steleZygarde);
 }
 
 const ALFA_RETRY = Object.freeze({ x: PENA.cimaStairs.x + 1, y: PENA.cimaStairs.y + 3, dir: 8 });

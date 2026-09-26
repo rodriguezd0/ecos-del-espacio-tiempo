@@ -4,7 +4,8 @@
 //   · Ráfaga: evento `touch` atravesable con la hoja asset:objects/rafagas(_fuertes).png (fila = dirección).
 //     Un sector con veleta tiene 4 páginas (una por giro, var `b06_veleta_<sala>_<letra>`).
 //   · Veleta: evento sólido (asset:objects/veleta.png, la flecha marca hacia dónde sopla su sector).
-// Voz de Zygarde en las pistas: sobria y telepática (una vez cada una: flags b06_pista_*).
+// Pistas del viento: narración neutra, no voz de Zygarde (autor, 25-09-2026: Zygarde habla muy poco); una vez cada
+// una (flags b06_pista_*).
 import { settleWind, rotateDir, DIR_NAME, DIR_LABEL, opposite } from './b06_wind_logic.js';
 import { roomOf } from './b06_wind_rooms.js';
 import { isRiding } from '../../world/zygarde/mount.js';
@@ -15,11 +16,11 @@ const WIND_SE = 'PRSFX- Gust';
 const BACK_SE = 'Anim/Wind1';
 const VANE_SE = 'Door slide';
 
-/** Pistas de Zygarde la primera vez que el viento devuelve al jugador. */
+/** Pistas (narración neutra) la primera vez que el viento devuelve al jugador. */
 export const WIND_HINTS = Object.freeze({
-  climb: { flag: 'b06_pista_montar', text: 'Contra este viento no avanzas a pie. Súbete. A mí no me arrastra.' },
-  strong: { flag: 'b06_pista_fuerte', text: 'Este sopla demasiado fuerte. Ni conmigo se puede remontar.' },
-  loop: { flag: 'b06_pista_bucle', text: 'El viento da vueltas sobre sí mismo. Algo tiene que cambiarle el rumbo.' },
+  climb: { flag: 'b06_pista_montar', text: 'Contra este viento no se avanza a pie.' },
+  strong: { flag: 'b06_pista_fuerte', text: 'Esta ráfaga sopla demasiado fuerte. No hay forma de remontarla.' },
+  loop: { flag: 'b06_pista_bucle', text: 'El viento da vueltas sobre sí mismo. Algo tendría que cambiarle el rumbo.' },
 });
 
 /** Variable de giros de una veleta. */
@@ -83,10 +84,9 @@ async function windHint(ctx, r, first, arrived, mounted) {
   if (r.reason === 'loop') hint = WIND_HINTS.loop;
   else if (arrived === opposite(first.dir) && first.force === 1 && !mounted && ctx.zygarde('run')) hint = WIND_HINTS.climb;
   else if (arrived === opposite(first.dir) && first.force === 2) hint = WIND_HINTS.strong;
-  if (!hint || ctx.flag(hint.flag) || !ctx.state.data.zygarde?.form) return;
+  if (!hint || ctx.flag(hint.flag)) return;
   ctx.setFlag(hint.flag);
-  ctx.se('core_signal', { volume: 40 });
-  await ctx.say(hint.text, { telepathy: true });
+  await ctx.say(hint.text);
 }
 
 /**

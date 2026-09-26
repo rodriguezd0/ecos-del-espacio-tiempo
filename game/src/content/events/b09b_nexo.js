@@ -6,10 +6,9 @@
 import { takeFerry } from '../../world/transport.js';
 import { clerkEvent } from '../services/shop.js';
 import { cellEvent } from './b01_cells.js';
-import { F, SPEAKER, SPRITE, OBJ, lines, zygardeSays, examine, blockedLink, rectCells } from './b09b_common.js';
+import { F, SPEAKER, SPRITE, OBJ, lines, examine, blockedLink, rectCells } from './b09b_common.js';
 import { W, H, BUILDINGS, PLAZA, PORT, CELLS, SPOTS, ITEMS, EXITS } from '../maps/b09b/nexo_layout.js';
 import { linkOpen, blockedText } from '../maps/b09b/links.js';
-import { ZYGARDE_LINES } from '../story/clues.js';
 
 export const NEXO_TEXT = Object.freeze({
   signN: 'CIUDAD NEXO\nEl puerto de Axis: tren, ferris y el correo de toda la región.',
@@ -39,7 +38,6 @@ export const NEXO_TEXT = Object.freeze({
     'Muy lejos, sobre el agua, se distingue una plataforma con grúas y una torre de perforación.',
     'Parpadean luces de color magenta. En un costado se lee, a duras penas: «Consorcio Meridiano».',
   ],
-  zygardePlatform: 'Allí… algo me llama. Muy lejos. Todavía no.',
   t12: [
     'En este puesto vendíamos los picos y las azadas de los herreros de Tizón. Los mejores de Axis.',
     'Pero hace semanas que no mandan ni uno. Ni una carta. Nadie sabe qué pasa allí arriba.',
@@ -75,9 +73,8 @@ function signEvents() {
 async function t12Stall(ctx) {
   if (ctx.flag(F.t12)) { await say(ctx, 'Mercader', NEXO_TEXT.t12After); return; }
   await lines(ctx, 'Mercader', NEXO_TEXT.t12);
-  const status = await ctx.story.openClue('T12');
-  ctx.setFlag(F.t12);
-  if (status === 'queued' && !ctx.state.zygardeAbility('swim')) await zygardeSays(ctx, ZYGARDE_LINES.swim);
+  await ctx.story.openClue('T12');
+  ctx.setFlag(F.t12); // Zygarde habla muy poco (autor, 25-09-2026). Sin anunciar Nadar.
 }
 
 function marketEvents() {
@@ -129,7 +126,6 @@ async function binocularsLook(ctx) {
   for (const line of NEXO_TEXT.platform) await ctx.say(line);
   ctx.setFlag(F.talasaSeen);
   await ctx.camera.reset(50);
-  await zygardeSays(ctx, NEXO_TEXT.zygardePlatform);
 }
 
 /**

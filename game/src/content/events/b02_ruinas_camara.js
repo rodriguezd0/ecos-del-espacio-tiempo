@@ -22,6 +22,8 @@ async function camaraScene(ctx) {
   await say(ctx, C, 'Toda una vida limpiando la galería, y no sabía que detrás había una sala.');
   await ctx.emote('casilda', '!');
   await say(ctx, C, 'Escucha. Por eso se oía rascar por las noches.');
+  // Pista (el Geodude queda fuera de pantalla al entrar): de dónde viene el ruido.
+  await say(ctx, C, 'Viene del fondo. De la pared del oeste.');
   ctx.setFlag(F.camara);
 }
 
@@ -176,7 +178,10 @@ function geodudeEvents() {
     {
       id: 'roca_tunel', x: TUNNEL.rock.x, y: TUNNEL.rock.y, when: (s) => !s.flag(F.rockBroken), sprite: SPRITE.rock, dir: 2,
       directionFix: true, walkAnime: false, solid: true, trigger: 'action',
-      script: async (ctx) => { await ctx.say('Una roca enorme tapa el túnel. No se mueve ni empujando con todas tus fuerzas.'); },
+      script: async (ctx) => {
+        await ctx.say('Una roca enorme tapa el túnel. No se mueve ni empujando con todas tus fuerzas.');
+        if (!ctx.flag(F.geodudeFree)) await ctx.say('Del fondo de la sala, hacia el oeste, llega un rascar de piedra contra piedra.');
+      },
     },
     ...strip('escena_camara', CAMARA.entry, { when: when({ all: [F.dinteles], none: [F.camara] }), script: camaraScene }),
     { id: 'piedra_dura', type: 'item', x: 20, y: 11, item: 'HARDSTONE' },

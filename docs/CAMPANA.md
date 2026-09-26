@@ -283,6 +283,10 @@ Zygarde** (`ZYGARDECUBE`, existe en Añil) es un objeto de los antiguos Custodio
 
 ### 2.2 Detección
 
+> **Revisado — DECIDIDO (autor, 25-09-2026), DECISIONES X34:** sin latido, pitido ni flecha. Antes del 50% solo queda
+> el rótulo «Células: n/m»; la Detección mejorada son solo las marcas del mapa regional. Lo que sigue se conserva como
+> referencia del diseño original.
+
 1. **Antes del 50%.** El Core, y luego el 10%, **laten** cuando hay una célula a 10 casillas o menos (sonido y brillo
    más rápidos al acercarse). El rótulo de cada mapa visitado muestra «Células: n/m» (Arca y Pokédex, D05b). Cada
    Guardián da una pista verbal sobre la célula más escondida de su comarca.

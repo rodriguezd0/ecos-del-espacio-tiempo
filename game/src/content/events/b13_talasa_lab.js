@@ -4,7 +4,7 @@
 // el tanque manejando los controles sin mirar; Vértice aparece en la pantalla como Líder Supremo; N4 se une al Core.
 // Si se pierde, se reintenta desde la puerta del laboratorio con el equipo curado (helper común bossBattle).
 import { grantCore } from '../../world/zygarde/scenes.js';
-import { F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, zygardeSays, bossBattle, findEvent, walkTo, objectPage } from './b13_common.js';
+import { F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, bossBattle, findEvent, walkTo, objectPage } from './b13_common.js';
 import { showScreen } from './b13_screen.js';
 
 /** Sala 26×17: suelo y 4–15, felpudo x 12–13 en y 15. */
@@ -78,7 +78,6 @@ async function labIntro(ctx) {
   const alerce = findEvent(ctx, 'alerce_lab');
   ctx.bgm(MUSIC.tension);
   await ctx.say(LAB_TEXT.tank);
-  await zygardeSays(ctx, 'Ahí dentro. Es parte de mí. Lo oigo desde el mar.');
   await ctx.movePlayerTo(LAB.stand.x, LAB.stand.y);
   if (alerce) await walkTo(ctx, alerce, LAB.alerceStand.x, LAB.alerceStand.y);
   ctx.face('player', 'up');
@@ -184,8 +183,7 @@ async function joinN4(ctx, tank) {
   await ctx.say('Un núcleo verde sale del tanque, flota hacia ti y se funde con el Core.');
   burst?.remove?.(20);
   await grantCore(ctx, 'N4', { scenes: false });
-  await zygardeSays(ctx, '…Estaba solo ahí dentro. Midiendo el cristal. Ya no.');
-  await zygardeSays(ctx, 'Con esta parte, mi campo podría cubrirte bajo el agua. Necesito un mar hondo y quieto… donde bajan los que bucean.');
+  // Zygarde habla muy poco (autor, 25-09-2026): N4 se une en silencio; sin anunciar el Buceo.
 }
 
 // ───────────────────────────── Eventos ─────────────────────────────

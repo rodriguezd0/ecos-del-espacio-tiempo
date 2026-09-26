@@ -4,7 +4,7 @@
 // arde; con la Tabla Llama y la sonda de Genesis retirada, Brasa enseña el crisol «que ningún fuego funde» y regala la
 // Houndoomita. Si se llega sin la pista, el arco empieza igual (descubrimiento directo).
 import { cellEvent } from './b01_cells.js';
-import { F, SPEAKER, SPRITE, OBJ, when, lines, zygardeSays, examine, byGender, findEvent, objectPage, blockers } from './b13_common.js';
+import { F, SPEAKER, SPRITE, OBJ, when, lines, examine, byGender, findEvent, objectPage, blockers } from './b13_common.js';
 import { BUILDINGS, FORGE, NPCS, TRAINERS, ITEMS, MINE, HOUSE_ENTRY, MESA_EDGE } from '../maps/b13/tizon_layout.js';
 
 const B = { speaker: SPEAKER.brasa };
@@ -25,8 +25,7 @@ async function arrival(ctx) {
   ctx.setFlag(F.tizArrival);
   const status = ctx.story.clueStatus('T12');
   if (status !== 'active' && status !== 'solved') await ctx.story.openClue('T12', { direct: true });
-  await ctx.say(TIZON_TEXT.arrival);
-  await zygardeSays(ctx, 'La montaña respira mal. Como si alguien le tapara la boca.');
+  await ctx.say(TIZON_TEXT.arrival); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 // ───────────────────────────── Maestra Brasa ─────────────────────────────

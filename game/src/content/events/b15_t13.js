@@ -5,7 +5,7 @@
 // lo talla, aparece la Tabla Helada y, esa noche, la Torre vuelve a la plaza. Recompensa: Froslassita.
 // Continuidad de Nieves: Talleres (antes de ir al lago y tras la ceremonia) · Lago Viejo (camino del bloque) · plaza
 // (ceremonia). Rosendo: Talleres salvo durante la ceremonia.
-import { F, SPEAKER, SPRITE, OBJ, isNorthUnbound, zygardeSays, lines, byGender, pause, when, fx } from './b15_common.js';
+import { F, SPEAKER, SPRITE, OBJ, isNorthUnbound, lines, byGender, pause, when, fx } from './b15_common.js';
 import { TALLERES, BOREAL } from '../maps/b15/layout_boreal.js';
 import { LAGO, lakeToMap } from '../maps/b15/layout_lago.js';
 import { LAKE } from './b15_lago_logic.js';
@@ -22,8 +22,6 @@ export const T13_TEXT = Object.freeze({
     'Tiene capas que no son de este invierno. Ni del anterior. Hielo muy viejo, que el lago ha sacado a flote cuando se fue esa helada rara.',
     'Y mi Frigibax, que dormía a mis pies desde que salió del huevo, ya no se me acerca. Me mira desde la esquina como a un extraño.',
   ],
-  rosendoZygardeClue: '«El hielo más viejo». Ahí espera.',
-  rosendoZygardeDirect: 'Hielo que recuerda. Ahí dentro hay algo.',
   rosendoAgain: 'El hielo viejo está en el lago, al noreste del pueblo. Nieves conoce el camino. Yo ya solo lo conozco de oído.',
   rosendoAfter: [
     'Nieves se queda con el oficio. Yo me quedo con el oído: la Torre suena distinta este año.',
@@ -55,11 +53,9 @@ export const T13_TEXT = Object.freeze({
   lakeAlone: 'Un lago helado con bloques cortados en la orilla. Sin alguien que conozca este hielo, mejor no fiarse de él.',
   hut: 'La caseta de Rosendo: sierras, garfios y un banco lleno de virutas de hielo.',
   sign: 'LAGO VIEJO\nHielo para la Torre. No pisar sin el tallista.',
-  pull: 'Yo tiro. Tú guía.',
   pulled: 'Zygarde tiende sus vetas verdes alrededor del bloque. Con un crujido largo, el hielo antiguo se suelta del lago.',
   carve: 'Nieves talla el bloque despacio, capa a capa, como le enseñó su abuelo.',
   found: 'Aquí dentro hay algo. …¡Una tabla! Estaba en el corazón del hielo.',
-  foundZygarde: 'La decimotercera. Estaba en el hielo más viejo.',
   tower: 'Y con el resto del bloque… me da para la Torre entera. ¡Esta noche la levantamos!',
   night: 'Esa noche, media Villa Boreal se reúne en la plaza.',
   ceremony: {
@@ -91,8 +87,7 @@ async function rosendoTalk(ctx) {
   const had = ctx.story?.clueStatus?.('T13');
   if (!had || had === 'none') await ctx.story?.openClue?.('T13', { direct: true, silent: true });
   await ctx.story?.advanceClue?.('T13', 2);
-  ctx.setFlag(F.rosendo);
-  await zygardeSays(ctx, had && had !== 'none' ? T13_TEXT.rosendoZygardeClue : T13_TEXT.rosendoZygardeDirect);
+  ctx.setFlag(F.rosendo); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 async function nievesTalk(ctx) {
@@ -172,7 +167,6 @@ export async function extractAncient(ctx) {
     await ctx.say('Sacarlo sin alguien que sepa tallar sería romperlo. En el pueblo, en los Talleres del Hielo, sabrán qué hacer.');
     return;
   }
-  await zygardeSays(ctx, T13_TEXT.pull);
   const [ax, ay] = lakeToMap(...LAKE.ancient);
   const burst = fx(ctx, 'zygardeHexBurst', { x: ax, y: ay, mode: 'in', count: 18 });
   ctx.se?.('PRSFX- Freeze Shock2');
@@ -190,7 +184,6 @@ export async function extractAncient(ctx) {
   await ctx.say(T13_TEXT.found, N);
   await ctx.story?.giveTablet?.('ICICLEPLATE');
   ctx.setFlag(F.icePlate);
-  await zygardeSays(ctx, T13_TEXT.foundZygarde);
   await ctx.say(T13_TEXT.tower, N);
   await ctx.fade('out', 30);
   ctx.setFlag(F.tower);

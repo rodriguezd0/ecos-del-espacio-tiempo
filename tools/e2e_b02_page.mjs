@@ -14,6 +14,7 @@ export async function installB02Helpers(page) {
       /** Resumen del Bloque 2. */
       b02() {
         const st = engine.state;
+        if (!st) return {}; // aún cargando (título/arranque)
         const z = st?.data?.zygarde || {};
         return {
           keyItems: ['ZYGARDECUBE', 'CLUENOTEBOOK', 'AZUREFRAGMENT', 'ESCAPEROPE'].filter((k) => st.hasKeyItem(k) || st.itemCount(k) > 0),

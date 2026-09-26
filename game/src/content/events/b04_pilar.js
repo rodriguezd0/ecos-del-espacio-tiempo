@@ -6,8 +6,7 @@ import { readPuzzle, isFull, isOpen, CYCLE_FLAG } from './b04_hydraulics.js';
 import { puzzleEvents, flowing } from './b04_pilar_puzzle.js';
 import { coreEvents } from './b04_pilar_core.js';
 import { SPOTS, CELL_SPOTS, TRAINER_SPOTS, ITEM_SPOTS } from '../maps/b04/pilar_corriente_layout.js';
-import { coreCellReaction } from '../companion.js';
-import { F, SPEAKER, SPRITE, SAY_CORE } from './b04_common.js';
+import { F, SPEAKER, SPRITE } from './b04_common.js';
 
 const L = { speaker: SPEAKER.leandro };
 const GREEN = [185, 255, 102];
@@ -33,7 +32,6 @@ async function dareScene(ctx) {
   if (leandro) { ctx.face(leandro, ctx.player); await ctx.emote(leandro, '!'); }
   ctx.face('player', leandro || 'up');
   for (const line of DARE_LINES) await ctx.say(line, L);
-  await ctx.say('El agua de aquí está atascada. Quiere dar la vuelta.', SAY_CORE);
   await ctx.say('…¿Y eso verde que brilla? Da igual. Escucha bien, que no lo voy a repetir.', L);
   for (const line of DARE_RULES) await ctx.say(line, L);
   for (const line of DARE_END) await ctx.say(line, L);
@@ -109,7 +107,6 @@ function itemEvents() {
 
 async function afterCell(ctx) {
   await ctx.flash(GREEN, 12, 90);
-  await coreCellReaction(ctx);
 }
 
 function cellEvents() {

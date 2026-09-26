@@ -87,6 +87,15 @@ lleva 1, 2 o 3 muescas (se leen al examinar la piedra por primera vez) para que 
 solo se enciende si la orientación es correcta **y el Core está a 3 casillas o menos**; fallar no penaliza. Las piedras
 se giran de lado (desde el hueco de su alcoba) para que el jugador no las tape.
 
+**Tras el puzzle (atasco del creador, 25-09):** el recorrido E2E pasa entero, así que no había bloqueo en el camino
+normal; faltaba guía. Al cruzar la losa, el Geodude de la grieta (3,7) queda fuera de pantalla y en la oscuridad, y lo
+primero que se ve es la roca del túnel (24,5), que «no se mueve». Pistas diegéticas (Casilda, nunca Zygarde): tras
+«rascar por las noches» añade «Viene del fondo. De la pared del oeste.»; al hablarle en la Cámara antes de sacarlo, «Ese
+rascar viene de la pared del oeste…»; y la roca, mientras el Geodude siga atrapado, añade «Del fondo de la sala, hacia el
+oeste, llega un rascar de piedra contra piedra.». Además, red de seguridad para un bloqueo posible: si las tres
+ranuras quedan encendidas sin `b02_dinteles` (partida cortada durante la animación de la losa), una piedra resuelta
+ya no gira y no había forma de abrirla; ahora el auto `escena_losa_galeria` desliza la losa al volver a la sala.
+
 ## Combates y encuentros
 
 - `content/trainers/b02.js`: Excursionista Remo (Zubat 6, Machop 7), Montañero Paco (Geodude 7, Machop 8), Arqueóloga

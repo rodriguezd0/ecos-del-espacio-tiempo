@@ -3,7 +3,7 @@
 // orilla (lo que luego usa en B17), objetos, C095 y la salida sur hacia Villa Boreal (B15; aviso neutro mientras no
 // exista). El puente de hielo y el hito de la Forma Completa están en b16_hito.js.
 import {
-  F, SPEAKER, SPRITE, OBJ, lines, zygardeSays, byGender, examine, frame,
+  F, SPEAKER, SPRITE, OBJ, lines, byGender, examine, frame,
 } from './b16_common.js';
 import {
   NPC, CAMP, LAGOS_ITEMS, CELL_LAGOS, EXITS, SANCTUARY,
@@ -15,7 +15,6 @@ const done = (s) => s.flag(F.milestone);
 
 export const LAGOS_TEXT = Object.freeze({
   arrival: 'Tres lagos quietos bajo la nieve y, en medio, un islote con una roca labrada. El aire huele a hielo y a algo más viejo.',
-  coreArrival: 'Ahí. El octavo. Tres voces lo guardan.',
   sign: 'LAGOS DEL ALMA\nAl norte, el Santuario. El puente de hielo no llega al islote: el último tramo se fundió.',
   signAfter: 'LAGOS DEL ALMA\nAl norte, el Santuario, por el puente de hielo.',
   stele: 'Una estela con letras antiguas. Traducidas dicen: «Lo que se sabe. Lo que se siente. Lo que se quiere.»',
@@ -202,8 +201,7 @@ function genesisEvents() {
 
 async function arrivalScene(ctx) {
   ctx.setFlag(F.arrival);
-  await ctx.say(LAGOS_TEXT.arrival);
-  await zygardeSays(ctx, LAGOS_TEXT.coreArrival);
+  await ctx.say(LAGOS_TEXT.arrival); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 function southExitEvents() {

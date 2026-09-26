@@ -67,6 +67,10 @@ async function talk(ctx) {
     await say(ctx, C, 'Esa luz… No me mires así. Sigue.');
     return;
   }
+  if (room === ROOM.camara && !ctx.flag(F.geodudeFree)) {
+    await say(ctx, C, 'Ese rascar viene de la pared del oeste. Algo se ha quedado atrapado ahí.');
+    return;
+  }
   if (room === ROOM.camara && ctx.flag(F.geodudeFree) && !ctx.flag(F.rockBroken)) {
     await say(ctx, C, 'Deja que él se encargue. De piedras sabe más que tú y que yo.');
     return;

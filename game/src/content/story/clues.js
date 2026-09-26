@@ -7,11 +7,7 @@
 
 export const MAX_ACTIVE_CLUES = 3;
 
-/** Frases de Zygarde cuando falta una capacidad (anticipación sin bloqueo, TABLILLAS §4.2). */
-export const ZYGARDE_LINES = Object.freeze({
-  default: 'Allí no llego todavía.',
-  swim: 'Necesito cruzar agua profunda.',
-});
+// Sin frases de Zygarde que anticipen capacidades (DECIDIDO autor, 25-09-2026: DECISIONES X34).
 
 /** Nombres de las capacidades de campo (claves de state.zygarde.abilities). */
 export const ABILITY_NAMES = Object.freeze({

@@ -4,7 +4,7 @@
 // La última caracola usada (o escuchada) es el punto de regreso cuando la Bramaluna embiste (var b14_caracola).
 // Las caracolas siguen funcionando tras el P7 (CAMPANA §2.5, invariante 4). Módulo puro salvo los guiones.
 import { ROOMS, ERA_LABEL, roomMap, parseRoomMap, ANTEA_MAPS } from '../maps/b14/layout.js';
-import { F, V, OBJ, COLOR, lines, zygardeSays, pause } from './b14_common.js';
+import { F, V, OBJ, COLOR, lines, pause } from './b14_common.js';
 
 /** Fila de la hoja de la caracola por capa. */
 export const CARACOLA_ROW = Object.freeze({ presente: 2, antea: 4, primigenia: 6 });
@@ -15,19 +15,13 @@ export const CARACOLA_TEXT = Object.freeze({
     antea: 'La caracola del heraldo, pulida y blanca sobre su peana. Vibra aunque nadie la toque.',
     primigenia: 'Una caracola viva, medio enterrada en la arena tibia. Late despacio.',
   },
-  tuto: [
-    'Espera. Esta caracola… guarda el sonido de lo que fue.',
-    'Si la golpeas, oiremos este mismo lugar en otro tiempo. Y estaremos allí.',
-  ],
   ask2: '¿Golpear la caracola?',
   ask3: 'La caracola resuena en dos tonos distintos. ¿Qué eco quieres oír?',
   hit: 'Golpeas la caracola con la palma.',
   keep: 'La caracola sigue vibrando. Recordarás este sitio.',
-  firstEcho: 'Esto es un eco. Lo que hagamos aquí seguirá en el presente. Al revés, no.',
-  firstPrimal: [
-    'Mucho antes de la ciudad. Aquí todavía no había nada que recordar.',
-    'Algo grande respira entre los helechos. Si nos ve, nos echará. No dejes que nos vea.',
-  ],
+  // Zygarde habla muy poco (autor, 25-09-2026): las reglas del eco se cuentan como narración neutra.
+  firstEcho: 'Es un eco de la ciudad, tal como fue. Lo que cambies aquí seguirá cambiado en el presente; al revés, no.',
+  firstPrimal: 'Helechos gigantes y aire tibio: mucho antes de la ciudad. Entre la maleza respira algo enorme. Mejor que no te vea.',
   back: 'El agua vuelve a llenarlo todo. El presente.',
 });
 
@@ -70,10 +64,10 @@ export async function switchEra(ctx, room, era) {
   await ctx.fade('in', 22);
   if (era === 'primigenia' && !ctx.flag(F.primalSeen)) {
     ctx.setFlag(F.primalSeen);
-    for (const t of CARACOLA_TEXT.firstPrimal) await zygardeSays(ctx, t);
+    await ctx.say(CARACOLA_TEXT.firstPrimal);
   } else if (era !== 'presente' && !ctx.flag(F.firstEcho)) {
     ctx.setFlag(F.firstEcho);
-    await zygardeSays(ctx, CARACOLA_TEXT.firstEcho);
+    await ctx.say(CARACOLA_TEXT.firstEcho);
   }
 }
 
@@ -82,10 +76,7 @@ export async function useCaracola(ctx, room, era, c) {
   const R = ROOMS[room];
   rememberCaracola(ctx);
   await ctx.say(CARACOLA_TEXT.look[era]);
-  if (!ctx.flag(F.caracolaTuto)) {
-    ctx.setFlag(F.caracolaTuto);
-    for (const t of CARACOLA_TEXT.tuto) await zygardeSays(ctx, t);
-  }
+  if (!ctx.flag(F.caracolaTuto)) ctx.setFlag(F.caracolaTuto);
   const others = R.eras.filter((e) => e !== era);
   let target = null;
   if (others.length === 1) {

@@ -4,7 +4,7 @@
 // los pilotes (Buceo, punto equivalente), C059–C060, objetos y, tras N4, la despedida en el embarcadero al atardecer:
 // el Porygon de Nilo, «Ha dejado de contestar» (Gael) y la salida del bloque (b13_talasa). La estación sigue accesible.
 import {
-  F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, zygardeSays, examine, byGender, findEvent, walkTo, objectPage, pause,
+  F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, examine, byGender, findEvent, walkTo, objectPage, pause,
 } from './b13_common.js';
 import { cellEvent } from './b01_cells.js';
 import {
@@ -67,7 +67,6 @@ async function arrivalScene(ctx) {
     await lines(ctx, SPEAKER.nilo, ['Yo me quedo en la barca. Ahí dentro me conoce todo el mundo.', 'Suerte. De verdad.']);
   }
   await ctx.say(`Tú encárgate de los técnicos; yo iré detrás de ti, sin hacer ruido. Aquí no eres ${byGender(ctx.state, 'bienvenido', 'bienvenida')}.`, A);
-  await zygardeSays(ctx, 'Está aquí. Abajo. Lo oigo.');
   if (alerce) {
     await ctx.move(alerce, ['down', 'left', 'left', 'left'], { through: true, speed: 4 });
     alerce.opacity = 0;
@@ -190,9 +189,9 @@ async function farewellScene(ctx) {
   await pause(ctx, 30);
   await ctx.say('…Ha dejado de contestar.', A);
   ctx.setFlag(F.talGaelLine);
-  await zygardeSays(ctx, 'Donde bajan los buzos. Allí podré cubrirte.');
+  // Zygarde habla muy poco (autor, 25-09-2026): la pista de adónde ir la da Alerce, sin anunciar la mecánica.
   await lines(ctx, SPEAKER.alerce, [
-    '¿Los buzos de Caleta Sonda? Tienen un muelle al final del pueblo.',
+    'Esa muestra la sacó una draga del fondo del mar. Si quieres saber qué más hay ahí abajo, los buzos de Caleta Sonda tienen un muelle al final del pueblo.',
     'Yo vuelvo a Villa Alba. Si necesitas algo, ya sabes dónde encontrarme.',
   ]);
   if (alerce) {

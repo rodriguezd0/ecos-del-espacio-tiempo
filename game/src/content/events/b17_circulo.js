@@ -8,7 +8,7 @@
 // Villa Alba y la casa son mapas del Bloque 1: los eventos se añaden con una línea en cada definición (cambios mínimos y
 // aditivos, todos condicionados a p8_restored). Reglas puras en b17_circulo_logic.js. Módulo puro salvo los guiones.
 import {
-  F, V, SPEAKER, SPRITE, OBJ, MUSIC, MOON, isNight, lines, zygardeSays, eventById, pause, frame, gameDay,
+  F, V, SPEAKER, SPRITE, OBJ, MUSIC, MOON, isNight, lines, eventById, pause, frame, gameDay,
 } from './b17_common.js';
 import {
   CIRCLE_POINTS, DANCE_ORDER, DANCERS, CIRCLE_LANDING, raiseInOrder, raisedPoints, lineRoute,
@@ -31,17 +31,16 @@ export const CIRCLE_TEXT = Object.freeze({
   danceIntro: 'A la luz de la luna, un corro de Clefairy baila alrededor del jardín de la plaza.',
   danceStep: 'El Clefairy pisa una losa hundida y la losa brilla un instante.',
   danceEnd: 'Los Clefairy vuelven al centro y se quedan mirándote, como si esperaran algo.',
-  danceZygarde: 'Seis piedras hundidas. Las pisan siempre en el mismo orden. Esperan que alguien las levante.',
+  // Zygarde habla muy poco (autor, 25-09-2026): la regla de la danza la cuenta la narración.
+  danceHint: 'Seis losas hundidas. Los Clefairy las pisan siempre en el mismo orden.',
   daySlab: 'Una losa hundida en la arena, con un hexágono gastado. De día nadie repara en ella.',
   nightNoDance: 'Una losa hundida con un hexágono gastado. Brilla un poco a la luz de la luna.',
   standOn: 'Estás encima de la losa.',
   wrong: 'Las piedras tiemblan… y vuelven a hundirse en la arena. Los Clefairy se miran entre ellos.',
-  wrongZygarde: 'No en ese orden. Mira otra vez cómo bailan.',
   again: 'Los Clefairy vuelven a bailar, despacio.',
   risen: 'Las seis piedras quedan en pie alrededor del jardín. La luz de la luna se queda prendida en sus hexágonos.',
   sign: 'El cartel de la entrada del pueblo nunca había dicho tanta verdad: «Donde el bosque guarda sus piedras».',
   gift: 'Los Clefairy dejan algo en el centro del Círculo y se ponen a bailar otra vez.',
-  zygarde: 'Estas piedras son un nudo pequeño de la red. Ya sé volver aquí volando.',
   flyNote: 'El Círculo del Jardín es ahora un destino de Vuelo.',
   standing: 'Una piedra alta con liquen y un hexágono tallado. Parece que siempre hubiera estado así.',
   clefairy: '¡Clef, clef!',
@@ -115,7 +114,7 @@ async function firstDance(ctx) {
   await ctx.say(CIRCLE_TEXT.danceIntro);
   await dance(ctx);
   await ctx.say(CIRCLE_TEXT.danceEnd);
-  await zygardeSays(ctx, CIRCLE_TEXT.danceZygarde);
+  await ctx.say(CIRCLE_TEXT.danceHint);
   await ctx.camera.reset(30);
 }
 
@@ -169,7 +168,6 @@ async function useSlab(ctx, i) {
     await pause(ctx, 20);
     await ctx.say(CIRCLE_TEXT.wrong);
     await sinkAll(ctx);
-    await zygardeSays(ctx, CIRCLE_TEXT.wrongZygarde);
     await ctx.say(CIRCLE_TEXT.again);
     await dance(ctx);
     return;
@@ -214,7 +212,6 @@ async function circleRaised(ctx) {
   await ctx.say(CIRCLE_TEXT.gift);
   await ctx.giveItem('MOONSTONE', 3);
   ctx.setFlag(F.moonStones);
-  await zygardeSays(ctx, CIRCLE_TEXT.zygarde);
   ctx.se('Mining item get');
   await ctx.say(CIRCLE_TEXT.flyNote);
   glow?.remove?.(60);

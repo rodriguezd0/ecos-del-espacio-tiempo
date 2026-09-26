@@ -300,6 +300,8 @@ test('Hito con 100 células: Forma Completa, Vuelo y Reconstrucción, hueco A al
   assert.ok(!s.flag(F.milestone), 'el hito termina antes de reconstruir el hueco B');
   assert.ok(ctx.said.some((l) => /Si no me sostengo ahora, no habrá nada que sostener\./.test(l.text)));
   assert.ok(ctx.said.some((l) => /Nada me obliga\. El mundo necesita que esté entero, y elijo estarlo\./.test(l.text)));
+  // Zygarde habla muy poco (autor, 25-09-2026): en el hito solo dice las dos canónicas.
+  assert.equal(ctx.said.filter((l) => l.speaker === 'Zygarde').length, 2, 'Zygarde habla de más en el hito');
   // El zócalo B (tipo rebuildGap ampliado): tutorial, piedras, flag y final del hito
   const sock = expandEventDef(def.events.find((e) => e.id === 'zocalo_b_0'), def);
   assert.ok(sock.pages[0].when(s, { selfSwitch: () => false }), 'el zócalo B no aparece tras hundirse el tramo');
@@ -308,6 +310,7 @@ test('Hito con 100 células: Forma Completa, Vuelo y Reconstrucción, hueco A al
   assert.ok(s.flag(F.bridgeB) && s.flag(F.milestone) && s.flag(F.bond) && s.flag(F.radio) && s.flag(F.genesis));
   assert.ok(s.flag('zyg_rebuild_tutorial'), 'el tutorial de Reconstrucción no queda visto');
   assert.ok(ctx2.said.some((l) => /zócalo con hexágonos gastados/.test(l.text)), 'sin tutorial');
+  assert.ok(!ctx2.said.some((l) => l.speaker === 'Zygarde'), 'el tutorial y el final del hito no son telepatía');
   for (const who of ['Leandro (radio)', 'Abril (radio)', 'Fermín (radio)']) assert.ok(ctx2.said.some((l) => l.speaker === who), `falta ${who}`);
   assert.equal(s.var('crisis_phase', null), null, 'la fase de crisis queda forzada');
   assert.ok(sock.pages[1].when(s, { selfSwitch: () => false }) && sock.pages[1].patch.length === 6, 'las piedras no persisten');
@@ -323,6 +326,9 @@ test('Hito sin todas las células: sostiene a medias, los vecinos cruzan y «Me 
   assert.ok(!s.zygardeAbility('fly'), 'hay Forma Completa sin las 100 células');
   assert.ok(s.flag(F.milestone) && s.flag(F.milestonePartial) && s.flag(F.bridgeBroken) && !s.flag(F.bridgeA));
   assert.ok(ctx.said.some((l) => l.text === 'Me faltan dos partes. Las siento todas encendidas.'));
+  assert.deepEqual(ctx.said.filter((l) => l.speaker === 'Zygarde').map((l) => l.text), [
+    'Si no me sostengo ahora, no habrá nada que sostener.', 'Me faltan dos partes. Las siento todas encendidas.',
+  ], 'Zygarde habla de más en el hito a medias');
   // La célula 100 más tarde: la escena corta genérica activa la Forma Completa
   const { checkZygardeProgress } = await import('../game/src/world/zygarde/scenes.js');
   s.addCell('cell_lagos_1'); s.addCell('cell_mar_boreal_1');

@@ -4,7 +4,7 @@
 //   2 y 3. «Lo que se deduce»: tres y luego cuatro puertas con inscripciones sobre lo vivido; solo una dice la verdad y
 //      solo una puerta sigue adelante. Un error es el «olvido» de Uxie: la ronda vuelve a empezar (otras inscripciones).
 //   4. Cámara de Uxie: la Hebra del Saber (KNOWLEDGETHREAD).
-import { F, V, SPEAKER, SPRITE, OBJ, TRIO_COLORS, lines, zygardeSays, examine, frame, placePlayer } from './b16_common.js';
+import { F, V, SPEAKER, SPRITE, OBJ, TRIO_COLORS, lines, examine, frame, placePlayer } from './b16_common.js';
 import {
   GLYPHS, RELIEF_ORDER, offerGlyph, isPlaced, ALL_PLACED, roundVariant, roundExit, inscriptionText, roman,
   DOOR_RULES,
@@ -109,7 +109,6 @@ function glyphRoomEvents() {
       script: async (ctx) => {
         ctx.setFlag('b16_saber_intro');
         await ctx.say(SABER_TEXT.intro);
-        await zygardeSays(ctx, 'Tú estuviste allí. Yo también.');
         await ctx.say(SABER_TEXT.diaryHint);
       },
     }],
@@ -199,8 +198,7 @@ async function uxieScene(ctx) {
   ctx.se('PRSFX- Heal Bell');
   await ctx.flash([...TRIO_COLORS.saber], 16, 160);
   await ctx.giveItem('KNOWLEDGETHREAD', 1);
-  ctx.setFlag(F.saber);
-  await zygardeSays(ctx, 'Una hebra. Dorada. Aún faltan dos.');
+  ctx.setFlag(F.saber); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 function uxieEvents() {

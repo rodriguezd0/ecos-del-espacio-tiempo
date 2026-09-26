@@ -8,32 +8,26 @@
 //   · Tras el P7, una corriente ascendente devuelve al jugador a Caleta Sonda.
 // Módulo puro salvo los guiones.
 import { FOSA, ROOM4, CALETA, roomMap } from '../maps/b14/layout.js';
-import { F, V, SPRITE, MUSIC, COLOR, lines, zygardeSays, eventById, placePlayer, pause, bossBattle } from './b14_common.js';
+import { F, V, SPRITE, MUSIC, COLOR, lines, eventById, placePlayer, pause, bossBattle } from './b14_common.js';
 import { BRAMALUNA_ECO, BRAMALUNA_REAL } from '../encounters/b14.js';
 import { bigFernEvents } from '../maps/b14/paint.js';
 import { pilarTone } from '../stamps/pilar.js';
 
 export const CATCH_REASON = '¡La Poké Ball la atraviesa como si fuera bruma! Es un eco: no hay nada que atrapar.';
 
+// Zygarde habla muy poco (autor, 25-09-2026): en la fosa no dice nada; lo necesario queda en la narración.
 export const FOSA_TEXT = Object.freeze({
-  enter: ['Su nido. Y debajo, el núcleo.', 'No es la guardiana de nada. Solo vive aquí… en un tiempo que ya no existe.'],
   wake: 'La Bramaluna Alfa se yergue en su nido y ruge. El eco entero tiembla.',
-  wakeCore: 'No nos dejará pasar. Tendremos que hacerle frente.',
   lost: 'Has tenido que retirarte. Junto al manantial del eco, tu equipo recupera fuerzas.',
   won: 'La Bramaluna del eco se deshace en ondas verdes, como un reflejo en el agua que alguien ha tocado.',
-  wonCore: 'El eco se rompe. El núcleo… ahora me oye.',
   coreBlocked: 'El núcleo late bajo una capa de eco espesa. Algo lo guarda.',
   coreCold: 'El núcleo guarda un calor tranquilo. El eco de la fosa se ha calmado.',
-  coreIntro: 'Aquí. Todo lo que fue sigue sonando.',
   tides: 'Un rumor de mareas recorre la fosa… y se aquieta, como una respiración que por fin se acompasa.',
   north: 'Muy lejos, al norte, algo helado se afloja. Como un nudo que se deshace.',
   dredge: 'Arriba, en el arrecife, algo metálico cruje y se queda en silencio.',
-  local: 'Las mareas vuelven a su sitio. Y el hielo del norte cede.',
-  faustoFreed: 'En la calle de los pescadores, el eco suelta a Fausto. Volverá a casa.',
-  verseCore: 'El chico de la caleta se quedó atrapado en lo que fue. Tú lo has oído y sigues aquí.',
+  faustoFreed: 'En la calle de los pescadores del eco, una figura se desvanece: el eco suelta a Fausto.',
   t13: 'Bajo el verso hay otra inscripción, más pequeña. La lees sin ayuda: «La decimotercera tabla espera en el hielo más viejo.»',
   real: 'Algo se mueve en el nido. La Bramaluna sigue ahí… pero ya no es un eco. Respira de verdad.',
-  realCore: 'Se ha quedado de este lado del tiempo. Ya no es un recuerdo: es ella, entera.',
   realTalk: 'La Bramaluna Alfa descansa en su nido. Te mira con unos ojos muy antiguos.',
   realLost: 'Te has retirado del nido. Tu equipo ha recuperado fuerzas.',
   realGone: 'El nido está vacío. Aún quedan escamas calientes entre las piedras.',
@@ -70,7 +64,6 @@ async function echoFight(ctx) {
   ctx.shake(7, 8, 40);
   if (ev) await ctx.emote(ev, '!');
   await ctx.say(FOSA_TEXT.wake);
-  await zygardeSays(ctx, FOSA_TEXT.wakeCore);
   const outcome = await bossBattle(ctx, echoBattleRequest(), RETRY, { loseText: FOSA_TEXT.lost });
   if (outcome !== 'win') return;
   ctx.setFlag(F.echoBeaten);
@@ -79,7 +72,6 @@ async function echoFight(ctx) {
   if (ev) { for (let o = 255; o >= 0; o -= 25) { ev.opacity = o; await pause(ctx, 2); } }
   ctx.requestRefresh();
   await ctx.say(FOSA_TEXT.won);
-  await zygardeSays(ctx, FOSA_TEXT.wonCore);
 }
 
 function echoEvents() {
@@ -106,7 +98,6 @@ async function localEffect(ctx) {
   await ctx.say(FOSA_TEXT.tides);
   await ctx.say(FOSA_TEXT.north);
   await ctx.say(FOSA_TEXT.dredge);
-  await zygardeSays(ctx, FOSA_TEXT.local);
   await releaseFausto(ctx);
 }
 
@@ -119,15 +110,13 @@ export async function releaseFausto(ctx) {
   if (ctx.flag(F.faustoAwake)) return false;
   ctx.setFlag(F.faustoFreed);
   ctx.setFlag(F.faustoAwake);
-  await zygardeSays(ctx, FOSA_TEXT.faustoFreed);
+  await ctx.say(FOSA_TEXT.faustoFreed);
   return true;
 }
 
 async function coreScene(ctx) {
-  await zygardeSays(ctx, FOSA_TEXT.coreIntro);
   const ok = await ctx.story.restorePillar(7, { core: { x: FOSA.core.x, y: FOSA.core.y }, onRestored: localEffect });
   if (!ok) return;
-  await zygardeSays(ctx, FOSA_TEXT.verseCore);
   await ctx.say(FOSA_TEXT.t13);
   await ctx.story.openClue('T13');
   ctx.setFlag(F.t13);
@@ -137,7 +126,6 @@ async function coreScene(ctx) {
   ctx.requestRefresh();
   await pause(ctx, 30);
   await ctx.say(FOSA_TEXT.real);
-  await zygardeSays(ctx, FOSA_TEXT.realCore);
 }
 
 function coreEvent() {
@@ -210,8 +198,6 @@ function upcurrentEvent() {
 export async function fosaOnEnter(ctx) {
   if (ctx.flag(F.fosaIn)) return;
   ctx.setFlag(F.fosaIn);
-  await pause(ctx, 20);
-  for (const t of FOSA_TEXT.enter) await zygardeSays(ctx, t);
 }
 
 export function fosaEvents() {

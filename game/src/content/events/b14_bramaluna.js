@@ -6,7 +6,7 @@
 import { dx, dy } from '../../world/gameMap.js';
 import { sightReach } from './b01_north_stealth.js';
 import { BRAMALUNA, PATROLS } from '../maps/b14/layout.js';
-import { F, V, SPRITE, COLOR, zygardeSays, pause } from './b14_common.js';
+import { F, V, SPRITE, COLOR, pause } from './b14_common.js';
 import { returnToCaracola } from './b14_caracolas.js';
 
 export const SIGHT = BRAMALUNA.sight;
@@ -53,10 +53,6 @@ export const patrolPeriod = (mapId) => compiled(mapId).period;
 export const BRAMALUNA_TEXT = Object.freeze({
   roar: '¡La Bramaluna ruge y se lanza contra ti!',
   charged: 'Una embestida brutal… y el eco te devuelve junto a la caracola.',
-  firstCaught: [
-    'Nos ha visto. Aquí somos un eco para ella, pero su furia es real.',
-    'Espera a que mire hacia otro lado.',
-  ],
   growl: 'Un rugido grave hace temblar los helechos.',
 });
 
@@ -81,10 +77,7 @@ async function caught(ctx) {
   await pause(ctx, 10);
   await ctx.fade('in', 20);
   await ctx.say(BRAMALUNA_TEXT.charged);
-  if (!ctx.flag(F.bramalunaSeen)) {
-    ctx.setFlag(F.bramalunaSeen);
-    for (const t of BRAMALUNA_TEXT.firstCaught) await zygardeSays(ctx, t);
-  }
+  if (!ctx.flag(F.bramalunaSeen)) ctx.setFlag(F.bramalunaSeen); // sin línea de Zygarde (autor, 25-09-2026)
 }
 
 /** Mueve el evento de la patrulla hacia su posición según el reloj (paso animado; si se desincroniza, salta). */

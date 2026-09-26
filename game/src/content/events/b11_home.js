@@ -1,12 +1,12 @@
 // Regreso a Villa Alba (docs/CAMPANA.md B11, pasos 2–4; §5.5 escalera de Alerce, escena 6; §6 Gael):
-//   · Villa Alba: primer regreso a casa tras el P5 (Zygarde mira el Monte) y una vecina que ha oído voces en el
+//   · Villa Alba: primer regreso a casa tras el P5 y una vecina que ha oído voces en el
 //     laboratorio.
 //   · Casa: Mamá entrega el huevo de Togepi («Una Togepi puso un huevo en el jardín y no ha vuelto. Creo que es para
 //     ti.»). Si el equipo está lleno, lo guarda hasta que haya sitio (CAMPANA §2.6: los regalos esperan).
 //   · Laboratorio: Gael se enfrenta a Alerce («Usted sabía quiénes eran desde el principio.» / «Sabía de qué eran
 //     capaces.») y se va hacia el Monte.
 // Villa Alba, la casa y el laboratorio son mapas del Bloque 1: los añaden con una línea (edición mínima y aditiva).
-import { F, SPEAKER, SPRITE, when, lines, zygardeSays, byGender, pause } from './b11_common.js';
+import { F, SPEAKER, SPRITE, when, lines, byGender, pause } from './b11_common.js';
 import { walkToPlayer } from './b01_town_path.js';
 import { restAtHome } from './b01_town_home.js';
 import { createEgg, addEggToParty, EGG_TEXT } from '../../world/eggs.js';
@@ -14,7 +14,6 @@ import { createEgg, addEggToParty, EGG_TEXT } from '../../world/eggs.js';
 const P5 = 'p5_restored';
 
 export const HOME_TEXT = Object.freeze({
-  village: 'Tu pueblo. Desde aquí se ve el Monte.',
   neighbor: '¿Has visto a Gael? Ha entrado en el laboratorio hace un rato. Se le oía desde la calle.',
   neighborAfter: 'Gael salió del laboratorio sin mirar a nadie. Iba hacia la Ruta 1, a paso ligero.',
   mom: {
@@ -46,9 +45,7 @@ export function b11VillaAlbaEvents() {
     {
       id: 'b11_regreso', x: 0, y: 0, trigger: 'auto', when: when({ all: [P5], none: [F.homeReturn] }),
       script: async (ctx) => {
-        ctx.setFlag(F.homeReturn);
-        await pause(ctx, 20);
-        await zygardeSays(ctx, HOME_TEXT.village);
+        ctx.setFlag(F.homeReturn); // Zygarde habla muy poco (autor, 25-09-2026): regreso sin línea
       },
     },
     {

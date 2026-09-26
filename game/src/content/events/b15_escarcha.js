@@ -2,20 +2,18 @@
 // «al fondo»; B22: el lago interior es del postgame, Articuno con la pista de Rosendo). Llegada, célula, objetos,
 // megapiedras, entrenadores (55–56) y los derrumbes que tapan las bocas sin salida. Coordenadas en
 // content/maps/b15/layout_escarcha.js.
-import { F, zygardeSays, when } from './b15_common.js';
+import { F, when } from './b15_common.js';
 import { b15CellEvents } from './b15_cells.js';
 import { ESCARCHA, ESCARCHA2 } from '../maps/b15/layout_escarcha.js';
 
 export const ESCARCHA_TEXT = Object.freeze({
   arrival: 'El aire de la gruta huele a hielo limpio. Del fondo llega el rumor de una cascada que no se congela.',
-  arrivalZygarde: 'Este hielo es de ahora. El viejo, el que recuerda, está en el lago del pueblo.',
   sealed: 'Un derrumbe de bloques de hielo tapa esta boca. Detrás se oye correr el agua.',
 });
 
 async function arrival(ctx) {
   ctx.setFlag(F.escarchaIntro);
-  await ctx.say(ESCARCHA_TEXT.arrival);
-  await zygardeSays(ctx, ESCARCHA_TEXT.arrivalZygarde);
+  await ctx.say(ESCARCHA_TEXT.arrival); // Zygarde habla muy poco (autor, 25-09-2026).
 }
 
 export function escarchaEvents() {

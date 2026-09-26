@@ -3,7 +3,7 @@
 // (3 quemadas) y 12 interruptores; la palanca general prueba la línea: si la corriente toca una caja quemada salta el
 // diferencial y todo se reinicia (interruptores reiniciables, sin fallo permanente). La operaria cuenta el apagón y
 // el contrato del Consorcio (CAMPANA B05). Lógica pura en content/events/b05_circuit.js.
-import { F, SPEAKER, SPRITE, say, core, zygardeEmote, byGender } from './b05_common.js';
+import { F, SPEAKER, SPRITE, say, byGender } from './b05_common.js';
 import {
   SWITCHES, DAMAGED, INPUT, OUTPUT, ROWS, COLS, node, nodeTile, switchTile, evaluateCircuit,
 } from './b05_circuit.js';
@@ -92,8 +92,6 @@ async function testLine(ctx) {
     ctx.turnToPlayer('operaria');
     await say(ctx, SPEAKER.operator, '¡Lo has conseguido! Ahora solo falta que caiga el rayo. Esta noche, como todas.');
   }
-  await zygardeEmote(ctx, '♪');
-  await core(ctx, 'El rayo ya tiene adónde ir.');
   return true;
 }
 

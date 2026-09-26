@@ -6,7 +6,7 @@ import { CAMPANAS, REMOLINO, marksInMap } from './b06_wind_rooms.js';
 import { gustEvents } from './b06_wind.js';
 import { b06CellEvents } from './b06_cells.js';
 import { bellEvents, pedestalEvent, abrilSalaEvent } from './b06_nucleo.js';
-import { F, SPEAKER, SPRITE, OBJ, lines, zygardeSays, scriptedBattle } from './b06_common.js';
+import { F, SPEAKER, SPRITE, OBJ, lines, scriptedBattle } from './b06_common.js';
 import { ANILLO, GALERIAS } from '../maps/b06/layout.js';
 
 const A = ANILLO;
@@ -208,11 +208,13 @@ function salaEvents() {
   ];
 }
 
-/** Primera llegada a la Sala (la llama la subida desde el Remolino tras el warp). */
+/**
+ * Primera llegada a la Sala (la llama la subida desde el Remolino tras el warp). Zygarde habla muy poco (autor,
+ * 25-09-2026): ya no comenta las campanas; solo queda la marca de sala vista.
+ */
 export async function salaIntro(ctx) {
   if (ctx.flag(F.salaSeen)) return;
   ctx.setFlag(F.salaSeen);
-  await zygardeSays(ctx, 'El centro está dormido. Las campanas lo llaman. Pero no de cualquier manera.');
 }
 
 /** Todos los eventos del Anillo de los Vientos. */

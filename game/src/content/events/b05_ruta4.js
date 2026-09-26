@@ -2,14 +2,12 @@
 // p2_restored), la roca de tutorial de Embestida con el rincón de la Heracrossita (C026), las Células C025 (vega)
 // y C073 (poza del río, Nadar), cinco entrenadores, objetos, árbol de miel, hierba que se agita, vecinos y carteles.
 // Coordenadas en content/maps/b05/ruta_4_layout.js.
-import { F, SPEAKER, SPRITE, say, core, zygardeEmote, blockedLink, examine, blockers } from './b05_common.js';
+import { F, SPEAKER, SPRITE, say, blockedLink, examine, blockers } from './b05_common.js';
 import { cellsOf, cellEvent } from './b05_cells.js';
 import { honeyTreeEvent, rustleEvents } from './b05_wild.js';
 import { FORD, WEST_ENTRY, NOOK, HOLLOW_TREE, HONEY_TREE, RUSTLE, FARM, SIGNS } from '../maps/b05/ruta_4_layout.js';
 import { FORD_TILES } from '../maps/b05/ruta_4_build.js';
 import { PENDING_LINKS, mapRegistered } from '../maps/b05/links.js';
-import { capabilityStatus } from '../../world/zygarde/progression.js';
-import { missingPartsLine } from '../zygarde/texts.js';
 
 /** Entrenadores (definiciones de combate en content/trainers/b05.js). */
 export const RUTA4_TRAINERS = Object.freeze([
@@ -34,7 +32,6 @@ const TEXT = Object.freeze({
   farmDoor: 'Casa de labranza. La puerta está cerrada con un cerrojo de madera.',
   hollowEmpty: 'Un hueco en el tronco del árbol. Ya no queda nada dentro.',
   hollowFind: 'En el hueco del tronco hay algo que brilla…',
-  rockSeen: 'Esa grieta… Casi lo recuerdo.',
 });
 
 function trainerEvents() {
@@ -98,8 +95,8 @@ function fordEvents() {
 
 /**
  * Roca de tutorial de Embestida (CAMPANA B05: «roca de tutorial en la Ruta 4») y el rincón que guarda (C026 y la
- * Heracrossita). La primera vez que el jugador llega junto a la roca sin Embestida, Zygarde la reconoce y dice las
- * partes que le faltan (sin cifras en el mapa, §1.1).
+ * Heracrossita). Zygarde habla muy poco (autor, 25-09-2026): la roca no lleva comentario del Core; la describe su
+ * propio evento (ramRock).
  */
 function nookEvents() {
   const r = NOOK.rock;
@@ -109,18 +106,6 @@ function nookEvents() {
   return [
     ...blockers('rincon_muro', wall),
     { id: 'roca_tutorial', type: 'ramRock', x: r.x, y: r.y, sprite: SPRITE.barrier, dir: 2, directionFix: true, stepAnime: true },
-    {
-      id: 'roca_tutorial_aviso', x: r.x - 1, y: r.y, trigger: 'touch', through: true,
-      when: (s) => !s?.flag(F.r4Tutorial) && !s?.zygardeAbility('ram') && Boolean(s?.data?.zygarde?.form),
-      script: async (ctx) => {
-        ctx.setFlag(F.r4Tutorial);
-        ctx.face('player', 'right');
-        await zygardeEmote(ctx, '…');
-        await core(ctx, TEXT.rockSeen);
-        const st = capabilityStatus(ctx.state, 'ram');
-        if (st.cellsMissing > 0) await core(ctx, missingPartsLine(st.cellsMissing));
-      },
-    },
     {
       id: 'hueco_arbol', x: HOLLOW_TREE.trunk.x, y: HOLLOW_TREE.trunk.y, trigger: 'action', noOver: true, solid: true,
       pages: [

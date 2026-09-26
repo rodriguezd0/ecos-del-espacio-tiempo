@@ -2,21 +2,23 @@
 // «recordar» es lenguaje de recuperación, sin explicar la profecía ni hacerlo cómico.
 // Las escenas propias de cada bloque (N2, N3, puente de hielo…) viven en el guion del bloque; estas son las
 // versiones cortas GENÉRICAS de la activación diferida (CAMPANA §2.1, regla general).
-// La línea de Embestida es literal de CAMPANA §2.1.
+//
+// DECIDIDO (autor, 25-09-2026): Zygarde es un legendario serio e imponente y habla MUY poco. Solo quedan sus
+// líneas canónicas (literales de CAMPANA) y las imprescindibles. Nunca anuncia mecánicas futuras (los bloqueos se
+// explican solo con la descripción del terreno), no agradece las células ni comenta el ambiente.
 
-/** Línea telepática de la escena corta de «recuerdo» por capacidad. */
+/**
+ * Línea telepática de la escena corta de «recuerdo» por capacidad. Solo las canónicas (CAMPANA §2.1: Embestida;
+ * B06: Terreno; Trepar «recuerda» subir; B16: Forma Completa; B21: Salto). El resto se activa sin que Zygarde hable
+ * (el aviso del sistema basta).
+ */
 export const MEMORY_LINES = Object.freeze({
-  run: ['Mis partes se juntan. Ya puedo llevarte.'],
   ram: ['Recuerdo cómo se abre paso.'],
-  terrain: ['Recuerdo cómo se pisa la tierra blanda.'],
+  terrain: ['Ahora recuerdo cómo se pisa la tierra blanda.'],
   climb: ['Recuerdo cómo se sube.'],
-  swim: ['Recuerdo el agua. Súbete.'],
-  detect: ['Os oigo mejor. Sé dónde estáis.'],
-  dive: ['Mi campo te cubrirá. Podemos bajar.'],
   // Versión corta del hito del P8 al recoger la célula 100 (CAMPANA B16 «Si faltan células»: la misma escena, corta).
   complete: ['Nada me obliga. El mundo necesita que esté entero, y elijo estarlo.'],
-  jump: ['Súbete. Esta forma conoce los caminos viejos.'],
-  anchor: ['Puedo sostener lo que se tuerce.'],
+  jump: ['Súbete. Esta forma sabe correr por los caminos viejos.'],
 });
 
 /** Aviso del sistema tras la escena (\\c[3] = verde). */
@@ -55,8 +57,6 @@ export const FIELD_TEXT = Object.freeze({
   roughSnow: 'Nieve profunda. Te hundes a cada paso.',
   roughMounted: 'Hace falta ir montado en Zygarde para cruzar esto.',
   gravel: 'Una cuesta de grava suelta. A pie, resbalas.',
-  // Primera vez que se intenta sin la montura: el Core explica que es un paso para más adelante.
-  gravelCoreHint: 'La grava cede bajo tus pies. Cuando recupere más de mí, podré llevarte arriba.',
   gravelAsk: '¿Quieres montar en Zygarde?',
   cantDismount: 'Aquí no puedes bajarte.',
   cantMount: 'Aquí no puedes montar.',
@@ -74,10 +74,11 @@ export const FIELD_TEXT = Object.freeze({
   rebuildBlocked: 'Un zócalo de piedra con hexágonos gastados. Al otro lado falta el camino.',
   rebuildAsk: '¿Quieres que Zygarde reconstruya el camino?',
   rebuildDone: 'El camino ha vuelto a su sitio.',
-  // Tutorial genérico de Reconstrucción (rebuildGap con `tutorial: true`; B16 es el primero).
+  // Tutorial genérico de Reconstrucción (rebuildGap con `tutorial: true`; B16 es el primero). Narración, no
+  // telepatía (autor, 25-09-2026: Zygarde no explica mecánicas).
   rebuildTutorial: Object.freeze([
-    'Donde quede un zócalo con hexágonos gastados, puedo alzar el camino que hubo.',
-    'Ponte delante del zócalo y pídemelo. Las piedras se quedarán.',
+    'Donde queda un zócalo con hexágonos gastados, Zygarde puede alzar el camino que hubo.',
+    'Ponte delante del zócalo y pulsa A. Las piedras se quedarán en su sitio.',
   ]),
   flyAsk: '¿Adónde quieres volar?',
   cantFly: 'Aquí no se puede volar.',

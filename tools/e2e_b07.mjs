@@ -351,7 +351,6 @@ async function galerias(d) {
   ];
   await solve(d, 3, watch);
   await d.until((s) => s.map === 'ruta_6' && s.ready, { timeout: 30000, what: 'salir por el pozo de ventilación' });
-  await d.expectSaid(/Las capas la guardaban/, 'Zygarde ante la Tablilla');
   await d.expectSaid(/Has obtenido la Tabla Pétrea/, 'la Tabla Pétrea');
   const tablets = await d.eval(() => window.__b07.tablets());
   await d.milestone('rescate_completo', (s) => {

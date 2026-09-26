@@ -13,7 +13,7 @@ export const F = Object.freeze({
   gala: 'b09_gala',
   gaelB3: 'b09_gael_b3',
   // Ruta 7
-  r7Arrival: 'b09_r7_llegada', // el Core comenta la Sima al entrar
+  r7Arrival: 'b09_r7_llegada', // primera entrada a la Ruta 7 (ya sin línea del Core)
   // Gala (Hotel Mirador)
   galaInvite: 'b09_gala_invitacion', // el botones ha llevado al jugador al hotel
   gaelB3Won: 'b09_gael_b3_ganado',
@@ -158,7 +158,7 @@ export async function lines(ctx, speaker, list) {
   for (const text of list) await say(ctx, speaker, text);
 }
 
-/** Zygarde (telepatía sobria, CAMPANA §3.2), solo si acompaña al jugador. */
+/** Zygarde (telepatía sobria, CAMPANA §3.2), solo si acompaña al jugador. Zygarde habla muy poco (autor, 25-09-2026). */
 export async function core(ctx, text) {
   if (!ctx.state.data.zygarde?.form) return;
   ctx.se?.('core_signal', { volume: 45 });

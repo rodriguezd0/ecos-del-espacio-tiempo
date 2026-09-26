@@ -9,8 +9,8 @@
 //   · Créditos sobre los lugares restaurados y el despertar en el cuarto. Zygarde sigue en Forma Completa por decisión
 //     propia (el Arca solo gestiona formas). Empieza el postgame.
 // Villa Alba y sus casas son mapas del Bloque 1: cada uno añade estos eventos con una línea (edición mínima).
-import { F, V, SPEAKER, SPRITE, EGG_ROW, MUSIC, when, lines, zygardeSays, pause, placePlayer, eventById, setClock, byGender } from './b21_common.js';
-import { EPILOGUE_TEXT, RESOLUTION_TEXT } from './b21_texts.js';
+import { F, V, SPEAKER, SPRITE, EGG_ROW, MUSIC, when, lines, pause, placePlayer, eventById, setClock, byGender } from './b21_common.js';
+import { EPILOGUE_TEXT } from './b21_texts.js';
 import { convergenceTravel, landFromJump, becomeTenPercent } from './b21_salto.js';
 import { guardiansMontage, shipScene, creditsRoll } from './b21_cine.js';
 import { stageRoute } from './b07_path.js';
@@ -42,15 +42,13 @@ async function labyrinthToGate(ctx) {
 
 /** Salto de vuelta (auto en Columna Lanza tras la resolución) y llegada a la verja de Villa Alba. */
 export async function returnHome(ctx) {
-  // Zygarde adopta la Forma 10 % y LUEGO dice la frase del Salto («Esta forma…», CAMPANA B21 §1 y §6).
+  // Zygarde adopta la Forma 10 % y lleva al jugador de vuelta, sin hablar (autor, 25-09-2026).
   await becomeTenPercent(ctx);
-  await zygardeSays(ctx, RESOLUTION_TEXT.home);
   await convergenceTravel(ctx, { to: 'laberinto_profundidad', x: EPI.labyrinth.x, y: EPI.labyrinth.y, dir: 2 });
   ctx.setFlag(F.epilogueBack);
   await landFromJump(ctx);
   setClock(ctx.state, 18, 0);
   await pause(ctx, 20);
-  await zygardeSays(ctx, EPILOGUE_TEXT.labyrinth);
   await labyrinthToGate(ctx);
 }
 
@@ -64,7 +62,6 @@ export async function leaveColumna(ctx) {
   const go = await ctx.choice(['Sí', 'No'], { message: EPILOGUE_TEXT.nodeAsk, cancel: 1 });
   if (go !== 0) return false;
   await becomeTenPercent(ctx);
-  await zygardeSays(ctx, RESOLUTION_TEXT.home);
   await convergenceTravel(ctx, { to: 'laberinto_profundidad', x: EPI.labyrinth.x, y: EPI.labyrinth.y, dir: 2 });
   await landFromJump(ctx);
   await labyrinthToGate(ctx);
@@ -236,7 +233,6 @@ export async function wakeUp(ctx) {
   await ctx.say(EPILOGUE_TEXT.wake);
   ctx.face('player', 'down');
   await pause(ctx, 20);
-  await zygardeSays(ctx, EPILOGUE_TEXT.zygardeStays);
   await ctx.say(EPILOGUE_TEXT.formNote);
   ctx.setFlag(F.epilogueEnd);
   await ctx.say(EPILOGUE_TEXT.postgame);

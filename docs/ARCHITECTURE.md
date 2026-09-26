@@ -319,7 +319,7 @@ Sistemas narrativos de toda la campaña (CAMPANA §1.7, §3.0, §3.1; TABLILLAS.
 **Datos** (`content/story/`):
 - `clues.js` — `CLUE_ARCS` T01–T15: `{ id, title, tablet, place, zone (id de mapa: anillo del mapa regional), block,
   opens: { block, by, flag|null }, available: { label, flag: 'pN_restored' }, abilities[], queueUntil: { ability }|null,
-  after, night, steps: [{ label, by, text }×2], closes: { tablet } }`. `MAX_ACTIVE_CLUES = 3`, `ZYGARDE_LINES`.
+  after, night, steps: [{ label, by, text }×2], closes: { tablet } }`. `MAX_ACTIVE_CLUES = 3` (sin frases de Zygarde: DECISIONES X34).
 - `tablets.js` — `TABLETS` (18 = 17 tablas de tipo + `LEGENDPLATE`; **sin `BLANKPLATE`**): `{ id, name, type, arc,
   chronicle, place, block, arceusPhase }`; `CAMPAIGN_TABLETS` (15), `ARCEUS_TABLETS` (3), `missingCampaignTablets(state)`,
   `hasAllCampaignTablets(state)` (Puerta de las Quince).
@@ -625,8 +625,9 @@ Devuelve `{ type: 'zygarde', action: 'fly' | 'formChanged' }`, que el mapa ejecu
 **Integración** (aditiva): MapScene crea `scene.zygarde = new ZygardeField(scene)` (`world/zygarde/field.js`) y lo llama en
 `enter/enterMap/onConnectionCrossed/refreshFollower/update/updateWhilePaused/drawUI/exit`; efectos Three.js propios
 registrados con `registerEffect(name, factory)` de `render/effects.js` (`zygardeHexBurst`, `zygardeFissure`,
-`zygardeVeins`, `zygardeSocket`, `zygardeWhirl`, `zygardeVent`, `zygardeCurrent`, `zygardeBubble`, `zygardeHeartbeat`,
-`zygardeStrip`), utilizables con `ctx.effect(nombre, opts)`. Seguidor por forma en `content/companion.js`. Con Zygarde en
+`zygardeVeins`, `zygardeSocket`, `zygardeWhirl`, `zygardeVent`, `zygardeCurrent`, `zygardeBubble`,
+`zygardeStrip`), utilizables con `ctx.effect(nombre, opts)`. Sin latido ni flecha de detección (DECISIONES X34).
+Seguidor por forma en `content/companion.js` (al hablarle, calla: X34). Con Zygarde en
 el equipo (B21, D21) `refreshFollower` no lo repite como Pokémon acompañante: camina como compañero de campo y sigue
 el siguiente Pokémon capaz.
 
@@ -652,6 +653,7 @@ Funciones puras: `createPokemon(db, species, level, opts)`, `calcStats`, `maxHP`
 `zygarde=all|ram,climb…`, `dark=1`, `through=1`, `noenc=1`, `fx=aurora,moon,cracks,cell`, `follower=0`,
 `flags=a,b`, `vars=k:v,…`, `core=1`, `fragments=N` (Fragmentos Azur F01…F0N). Sin partida se crea una de prueba
 (Pikachu nv 8).
+**F9** (siempre, sin `?debug`): menú del modo desarrollador (§24).
 **Teclas con `?debug`** en el mapa: T +1 h · Y clima siguiente · U oscuridad · G atravesar muros · N modo de
 encuentros · B efectos de crisis · J transición de combate · K encuentro salvaje · L linterna. Consola:
 `window.__map` (MapScene: `.state`, `.world`, `.runScript(fn)`, `.transfer(id, x, y)`), `window.__ui`.
@@ -1132,3 +1134,25 @@ Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset
   - Al guardar o borrar se copian al servidor; al arrancar, se reconcilian por `savedAt` (gana la más reciente).
   - «Cargar partida → Importar partida → Desde el servidor» recupera cualquier partida, aunque el navegador haya
     perdido su id.
+
+## 24. Modo desarrollador (`src/dev/dev*.js`; guía para el creador en `docs/MODO_DESARROLLADOR.md`)
+
+Siempre disponible en esta versión (`dev/devConfig.js#DEV_MODE`; `false` lo quita todo): **F9** en el mapa
+(`devRuntime.js#installDevMenuKey`, instalado por MapScene en `enter`/`exit`) y la entrada «Desarrollador» del menú de
+pausa (con el recordatorio «F9: modo desarrollador» bajo el recuadro de hora). No sustituye a `world/devTools.js`
+(parámetros de URL y teclas con `?debug`): los interruptores se leen del mapa (`world.debugThrough`,
+`scene.noEncounters`, `world.devRunBoost`), así que la tecla G y el menú siempre coinciden.
+- **Módulos puros** (probados en `tests/dev_{arrival,give,progress}.test.mjs`): `devArrival` (casilla de llegada:
+  `start` → `flyPoint` → delante de un warp → borde de una conexión → la más cercana al centro; pisable, sin evento
+  sólido y con salida; `spotNear` para «x,y»), `devMaps` (catálogo por carpeta de bloque del registro generado, con
+  búsqueda), `devSearch` (especies con formas y objetos con `items_axis`), `devPokemon` (dar Pokémon, nivel,
+  variocolor, curar, objetos, dinero), `devZygarde` (células, núcleos, capacidades, forma, Fragmentos, Tablillas,
+  Vuelo, Pokédex), `devProgress` (`applyBlockStart`: flags/vars/Zygarde/Fragmentos/Tablillas EXACTOS, objetos y
+  Vuelo sumados, equipo nuevo y el anterior al PC; editor de flags/variables), `devEnv` (hora), `devBlocks`
+  (**`BLOCK_STARTS`**: estado de entrada B01–B21 sacado de los README/E2E de cada bloque; al cambiar la cadena de
+  flags de un bloque, actualizarlo; lo valida el test).
+- **Interfaz**: `devMenu.js` (`DevMenuScene`, UIScene transparente con pila de páginas; teclado físico: ↑↓, RePág/AvPág,
+  Intro, Esc, escribir = buscar; `menu.push/prompt/pick/status/close`), páginas en `devPages*.js`. Lo que debe pasar
+  en el mapa (teletransporte, salto de bloque) vuelve como acción `{ type: 'dev', label, run(ctx) }` que MapScene
+  ejecuta como guion (registrada con `registerFieldAction('dev')`, sirve también desde el menú de pausa).
+- `GameState` añade `clearVar`, `removeCell`, `removeCore`, `removeFragment`, `removeTablet` (sustituyen la lista).

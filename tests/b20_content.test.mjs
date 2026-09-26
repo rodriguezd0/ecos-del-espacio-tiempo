@@ -196,7 +196,7 @@ test('zonas: los tramos senda_origen_N son del Pilar del Origen (atlas y fondo C
 
 // ───────────────────────────── Tramo 9 · cristales de cambio ─────────────────────────────
 
-test('tramo 9: los cristales tensan la Cadena Roja del tramo (no la del Cruce) y Zygarde nombra cada eje una vez', async () => {
+test('tramo 9: los cristales tensan la Cadena Roja del tramo (no la del Cruce) y la narración describe cada eje una vez', async () => {
   const crystal = expandEventDef(tramo9Events().find((e) => e.type === 'axisCrystal'));
   const script = crystal.pages[0].script;
   // Sin la Cadena Roja el cristal solo vibra
@@ -213,7 +213,8 @@ test('tramo 9: los cristales tensan la Cadena Roja del tramo (no la del Cruce) y
   assert.equal(s.var('cadena_eje', null), null, 'tensa la Cadena de la Cámara del Cruce');
   assert.ok(s.flag(F.t9Crystal) && s.flag(F.t9Frozen) && !s.flag(F.t9Fold));
   assert.match(text(time), /eco de la Cámara del Cruce/);
-  assert.ok(time.said.filter((l) => /Cámara del Cruce/.test(l.text)).every((l) => l.speaker === 'Zygarde'), 'la explicación no la dice Zygarde');
+  // Zygarde habla muy poco (autor, 25-09-2026): la explicación y los cambios son narración.
+  assert.ok(!time.said.some((l) => l.speaker === 'Zygarde'), 'Zygarde explica el cristal');
   assert.match(text(time), /La cascada se ha parado/);
   const space = stubCtx(s, { choice: 1 });
   await script(space);
@@ -223,7 +224,8 @@ test('tramo 9: los cristales tensan la Cadena Roja del tramo (no la del Cruce) y
   assert.match(text(space), /Las marcas violetas se han abierto/);
   const again = stubCtx(s, { choice: 0 });
   await script(again);
-  assert.doesNotMatch(text(again), /La cascada se ha parado/, 'Zygarde repite su línea');
+  assert.doesNotMatch(text(again), /La cascada se ha parado/, 'la narración de la cascada se repite');
+  assert.ok(![...space.said, ...again.said].some((l) => l.speaker === 'Zygarde'), 'Zygarde habla en el tramo 9');
 });
 
 // ───────────────────────────── Trío de las Nubes ─────────────────────────────
@@ -264,6 +266,8 @@ test('Trío: la pregunta, Zygarde responde por él o por ella y el Trío se reti
   const her = await council('F', { towers: true });
   assert.ok(her.ctx.said.some((l) => l.speaker === 'Zygarde' && l.text === 'Yo respondo por ella.'), 'Zygarde no responde «por ella»');
   assert.ok(her.ctx.said.some((l) => l.speaker === 'Landorus' && l.text === 'Alguien apagó las torres. Lo sentimos.'));
+  // Zygarde habla muy poco (autor, 25-09-2026): en el Consejo solo dice la canónica.
+  assert.deepEqual(her.ctx.said.filter((l) => l.speaker === 'Zygarde').map((l) => l.text), ['Yo respondo por ella.']);
   assert.equal(ringTowersOff(her.s), true);
 });
 
@@ -353,7 +357,8 @@ test('Núcleo: Fragmento 10, los diez se unen en la Flauta Azur, profecía enter
   assert.ok(idx.every((i) => i >= 0), 'falta algún verso');
   assert.deepEqual([...idx].sort((a, b) => a - b), idx, 'los versos no van en orden');
   assert.ok(idx[9] - idx[0] === 9, 'la profecía no se lee de corrido');
-  assert.ok(ctx.said.some((l) => l.speaker === 'Zygarde' && l.text === 'El Eje está entero. Pero quien lo sostiene duerme.'));
+  // Zygarde habla muy poco (autor, 25-09-2026): en el núcleo solo la canónica de la falsa calma.
+  assert.deepEqual(ctx.said.filter((l) => l.speaker === 'Zygarde').map((l) => l.text), ['El Eje está entero. Pero quien lo sostiene duerme.']);
   assert.equal(crisisPhase(s), 4);
 });
 

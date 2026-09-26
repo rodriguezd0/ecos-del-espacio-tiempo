@@ -3,10 +3,10 @@
 // con lo que registró desde fuera del P8. Lo alimenta el Anillo de Captación»; §5.4 «Operación Convergencia»).
 //   · Antes del P8 (se llega desde Lúmina en cualquier momento) es un paseo público sobre la Sima.
 //   · Del P8 al P9 (B18): valla de obra, caravana, contenedores, andamios sobre el vacío y el Resonador; técnicos en la
-//     puerta. La primera vez que el jugador se acerca, escena de la ocupación: Zygarde reconoce la cadena copiada y
-//     siente las tres torres del Anillo (nota en la Libreta). Espolón del este: la Torre del Temblor.
+//     puerta. La primera vez que el jugador se acerca, escena de la ocupación: los técnicos hablan de la cadena y de
+//     las tres torres del Anillo (nota en la Libreta). Espolón del este: la Torre del Temblor.
 import {
-  F, SPEAKER, SPRITE, OBJ, MUSIC, occupied, lines, zygardeSays, eventById, pause, npc, frame,
+  F, SPEAKER, SPRITE, OBJ, MUSIC, occupied, lines, eventById, pause, npc, frame,
 } from './b17_common.js';
 import {
   COMPOUND, DECK_BARRIER, SCAFFOLD, RESONATOR, TOWER, DESCENT, DESCENT_GAP, SPOTS, ITEMS, RIM_Y,
@@ -40,10 +40,7 @@ export const MIRADOR_TEXT = Object.freeze({
     a: 'El registro del Santuario ha servido. La Cadena Sintética ya resuena en la frecuencia buena.',
     b: 'Resonar no es sostener. Sin las torres del Anillo a pleno rendimiento, el Resonador no aguanta ni un minuto.',
     c: 'Las tres drenan desde anoche: viento, tormenta y temblor. El director quiere la prueba cuanto antes.',
-    z1: 'Esa cadena imita algo que conozco. Suena mal, como una voz copiada.',
-    z2: (s) => (s.flag(F.towerTemblor)
-      ? 'Las torres tiran de la tierra para alimentar ese anillo. La del este ya está callada. Las otras, al otro lado de la Sima, no.'
-      : 'Las torres tiran de la tierra para alimentar ese anillo. Siento una aquí, al este. Y dos más al otro lado de la Sima.'),
+    // Zygarde habla muy poco (autor, 25-09-2026): dónde están las torres lo dice la nota de la Libreta.
     note: 'Has anotado en la Libreta lo del Anillo de Captación.',
   },
   worker1: ['Calibración del Resonador: 71 %. No toque nada, por favor.'],
@@ -151,8 +148,6 @@ async function occupationScene(ctx) {
   await ctx.say(S.c, { speaker: SPEAKER.tecnica });
   await ctx.camera.reset(40);
   await pause(ctx, 10);
-  await zygardeSays(ctx, S.z1);
-  await zygardeSays(ctx, S.z2);
   if (ctx.state.hasClue(MIRADOR_HINT_NOTE.id)) ctx.state.solveClue(MIRADOR_HINT_NOTE.id); // el aviso de Alerce, ya visto
   if (!ctx.state.hasClue(ANILLO_NOTE.id)) {
     ctx.state.addClue(ANILLO_NOTE.id, ANILLO_NOTE.text);

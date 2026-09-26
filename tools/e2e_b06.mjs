@@ -252,9 +252,9 @@ async function ruta5(d) {
 }
 
 async function meseta(d) {
-  await d.walkTo(3, 23, { watch: [{ re: /algo que lo sujeta/, name: 'meseta_llegada', delay: 200 }] });
-  await d.settle({ watch: [{ re: /algo que lo sujeta/, name: 'meseta_llegada', delay: 200 }] });
-  await d.expectSaid(/Ahí dentro hay algo mío/, 'la llegada a la Meseta');
+  await d.walkTo(3, 23, { watch: [{ re: /aerogeneradores del Parque están quietos/, name: 'meseta_llegada', delay: 200 }] });
+  await d.settle({ watch: [{ re: /aerogeneradores del Parque están quietos/, name: 'meseta_llegada', delay: 200 }] });
+  await d.expectSaid(/aerogeneradores del Parque están quietos/, 'la llegada a la Meseta');
   const watch = [
     { re: /Tú también lo has notado/, name: 'gael_puerta', delay: 300 },
     { scene: 'BattleScene', name: 'combate_doble', delay: 4500 },
@@ -365,9 +365,9 @@ async function galerias(d) {
   await ride(d, ['right']);
   s = await d.snapState();
   if (!(s.x === 12 && s.y === 21)) throw new Error(`El río no ha llevado al rellano: (${s.x},${s.y})`);
-  // A pie, la rampa devuelve (pista de Zygarde); montado, se remonta.
+  // A pie, la rampa devuelve (pista narrada); montado, se remonta.
   await ride(d, ['up']);
-  await d.expectSaid(/Súbete\. A mí no me arrastra/, 'la pista de montar');
+  await d.expectSaid(/Contra este viento no se avanza a pie/, 'la pista de montar');
   await ride(d, ['montar', 'up', 'up', 'up', 'up']);
   await d.until((st) => st.y <= 17, { timeout: 8000, what: 'salir de las Flechas' });
   await d.milestone('flechas_superada');

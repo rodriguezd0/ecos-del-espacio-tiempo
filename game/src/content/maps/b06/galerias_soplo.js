@@ -6,7 +6,7 @@
 // Campanas (anillo_vientos). Eventos en content/events/b06_galerias.js.
 import { FLECHAS, REMOLINO, walkCells, marksInMap } from '../../events/b06_wind_rooms.js';
 import { galeriasEvents } from '../../events/b06_galerias.js';
-import { F, zygardeSays } from '../../events/b06_common.js';
+import { F } from '../../events/b06_common.js';
 import { GALERIAS_SOPLO } from '../../encounters/b06.js';
 import { pilarTone } from '../../stamps/pilar.js';
 import { GALERIAS, ANILLO } from './layout.js';
@@ -119,7 +119,7 @@ export default {
   onEnter: async (ctx) => {
     if (ctx.flag(F.galeriasSeen)) return;
     ctx.setFlag(F.galeriasSeen);
-    await zygardeSays(ctx, 'Aquí abajo el viento no encuentra salida. Da vueltas y vuelve.');
+    // Zygarde habla muy poco (autor, 25-09-2026): la llegada ya no lleva comentario del Core.
   },
 
   events: galeriasEvents(),

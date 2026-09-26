@@ -5,7 +5,7 @@
 // (explanada quemada), C051 (mitad de la escalinata) y C076 (poza, Nadar); pared de raíces a la repisa de la cascada
 // y su gruta; una montañera. El aljibe responde a Zygarde y abre el paso al Mundo Distorsión.
 // Todo lo del B12 depende de b01_left_town: en el prólogo (partida provisional sin flags) no aparece nada.
-import { F, EXT, OBJ, SPEAKER, SPRITE, MUSIC, VIOLET, when, lines, zygardeSays, zygardeLines, pause } from './b12_common.js';
+import { F, EXT, OBJ, SPEAKER, SPRITE, MUSIC, VIOLET, when, lines, zygardeSays, pause } from './b12_common.js';
 import { MONTE, VESTIBULO, GRUTA } from '../maps/b12/layout.js';
 import { b12CellEvents } from './b12_cells.js';
 
@@ -31,12 +31,7 @@ export const MONTE_TEXT = Object.freeze({
 async function arrivalScene(ctx) {
   ctx.setFlag(F.monteLlegadaP6);
   await pause(ctx, 20);
-  await ctx.emote?.('player', '…');
-  await zygardeLines(ctx, [
-    'Aquí.',
-    'Esta es la piedra donde me rompí.',
-    'Arriba, en el aljibe, una parte de mí sigue al otro lado. La noto.',
-  ]);
+  await ctx.emote?.('player', '…'); // Zygarde habla muy poco (autor, 25-09-2026)
 }
 
 /** Primera vuelta del Mundo Distorsión tras restaurar el P6 (la puerta anclada, X16). */
@@ -45,7 +40,6 @@ async function returnScene(ctx) {
   ctx.bgm(MUSIC.monte, { fadeOutPrevious: 30 });
   await pause(ctx, 30);
   await ctx.say(MONTE_TEXT.aljibeCalm);
-  await zygardeLines(ctx, ['La puerta ya no necesita a nadie dentro para cerrarse.', 'Podremos volver cuando haga falta.']);
 }
 
 // ───────────────────────────── el aljibe ─────────────────────────────
@@ -86,11 +80,8 @@ export async function b12Aljibe(ctx) {
     if (aljibe) { aljibe.direction = 4; aljibe.stepAnime = true; }
     ctx.se('PRSFX- Ominous Wind', { volume: 60 });
     await ctx.shake(2, 5, 30);
-    await zygardeLines(ctx, [
-      'Me reconoce.',
-      'Al otro lado está la parte de mí que se quedó sujetando la puerta.',
-      'Se abrirá. Solo por un tiempo.',
-    ]);
+    // Zygarde habla muy poco (autor, 25-09-2026): única línea imprescindible del bloque además de las canónicas (qué hay al otro lado del aljibe).
+    await zygardeSays(ctx, 'Al otro lado está la parte de mí que se quedó sujetando la puerta.');
   } else if (restored) {
     await ctx.say(MONTE_TEXT.aljibeCalm);
   }
@@ -131,7 +122,6 @@ function battleMarks() {
 
 async function sensorTalk(ctx) {
   await ctx.say(MONTE_TEXT.sensor);
-  await zygardeSays(ctx, 'Midieron desde fuera. El aljibe no les dejó acercarse.');
 }
 
 function aljibeSurroundings() {

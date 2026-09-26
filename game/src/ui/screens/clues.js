@@ -386,10 +386,6 @@ class CluesScene extends ScreenScene {
       y = this.paragraph(g, s.text, x, y, w, faded) + 4;
     });
     if (row.status === 'solved' && row.place && y <= BOTTOM - LINE) { txt(g, cropText(row.place, w, 'note'), x, y, P.blue); y += LINE; }
-    if (row.zygarde && y <= BOTTOM - LINE) {
-      drawHexFilled(g, x + 6, y + 10, 5, P.green, 0.8);
-      this.paragraph(g, `Zygarde: «${row.zygarde}»`, x + 16, y, w - 16, P.green);
-    }
   }
 
   // ---- Profecía

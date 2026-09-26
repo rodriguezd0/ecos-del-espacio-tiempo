@@ -3,7 +3,7 @@
 // engranajes (colocar y girar: content/events/b05_gears.js), la muela que vuelve a moler a derechas, el eje que se
 // abre y deja ver la Tabla Linfa, los técnicos del Consorcio que llegan a «tomar muestras» (combate 18–20; si se
 // pierde, se vuelve a la puerta del molino) y Darío, que deja el Consorcio y avisa del Parque Eólico.
-import { F, V, SPEAKER, SPRITE, say, core, zygardeEmote, byGender } from './b05_common.js';
+import { F, V, SPEAKER, SPRITE, say, byGender } from './b05_common.js';
 import { GEAR_NAMES, SENSE_NAMES, SOCKET_SIZES, evaluateGears } from './b05_gears.js';
 import { bossBattle } from '../common/bossBattle.js';
 
@@ -130,8 +130,6 @@ async function millTurns(ctx) {
     ctx.turnToPlayer('anselmo');
     await say(ctx, S.anselmo, '¡Muele! ¡Muele a derechas, como el sol! …¿Y eso? Setenta años en este molino y nunca vi ese eje abierto.');
   }
-  await zygardeEmote(ctx, '!');
-  await core(ctx, 'Agua quieta dentro de la piedra. Eso pesaba.');
 }
 
 /** Llegada de los técnicos del Consorcio (y de Darío) cuando el eje queda abierto. */

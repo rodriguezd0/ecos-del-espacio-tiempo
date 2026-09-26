@@ -5,7 +5,7 @@
 // ninguna tienda.»). Coordenadas en content/maps/b15/layout_boreal.js.
 import { takeFerry } from '../../world/transport.js';
 import {
-  F, SPEAKER, SPRITE, OBJ, isNorthUnbound, markNorthUnbound, zygardeSays, lines, alerceCall, pause, when, isNight,
+  F, SPEAKER, SPRITE, OBJ, isNorthUnbound, markNorthUnbound, lines, alerceCall, pause, when, isNight,
 } from './b15_common.js';
 import { BOREAL } from '../maps/b15/layout_boreal.js';
 import { PENDING_LINKS } from '../maps/b15/links.js';
@@ -22,7 +22,6 @@ export const BOREAL_TEXT = Object.freeze({
   arrival: 'Villa Boreal: casas bajas, humo de chimeneas y, en la plaza, un andamio vacío donde otros inviernos se alza la Torre de Hielo.',
   boyCall: '¡Bolita! Ven, que nos vamos a casa…',
   boy: ['No me hace caso. Desde hace días ni me mira.', 'Mamá dice que les pasa a todos los del pueblo. Que es por el cielo.'],
-  arrivalZygarde: 'Aquí también. Más fuerte que en la vertiente.',
   scaffold: 'El andamio de la Torre de Hielo, vacío. Un cartel clavado a un poste: «Este invierno no habrá Torre. — El concejo.»',
   tower: 'La Torre de Hielo, tallada con el bloque del Lago Viejo. De noche, su fanal se ve desde la Ruta 13.',
   concejal: [
@@ -64,7 +63,6 @@ async function arrival(ctx) {
     await lines(ctx, 'Niño', BOREAL_TEXT.boy);
     await ctx.camera?.reset?.(30);
   }
-  await zygardeSays(ctx, BOREAL_TEXT.arrivalZygarde);
 }
 
 /** Tras el combate B5 (al salir del Observatorio): Alerce llama. */
@@ -78,8 +76,9 @@ export async function alerceRingCall(ctx) {
     '…',
     'Ese aro no es de ninguna tienda.',
     'Si vuelves a ver a Gael, no le preguntes por el aro. Todavía no.',
+    // Zygarde habla muy poco (autor, 25-09-2026): la pista de los Lagos la da Alerce.
+    'Al norte de Boreal quedan los Lagos del Alma. Poca gente sube allí. Yo empezaría por ahí.',
   ]);
-  await zygardeSays(ctx, 'Al norte, los lagos. Algo nos espera allí.');
 }
 
 export async function borealOnEnter(ctx) {

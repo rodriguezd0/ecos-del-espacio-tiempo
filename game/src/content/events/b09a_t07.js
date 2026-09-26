@@ -4,7 +4,7 @@
 // Vespiquen Alfa nv 36 (captura opcional). La colmena se traslada, aparece la Tabla Bicho (Crónica VII), Iván da la
 // Scolipedita y la Reserva reabre entera. Reintento sin pérdida: derrota → curación ante la colmena; huida → la reina
 // vuelve a esconderse; vencida sin capturar → reaparece al descansar (§2.6, TABLILLAS §4.8).
-import { F, V, SPEAKER, SPRITE, MUSIC, say, lines, core, byGender, pause, restCount } from './b09a_common.js';
+import { F, V, SPEAKER, SPRITE, MUSIC, say, lines, byGender, pause, restCount } from './b09a_common.js';
 import { ZONES, zoneByKey, workerFlown, withWorker, flowersHeld, allFlowers, t07Phase, alphaReturns, flightPath } from './b09a_t07_logic.js';
 import { VESPIQUEN_ALPHA } from '../encounters/b09a.js';
 import { RESERVE, FLOWERS, WORKERS } from '../maps/b09a/ruta_14_layout.js';
@@ -35,7 +35,6 @@ async function firstLook(ctx) {
   ctx.setFlag(F.hiveSeen);
   await ctx.say(T07_TEXT.hive);
   await ctx.story.advanceClue('T07', 2);
-  await core(ctx, 'Esa piedra está escrita. Lo noto desde aquí.');
   // Iván se acerca desde la puerta para explicar.
   const ivan = ctx.world.events.find((e) => e.id === 'ivan_reserva');
   if (ivan && !ivan.erased) { await ctx.approach(ivan); ctx.face('player', ctx.directionTo(ctx.player, ivan)); }
@@ -80,7 +79,6 @@ async function resolve(ctx, caught) {
   await ctx.fade('in', 24);
   ctx.se?.('Anim/Saint3');
   await ctx.say('Donde estaba la colmena queda la losa, y sigue zumbando. Al tocarla, el zumbido se apaga.');
-  await core(ctx, 'Es una de ellas. La guardaban los pequeños.');
   await ctx.story.giveTablet('INSECTPLATE');
   ctx.setFlag(F.t07Done);
   await lines(ctx, I, [

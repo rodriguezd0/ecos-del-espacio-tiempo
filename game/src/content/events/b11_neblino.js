@@ -4,7 +4,7 @@
 // (copa del tronco hueco) y C048 (repisa de cristal) con sus paredes de Trepar, entrenadores (nv 38–41), objetos
 // (Lopunnita, POKEDEX_DISTRIBUCION §7.7), el santuario musgoso y el enlace con la Aldea Mnemos (B10, pendiente).
 // Nilo y su escondite (T10) están en b11_t10_nilo.js.
-import { F, SPEAKER, OBJ, when, zygardeSays, placePlayer, pause } from './b11_common.js';
+import { F, SPEAKER, OBJ, when, placePlayer, pause } from './b11_common.js';
 import { b11CellEvents } from './b11_cells.js';
 import { niloEvents } from './b11_t10_nilo.js';
 import { NEBLINO } from '../maps/b11/layout.js';
@@ -18,9 +18,7 @@ export const NEBLINO_TEXT = Object.freeze({
   signNorth: 'RUTA 9 · BOSQUE NEBLINO\n↑ Ruta 10 · Monte del Portal  ↓ Aldea Mnemos',
   signSouth: 'BOSQUE NEBLINO\nNo se aparte del sendero.',
   fogBack: 'La niebla lo envuelve todo. Das unos pasos… y, sin saber cómo, vuelves a estar en el lindero.',
-  fogZygarde: 'Esta niebla borra el camino. No es de este bosque.',
   arrival: 'La niebla se ha retirado. Entre los pinos lilas brillan cristales que antes nadie veía.',
-  arrivalZygarde: 'El bosque respira otra vez.',
   fire: 'Una hoguera de campamento. Aún quedan brasas y leña seca al lado.',
   fireAsk: '¿Quieres descansar junto a la hoguera?',
   shrine: 'Un claro silencioso. Sobre una piedra plana cubierta de musgo alguien ha dejado unas bayas, como una ofrenda.',
@@ -42,10 +40,6 @@ function fogLoopEvents() {
           await pause(ctx, 20);
           await ctx.fade('in', 24, [230, 222, 240]);
           await ctx.say(NEBLINO_TEXT.fogBack);
-          if (!ctx.flag('b11_niebla_vista')) {
-            ctx.setFlag('b11_niebla_vista');
-            await zygardeSays(ctx, NEBLINO_TEXT.fogZygarde);
-          }
         },
       });
     }
@@ -68,8 +62,7 @@ function arrivalEvents() {
   const script = async (ctx) => {
     if (ctx.flag(F.neblinoIntro)) return;
     ctx.setFlag(F.neblinoIntro);
-    await ctx.say(NEBLINO_TEXT.arrival);
-    await zygardeSays(ctx, NEBLINO_TEXT.arrivalZygarde);
+    await ctx.say(NEBLINO_TEXT.arrival); // Zygarde habla muy poco (autor, 25-09-2026)
   };
   const out = [];
   for (const loop of [N.loopNorth, N.loopSouth]) {

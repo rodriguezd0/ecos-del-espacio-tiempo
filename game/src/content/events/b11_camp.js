@@ -6,7 +6,7 @@
 //   · RECOGIDO: tras la escena del laboratorio (b11_gael_alerce), al llegar, Genesis carga la última caja y se va (un
 //     evento con `patch` quita tiendas, camión y contenedores y deja los pozos de sondeo); Gael baja de la senda y
 //     combate (B4, continúa aunque se pierda). Salida del bloque: b11_gael_b4; la senda sube a montana_portal (B12).
-import { F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, zygardeSays, placePlayer, pause, scriptedBattle } from './b11_common.js';
+import { F, SPEAKER, SPRITE, OBJ, MUSIC, when, lines, placePlayer, pause, scriptedBattle } from './b11_common.js';
 import { trainerUntil } from './b06_common.js';
 import { CAMP } from '../maps/b11/layout.js';
 import { CAMP_PIECES, CAMP_HOLES } from '../maps/b11/campamento_monte_build.js';
@@ -22,7 +22,6 @@ export const CAMP_TEXT = Object.freeze({
   ],
   introTech: 'EXP-03 lista para el primer envío, jefa.',
   introChief: 'Con cuidado. Es la mejor muestra de la temporada.',
-  introZygarde: 'Esa piedra… resuena. Como yo aquellas noches.',
   chief: 'Siga, por favor. La senda estará cerrada hasta que terminemos.',
   guard: 'Perímetro de perforación. No se puede subir al Monte mientras trabajamos. Gracias por su comprensión.',
   barrier: 'Una barrera del Consorcio: «PERÍMETRO DE PERFORACIÓN · PROHIBIDO EL PASO».',
@@ -40,7 +39,6 @@ export const CAMP_TEXT = Object.freeze({
     toPlayer: 'Consorcio Meridiano. Hemos terminado aquí. Puede circular.',
     crewMissing: 'Jefa, la cuadrilla de Nilo sigue sin volver…',
     crewMissingChief: 'Constará en el informe.',
-    zygarde: 'Se llevan algo que estuvo conmigo aquellas noches.',
     gone: 'El campamento se ha quedado vacío. Solo quedan los pozos de sondeo y una caja olvidada.',
   },
   gael: {
@@ -86,7 +84,6 @@ async function campIntro(ctx) {
   await ctx.say(CAMP_TEXT.introTech, { speaker: SPEAKER.tecnico });
   await ctx.say(CAMP_TEXT.introChief, { speaker: SPEAKER.jefa });
   await ctx.camera?.reset?.(30);
-  await zygardeSays(ctx, CAMP_TEXT.introZygarde);
 }
 
 async function departure(ctx) {
@@ -101,8 +98,7 @@ async function departure(ctx) {
     await ctx.say(D.crewMissing, { speaker: SPEAKER.tecnica });
     await ctx.say(D.crewMissingChief, { speaker: SPEAKER.jefa });
   }
-  await ctx.camera?.reset?.(20);
-  await zygardeSays(ctx, D.zygarde);
+  await ctx.camera?.reset?.(20); // Zygarde habla muy poco (autor, 25-09-2026)
   await ctx.fade('out', 30);
   ctx.setFlag(F.campSeen);
   ctx.setFlag(F.exp03Taken);
@@ -207,10 +203,7 @@ function objectEvents() {
     pages: [
       {
         when: active, sprite: OBJ.crate, dir: 2, directionFix: true, walkAnime: false, stepAnime: true, speed: 2, trigger: 'action',
-        script: async (ctx) => {
-          await ctx.say(CAMP_TEXT.crates);
-          if (!ctx.flag('b11_exp03_zygarde')) { ctx.setFlag('b11_exp03_zygarde'); await zygardeSays(ctx, CAMP_TEXT.introZygarde); }
-        },
+        script: async (ctx) => { await ctx.say(CAMP_TEXT.crates); },
       },
       ...(i === 0 ? [{ when: gone, sprite: OBJ.crate, dir: 4, directionFix: true, walkAnime: false, trigger: 'action', script: text(CAMP_TEXT.crateEmpty) }] : []),
     ],
