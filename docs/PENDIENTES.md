@@ -1,5 +1,33 @@
 # Pendientes (lista viva)
 
+> **Pausa 26-09 (uso semanal al 95 %).**
+>
+> Hecho y guardado hasta el commit 030e80d:
+> - el multijugador completo, incluido el juego en equipo contra los entrenadores de la historia;
+> - el título renovado;
+> - las partidas guardadas en disco (`saves/`);
+> - las tandas 1–4 de correcciones del creador:
+>   - modo desarrollador F9;
+>   - tono de Zygarde y células;
+>   - combate y animaciones de Añil;
+>   - curva inicial y cierres de progresión;
+>   - cámara siempre centrada;
+>   - reglas de mapas;
+>   - mapas B01–B21 limpios.
+>
+> Al reanudar:
+> 1. Pilares verticales P1–P4 (no llegaron a cambiar nada) y luego P5.
+> 2. Confirmar con el creador el reparto de pisos de P6–P10.
+> 3. Arte.
+> 4. Postgame B22 (a medias en la rama `wip-pausa-25-09`).
+> 5. DLC B23 y B24.
+> 6. Partida completa.
+>
+> Pendientes menores:
+> - En los dobles, los Pokémon del propio bando salen solapados.
+> - El creador tiene que confirmar la regla de tamaño de los Pokémon en el mapa (afecta a unas 140 especies).
+> - Rocas de cueva: implican rehacer 3 puzles.
+
 Actualizado: 25-09-2026. Prioridad actual: **multijugador** (pedido del usuario, va antes que todo lo demás).
 
 ## 0. En curso — Multijugador online (salas)
