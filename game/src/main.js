@@ -40,6 +40,19 @@ async function loadFonts() {
   ].map((p) => p.catch((err) => console.warn(err))));
 }
 
+/** Partidas en el disco del servidor (core/saveSync.js): se copian al guardar y se reconcilian al arrancar. */
+async function syncSavesAtBoot() {
+  const { installSaveSync, syncSaves } = await import('./core/saveSync.js');
+  const { ui } = await import('./ui/api.js');
+  installSaveSync({ onError: (text) => ui.toast(text) });
+  try {
+    const { pulled, pushed } = await syncSaves();
+    if (pulled.length || pushed.length) console.info(`[partidas] del servidor: ${pulled.join(',') || '-'} · subidas: ${pushed.join(',') || '-'}`);
+  } catch (err) {
+    console.warn('[partidas] No se pudo sincronizar con el servidor; se usan las del navegador.', err);
+  }
+}
+
 async function openRoute(route, params) {
   const loader = DEV_ROUTES[route] || DEV_ROUTES.title;
   let mod;
@@ -62,6 +75,7 @@ async function main() {
     window.addEventListener('pointerdown', unlock, { once: true });
     await loadFonts();
     engine.data = await loadDatabase();
+    await syncSavesAtBoot();
     document.getElementById('boot')?.remove();
     engine.start();
     const params = Object.fromEntries(new URLSearchParams(location.search));

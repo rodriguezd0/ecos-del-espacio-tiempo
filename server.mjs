@@ -10,12 +10,14 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 import { attachMultiplayer } from './server/multiplayer.mjs';
+import { handleSaves, SAVES_PREFIX } from './server/saves.mjs';
 
 const PROJECT = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(PROJECT, 'game');
 // Recursos originales de Añil servidos sin copiar (sprites, audio, UI...).
 const ANIL_ROOT = path.join(PROJECT, 'Pokemon Anil V4.13');
 const ANIL_PREFIX = '/anil/';
+const SAVES_DIR = process.env.SAVES_DIR || path.join(PROJECT, 'saves'); // fuera de game/: no dispara el aviso de cambios
 const PORT = Number(process.env.PORT || 8080);
 const HOST = process.env.HOST || '::'; // todas las interfaces (IPv6 + IPv4)
 const ANIL_MAX_AGE = 7 * 24 * 3600; // s: los recursos de Añil no cambian
@@ -136,6 +138,14 @@ function send(req, res, target) {
 }
 
 const server = http.createServer((req, res) => {
+  // Partidas en el disco del servidor (server/saves.mjs): carpeta saves/ del proyecto.
+  if (req.url.startsWith(SAVES_PREFIX)) {
+    handleSaves(req, res, SAVES_DIR).catch((err) => {
+      console.error('[partidas]', err);
+      if (!res.headersSent) res.writeHead(500).end();
+    });
+    return;
+  }
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     res.writeHead(405, { Allow: 'GET, HEAD' }).end();
     return;

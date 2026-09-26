@@ -13,6 +13,8 @@ import { formatPlayTime, formatDate } from '../logic/format.js';
 import { message, confirm, showCommands, mapName, resolveMapNames } from './common.js';
 import { pickFile } from '../core/filePicker.js';
 
+const SERVER_LIST_MAX = 8; // partidas del servidor que caben en la lista de recuperación
+
 const L = (n) => UI(`Load/${n}.png`);
 const TEXT = ['#e8e8e8', '#888888'];
 const MALE = ['#38a0f8', '#3868a8'];
@@ -41,7 +43,7 @@ class SaveLoadScene extends ScreenScene {
   }
 
   get smallPanels() {
-    return this.mode === 'load' ? ['Importar desde archivo', 'Volver'] : ['Exportar a archivo', 'Volver'];
+    return this.mode === 'load' ? ['Importar partida', 'Volver'] : ['Exportar a archivo', 'Volver'];
   }
 
   async enter() {
@@ -94,7 +96,7 @@ class SaveLoadScene extends ScreenScene {
   async activate() {
     const small = this.row > 0 ? this.smallPanels[this.row - 1] : null;
     if (small === 'Volver') { this.finish(this.mode === 'load' ? null : false); return; }
-    if (small === 'Importar desde archivo') { await this.importFile(); return; }
+    if (small === 'Importar partida') { await this.importMenu(); return; }
     if (small === 'Exportar a archivo') { SaveSystem.exportFile(engine.state, `ecos_${engine.state.player.name || 'partida'}.json`); await message('Se ha descargado el archivo de la partida.'); return; }
     if (this.mode === 'save') await this.saveToSlot();
     else await this.slotMenu();
@@ -144,6 +146,37 @@ class SaveLoadScene extends ScreenScene {
         await message('Partida borrada.');
       }
     }
+  }
+
+  /** Importar: desde las partidas guardadas en el servidor (de cualquier navegador) o desde un archivo. */
+  async importMenu() {
+    const c = await showCommands(['Desde el servidor', 'Desde un archivo', 'Cancelar']);
+    if (c === 0) await this.importFromServer();
+    else if (c === 1) await this.importFile();
+  }
+
+  async importFromServer() {
+    const { listServerSaves, fetchServerSave } = await import('../../core/saveSync.js');
+    let list;
+    try {
+      list = (await listServerSaves()).slice(0, SERVER_LIST_MAX);
+    } catch (err) {
+      await message(`No se pudo consultar el servidor: ${err.message}`);
+      return;
+    }
+    if (!list.length) { await message('No hay partidas guardadas en el servidor.'); return; }
+    const c = await showCommands([...list.map((s) => `${s.name} · ${formatDate(s.savedAt)}`), 'Cancelar']);
+    const pick = list[c];
+    if (!pick) return;
+    const data = await fetchServerSave(pick.owner, pick.slot);
+    if (!data) { await message('Esa partida ya no está en el servidor.'); return; }
+    if (this.info && !(await confirm(`Se copiará en la ranura ${this.slot}, que ya tiene una partida. ¿Sobrescribirla?`))) return;
+    SaveSystem.store(this.slot, data);
+    this.refreshList();
+    const state = SaveSystem.load(this.slot);
+    await message(`Partida de ${state.player.name} recuperada en la ranura ${this.slot}.`);
+    rememberSlot(this.slot);
+    this.finish(state);
   }
 
   async importFile() {

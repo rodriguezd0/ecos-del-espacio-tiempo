@@ -16,6 +16,8 @@ export const MAX_ITEM_QTY = 999;
 /** Objeto clave de la Pokédex de Axis (items_axis.json). */
 export const POKEDEX_ITEM = 'POKEDEXAXIS';
 const SAVE_KEY = (slot) => `ecos.save.${slot}`;
+/** Clave de localStorage de una ranura (core/saveSync.js la copia en el servidor). */
+export const saveKey = SAVE_KEY;
 
 const isRef = (r) => r && typeof r === 'object' && (Number.isInteger(r.party) || (Number.isInteger(r.box) && Number.isInteger(r.slot)));
 
@@ -329,7 +331,16 @@ export const SaveSystem = {
     const data = { ...state.data, version: SAVE_VERSION, savedAt: Date.now() };
     storage().setItem(SAVE_KEY(slot), JSON.stringify(data));
     state.data.savedAt = data.savedAt;
+    SaveSystem.listener?.('save', slot, data);
   },
+  /** Coloca datos ya guardados en una ranura (partida recuperada del servidor). */
+  store(slot, data) {
+    checkSlot(slot);
+    storage().setItem(SAVE_KEY(slot), JSON.stringify(data));
+    SaveSystem.listener?.('save', slot, data);
+  },
+  /** Oyente de cambios (kind: 'save' | 'remove', slot, data): core/saveSync.js lo copia al servidor. */
+  listener: null,
   /** GameState de la ranura (migrado), null si está vacía. Lanza si los datos están dañados. */
   load(slot) {
     checkSlot(slot);
@@ -343,7 +354,7 @@ export const SaveSystem = {
     }
     return new GameState(migrate(parsed));
   },
-  remove(slot) { checkSlot(slot); storage().removeItem(SAVE_KEY(slot)); },
+  remove(slot) { checkSlot(slot); storage().removeItem(SAVE_KEY(slot)); SaveSystem.listener?.('remove', slot, null); },
   /** Descarga la partida como archivo JSON. */
   exportFile(state, filename = 'ecos_partida.json') {
     const blob = new Blob([JSON.stringify(state.data)], { type: 'application/json' });

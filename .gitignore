@@ -3,3 +3,6 @@ node_modules/
 Pokemon Anil V4.13/
 tools/cache/
 *.log
+
+# Partidas guardadas en el servidor (server/saves.mjs)
+saves/
