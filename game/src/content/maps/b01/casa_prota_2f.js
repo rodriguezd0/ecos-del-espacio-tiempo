@@ -4,6 +4,7 @@ import { ROOM_BRUSHES, examineRect } from './common.js';
 import { bedroomEvents } from '../../events/b01_town_home.js';
 import { F, when } from '../../events/b01_town_common.js';
 import { b21CuartoEvents } from '../../events/b21_epilogo.js'; // B21: despertar tras los créditos
+import { b22aCuartoEvents } from '../../events/b22a_home.js'; // B22a: línea base del descanso de Arceus (postgame)
 
 /** Punto de inicio de partida nueva (junto a la cama, mirando abajo). */
 export const START = Object.freeze({ x: 8, y: 6, dir: 2 });
@@ -72,5 +73,6 @@ export default {
     ...examineRect('consola', 4, 7, 2, 1, 'Una consola de videojuegos. Ahora no es momento.'),
     ...examineRect('cama', 9, 6, 3, 3, 'Tu cama. Sigue deshecha.'),
     ...b21CuartoEvents(),
+    ...b22aCuartoEvents(),
   ],
 };

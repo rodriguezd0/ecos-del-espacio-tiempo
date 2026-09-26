@@ -15,7 +15,7 @@ import {
 import { stoneScript, stoneIntro } from '../game/src/content/events/b02_ruinas_salas.js';
 import { EXPLANADA_DOOR } from '../game/src/content/maps/b02/explanada_umbral_layout.js';
 import { explanadaEvents, toDusk, T01_TEXT } from '../game/src/content/events/b02_explanada.js';
-import { guardianBattle, holdToPull, PULL_FRAMES } from '../game/src/content/events/b02_ruinas_camara.js';
+import { guardianBattle, holdToPull, PULL_FRAMES, camaraEvents, CAMARA_HINT } from '../game/src/content/events/b02_ruinas_camara.js';
 import { nucleoEvents } from '../game/src/content/events/b02_ruinas_nucleo.js';
 import { casildaEvents, ROOM, ROOM_VAR, casildaSpot, HEAL_SPOT } from '../game/src/content/events/b02_ruinas_casilda.js';
 import { ANTESALA } from '../game/src/content/maps/b02/ruinas_dintel_layout.js';
@@ -141,6 +141,27 @@ test('tirar del Geodude: hay que mantener A (con entrada real); sin entrada (Nod
   const never = mockCtx(newState(), { input: { held: () => false } });
   assert.equal(await holdToPull(never, 10), false);
   assert.equal(await holdToPull(mockCtx(newState())), true);
+});
+
+test('cámara de Geodude: tras el puzzle se señala la grieta y Casilda repite dónde está lo que rasca (guía, 25-09)', async () => {
+  const s = newState(F.casildaJoined, F.dinteles);
+  s.setVar(ROOM_VAR, ROOM.galeria);
+  const scene = camaraEvents().find((e) => e.id.startsWith('escena_camara'));
+  assert.ok(scene.when(s), 'la escena salta al entrar tras la losa');
+  const ctx = mockCtx(s);
+  let panned = null;
+  ctx.camera = { pan: async (x, y) => { panned = [x, y]; }, reset: async () => {} };
+  await scene.script(ctx);
+  assert.ok(s.flag(F.camara));
+  assert.ok(panned && panned[0] <= 10, 'la cámara va hacia la grieta del oeste');
+  assert.ok(ctx.said.some((l) => l.t === CAMARA_HINT.scene));
+  const talk = mockCtx(s);
+  await pageScript(casildaEvents(), 'casilda', s)(talk);
+  assert.ok(talk.said.some((l) => l.t === CAMARA_HINT.talk), 'Casilda da la pista al hablarle');
+  s.setFlag(F.geodudeFree);
+  const after = mockCtx(s);
+  await pageScript(casildaEvents(), 'casilda', s)(after);
+  assert.ok(!after.said.some((l) => l.t === CAMARA_HINT.talk), 'con el Geodude fuera ya no la repite');
 });
 
 test('Casilda: si pierdes vuelves a la antesala y te cura («Otra vez. Con cabeza.»); si ganas, 3 Pociones y Cuerda Huida', async () => {

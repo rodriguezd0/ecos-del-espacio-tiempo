@@ -18,10 +18,10 @@ Añil). Parámetros: `&char=<id>`, `&run`, `&mode=<walk|run|ride10|ride50|dive|c
 | Charset | Hoja **256×256**, 4×4 al estilo Essentials: filas abajo, izquierda, derecha, arriba; columnas = patrón 0..3 (0 y 2 de pie, 1 y 3 pasos opuestos). La derecha es el espejo de la izquierda. |
 | Paso | En los frames de paso el cuerpo sube 1 px nativo (rebote BW). |
 | Correr | Hoja `_run` con 4 frames distintos: 0/2 paso cruzado (agachado 1 px), 1/3 zancada, brazos flexionados y cabeza adelantada 1 px en perfil. |
-| Proporciones | Estudiadas (no copiadas) de charsets BW de Añil (`cheren.png`, `chaval1.png`, `hilda.png`): cabeza ≈16×15 nativos con la coronilla en la fila 3, cara de ~7 filas con ojos 2×2 (pupila + brillo exterior), cuerpo ≈13 filas; figura total ≈28 filas. **Protagonistas (3.ª pasada, kit propio, §9)**: estilo de las referencias BW del autor (25-09-2026): cabeza de 17 filas × 18 px (≈ la mitad de la figura y más ancha que el torso), cuerpo de 12 filas; figura de 29 filas (coronilla en la 2, suela en la 30), a la altura de los adultos del pueblo. |
+| Proporciones | Estudiadas (no copiadas) de charsets BW de Añil (`cheren.png`, `chaval1.png`, `hilda.png`): cabeza ≈16×15 nativos con la coronilla en la fila 3, cara de ~7 filas con ojos 2×2 (pupila + brillo exterior), cuerpo ≈13 filas; figura total ≈28 filas. **Protagonistas (3.ª pasada, kit propio, §9)**: estilo de las referencias BW del autor (25-09-2026): cabeza de 17 filas × 18 px (≈ la mitad de la figura y más ancha que el torso), cuerpo de 12 filas; figura de 29 filas (coronilla en la 2, suela en la 30), a la altura de los adultos del pueblo. La femenina tiene la misma altura, cabeza y cara; su melena sobresale 2 px por lado (cabeza de 22 px de ancho). |
 | Adultos | Mismo esqueleto con el torso estirado 1 px (`tall: 1`). El anciano baja la cabeza 1 px. |
 | Niños | Cuerpo propio (`kids.mjs`, 9 filas) y cabeza 4 filas más abajo (`headLift: 4`), como `nino`/`nina` de Añil: ≈5 filas más bajos que un adulto. |
-| Mochila (D06) | `backpack.mjs` transforma las poses de cuerpo de los protagonistas: correas de frente (columnas 6 y 11), volumen detrás de la espalda y correa al hombro de perfil, bolsa con solapa de espaldas; sigue el rebote de cada frame. Colores A/a/D/z de la paleta. |
+| Mochila (D06) | `prota_bag.mjs` (kit de protagonistas, §9): correas de frente, volumen detrás de la espalda y correa al hombro de perfil, bolsa con solapa de espaldas; sigue el rebote y el torso de cada pose. Colores A/a/D/z de la paleta. (`backpack.mjs` es la versión para las plantillas antiguas; ya no la usa ningún personaje, pero se conserva con sus tests.) |
 | Luz | Desde arriba-izquierda; 2–3 tonos por material; contorno oscuro de silueta y líneas interiores de color. |
 | Combate espalda | Tira de **5 frames de 160×160** (nativo 80×80 ×2): 0 estático, 1 preparar, 2 brazo arriba con Poké Ball, 3 lanzar, 4 seguimiento (formato de Essentials: ancho > 2×alto ⇒ 5 frames). Se recorta por abajo, como en BW. |
 | Combate frente | 160×160 (nativo 80×80 ×2), proporción ≈4 cabezas. |
@@ -35,8 +35,8 @@ medir proporciones y el ritmo del ciclo de paso.
 node tools/pixel_build.mjs [id ...] [--preview] [--lineup] [--out=tools/cache/pixel/draft]
 ```
 - Fuentes en `tools/pixel_chars/`: `body_jacket.mjs` (plantilla de cuerpo y paso), `body_run.mjs` (carrera),
-  `kids.mjs` (cuerpo infantil + cabezas de niño/niña), `backpack.mjs` (mochila de los protagonistas),
-  `overlays.mjs` (abrigo largo, delantal y falda), `heads_protas.mjs` / `heads_cast.mjs` / `heads_b01.mjs`
+  `kids.mjs` (cuerpo infantil + cabezas de niño/niña), `backpack.mjs` (mochila del kit antiguo, sin uso),
+  `overlays.mjs` (abrigo largo, delantal y falda), `heads_cast.mjs` / `heads_b01.mjs`
   (cabezas por matrices de caracteres), `palettes.mjs` (todas las paletas), `zygarde.mjs`, `battle_back.mjs`,
   `battle_front.mjs`, `battle_front_b01.mjs` (sprites grandes con formas + sombreado de celda de `raster.mjs`),
   `roster.mjs` (qué hojas se generan).
@@ -44,11 +44,13 @@ node tools/pixel_build.mjs [id ...] [--preview] [--lineup] [--out=tools/cache/pi
   `heads_genesis.mjs`, `front_kit.mjs` + `battle_front_campaign.mjs` (frontales), `overlays.mjs` (también peto,
   capa corta, maletín, `recolorOverlay`, `recolorPoses`), `follower_src.mjs` (lee los seguidores de Añil),
   `rider.mjs` (jinete sentado), `mounts.mjs` (10% y 50%), `actions.mjs` (buceo, trepar, pesca) y `flight.mjs` (Vuelo).
-- Protagonistas, kit nuevo (§9): `prota_kit.mjs` (rejilla, capas, ensamblado), `prota_heads.mjs` (cabezas),
-  `prota_body.mjs` (torso, brazos, piernas y ciclo de caminar), `prota_run.mjs` (correr), `prota_bag.mjs` (mochila) y
-  `prota_field.mjs` (jinete, pierna colgante, trepar). `rider.mjs` elige kit por protagonista (`PROTAS`).
-- Revisión visual del protagonista: `node tools/cache/art/prota_review.mjs protagonista_m` (con `REF_DIR=<carpeta
-  de las referencias>` añade la fila de referencias) → `tools/cache/art/protagonista_m_{compare,big,game}.png`.
+- Protagonistas, kit nuevo (§9): `prota_kit.mjs` (rejilla, capas, ensamblado), `prota_heads.mjs` (cabeza del
+  masculino), `prota_heads_f.mjs` (cabeza de la femenina), `prota_body.mjs` (torso, brazos, piernas y ciclo de
+  caminar), `prota_body_f.mjs` (chaqueta y pantalón corto de la femenina), `prota_run.mjs` (correr), `prota_bag.mjs`
+  (mochila) y `prota_field.mjs` (jinete, pierna colgante, trepar). `rider.mjs` reúne los datos de cada uno (`PROTAS`).
+- Revisión visual de un protagonista: `node tools/cache/art/prota_review.mjs protagonista_m|protagonista_f` (con
+  `REF_DIR=<carpeta de las referencias>` añade la fila de referencias: la del chico para él, las de las chicas para
+  ella) → `tools/cache/art/<id>_{compare,big,game}.png` (la fila de NPC incluye al otro protagonista).
 - Un id puede ser un personaje (todas sus hojas) o una hoja concreta: `node tools/pixel_build.mjs protagonista_f_ride50`.
 - `--out=<carpeta>` escribe los PNG en otra carpeta para iterar sin tocar el juego en marcha.
 - Salida: `game/assets/characters/<id>.png`. Con `--preview`, vistas ×6 con rejilla en
@@ -90,15 +92,27 @@ de 2×2 y balanceo al andar; piernas de 4 filas con zapatos de suela clara. La e
 barrido con brillos en banda.
 Propuestas no canónicas: color de ojos (castaño), tono de piel claro, forma exacta de los mechones.
 
-### Protagonista femenina — `protagonista_f` (+ `_run`, `_back`) · PROPUESTA
+### Protagonista femenina — `protagonista_f` (+ `_run`, `_back`) · DECIDIDO-DEV X32
 Canon usado: **azul marino profundo casi nocturno con lectura azul** (#5A6CB4 luces, #34427E base, #222C58,
-#141A38) y el mismo lenguaje BW y acento verde. Todo lo demás es **propuesta provisional D30**:
-melena por los hombros con raya y flequillo ladeado (sin gorra, sin coletas), chaqueta corta **blanco hueso**
-cerrada con cuello interior azul noche (contrasta con el pelo oscuro y con la chaqueta del masculino),
-**verde en el tirador** (igual que él), pantalón corto oscuro sobre mallas oscuras, calzado oscuro.
-**Mochila (D06)** color teja (#EA8A6C / #C45C42 / #8E3C2C / #5A221A): legible sobre la chaqueta clara y bajo la
-melena; de espaldas asoma por debajo del pelo. Coronilla 1 fila más baja en la 2.ª pasada para igualar la
-altura de cabeza del masculino. Altura idéntica al masculino (biblia: "compatible con el estándar humano").
+#141A38) y el mismo lenguaje BW y acento verde. El resto lo fija **X32** (docs/DECISIONES.md, provisional D30).
+**3.ª pasada (25-09-2026, referencias de estilo BW del autor)**, con el kit de protagonistas (§9):
+- **Proporciones**: las del masculino (figura de 29 filas, cabeza de 17 filas, cara, ojos y barbilla en las mismas
+  filas y columnas); la melena sobresale 2 px por lado (cabeza de 22 px), así que su silueta es más ancha abajo.
+- **Pelo**: media melena hasta los hombros con **anillo de brillo en la coronilla** (como las chicas BW de las
+  referencias), raya a su izquierda y **flequillo barrido hacia su derecha** en tres mechones con punta; las puntas
+  se **abren hacia fuera** a la altura de los hombros (de frente a su derecha, de perfil en la nuca, de espaldas a
+  su derecha). Por su izquierda el pelo va recogido en una **trenza fina** que cae por delante del hombro con una
+  **goma verde #B9FF66**: es su acento (visible de frente, de perfil y de espaldas) y la chaqueta no lleva verde.
+- **Cara**: ojos 2×3 como los del masculino con **iris azul #3E64B0** (propuesta) y barbilla más suave.
+- **Ropa**: **chaqueta corta crema** cerrada con cuello azul noche (contraste claro/oscuro con él), **pantalón corto
+  marino** con 1 px de vuelo por lado en el muslo (de frente y de espaldas), **mallas oscuras** y **botines teja**.
+- **Mochila (D06)** teja (#EA8A6C / #C45C42 / #8E3C2C / #5A221A), a juego con los botines; la misma forma que la de él.
+- **Espalda de combate**: melena con anillo de brillo, mechones hacia las puntas, punta abierta a su derecha y la
+  trenza con eslabones y goma verde sobre el hombro izquierdo; mochila con asa, solapa, hebilla y bolsillo.
+No copia a Dawn, Hilda/Touko, May, Rosa ni a las chicas de las referencias (sin gorra, coletas, falda ni vestido;
+de las referencias se tomó el estilo: cabeza grande, contorno casi negro, 3 tonos por material, brillo en anillo).
+Se distingue de la ayudante del laboratorio (pelo negro liso, bata larga) por el azul, la silueta de la melena, la
+trenza y el conjunto corto. Propuestas no canónicas: nombre (abierto), peinado, prendas, colores de ropa, ojos.
 
 ### Gael — `gael` (+ `gael_front`)
 Antecedente del autor **a ratificar** (§13.3), aplicado tal cual: pelo #E0C870 / #A08840 / #F8F8C8 / #604820,
@@ -196,7 +210,8 @@ Regenerar ambos: `node tools/pixel_build.mjs zygarde_core zygarde_celula --previ
 
 1. **Masculino**: ¿se aprueba esta silueta de pelo y la chaqueta azul petróleo cerrada como base, o se
    retoma la candidata C de V07?
-2. **Femenina**: ¿melena, chaqueta clara y pantalón corto con mallas? ¿Dónde va el verde (tirador, horquilla…)?
+2. **Femenina** (X32): ¿se aprueba la media melena con trenza y goma verde, la chaqueta crema y el pantalón corto
+   con mallas y botines? ¿Nombre?
 3. **Gael**: ¿se ratifica el rubio y la paleta histórica bordó/gris/azul? ¿Ojos #58A0D8?
 4. **Profesor (D03)**: edad, pelo, gafas sí/no, abrigo de campo o bata.
 5. **Core**: rehecho con la referencia del autor (cabeza verde con un ojo y cuerpo oliva en punta). ¿Se
@@ -220,8 +235,8 @@ Regenerar ambos: `node tools/pixel_build.mjs zygarde_core zygarde_celula --previ
   y Vuelo existen desde la 3.ª pasada (§8); no hay bici (Axis no la usa: la montura es Zygarde 10%).
 - Las monturas usan como base los seguidores de Añil (ZYGARDE_1 y ZYGARDE) muestreados a resolución nativa: si se
   sustituye el arte de Zygarde, basta con regenerar (`pixel_build.mjs protagonista_m_ride10 …`).
-- La vista de perfil se obtiene por espejo (como en BW): el flequillo y el tirador cambian de lado al mirar
-  a la derecha.
+- La vista de perfil se obtiene por espejo (como en BW): el flequillo, el tirador y la trenza de la femenina
+  cambian de lado al mirar a la derecha (la trenza está a su izquierda; el perfil izquierdo es el fiel).
 
 ## 6. Mapa regional de Axis (ilustración PROVISIONAL, D30 · X02) — para el agente *services*
 
@@ -322,14 +337,16 @@ Hojas por protagonista (`protagonista_m_*` y `protagonista_f_*`), registradas co
 - Regenerar: `node tools/pixel_build.mjs protagonista_m_ride10 …` (fuentes en `tools/pixel_chars/mounts.mjs`,
   `actions.mjs`, `flight.mjs`). Tests: `tests/art_campaign.test.mjs`.
 
-## 9. Kit de protagonistas (3.ª pasada, 25-09-2026) — y cómo hacer la femenina con él
+## 9. Kit de protagonistas (3.ª pasada, 25-09-2026)
 
-El masculino se rehízo con un kit propio, separado de las plantillas del elenco (`body_jacket.mjs`, `backpack.mjs`,
-`assemble.mjs`), que **no cambian**: los NPC se ven igual. La femenina sigue en el kit antiguo hasta rehacerla.
+Los dos protagonistas se hicieron con un kit propio, separado de las plantillas del elenco (`body_jacket.mjs`,
+`assemble.mjs`), que **no cambian**: los NPC se ven igual (comprobado píxel a píxel). Se retiró el kit antiguo de
+los protagonistas (`heads_protas.mjs` y las ramas `legacy` de `rider.mjs` y `actions.mjs`).
 
 **Rejilla** (`prota_kit.mjs`, `PROTA`): frame nativo 32×32; columnas 7..24 (18 px) para cabeza y cuerpo.
-- Cabeza: matriz **18×20** por vista (`down`, `left`, `up`) desde la fila 0: pelo desde la fila 2, ojos en 13–15,
-  barbilla en la 18 (`checkHead` valida). Se dibuja encima de todo.
+- Cabeza: matriz de **20 filas** por vista (`down`, `left`, `up`) desde la fila 0: pelo desde la fila 2, ojos en
+  13–15, barbilla en la 18. Mide **18 columnas o 18 + 2·pad (pad ≤ 2)** y se centra sobre la rejilla, de modo que
+  una melena puede sobresalir sin mover la cara (`checkHead` valida filas y ancho). Se dibuja encima de todo.
 - Cuerpo: capas `{ x, y, rows }` (helper `part(y, rows, x)`) en la rejilla del cuerpo (x 0..17, y 0 = fila 18):
   hombros en y1, bajo de la chaqueta en y6, cadera en y7, zapatos en y10–y11, suela/contorno en y12 (fila 30).
 - Orden de capas: `armBack` (brazo lejano) → `legs` → `torso` → `bag` → `arms` → cabeza.
@@ -345,23 +362,26 @@ El masculino se rehízo con un kit propio, separado de las plantillas del elenco
 - `prota_bag.mjs` → `PROTA_BAG` (correas / bolsa de perfil / bolsa de espaldas) y `withBag(poses)`, que sigue
   `torsoDx`/`torsoDy`.
 - `prota_field.mjs` → `kitWalkSheet`, `kitRunSheet`, `kitRiderFrame` (cadera cerrada o pierna sentada),
-  `KIT_HANGING_LEG`, `kitClimbCycle` (brazos por encima de la cabeza).
-- Utilidades: `recolorPart` (cambiar símbolos, p. ej. mallas `Q/q` o guantes), `shiftPart`, `withProtaBag`.
+  `KIT_HANGING_LEG`, `kitClimbCycle` (brazos por encima de la cabeza; usa el torso y las piernas de las poses del
+  protagonista y abre los brazos 1 px si la cabeza es más ancha que la rejilla).
+- Utilidades: `recolorPart` (cambiar símbolos), `shiftPart`, `withProtaBag`.
 
-**Receta para la femenina** (sin tocar al masculino):
-1. Cabeza `PROTA_F_HEAD` en `prota_heads.mjs` con `checkHead` (18×20; mismos ojos 2×3 en 13–15 y coronilla en la
-   fila 2 ±1, que comprueba `tests/characters.test.mjs`). Una melena puede bajar hasta la fila 19 por detrás.
-2. Ropa: reutilizar `PARTS`; si cambia la silueta (chaqueta corta, falda, pantalón corto) crear sus partes en un
-   archivo nuevo (p. ej. `prota_body_f.mjs`) y montar `PROTA_WALK_F` / `PROTA_RUN_F` con la misma forma de pose
-   (misma y de hombros y cadera para que la mochila y el jinete encajen). Mallas o pierna al aire: solo paleta
-   (`Q/q`) o `recolorPart`.
-3. Paleta en `palettes.mjs` (`protagonista_f`): añadir `i` (iris) y mantener `A/a/D/z` (mochila) y `G` (verde).
-4. En `rider.mjs`, `PROTAS.protagonista_f = { kit: 'bw', head: PROTA_F_HEAD, palette, walk?, run?, bag? }`
-   (`walk`/`run`/`bag` solo si tiene poses o mochila propias; si no, usa `PROTA_WALK`/`PROTA_RUN`/`PROTA_BAG`).
-   Montura, nado, buceo, pesca, trepar y Vuelo salen solos de `rider.mjs` (el jinete usa la pose 0 de su `walk`);
-   en `roster.mjs`, sus hojas pasan a `build: () => walkSheet(id)` / `runSheet(id)`, como las del masculino.
-5. Espalda de combate: `battle_back.mjs` → `CONFIGS.protagonista_f` (máscara de pelo, rayas y brillos).
-6. Revisar con `prota_review.mjs protagonista_f`, `pixel_build.mjs protagonista_f --preview --lineup` y el visor
-   (`?scene=sprites&char=protagonista_f`); después se pueden borrar `heads_protas.mjs` y las ramas `legacy`.
+**Cada protagonista** (`rider.mjs` → `PROTAS`: `{ head, palette, walk?, run?, bag? }`; sin `walk`/`run`/`bag` usa
+los comunes). Montura, nado, buceo, pesca, trepar y Vuelo salen de ahí (el jinete usa la pose 0 de su `walk`); en
+`roster.mjs` los dos se declaran con `protagonist(id)`.
+- **Masculino**: `PROTA_M_HEAD` (`prota_heads.mjs`, 18 px) con las poses y la mochila comunes.
+- **Femenina** (X32): `PROTA_F_HEAD` (`prota_heads_f.mjs`, 22 px: melena con las puntas hacia fuera y trenza con
+  goma verde) y `PROTA_WALK_F` / `PROTA_RUN_F` (`prota_body_f.mjs`): las poses comunes con su chaqueta (sin tirador
+  verde ni línea de cremallera de perfil) y el pantalón corto con vuelo (`flareShorts`: +1 px por lado en el muslo
+  de las piernas de frente/espaldas), a las mismas alturas de hombros y cadera. Espalda de combate:
+  `battle_back.mjs` → `CONFIGS.protagonista_f` (máscara de melena, anillo de brillo `ring`, rayas y `drawBraid`).
 
-Tests: `tests/prota_kit.test.mjs` (partes, capas, rebote, espejo, mochila, proporciones 17 + 12 filas, jinete).
+**Regenerar y revisar**: `node tools/pixel_build.mjs protagonista_f [--preview] [--lineup]` (o `protagonista_m`);
+comparativas con `REF_DIR=<carpeta de las referencias> node tools/cache/art/prota_review.mjs protagonista_f`; visor
+`?scene=sprites&char=protagonista_f` (Z modos, C combate).
+
+Tests: `tests/prota_kit.test.mjs` (partes, capas, rebote, espejo, mochila, proporciones 17 + 12 filas, jinete,
+API de campo de los dos) y `tests/prota_f.test.mjs` (cabeza de 22 px centrada con la cara del masculino, misma
+altura, goma verde en los 16 frames y nunca en la chaqueta, vuelo del pantalón, alturas de las poses, paleta y
+espalda de combate).
+

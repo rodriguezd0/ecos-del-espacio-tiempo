@@ -1,15 +1,20 @@
 // Cámara del combate al estilo de Negro 2/Blanco 2 (emulada en 2D): encuadre (centro + zoom) que se
 // interpola suavemente, balanceo en reposo, sacudidas y paralaje (el fondo se mueve menos que el campo).
 // La matemática es PURA (se prueba en Node); `apply` escribe la transformación en grupos de Three.js.
+//
+// DECIDIDO (autor, 25-09-2026): el combate se ve como en Añil. Los fondos (512×384) y los sprites (×2/×3) de Añil
+// solo son nítidos a escala entera: un zoom de 1,1–1,4 con muestreo al vecino más cercano repartía los píxeles de
+// forma irregular (fondo «muy pixelado», entrenadores «cuadrados»). La cámara conserva paneos, balanceo y
+// sacudidas, siempre con zoom 1 y desplazamientos enteros (`pixelPerfect`).
 import { SCREEN_W, SCREEN_H } from './layout.js';
 
 export const CAMERA_PRESETS = Object.freeze({
   default: { x: SCREEN_W / 2, y: SCREEN_H / 2, zoom: 1 },
-  introFoe: { x: 384, y: 150, zoom: 1.4 },
-  introTrainer: { x: 372, y: 140, zoom: 1.3 },
-  focusFoe: { x: 340, y: 168, zoom: 1.14 },
-  focusPlayer: { x: 196, y: 222, zoom: 1.08 },
-  wide: { x: SCREEN_W / 2, y: SCREEN_H / 2 + 6, zoom: 1.02 },
+  introFoe: { x: SCREEN_W / 2, y: SCREEN_H / 2, zoom: 1 },
+  introTrainer: { x: SCREEN_W / 2, y: SCREEN_H / 2, zoom: 1 },
+  focusFoe: { x: 300, y: 176, zoom: 1 },
+  focusPlayer: { x: 220, y: 206, zoom: 1 },
+  wide: { x: SCREEN_W / 2, y: SCREEN_H / 2 + 6, zoom: 1 },
 });
 
 /**
@@ -40,12 +45,13 @@ export class BattleCamera {
     this.shakeFrames = 0;
     this.shakeT = 0;
     this.offset = { x: 0, y: 0 };
+    this.pixelPerfect = true; // zoom siempre 1 (ver cabecera)
   }
 
   /** Cambia el objetivo. `speed` 0..1 (1 = instantáneo). */
   to(preset, speed = 0.08) {
     const p = typeof preset === 'string' ? CAMERA_PRESETS[preset] || CAMERA_PRESETS.default : preset;
-    this.target = { x: p.x, y: p.y, zoom: p.zoom };
+    this.target = { x: p.x, y: p.y, zoom: this.pixelPerfect ? 1 : p.zoom };
     this.speed = speed;
   }
 

@@ -180,24 +180,26 @@ test('células C008, C010–C012 en sus mapas del registro; C009 es de guion', a
   for (const id of B02_MAPS) assert.ok(!(await build(id)).def.events.some((e) => e.cell === C009.id));
 });
 
-test('encuentros de POKEDEX_DISTRIBUCION §7.3: Zaguán (día, noche, Caña Vieja) y ruina 5–9', () => {
+// Niveles actualizados con la curva inicial del autor (DECISIONES «DECIDIDO (autor, 25-09-2026)»): hierba de Zaguán
+// 5–9 (antes 7–12), ruina 5–8 (antes 5–9), Geodude 7 (antes 8), entrenadores 5–8 (antes 6–9), Casilda 10–11 (antes 11–12).
+test('encuentros de POKEDEX_DISTRIBUCION §7.3: Zaguán (día, noche, Caña Vieja) y ruina 5–8', () => {
   const sum = (t) => t.reduce((a, [w]) => a + w, 0);
   for (const k of ['grass', 'grassNight', 'fish_old']) assert.equal(sum(ZAGUAN_ENCOUNTERS[k]), 100, k);
   assert.equal(sum(RUINAS_ENCOUNTERS.cave), 100);
   assert.deepEqual(RUINAS_ENCOUNTERS.cave.map(([w, s]) => `${s}:${w}`), ['GEODUDE:30', 'ZUBAT:30', 'MACHOP:15', 'NACLI:15', 'BONSLY:6', 'ONIX:4']);
-  assert.ok(RUINAS_ENCOUNTERS.cave.every(([, , a, b]) => a === 5 && b === 9));
-  assert.ok(ZAGUAN_ENCOUNTERS.grass.every(([, , a, b]) => a === 7 && b === 12));
-  assert.deepEqual(GEODUDE_GIFT, { species: 'GEODUDE', level: 8 });
+  assert.ok(RUINAS_ENCOUNTERS.cave.every(([, , a, b]) => a === 5 && b === 8));
+  assert.ok(ZAGUAN_ENCOUNTERS.grass.every(([, , a, b]) => a === 5 && b === 9));
+  assert.deepEqual(GEODUDE_GIFT, { species: 'GEODUDE', level: 7 });
 });
 
-test('entrenadores: Remo, Paco e Inés nv 6–9; Casilda Bonsly 11, Nacli 11, Hippopotas 12 con Chorro Arena', () => {
+test('entrenadores: Remo, Paco e Inés nv 5–8; Casilda Bonsly 10, Nacli 10, Hippopotas 11 con Chorro Arena', () => {
   for (const id of ['b02_excursionista_remo', 'b02_montanero_paco', 'b02_arqueologa_ines']) {
     const t = TRAINERS[id];
     assert.ok(t, id);
-    assert.ok(t.party.every((p) => p.level >= 6 && p.level <= 9), `${id}: niveles del tramo`);
+    assert.ok(t.party.every((p) => p.level >= 5 && p.level <= 8), `${id}: niveles del tramo`);
   }
   const c = TRAINERS.b02_casilda;
-  assert.deepEqual(c.party.map((p) => `${p.species}:${p.level}`), ['BONSLY:11', 'NACLI:11', 'HIPPOPOTAS:12']);
+  assert.deepEqual(c.party.map((p) => `${p.species}:${p.level}`), ['BONSLY:10', 'NACLI:10', 'HIPPOPOTAS:11']);
   assert.equal(c.party[2].ability, 'SANDSTREAM');
   assert.equal(c.sprite, 'casilda_front');
   assert.equal(c.overworld, 'casilda');

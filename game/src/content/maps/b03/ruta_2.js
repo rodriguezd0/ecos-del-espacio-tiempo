@@ -6,6 +6,7 @@
 import { ruta2Events } from '../../events/b03_ruta2.js';
 import { RUTA_2 } from '../../encounters/b03.js';
 import { linkIfReady, mapRegistered } from './pending_links.js';
+import { ruta2BridgeGate } from '../../events/progression_gates.js'; // cierre de progresión: puente cerrado hasta el P1
 
 export const W = 30;
 export const H = 70;
@@ -165,5 +166,8 @@ export default {
     ...[linkIfReady('ruta_2', 'villa_zaguan')].filter(Boolean),
   ],
 
-  events: ruta2Events({ zaguanOpen: HAS_ZAGUAN, pathX: PATH_X, pond: POND, hill: HILL, pasture: PASTURE, honeyTree: HONEY_TREE }),
+  events: [
+    ...ruta2Events({ zaguanOpen: HAS_ZAGUAN, pathX: PATH_X, pond: POND, hill: HILL, pasture: PASTURE, honeyTree: HONEY_TREE }),
+    ...ruta2BridgeGate(BRIDGES[0]),
+  ],
 };

@@ -71,11 +71,11 @@ export const MAP_GROUPS = Object.freeze([
   G('arrecife_eco', 'Arrecife del Eco', 'Emociones', 'Sub', ['arrecife_eco',
     ['arrecife_campana', { name: 'Campana de dragado', bgm: 'GuaridaRocket', battleback: 'BaseVillano' }]]), // B14: interior de Genesis
   G('sima_eje', 'Sima del Eje', 'Amenaza', 'Espacio', ['sima_eje']),
-  G('senda_mirador', 'Senda del Mirador', 'Amenaza', 'Espacio', ['senda_mirador']),
+  G('senda_mirador', 'Senda del Mirador', 'Amenaza', 'Acantilado', ['senda_mirador']), // antes 'Espacio' (autor, 25-09-2026)
   G('mirador_sur', 'Mirador Sur', null, 'Espacio', ['mirador_sur', ['grieta_porvenir', { name: 'Grieta del Porvenir' }]]),
   G('calzada_rey', 'Calzada del Rey', null, 'Espacio', ['calzada_rey',
     ['calzada_taller', { name: 'Taller del Rey', battleback: 'Cueva' }]]), // B19: el taller de la Peña del Rey
-  G('cumbre_azur', 'Columna Lanza', 'Final2', 'ColumnaLanza', ['columna_lanza', ['cumbre_azur', { name: 'Cumbre Azur' }]]),
+  G('cumbre_azur', 'Columna Lanza', 'Final2', 'ColumnaLanza', ['columna_lanza', ['cumbre_azur', { name: 'Cumbre Azur', bgm: 'Transicion', battleback: 'CimaNevada' }]]), // B22a: la Senda del Lazo abierta
   G('instalacion_cierzo', 'Instalación Cierzo', null, null, ['instalacion_cierzo'], ['cierzo_']),
 
   // ── Pilares (§1.5) ──────────────────────────────────────────────────────────────────────────
@@ -86,6 +86,7 @@ export const MAP_GROUPS = Object.freeze([
   G('ciudad_estrato', 'Mina Galena', null, 'CuevaOscura', ['mina_galena'], ['mina_galena_']),
   G('archivo_hondo', 'Pilar de la Memoria', null, 'Templo', ['archivo_hondo']),
   G('aljibe_portal', 'Pilar Invertido', 'distortion', 'MundoDistorsion', ['aljibe_portal'], ['pilar_invertido']),
+  G('aljibe_portal', 'Mundo Distorsión', 'distortion', 'MundoDistorsion', ['distorsion_honda', 'distorsion_corazon']), // B22a: Mundo Distorsión profundo
   G('arrecife_eco', 'Pilar de los Ecos', null, 'Templo', ['fosa_eco'], ['antea_']),
   G('lagos_alma', 'Pilar del Alma', null, 'Templo', ['santuario_alma'], ['santuario_alma_']),
   G('sima_eje', 'Pilar de la Convergencia', null, 'Espacio', ['puente_convergencia', 'camara_cruce']),

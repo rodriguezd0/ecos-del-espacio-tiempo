@@ -1,7 +1,7 @@
 // Antesala y Galería de los Dinteles de las Ruinas del Dintel (CAMPANA B02, mazmorra 1–2; D08):
 // inscripción con la traducción grabada por la madre de Casilda, losa atascada del atajo, entrenadores,
 // objetos y el puzzle de las tres piedras giratorias (lógica pura en b02_puzzle.js).
-import { F, SPEAKER, SPRITE, GREEN, when, say, core, strip, examine, fx } from './b02_common.js';
+import { F, SPEAKER, SPRITE, GREEN, when, say, strip, examine, fx } from './b02_common.js';
 import { ROOM, placeCasilda, setRoom, casildaRoom } from './b02_ruinas_casilda.js';
 import { STONES, ROTATION, DIR_NAME, stoneDir, isSolved, solvedCount, allSolved, coreNear, turnStone, applyTurn, stoneFlag } from './b02_puzzle.js';
 import { ANTESALA, GALERIA, PASSAGES } from '../maps/b02/ruinas_dintel_layout.js';
@@ -20,8 +20,6 @@ async function antesalaScene(ctx) {
   await say(ctx, C, 'Por la losa del fondo se llegaba a la sala de la caja. Desde los temblores no se mueve.');
   ctx.face('casilda', 'left');
   await say(ctx, C, 'Queda la galería. Tiene tres piedras que giran y no abren nada. Tú verás.');
-  await ctx.wait(10);
-  await core(ctx, 'Este lugar me reconoce.');
   ctx.setFlag(F.antesala);
 }
 

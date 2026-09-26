@@ -4,7 +4,6 @@
 // content/zygarde/cells.js (agente zygarde); aquí se fijan las CASILLAS del bloque. Los eventos usan el tipo
 // `zygardeCell` (world/zygarde/eventTypes.js: texto «(n/100)» y comprobación de progresión al recoger).
 // Módulo puro (se importa en Node).
-import { coreCellReaction } from '../companion.js';
 
 /** Total de células del juego (biblia §8). */
 export const CELL_TOTAL = 100;
@@ -35,15 +34,17 @@ export function cellFoundText(state) {
   return `Has encontrado una Célula de Zygarde. (${n}/${CELL_TOTAL})`;
 }
 
-/** Brillo breve y reacción del Core al recoger una célula (B01 §4.8). */
+/**
+ * Destello breve de obtención al recoger una célula. Sin reacción ni gratitud del Core (autor, 25-09-2026:
+ * «tampoco que cada vez que agarres una célula te diga "Una parte de mí, gracias"»).
+ */
 export async function afterCell(ctx) {
   await ctx.flash(GREEN, 12, 90);
-  await coreCellReaction(ctx);
 }
 
 /**
  * Evento de célula (tipo `zygardeCell`). `extra.when(state)` añade una condición de aparición (p. ej. C001
- * solo tras recibir la Pokédex). El texto con el recuento lo pone el tipo; después reacciona el Core.
+ * solo tras recibir la Pokédex). El texto con el recuento lo pone el tipo; después, el destello de obtención.
  */
 export function cellEvent(cell, extra = {}) {
   return { id: cell.id, type: 'zygardeCell', x: cell.x, y: cell.y, cell: cell.id, onFound: afterCell, ...extra };
@@ -60,17 +61,16 @@ async function checkProgress(ctx) {
 }
 
 /**
- * Recoge una célula desde un guion (escenas forzadas): mismo efecto que pisarla (texto con el recuento y
- * progresión). Devuelve false si ya estaba. `react`: reacción del Core después del texto.
+ * Recoge una célula desde un guion (escenas forzadas): mismo efecto que pisarla (texto con el recuento, destello
+ * y progresión). Devuelve false si ya estaba.
  */
-export async function collectCell(ctx, id, { react = true } = {}) {
+export async function collectCell(ctx, id) {
   if (ctx.state.hasCell(id)) return false;
   ctx.state.addCell(id);
   ctx.se('Mining item get');
   ctx.requestRefresh();
   await ctx.say(cellFoundText(ctx.state));
-  if (react) await afterCell(ctx);
-  else await ctx.flash(GREEN, 12, 90);
+  await afterCell(ctx);
   await checkProgress(ctx);
   return true;
 }

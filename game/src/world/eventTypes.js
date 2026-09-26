@@ -62,8 +62,12 @@ const EXPANDERS = {
 
   trainer(d) {
     const sight = d.sight ?? 4;
+    // `when(state, ev)` opcional: el entrenador solo existe entonces (p. ej. los curiosos de B17 tras el P8). Antes las
+    // páginas lo pisaban y el entrenador salía desde el principio de la partida (fuga de nivel 60 al sur de Caudal).
+    const extra = typeof d.when === 'function' ? d.when : null;
+    const exists = (s, ev) => !extra || Boolean(extra(s, ev));
     const battlePage = {
-      when: notA,
+      when: (s, ev) => exists(s, ev) && notA(s, ev),
       sprite: d.sprite,
       dir: d.dir,
       move: d.move,
@@ -88,7 +92,7 @@ const EXPANDERS = {
       },
     };
     const afterPage = {
-      when: isA,
+      when: (s, ev) => exists(s, ev) && isA(s, ev),
       sprite: d.sprite,
       dir: d.dir,
       move: d.move,

@@ -7,15 +7,20 @@ import { rawTexture } from '../../../render/textures.js';
 import { spriteMaterial, GEOM } from './materials.js';
 import {
   battlerPosition, spriteScale, speciesMetrics, spriteOffset, shadowPlacement, spriteFrameTicks, SHADOW_OPACITY,
+  stripFrames, spriteFileCandidates,
 } from '../layout.js';
 
 const ATLAS_MAX = 4096;
 
-/** Imagen → { tex, frames, fs, cols, rows } (rejilla si la tira es demasiado ancha). */
+/**
+ * Imagen → { tex, frames, fw, fh, cols, rows } (rejilla si la tira es demasiado ancha). Sin `frameW`, los frames
+ * se deducen como DeluxeBitmapWrapper (tira de frames cuadrados si el ancho supera el doble del alto).
+ */
 export function stripAtlas(img, frameW = null) {
-  const fs = frameW || img.height;
+  const auto = frameW ? null : stripFrames(img.width, img.height);
+  const fs = frameW || auto.fw;
   const fh = img.height;
-  const frames = Math.max(1, Math.round(img.width / fs));
+  const frames = auto ? auto.frames : Math.max(1, Math.round(img.width / fs));
   if (img.width <= ATLAS_MAX) {
     return { tex: rawTexture(img), frames, fw: fs, fh, cols: frames, rows: 1, w: img.width, h: fh };
   }
@@ -41,13 +46,8 @@ export function atlasRect(a, i) {
 }
 
 function spriteCandidates(view, back) {
-  const dirs = view.shiny ? [back ? 'Back shiny' : 'Front shiny', back ? 'Back' : 'Front'] : [back ? 'Back' : 'Front'];
-  const out = [];
-  for (const d of dirs) {
-    if (view.form) out.push(`Graphics/Pokemon/${d}/${view.species}_${view.form}.png`);
-    out.push(`Graphics/Pokemon/${d}/${view.species}.png`);
-  }
-  return out.map((p) => engine.assets.anil(p));
+  const req = { species: view.species, form: view.form || 0, female: view.gender === 'F', shiny: Boolean(view.shiny) };
+  return spriteFileCandidates(req, back ? 'Back' : 'Front').map((p) => engine.assets.anil(p));
 }
 
 /** Primera imagen existente del sprite (espalda → frente como último recurso). */
@@ -96,9 +96,11 @@ export class BattlerSprite {
 
   get side() { return this.index & 1; }
   get back() { return this.side === 0; }
-  get scale() { return spriteScale(this.index); }
+  get scale() { return spriteScale(this.index, this.metrics); }
   get width() { return this.atlas ? this.atlas.fw * this.scale : 96; }
   get height() { return this.atlas ? this.atlas.fh * this.scale : 96; }
+  /** Alto del bitmap de trabajo de DBK (cuadrado del ancho del frame): lo usan la sombra y las animaciones. */
+  get squareHeight() { return this.atlas ? this.atlas.fw * this.scale : 96; }
 
   /** Posición base (centro inferior con métricas). */
   get anchor() {
@@ -117,8 +119,8 @@ export class BattlerSprite {
   async setPokemon(view) {
     const token = ++this.loadToken;
     this.view = view;
-    this.metrics = speciesMetrics(engine.data, view.species, view.form);
-    this.ticks = spriteFrameTicks(this.metrics);
+    this.metrics = speciesMetrics(engine.data, view.species, view.form, view.gender === 'F');
+    this.ticks = spriteFrameTicks(this.metrics, this.back);
     const img = await loadPokemonImage(view, this.back);
     if (token !== this.loadToken) return;
     if (!img) {
@@ -176,7 +178,7 @@ export class BattlerSprite {
     this.mesh.scale.set(this.width * this.scaleX, this.height * this.scaleY, 1);
     this.mesh.rotation.z = this.rot;
     // Sombra: silueta aplastada (no sigue el bamboleo ni los saltos verticales)
-    const sh = shadowPlacement(this.metrics, this.index, this.height);
+    const sh = shadowPlacement(this.metrics, this.index, this.squareHeight);
     this.shadow.visible = shadowShow && sh.visible;
     if (this.shadow.visible) {
       const base = battlerPosition(this.index, this.sideSize);

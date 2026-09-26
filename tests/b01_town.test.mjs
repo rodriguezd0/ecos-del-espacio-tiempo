@@ -284,7 +284,8 @@ test('regreso al laboratorio: duelo (perdido: se cura y sigue), Pokédex + 5 Pok
   assert.ok(state.party[0].hp > 0, 'curado tras perder');
   const lines = ctx.log.filter((l) => l[0] === 'say');
   assert.ok(lines.some((l) => l[2] === '¿Decidido? ¿Por qué ella?'), 'pronombre según el género');
-  assert.ok(lines.some((l) => l[1] === 'Core' && l[2] === 'Este humano sabe qué soy.'), 'telepatía del Core');
+  // Autor, 25-09-2026: Zygarde habla muy poco; en el regreso al laboratorio el Core calla.
+  assert.ok(!lines.some((l) => l[1] === 'Core'), 'el Core no habla en el regreso');
   assert.ok(lines.some((l) => l[2] === 'Ya está. Sigo sin entenderlo.'), 'texto de derrota del guion');
   assert.ok(ctx.log.some((l) => l[0] === 'battle' && l[1] === 'gael_1'));
 });

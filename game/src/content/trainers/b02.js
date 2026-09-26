@@ -1,6 +1,8 @@
-// Entrenadores del Bloque 2 — Pilar del Umbral (docs/CAMPANA.md B02; POKEDEX_DISTRIBUCION §7.1: entrenadores nv 6–9,
-// Casilda 11–12). Formato en content/trainers/index.js. Sprites de combate: arte de campaña (Casilda) o clases de Añil.
+// Entrenadores del Bloque 2 — Pilar del Umbral (docs/CAMPANA.md B02; POKEDEX_DISTRIBUCION §7.1: entrenadores nv 5–8,
+// Casilda 10–11). Formato en content/trainers/index.js. Sprites de combate: arte de campaña (Casilda) o clases de Añil.
 // `money` = base por clase de docs/BALANCE.md (content/trainerMoney.js).
+// Curva del principio rebajada un nivel a petición del autor (DECISIONES «DECIDIDO (autor, 25-09-2026)», curva inicial;
+// antes entrenadores 6–9 y Casilda 11–12).
 
 export default {
   // ─── Ruinas del Dintel ───────────────────────────────────────────────────────────────────────
@@ -9,7 +11,7 @@ export default {
     class: 'Excursionista',
     sprite: 'anil:excursionista',
     overworld: 'anil:excursionista',
-    party: [{ species: 'ZUBAT', level: 6 }, { species: 'MACHOP', level: 7 }],
+    party: [{ species: 'ZUBAT', level: 5 }, { species: 'MACHOP', level: 6 }],
     items: [],
     ai: 16,
     money: 32,
@@ -22,7 +24,7 @@ export default {
     class: 'Montañero',
     sprite: 'anil:montanero',
     overworld: 'anil:montanero',
-    party: [{ species: 'GEODUDE', level: 7 }, { species: 'MACHOP', level: 8 }],
+    party: [{ species: 'GEODUDE', level: 6 }, { species: 'MACHOP', level: 7 }],
     items: [],
     ai: 24,
     money: 32,
@@ -35,7 +37,7 @@ export default {
     class: 'Arqueóloga',
     sprite: 'anil:cientifica',
     overworld: 'anil:cientifica',
-    party: [{ species: 'ZUBAT', level: 8 }, { species: 'ONIX', level: 9 }],
+    party: [{ species: 'ZUBAT', level: 7 }, { species: 'ONIX', level: 8 }],
     items: [],
     ai: 32,
     money: 48,
@@ -52,9 +54,9 @@ export default {
     overworld: 'casilda',
     party: [
       // Cabeza Roca (no Robustez): sin el combo Robustez + Azote que tumba al inicial de un golpe en el primer reto.
-      { species: 'BONSLY', level: 11, ability: 'ROCKHEAD', moves: ['ROCKTHROW', 'FLAIL', 'FAKETEARS', 'DISABLE'] },
-      { species: 'NACLI', level: 11, moves: ['ROCKTHROW', 'MUDSHOT', 'SMACKDOWN', 'HARDEN'] },
-      { species: 'HIPPOPOTAS', level: 12, ability: 'SANDSTREAM', item: 'ORANBERRY', moves: ['SANDTOMB', 'BITE', 'YAWN', 'SANDATTACK'] },
+      { species: 'BONSLY', level: 10, ability: 'ROCKHEAD', moves: ['ROCKTHROW', 'FLAIL', 'FAKETEARS', 'DISABLE'] },
+      { species: 'NACLI', level: 10, moves: ['ROCKTHROW', 'MUDSHOT', 'SMACKDOWN', 'HARDEN'] },
+      { species: 'HIPPOPOTAS', level: 11, ability: 'SANDSTREAM', item: 'ORANBERRY', moves: ['SANDTOMB', 'BITE', 'YAWN', 'SANDATTACK'] },
     ],
     items: ['POTION'],
     ai: 48,

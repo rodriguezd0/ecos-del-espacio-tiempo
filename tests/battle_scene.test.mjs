@@ -11,7 +11,7 @@ import {
 import { syncBag, applyBattleResult, storeCaught, storedMessage } from '../game/src/battle/scene/results.js';
 import {
   battlerPosition, trainerPosition, dataBoxLayout, targetButtons, gridMove, shadowPlacement, spriteOffset, spriteFrameTicks,
-  spriteScale, speciesMetrics,
+  spriteScale, speciesMetrics, spriteFileCandidates, stripFrames,
 } from '../game/src/battle/scene/layout.js';
 import { layerTransform, worldToScreen, BattleCamera } from '../game/src/battle/scene/camera.js';
 import { Tasks, Ease } from '../game/src/battle/scene/timeline.js';
@@ -182,15 +182,52 @@ test('métricas: desplazamiento, sombra y velocidad de animación', () => {
   const m = speciesMetrics(db, 'PIKACHU', 0);
   assert.deepEqual(spriteOffset(m, 0), { dx: m.back[0] * 2, dy: m.back[1] * 2 });
   assert.deepEqual(spriteOffset({ front: [3, 4], altitude: 5 }, 1), { dx: 6, dy: -2 });
+  // Sombra exactamente como BattlerShadowSprite de DBK (25-09-2026, el autor vio a Litten «flotando»): centro en
+  // battlerPosition − H/4 + (métrica + ShadowSprite) × 2; antes se apoyaba en los pies (−5 % de H) y quedaba debajo.
   const sh = shadowPlacement({ front: [0, 2], shadow: [1, 0, 3], shadowSize: 3 }, 1, 100);
   assert.equal(sh.visible, true);
   assert.equal(sh.dx, 2);
-  assert.equal(sh.dy, 4 + 6 - 5);
+  assert.equal(sh.dy, 4 + 6 - 25);
   assert.ok(Math.abs(sh.zoomX - 1.2) < 1e-9);
+  assert.ok(Math.abs(sh.zoomY - 0.3) < 1e-9);
+  assert.equal(shadowPlacement({ front: [0, 0] }, 1, 182).dy, -45, 'H/4 con división entera de Ruby');
+  assert.ok(Math.abs(shadowPlacement({ shadowSize: -1 }, 1, 100).zoomX - 0.9) < 1e-9, 'ShadowSize negativo encoge');
   assert.equal(shadowPlacement({ shadowSize: 0 }, 1, 100).visible, false);
   assert.equal(spriteFrameTicks({ animSpeed: 2 }), 4);
   assert.equal(spriteFrameTicks({ animSpeed: 0 }), 0);
   assert.equal(spriteFrameTicks({}), 4);
+  assert.equal(spriteFrameTicks({ animSpeed: 3 }), 6, 'ceil(90 ms × 60)');
+  assert.equal(spriteFrameTicks({ animSpeed: 1, animSpeedFront: 2 }, true), 2, 'espalda');
+  assert.equal(spriteFrameTicks({ animSpeed: 1, animSpeedFront: 2 }, false), 4, 'frente');
+});
+
+test('métricas de Añil: Litten apoyado sobre su sombra por detrás y por delante', () => {
+  const m = speciesMetrics(db, 'LITTEN', 0);
+  assert.deepEqual(m.back, [3, 47]);
+  // Espalda: frames de 96 px ×3 → la sombra se centra 72 px por encima de la base + (47 − 19) × 2.
+  const back = shadowPlacement(m, 0, 96 * 3);
+  assert.equal(back.dy, 47 * 2 - 19 * 2 - 72);
+  assert.ok(back.dy < spriteOffset(m, 0).dy, 'la sombra queda por encima del borde inferior del sprite (bajo los pies)');
+  const front = shadowPlacement(m, 1, 96 * 2);
+  assert.equal(front.dy, 30 * 2 - 11 * 2 - 48);
+});
+
+test('métricas de hembra, forma, escala propia y rutas de sprites (Essentials check_graphic_file)', () => {
+  const pika = db.species.PIKACHU;
+  assert.ok((pika.flags || []).includes('HasGenderedSprites'));
+  assert.deepEqual(speciesMetrics(db, 'PIKACHU', 0, true), pika.metricsFemale);
+  assert.deepEqual(speciesMetrics(db, 'PIKACHU', 0, false), pika.metrics);
+  assert.deepEqual(speciesMetrics(db, 'LITTEN', 0, true), db.species.LITTEN.metrics, 'sin sprites por sexo');
+  assert.deepEqual(speciesMetrics(db, 'VENUSAUR', 1), db.species.VENUSAUR.forms[1].metrics, 'la forma es una entrada completa');
+  assert.equal(spriteScale(0, { back: [4, 27, 2] }), 2);
+  assert.equal(spriteScale(1, { front: [4, 27] }), 2);
+  assert.deepEqual(spriteFileCandidates({ species: 'PIKACHU', female: true, shiny: true }, 'Front'), [
+    'Graphics/Pokemon/Front shiny/PIKACHU_female.png', 'Graphics/Pokemon/Front/PIKACHU_female.png',
+    'Graphics/Pokemon/Front shiny/PIKACHU.png', 'Graphics/Pokemon/Front/PIKACHU.png',
+  ]);
+  assert.deepEqual(spriteFileCandidates({ species: 'ONIX' }, 'Back'), ['Graphics/Pokemon/Back/ONIX.png']);
+  assert.deepEqual(stripFrames(11328, 96), { frames: 118, fw: 96, fh: 96 });
+  assert.deepEqual(stripFrames(80, 64), { frames: 1, fw: 80, fh: 64 });
 });
 
 test('menús: rejilla 2×2 y botones de objetivo en dobles', () => {

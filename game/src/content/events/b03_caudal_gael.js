@@ -1,8 +1,8 @@
 // Gael en el puente de entrada de Caudal (CAMPANA B03 punto 4, §6.2 «Orgullo herido», §6.3) y la llamada de
-// Alerce por la Pokédex (B03 punto 5; §5.5 escalera de revelación, escena 2). Combate B2: Starly 12, Riolu 12,
-// inicial 14 (content/trainers/b03.js → gael_2). Si el jugador pierde, la historia sigue (§2.6): cura y cambia
+// Alerce por la Pokédex (B03 punto 5; §5.5 escalera de revelación, escena 2). Combate B2: Starly 9, Riolu 9,
+// inicial 11 (content/trainers/b03.js → gael_2; curva del autor del 25-09-2026). Si el jugador pierde, la historia sigue (§2.6): cura y cambia
 // la frase de Gael. La célula que «se le escapó» es C014 y queda en la pasarela de la Esclusa mayor.
-import { F, SPEAKER, SPRITE, say, core, when, zygardeEmote, B03_CELLS } from './b03_common.js';
+import { F, SPEAKER, SPRITE, say, when, zygardeEmote, B03_CELLS } from './b03_common.js';
 import { GAEL, BRIDGES } from '../maps/b03/caudal_layout.js';
 import { getTrainer } from '../trainers/index.js';
 
@@ -100,7 +100,6 @@ export async function gaelBridgeScene(ctx) {
   await cellFlight(ctx, { x: gael.x, y: gael.y });
   await ctx.wait(20);
   await say(ctx, G, 'Se me escapó de las manos… hacia ti.');
-  await core(ctx, 'Una parte de mí. Me ha oído llegar. Está en el agua que se detiene.');
   await ctx.wait(20);
   await say(ctx, G, 'Claro. Viene a ti. Todo viene a ti.');
   await say(ctx, G, 'Pues demuéstrame que no es casualidad. Combate.');

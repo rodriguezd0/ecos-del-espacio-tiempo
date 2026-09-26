@@ -22,7 +22,31 @@ async function camaraScene(ctx) {
   await say(ctx, C, 'Toda una vida limpiando la galería, y no sabía que detrás había una sala.');
   await ctx.emote('casilda', '!');
   await say(ctx, C, 'Escucha. Por eso se oía rascar por las noches.');
+  await showScratching(ctx);
   ctx.setFlag(F.camara);
+}
+
+/** Frases de guía de la cámara (DECIDIDO autor 25-09-2026: tras el puzzle no se sabía cómo seguir). */
+export const CAMARA_HINT = Object.freeze({
+  scene: 'Ahí, en la grieta del fondo. Hay algo atascado.',
+  talk: 'Lo que rasca está en la grieta del fondo, al oeste. Sácalo de ahí si puedes.',
+  rock: 'Haría falta alguien que sepa de piedras.',
+  pullFailed: 'El Geodude sigue atascado. Mantén pulsado A, sin soltarlo, para tirar de él.',
+});
+
+/**
+ * La cámara enseña de dónde sale el ruido: la grieta del oeste con el Geodude (sala oscura y grande: sin esto el
+ * jugador no lo encontraba). Solo mientras sigue atascado.
+ */
+export async function showScratching(ctx) {
+  if (ctx.flag(F.geodudeFree)) return;
+  ctx.se('Strength push');
+  await ctx.camera.pan(CAMARA.pull.x + 3, CAMARA.geodude.y + 1, 40);
+  ctx.cry('GEODUDE');
+  await ctx.emote('geodude', '…');
+  await ctx.wait(20);
+  await say(ctx, C, CAMARA_HINT.scene);
+  await ctx.camera.reset(30);
 }
 
 /**
@@ -51,7 +75,7 @@ async function pullGeodude(ctx) {
   if (!(await ctx.confirm('¿Intentas sacarlo?'))) return;
   await ctx.say('Agárralo bien y mantén pulsado A para tirar.');
   const ok = await holdToPull(ctx);
-  if (!ok) { await ctx.say('El Geodude sigue atascado. Habrá que tirar con más constancia.'); return; }
+  if (!ok) { await ctx.say(CAMARA_HINT.pullFailed); return; }
   ctx.se('PRSFX- Rock Smash');
   await ctx.shake(4, 8, 16);
   await ctx.move('player', ['backward'], { through: false });
@@ -176,7 +200,10 @@ function geodudeEvents() {
     {
       id: 'roca_tunel', x: TUNNEL.rock.x, y: TUNNEL.rock.y, when: (s) => !s.flag(F.rockBroken), sprite: SPRITE.rock, dir: 2,
       directionFix: true, walkAnime: false, solid: true, trigger: 'action',
-      script: async (ctx) => { await ctx.say('Una roca enorme tapa el túnel. No se mueve ni empujando con todas tus fuerzas.'); },
+      script: async (ctx) => {
+        await ctx.say('Una roca enorme tapa el túnel. No se mueve ni empujando con todas tus fuerzas.');
+        if (!ctx.flag(F.geodudeFree)) await ctx.say(CAMARA_HINT.rock);
+      },
     },
     ...strip('escena_camara', CAMARA.entry, { when: when({ all: [F.dinteles], none: [F.camara] }), script: camaraScene }),
     { id: 'piedra_dura', type: 'item', x: 20, y: 11, item: 'HARDSTONE' },

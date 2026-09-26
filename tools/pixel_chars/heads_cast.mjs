@@ -1,5 +1,5 @@
 // Cabezas del elenco secundario (rejilla local de 18 px, filas y=0..17). Mismos símbolos que
-// heads_protas.mjs; la gorra del policía usa U/u (copa), v (banda), V (visera), G (placa).
+// palettes.mjs (k contorno · H/h/m/n pelo · S/s/r/o piel · e/w ojos); la gorra del policía usa U/u (copa), v (banda), V (visera), G (placa).
 // Todas PROVISIONALES (D30); ver docs/arte.md.
 
 // Filas de cara frontal compartidas (ojos 2×2 con brillo exterior, mentón redondeado).

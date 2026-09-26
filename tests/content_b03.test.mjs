@@ -143,21 +143,24 @@ test('encuentros: tablas de POKEDEX_DISTRIBUCION (pesos 100, niveles y especies 
     assert.equal(sum(table), 100, `${name} suma 100`);
     for (const [, sp] of table) assert.ok(db.species[sp], `${name}: ${sp}`);
   }
-  assert.ok(RUTA_2.grass.every((r) => r[2] === 7 && r[3] === 12), 'hierba de la Ruta 2: 7–12');
-  assert.ok(CAUDAL.fish_old.every((r) => r[2] === 8 && r[3] === 15), 'Caña Vieja de Caudal: 8–15');
+  // Curva inicial del autor (DECISIONES «DECIDIDO (autor, 25-09-2026)»): antes hierba 7–12 y Caña Vieja 8–15.
+  assert.ok(RUTA_2.grass.every((r) => r[2] === 5 && r[3] === 9), 'hierba de la Ruta 2: 5–9');
+  assert.ok(CAUDAL.fish_old.every((r) => r[2] === 8 && r[3] === 13), 'Caña Vieja de Caudal: 8–13');
   assert.deepEqual(ruta2.encounters, RUTA_2);
   assert.deepEqual(caudal.encounters, CAUDAL);
 });
 
-test('entrenadores: curva del Interludio 1 (9–13) y Gael B2 con Starly 12, Riolu 12 e inicial con ventaja 14', () => {
+// Curva inicial del autor (DECISIONES «DECIDIDO (autor, 25-09-2026)»): el Gael B2 de 12/12/14 era «mucha diferencia»
+// para quien acaba de elegir el inicial; ahora Starly 9, Riolu 9 e inicial 11, y entrenadores 7–11 (antes 9–13).
+test('entrenadores: curva del Interludio 1 (7–11) y Gael B2 con Starly 9, Riolu 9 e inicial con ventaja 11', () => {
   for (const [id, t] of Object.entries(trainers)) {
     if (id === 'gael_2') continue;
-    for (const p of t.party) assert.ok(p.level >= 9 && p.level <= 13, `${id}: ${p.species} ${p.level}`);
+    for (const p of t.party) assert.ok(p.level >= 7 && p.level <= 11, `${id}: ${p.species} ${p.level}`);
   }
   const s = newState();
   s.setVar('starter', 'SOBBLE');
   const party = trainers.gael_2.party(s);
-  assert.deepEqual(party.map((p) => [p.species, p.level]), [['STARLY', 12], ['RIOLU', 12], ['TURTWIG', 14]]);
+  assert.deepEqual(party.map((p) => [p.species, p.level]), [['STARLY', 9], ['RIOLU', 9], ['TURTWIG', 11]]);
   assert.equal(trainers.gael_2.canLose, true);
 });
 

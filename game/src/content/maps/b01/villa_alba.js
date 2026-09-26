@@ -11,6 +11,7 @@ import { b11VillaAlbaEvents } from '../../events/b11_home.js'; // B11: primer re
 import { b12VillaAlbaEvents } from '../../events/b12_mundo.js'; // B12: temblores nocturnos hasta el P6
 import { b17VillaAlbaEvents, villaAlbaLandings } from '../../events/b17_circulo.js'; // B17: Círculo del Jardín (tras el P8)
 import { b21VillaAlbaEvents } from '../../events/b21_epilogo.js'; // B21: epílogo (Olmedo, Mamá, Alerce, montaje)
+import { b22aVillaAlbaEvents } from '../../events/b22a_red.js'; // B22a: en el postgame Olmedo deja pasar al Laberinto
 
 export default {
   id: 'villa_alba',
@@ -43,5 +44,5 @@ export default {
   ],
 
   // C001 en el parterre central con su escena forzada al salir del laboratorio con la Pokédex (CAMPANA §2.3).
-  events: [...villageEvents(), ...parterreCellEvents(), ...villaAlbaStarlyEvents(), ...b11VillaAlbaEvents(), ...b12VillaAlbaEvents(), ...b17VillaAlbaEvents(), ...b21VillaAlbaEvents()],
+  events: b22aVillaAlbaEvents([...villageEvents(), ...parterreCellEvents(), ...villaAlbaStarlyEvents(), ...b11VillaAlbaEvents(), ...b12VillaAlbaEvents(), ...b17VillaAlbaEvents(), ...b21VillaAlbaEvents()]),
 };

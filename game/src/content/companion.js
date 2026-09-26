@@ -1,6 +1,7 @@
 // El Core de Zygarde como acompañante de campo (D06): sigue al jugador en el mapa, fuera del equipo.
-// Gráfico según la forma (state.data.zygarde.form) y frases telepáticas breves y contextuales al hablarle.
-// Voz: sobria y telepática (docs/bloques/B01_apertura.md). Nada de explicar la profecía (D02b).
+// Gráfico según la forma (state.data.zygarde.form). DECIDIDO (autor, 25-09-2026): Zygarde es un legendario serio e
+// imponente, no una mascota parlanchina: al hablarle no charla (sin frases de ambiente ni de cariño) y al
+// recoger una célula no reacciona ni da las gracias.
 
 /**
  * Sprite de campo por forma: Core (arte propio) y seguidores de Añil para 10 % (Followers/ZYGARDE_1.png) y
@@ -24,88 +25,19 @@ export function coreFollows(state) {
   return Boolean(state?.data?.zygarde?.form);
 }
 
-// Frases por contexto. Se elige la primera regla que se cumple; dentro de ella, una al azar.
-const RULES = [
-  {
-    when: ({ mapId }) => mapId === 'laberinto_profundidad',
-    lines: ['Aquí me escondí. Las piedras me dejaron descansar.'],
-  },
-  {
-    when: ({ mapId, flag }) => mapId === 'laboratorio_alerce' && !flag('b01_dex_received'),
-    lines: ['Este humano sabe qué soy.', '…'],
-  },
-  {
-    when: ({ mapId, cellsLeftHere }) => mapId === 'ruta_1' && cellsLeftHere > 0,
-    lines: ['Hay partes de mí cerca. Las noto.', 'Por aquí. Algo mío late bajo la hierba.'],
-  },
-  {
-    when: ({ mapId }) => mapId === 'ruta_1',
-    lines: ['Al sur. Algo antiguo se ha movido.', 'Sigue. Te sigo.'],
-  },
-  {
-    when: ({ mapId }) => mapId === 'casa_prota_1f' || mapId === 'casa_prota_2f',
-    lines: ['Descansa. Yo escucho.', 'Tu casa es tranquila.'],
-  },
-  // B02 — Pilar del Umbral
-  {
-    when: ({ mapId, flag }) => mapId === 'ruinas_dintel' && !flag('p1_restored'),
-    lines: ['Estas piedras me conocen.', 'Más adentro. Algo mío espera.'],
-  },
-  {
-    when: ({ mapId, flag }) => (mapId === 'villa_zaguan' || mapId === 'explanada_umbral') && !flag('p1_restored'),
-    lines: ['Al oeste. Las piedras antiguas llaman.', 'Hay algo viejo cerca. Lo noto.'],
-  },
-  // B12 — Pilar Invertido (Monte del Portal y Mundo Distorsión)
-  {
-    when: ({ mapId, flag }) => mapId === 'montana_portal' && flag('b01_left_town') && !flag('p6_restored'),
-    lines: ['Arriba. El aljibe me llama.', 'Aquí me rompí. Lo recuerdo.'],
-  },
-  {
-    when: ({ mapId, flag }) => String(mapId).startsWith('pilar_invertido') && !flag('p6_restored'),
-    lines: ['Sigue. La parte de mí está al fondo.', 'No mires el vacío mucho rato.'],
-  },
-  {
-    when: ({ mapId }) => String(mapId).startsWith('pilar_invertido'),
-    lines: ['La puerta se sostiene sola. Podemos irnos.', 'Aquí ya no falta nada mío.'],
-  },
-  {
-    when: () => true,
-    lines: ['Sigo aquí.', 'Te escucho.', 'Estoy contigo.'],
-  },
-];
-
-/** Células del mapa actual aún sin recoger (eventos de tipo zygardeCell). */
-function cellsLeftOnMap(ctx) {
-  const defs = ctx.world?.current?.def?.events || [];
-  return defs.filter((e) => e.type === 'zygardeCell' && !ctx.state.hasCell(e.cell)).length;
+/**
+ * Narración (no telepatía) al hablar con el compañero: se gira y no dice nada. Pura, para tests.
+ * form = state.data.zygarde.form ('core' | '10' | '50' | 'complete').
+ */
+export function coreSilenceLine(form) {
+  return form === 'core' || !form ? 'El Core te mira un instante. No dice nada.' : 'Zygarde te mira un instante. No dice nada.';
 }
 
-/** Frase contextual (pura, para tests): info = { mapId, flag(k), cellsLeftHere }, rng. */
-export function coreLine(info, rng = Math.random) {
-  const rule = RULES.find((r) => r.when(info)) || RULES[RULES.length - 1];
-  return rule.lines[Math.floor(rng() * rule.lines.length) % rule.lines.length];
-}
-
-/** Hablar con el Core: se gira, late un instante (brillo) y dice una línea telepática breve. */
+/**
+ * Hablar con el Core/Zygarde fuera de un hito: se gira hacia el jugador en silencio. El recordatorio canónico
+ * «Me faltan N partes» (hito esperando células) lo dice antes world/zygarde/field.js#zygardeTalk.
+ */
 export async function coreTalk(ctx, core) {
   core.turnToward(ctx.player);
-  ctx.se('core_signal', { volume: 45 });
-  await ctx.flash([185, 255, 102], 10, 50);
-  const line = coreLine({
-    mapId: ctx.world?.map?.id,
-    flag: (k) => ctx.flag(k),
-    cellsLeftHere: cellsLeftOnMap(ctx),
-  });
-  await ctx.say(line, { telepathy: true });
-}
-
-/** Reacción del Core al recoger una célula (B01 §4.8). */
-export async function coreCellReaction(ctx) {
-  if (!coreFollows(ctx.state)) return;
-  const core = ctx.world?.core;
-  if (core?.visible) {
-    core.turnToward(ctx.player);
-    await ctx.emote(core, '!');
-  }
-  await ctx.say('Una parte de mí. Gracias.', { telepathy: true });
+  await ctx.say(coreSilenceLine(ctx.state?.data?.zygarde?.form));
 }

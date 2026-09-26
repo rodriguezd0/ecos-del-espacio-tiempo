@@ -9,8 +9,9 @@ import { paintPlatform, floatingDebris, rectSet, rockSet, raggedIsland, union, D
 import { vestibuloEvents, firstFallHint } from '../../events/b12_distorsion.js';
 import { PILAR_INVERTIDO } from '../../encounters/b12.js';
 import { F } from '../../events/b12_common.js';
+import { explanadaB22aEvents } from '../../events/b22a_distorsion.js'; // B22a: la grieta hacia la Hondura (postgame)
 
-const events = vestibuloEvents();
+const events = [...vestibuloEvents(), ...explanadaB22aEvents()];
 const key = (x, y) => `${x},${y}`;
 
 export default {

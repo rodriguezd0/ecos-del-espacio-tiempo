@@ -12,6 +12,7 @@ import { MONTE } from '../b12/layout.js';
 import { MONTE_HIERBA } from '../../encounters/b12.js';
 import { monteEvents, monteWarps, b12Aljibe } from '../../events/b12_monte.js';
 import { buildMonteB12 } from '../b12/monte_build.js';
+import { aljibeNodeEvents } from '../../events/b22a_red.js'; // B22a: nodo de la Red de Convergencia (postgame)
 
 const W = MONTE.width; // B12: 44 → 50
 const H = 50;
@@ -146,5 +147,6 @@ export default {
     ruin('escombros_1', 10, 47, RUIN.escombros), ruin('escombros_2', 25, 42, RUIN.escombros),
     ruin('escombros_3', 9, 31, RUIN.escombros), ruin('escombros_4', 22, 20, RUIN.escombros),
     ...monteEvents(), // B12 (solo en la partida real)
+    ...aljibeNodeEvents(), // B22a (solo en el postgame)
   ],
 };

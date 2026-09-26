@@ -1,7 +1,7 @@
 // Personajes de Ciudad Caudal (B03): el molinero Anselmo abre la pista T02 (TABLILLAS T02, «pista inicial»), el
 // pescador del Mercado fluvial regala la Caña Vieja (OLDROD, X17), el puesto del mercado (Miel y bayas), el tutor
 // y los vecinos que cuentan el problema del río (CAMPANA B03: «inundaciones de día y canales secos de noche»).
-import { F, SPEAKER, SPRITE, say, core, when } from './b03_common.js';
+import { F, SPEAKER, SPRITE, say, when } from './b03_common.js';
 import { F as F5 } from './b05_common.js';
 import { SPOTS } from '../maps/b03/caudal_layout.js';
 import { clerkEvent } from '../services/shop.js';
@@ -29,8 +29,7 @@ export async function anselmoTalk(ctx) {
   await say(ctx, A, 'Nunca supe qué quería decir. A lo mejor tú, que tienes cara de preguntar, lo averiguas.');
   ctx.setFlag(F.anselmo);
   await ctx.story.openClue('T02');
-  // T02 pide el P2 restaurado: anticipación sin bloqueo con la frase de Zygarde de TABLILLAS §4.2.
-  if (ctx.world?.core?.visible && !ctx.flag(F.p2)) await core(ctx, 'Ese molino guarda algo muy antiguo. Allí no llego todavía.');
+  // Sin frase de Zygarde que anticipe cuándo se podrá (autor, 25-09-2026): Anselmo ya dice que hay que esperar al río.
 }
 
 // ── Pescador: Caña Vieja ───────────────────────────────────────────────────────────────────

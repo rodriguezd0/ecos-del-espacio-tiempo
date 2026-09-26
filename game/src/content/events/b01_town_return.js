@@ -8,7 +8,8 @@ const A = SPEAKER.alerce;
 const G = SPEAKER.gael;
 const P = SPEAKER.police;
 const say = (ctx, speaker, text) => ctx.say(text, { speaker });
-const core = (ctx, text) => ctx.say(text, { telepathy: true });
+// Zygarde calla en el regreso (autor, 25-09-2026: habla muy poco; se retiraron «Este humano sabe qué soy.» y
+// «Allí. Algo antiguo se ha movido…» del guion B01 §4.7).
 
 /**
  * Configuración del combate contra Gael: el entrenador se resuelve por id (content/trainers/b01_town.js →
@@ -53,7 +54,6 @@ async function returnScene(ctx) {
   ctx.se('door_exit');
   ctx.erase('policia');
   await ctx.wait(20);
-  await core(ctx, 'Este humano sabe qué soy.');
   ctx.face('alerce', 'down');
   await say(ctx, A, 'Parece que ha decidido quedarse contigo, \\PN. Eso… no es algo que se pueda ordenar.');
   await gaelChallenge(ctx);
@@ -98,7 +98,6 @@ async function deliverDex(ctx) {
   await ctx.giveItem('POKEBALL', 5);
   await say(ctx, A, 'La Pokédex registra a cada Pokémon que veáis o capturéis. Y también me enviará lecturas del terreno.');
   await say(ctx, A, 'Anoche mis instrumentos marcaron una lectura extraña al sur, en las ruinas del \\c[1]Pilar del Umbral\\c[0], pasada la Ruta 1. Nunca había reaccionado así.');
-  await core(ctx, 'Allí. Algo antiguo se ha movido. Y hay partes de mí por el camino.');
   await say(ctx, A, 'Id con cuidado. Y \\PN… cuida de él. Creo que él también cuidará de ti.');
   ctx.face('gael', 'left');
   await say(ctx, G, 'Nos vemos allí. Llegaré antes.');

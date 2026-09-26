@@ -15,6 +15,7 @@ import { quererEvents, quererWarps } from '../../events/b16_querer.js';
 import { telarEvents, telarWarps } from '../../events/b16_telar.js';
 import { ensurePlayerLooksLikePlayer } from '../../events/b16_recuerdo.js';
 import { SABER as S } from './santuario_layout.js';
+import { b22aSantuarioEvents } from '../../events/b22a_trio.js'; // B22a: reencuentros del trío (postgame)
 
 const gateWarp = (g, to) => ({ x: g.warp.x, y: g.warp.y, to: 'santuario_alma', tx: to.x, ty: to.y, dir: 8 });
 
@@ -50,7 +51,7 @@ export default {
   ],
 
   onEnter: ensurePlayerLooksLikePlayer,
-  events: [...patioEvents(), ...saberEvents(), ...sentirEvents(), ...quererEvents(), ...telarEvents()],
+  events: b22aSantuarioEvents([...patioEvents(), ...saberEvents(), ...sentirEvents(), ...quererEvents(), ...telarEvents()]),
 };
 
 export const SANTUARIO_ROOMS = Object.freeze({ PATIO, SABER, SENTIR, QUERER });

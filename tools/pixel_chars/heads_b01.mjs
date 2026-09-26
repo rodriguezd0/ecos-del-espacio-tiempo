@@ -1,5 +1,5 @@
 // Cabezas del elenco nuevo de los bloques 1–2 (rejilla local de 18 px; pueden medir más de 18 filas
-// cuando el pelo cae sobre la espalda). Mismos símbolos que heads_protas.mjs; U = detalle del pelo
+// cuando el pelo cae sobre la espalda). Mismos símbolos que heads_cast.mjs; U = detalle del pelo
 // (horquilla, goma). Todas PROVISIONALES (D30); ver docs/arte.md.
 
 // Madre del protagonista (D01): adulta cálida; castaño medio con raya a un lado, flequillo

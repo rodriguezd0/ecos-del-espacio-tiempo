@@ -11,7 +11,7 @@ import { PROTA_RUN } from '../tools/pixel_chars/prota_run.mjs';
 import { withBag, PROTA_BAG } from '../tools/pixel_chars/prota_bag.mjs';
 import { PROTA_M_HEAD } from '../tools/pixel_chars/prota_heads.mjs';
 import { KIT_HANGING_LEG, kitWalkSheet, kitRiderFrame } from '../tools/pixel_chars/prota_field.mjs';
-import { prota, usesKit, walkSheet, runSheet, riderFrame, kitClimb, hangingLeg } from '../tools/pixel_chars/rider.mjs';
+import { prota, walkSheet, runSheet, riderFrame, climbCycle, hangingLeg } from '../tools/pixel_chars/rider.mjs';
 import { PALETTES } from '../tools/pixel_chars/palettes.mjs';
 
 const PAL = PALETTES.protagonista_m;
@@ -111,17 +111,16 @@ test('mochila: withBag no modifica las poses y sigue el torso (torsoDx de la car
   assert.equal(custom.down[0].bag, undefined, 'sin bolsa para esa vista, la pose no cambia');
 });
 
-test('protagonistas: el masculino usa el kit nuevo y la femenina el antiguo, con la misma API de campo', () => {
-  assert.ok(usesKit('protagonista_m'));
-  assert.ok(!usesKit('protagonista_f'));
+test('protagonistas: los dos usan el kit, con la misma API de campo', () => {
   assert.throws(() => prota('gael'), /Sin datos de protagonista/);
   for (const id of ['protagonista_m', 'protagonista_f']) {
     assert.deepEqual([walkSheet(id).w, runSheet(id).h], [128, 128]);
     for (const dir of ['down', 'left', 'up']) assert.equal(riderFrame(id, dir).w, 32);
     assert.ok(hangingLeg(id).h >= 5);
+    const climb = climbCycle(id);
+    assert.equal(climb.length, 4);
+    assert.ok(climb.every((f) => f.w === 32 && f.h === 32));
   }
-  assert.equal(kitClimb('protagonista_f'), null);
-  assert.equal(kitClimb('protagonista_m').length, 4);
   assert.equal(KIT_HANGING_LEG.length, 5);
 });
 

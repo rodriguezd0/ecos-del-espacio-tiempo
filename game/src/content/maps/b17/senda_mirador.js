@@ -21,7 +21,9 @@ export default {
   height: H,
   outdoor: true,
   bgm: 'Amenaza',
-  battleback: 'Espacio',
+  // Fondo de combate: el borde de la Sima es un pinar sobre un acantilado, no el espacio (petición del autor del
+  // 25-09-2026: «un fondo de pelea como en el espacio, justo abajo de Ciudad Caudal»). Antes 'Espacio'.
+  battleback: 'Acantilado',
   start: { x: ARRIVAL.x, y: ARRIVAL.y, dir: ARRIVAL.dir },
   brushes: SENDA_BRUSHES,
   panorama: SIMA_PANORAMA,

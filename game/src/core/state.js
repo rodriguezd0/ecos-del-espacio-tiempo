@@ -36,6 +36,11 @@ export class GameState {
   }
   var(key, fallback = 0) { return key in this.data.vars ? this.data.vars[key] : fallback; }
   setVar(key, value) { this.data.vars[key] = value; }
+  /** Borra una variable (vuelve a su valor por defecto al leerla). */
+  clearVar(key) {
+    const { [key]: _removed, ...rest } = this.data.vars;
+    this.data.vars = rest;
+  }
   selfSwitch(mapId, eventId, letter = 'A') { return Boolean(this.data.selfSwitches[`${mapId}:${eventId}:${letter}`]); }
   setSelfSwitch(mapId, eventId, letter = 'A', value = true) {
     const k = `${mapId}:${eventId}:${letter}`;
@@ -276,6 +281,11 @@ export class GameState {
   cellCount() { return this.data.zygarde.cells.length; }
   addFragment(id) { if (!this.data.fragments.includes(id)) this.data.fragments.push(id); }
   addTablet(id) { if (!this.data.tablets.includes(id)) this.data.tablets.push(id); }
+  // Quitar progreso (modo desarrollador, dev/devZygarde.js): sustituyen la lista, no la modifican.
+  removeCell(id) { this.data.zygarde = { ...this.data.zygarde, cells: this.data.zygarde.cells.filter((c) => c !== id) }; }
+  removeCore(id) { this.data.zygarde = { ...this.data.zygarde, cores: this.data.zygarde.cores.filter((c) => c !== id) }; }
+  removeFragment(id) { this.data.fragments = this.data.fragments.filter((f) => f !== id); }
+  removeTablet(id) { this.data.tablets = this.data.tablets.filter((t) => t !== id); }
 
   // ---- Vuelo (atlas: ui/logic/regionMapData.js) ----
   /** ¿Destino de Vuelo desbloqueado por guion? (los visitados cuentan solos vía `visited`). */

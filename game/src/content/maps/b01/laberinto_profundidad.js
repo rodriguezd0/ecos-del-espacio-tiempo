@@ -5,6 +5,7 @@
 import { stealthEvents, SAFE_SPOT } from '../../events/b01_north_stealth.js';
 import { coreChamberEvents } from '../../events/b01_north_core.js';
 import { layoutHedges, paintHedges } from './laberinto_setos.js';
+import { labyrinthNodeEvents } from '../../events/b22a_red.js'; // B22a: nodo de la Red de Convergencia (postgame)
 
 const W = 40;
 const H = 34;
@@ -136,5 +137,6 @@ export default {
   events: [
     ...stealthEvents(),
     ...coreChamberEvents(CHAMBER),
+    ...labyrinthNodeEvents(),
   ],
 };

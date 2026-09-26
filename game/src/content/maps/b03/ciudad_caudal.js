@@ -13,6 +13,7 @@ import { caudalEvents } from '../../events/b03_caudal.js';
 // Gael evacúa el barrio bajo con sus Pokémon (CAMPANA B04 §3).
 import { thanksEvents, CAUDAL_THANKS, evacuationEvents } from '../../events/b04_caudal.js';
 import { b17CaudalEvents } from '../../events/b17_vigilia.js'; // B17: la Vigilia en la Esclusa mayor
+import { caudalSendaGate } from '../../events/progression_gates.js'; // cierre de progresión: la Senda, hasta el P8
 import { CENTER_ENTRY } from '../../services/pokecenter.js';
 import { SHOP_LAYOUT } from '../../services/shop.js';
 
@@ -61,5 +62,8 @@ export default {
     ...(OPEN.diezmo ? [enter('diezmo', 'molino_diezmo', 7, 10)] : []),
   ],
 
-  events: [...caudalEvents(OPEN), ...thanksEvents(CAUDAL_THANKS, { id: 'b04_gracias_plaza' }), ...evacuationEvents(), ...b17CaudalEvents()],
+  events: [
+    ...caudalEvents(OPEN), ...thanksEvents(CAUDAL_THANKS, { id: 'b04_gracias_plaza' }), ...evacuationEvents(), ...b17CaudalEvents(),
+    ...(OPEN.senda ? caudalSendaGate() : []),
+  ],
 };

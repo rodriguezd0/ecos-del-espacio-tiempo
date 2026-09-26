@@ -1,6 +1,6 @@
 // Tipos de evento de campo de Zygarde (se registran en world/eventTypes.js y sustituyen a los básicos).
 // Lectura en el mapa (CAMPANA §1.1): ninguna barrera muestra cifras.
-//   zygardeCell   { cell, text?, onFound?, sprite? }             célula (brillo + sprite); comprueba la progresión
+//   zygardeCell   { cell, text?, onFound?, sprite? }             célula quieta en el suelo; comprueba la progresión
 //   ramRock       { kind: 'rock'|'log', group?, sprite?, tileId? } Embestida: fisura blanca con brillo verde
 //   roughTerrain  { kind: 'mud'|'sand'|'snow', mounted? }       Terreno complicado (mounted: solo montado)
 //   gravelSlope   {}                                            cuesta de grava: solo montado en el 10 %
@@ -17,18 +17,16 @@ import { checkZygardeProgress } from './scenes.js';
 import { ramBreak, climbWall, rebuildStones, diveDown, surfaceUp } from './actions.js';
 import { diveSpotTarget } from './dive.js';
 
-/** Charset de la célula en el mapa (flota con pulso de brillo; las 4 filas son iguales). */
+/**
+ * Charset de la célula en el mapa. DECIDIDO (autor, 25-09-2026): solo la célula, QUIETA y apoyada en el suelo, sin
+ * flotar, sin brillo ni luz alrededor; algo visible para buscarla, pero no llamativa. Frame estático (sin
+ * stepAnime): el arte lo pone el original del creador (tools/pixel_chars/zygarde.mjs, 16 frames iguales).
+ */
 const CELL_SPRITE = 'zygarde_celula';
-/** Brillo hexagonal alrededor de la célula: el aro rodea el sprite y no lo tapa (el pulso lo lleva el sprite). */
-const CELL_GLOW = Object.freeze({ name: 'zygardeCell', size: 88, alpha: 0.4 });
-/** Luz propia de la célula en mapas oscuros (solo actúa con oscuridad): se ve fuera del radio del jugador. */
-const CELL_LIGHT = Object.freeze({ radius: 40, intensity: 0.8 });
 const notA = (_s, ev) => !ev.selfSwitch('A');
 const isA = (_s, ev) => ev.selfSwitch('A');
 const YES_NO = ['Sí', 'No'];
 const DIR_NAME = { 2: 'down', 4: 'left', 6: 'right', 8: 'up' };
-/** Flag global: el Core ya explicó una vez que la grava se sube más adelante con la montura. */
-const GRAVEL_HINT_FLAG = 'zyg_gravel_hint';
 /** Flag global: ya se vio el tutorial de Reconstrucción (primer zócalo con `tutorial`). */
 export const REBUILD_TUTORIAL_FLAG = 'zyg_rebuild_tutorial';
 
@@ -55,9 +53,9 @@ async function offerRide(ctx) {
 const ROUGH_TEXT = { mud: FIELD_TEXT.roughMud, sand: FIELD_TEXT.roughSand, snow: FIELD_TEXT.roughSnow };
 
 export const ZYGARDE_EVENT_TYPES = {
-  // ---- Célula en el suelo: brillo verde hexagonal + sprite flotante (zygarde_celula; `sprite: ''` lo quita);
-  // al pisarla se recoge y se comprueba la progresión.
-  // `when(state, ev)` opcional: condición extra de aparición (célula que aparece tras un hito de historia).
+  // ---- Célula en el suelo: el sprite quieto (zygarde_celula; `sprite: ''` lo quita), sin brillo ni luz.
+  // Al pisarla se recoge (sonido, destello de obtención y contador; el Core no dice nada) y se comprueba la
+  // progresión. `when(state, ev)` opcional: condición extra de aparición (célula que aparece tras un hito).
   zygardeCell(d) {
     if (!d.cell) throw new Error(`zygardeCell ${d.id}: falta "cell"`);
     const extra = typeof d.when === 'function' ? d.when : null;
@@ -66,9 +64,9 @@ export const ZYGARDE_EVENT_TYPES = {
       pages: [{
         when: (s, ev) => !s?.hasCell(d.cell) && (!extra || Boolean(extra(s, ev))),
         sprite: d.sprite ?? CELL_SPRITE,
-        stepAnime: true,
-        glow: d.glow ?? CELL_GLOW,
-        light: d.light ?? CELL_LIGHT,
+        stepAnime: false,
+        walkAnime: false,
+        directionFix: true,
         through: true,
         trigger: 'touch',
         script: async (ctx) => {
@@ -137,8 +135,8 @@ export const ZYGARDE_EVENT_TYPES = {
   },
 
   // ---- Cuesta de grava (G1): a pie resbala; montado en el 10 % se sube.
-  // Responde al chocar contra ella (no solo con A) para que se entienda que es una barrera. Sin la montura,
-  // la primera vez el Core explica que es un paso para más adelante.
+  // Responde al chocar contra ella (no solo con A) para que se entienda que es una barrera. Sin la montura solo
+  // se describe el terreno: Zygarde no promete nada (autor, 25-09-2026).
   gravelSlope(d) {
     return {
       ...d,
@@ -151,10 +149,6 @@ export const ZYGARDE_EVENT_TYPES = {
           script: async (ctx) => {
             ctx.se('bump');
             await ctx.say(d.blockedText ?? FIELD_TEXT.gravel);
-            if (!ctx.zygarde('run') && !ctx.flag(GRAVEL_HINT_FLAG) && ctx.state.zygardeForm) {
-              ctx.setFlag(GRAVEL_HINT_FLAG);
-              await ctx.say(FIELD_TEXT.gravelCoreHint, { telepathy: true });
-            }
             await offerRide(ctx);
           },
         },
@@ -245,8 +239,8 @@ export const ZYGARDE_EVENT_TYPES = {
   //   flag        estado «reconstruido» en un flag global en vez del self switch A: varios zócalos del mismo hueco
   //               (uno a cada lado) lo comparten y otros eventos o mapas lo pueden consultar
   //   when        (state, ev) => bool: el zócalo solo existe entonces (p. ej. un hueco que se abre en una escena)
-  //   tutorial    líneas que se dicen la primera vez que se reconstruye en la partida (flag zyg_rebuild_tutorial);
-  //               true = las genéricas de FIELD_TEXT.rebuildTutorial
+  //   tutorial    líneas (narración, no telepatía) que se dicen la primera vez que se reconstruye en la partida
+  //               (flag zyg_rebuild_tutorial); true = las genéricas de FIELD_TEXT.rebuildTutorial
   //   onRebuilt   async (ctx) => {} tras alzar las piedras (escenas del bloque)
   rebuildGap(d) {
     if (!Array.isArray(d.tiles) || !d.tiles.length) throw new Error(`rebuildGap ${d.id}: falta "tiles"`);
@@ -265,7 +259,7 @@ export const ZYGARDE_EVENT_TYPES = {
           script: async (ctx) => {
             if (!ctx.zygarde('rebuild')) { await ctx.say(d.blockedText ?? FIELD_TEXT.rebuildBlocked); return; }
             if (tutorial && !ctx.flag(REBUILD_TUTORIAL_FLAG)) {
-              for (const line of tutorial) await ctx.say(line, { telepathy: true });
+              for (const line of tutorial) await ctx.say(line);
             }
             if (!(await ask(ctx, d.askText ?? FIELD_TEXT.rebuildAsk))) return;
             await rebuildStones(ctx, d.tiles);

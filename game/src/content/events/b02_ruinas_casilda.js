@@ -67,6 +67,12 @@ async function talk(ctx) {
     await say(ctx, C, 'Esa luz… No me mires así. Sigue.');
     return;
   }
+  if (room === ROOM.camara && !ctx.flag(F.geodudeFree)) {
+    // Guía (DECIDIDO autor 25-09-2026): dónde está lo que rasca.
+    const { CAMARA_HINT } = await import('./b02_ruinas_camara.js');
+    await say(ctx, C, CAMARA_HINT.talk);
+    return;
+  }
   if (room === ROOM.camara && ctx.flag(F.geodudeFree) && !ctx.flag(F.rockBroken)) {
     await say(ctx, C, 'Deja que él se encargue. De piedras sabe más que tú y que yo.');
     return;

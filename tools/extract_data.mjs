@@ -100,14 +100,22 @@ function extractSpecies() {
       if (f.ShadowX) m.shadowX = int(f.ShadowX);
       if (f.ShadowSize) m.shadowSize = int(f.ShadowSize);
       if (f.ShadowSprite) m.shadow = list(f.ShadowSprite).map(Number);
-      if (f.AnimationSpeed) m.animSpeed = num(f.AnimationSpeed);
-      const form = sec.args[0] !== undefined ? int(sec.args[0]) : 0;
+      if (f.AnimationSpeed) {
+        // "AnimationSpeed = espalda[,frente]" (plugin Pokémon Animados para DBK): animSpeed = espalda (compatibilidad)
+        // y animSpeedFront solo si el frente es distinto.
+        const [back, front] = list(f.AnimationSpeed).map(Number);
+        m.animSpeed = back;
+        if (Number.isFinite(front) && front !== back) m.animSpeedFront = front;
+      }
+      const form = sec.args[0] !== undefined && sec.args[0] !== '' ? int(sec.args[0]) : 0;
       const isFemale = file.includes('female');
       if (form === 0 && !isFemale) sp.metrics = { ...(sp.metrics || {}), ...m };
-      else if (isFemale) sp.metricsFemale = { ...(sp.metricsFemale || {}), ...m };
+      else if (isFemale && form === 0) sp.metricsFemale = { ...(sp.metricsFemale || {}), ...m };
       else {
+        // [ESPECIE,forma] y [ESPECIE,forma,female] (p. ej. SNEASEL,1,female): métricas de la forma.
+        const key = isFemale ? 'metricsFemale' : 'metrics';
         sp.forms[form] = sp.forms[form] || {};
-        sp.forms[form].metrics = { ...(sp.forms[form].metrics || {}), ...m };
+        sp.forms[form][key] = { ...(sp.forms[form][key] || {}), ...m };
       }
     }
   }

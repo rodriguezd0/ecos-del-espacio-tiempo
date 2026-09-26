@@ -6,6 +6,7 @@ import { nucleoEvents, nucleoOnEnter } from '../../events/b20_nucleo.js';
 import { MUSIC } from '../../events/b20_common.js';
 import { pilarTone } from '../../stamps/pilar.js';
 import '../../events/b21_salto.js'; // B21: registra el Salto de Convergencia en el Nodo del Origen (registerOriginNode)
+import '../../events/b22a_red.js'; // B22a: en el postgame el nodo abre la Red de Convergencia (envuelve el de B21)
 
 export function buildNucleo(b) {
   b.fill(0, 'vacio');

@@ -1,16 +1,20 @@
-// Detección de células (docs/CAMPANA.md §2.2). Módulo PURO:
-//  1. Antes del 50 %: el Core/10 % late si hay una célula a ≤ 10 casillas (más rápido y brillante al acercarse).
-//     Rótulo «Células: n/m» al entrar en un mapa con células.
-//  2. Detección mejorada (60): flecha hacia la célula más cercana del mapa y marcas en el mapa regional de los
-//     mapas visitados.
+// Detección de células (docs/CAMPANA.md §2.2, revisada por el autor el 25-09-2026). Módulo PURO:
+//  1. Sin latido ni pitido de proximidad (DECIDIDO autor: no es una mecánica de Zygarde en el lore y molesta, sobre
+//     todo junto a células aún inalcanzables). Rótulo «Células: n/m» al entrar en un mapa con células.
+//  2. Detección mejorada (60): la célula por recoger más cercana DESTELLA un instante, en silencio, cuando el
+//     jugador está a ≤ GLINT_RADIUS casillas (cada GLINT_INTERVAL fotogramas), y marcas en el mapa regional de los
+//     mapas visitados. Sin flechas ni sonido.
 //  3. Crisis del P8 sin todas las células: marcas en el mapa regional también en mapas no visitados.
 // API para el mapa regional (agente services): regionCellMarks(state) y regionPointMarks(state, points).
 import { CELLS, cellsOnMap } from '../../content/zygarde/cells.js';
 import { inCrisisSearch } from './progression.js';
 
-export const HEARTBEAT_RADIUS = 10; // casillas (§2.2)
-const BEAT_MIN = 18; // fotogramas entre latidos pegado a la célula
-const BEAT_STEP = 8; // fotogramas extra por casilla de distancia
+/** Radio (casillas, a pie) en el que la célula más cercana destella con la Detección mejorada. */
+export const GLINT_RADIUS = 6;
+/** Fotogramas entre destellos (≈ 3,5 s a 60 fps): discreto, no un aviso continuo. */
+export const GLINT_INTERVAL = 210;
+/** Intensidad del destello (0..1): leve. */
+export const GLINT_STRENGTH = 0.55;
 
 /** Claves de célula de un mapa: las del registro y las de sus eventos `zygardeCell` (mapas de prueba). */
 export function mapCellKeys(mapId, mapDef = null) {
@@ -37,16 +41,13 @@ export function cellLabel(state, mapId, mapDef = null) {
 /** Distancia en casillas (Manhattan: recorrido a pie). */
 export const tileDistance = (ax, ay, bx, by) => Math.abs(ax - bx) + Math.abs(ay - by);
 
-/** Fotogramas entre latidos para una distancia (0 = no late: fuera de radio). */
-export function heartbeatInterval(distance, radius = HEARTBEAT_RADIUS) {
-  if (!Number.isFinite(distance) || distance < 0 || distance > radius) return 0;
-  return BEAT_MIN + Math.round(distance) * BEAT_STEP;
-}
-
-/** Intensidad del latido (0..1): 1 pegado a la célula, ~0.1 en el borde del radio. */
-export function heartbeatStrength(distance, radius = HEARTBEAT_RADIUS) {
-  if (!Number.isFinite(distance) || distance > radius) return 0;
-  return Math.max(0.1, 1 - distance / (radius + 1));
+/**
+ * ¿Debe destellar la célula más cercana? Solo con la Detección mejorada (`detect`) y a ≤ `radius` casillas
+ * (Manhattan). `near` = resultado de nearestCell o null.
+ */
+export function shouldGlint(state, near, radius = GLINT_RADIUS) {
+  if (!near || !Number.isFinite(near.dist) || near.dist < 0 || near.dist > radius) return false;
+  return Boolean(state?.data?.zygarde?.abilities?.detect);
 }
 
 /** ¿Es un evento de célula aún por recoger (página activa y no borrado)? */
@@ -67,9 +68,6 @@ export function nearestCell(events, px, py) {
   }
   return best;
 }
-
-/** Ángulo (radianes, 0 = este, y hacia abajo) de un vector de casillas. */
-export const vectorAngle = (dx, dy) => Math.atan2(dy, dx);
 
 /** Modo de marcas del mapa regional: 'none' | 'visited' (Detección mejorada) | 'crisis' (P8 incompleto). */
 export function detectionMode(state) {

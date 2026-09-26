@@ -5,6 +5,7 @@
 import * as THREE from 'three';
 import { TILE, FIRST_REGULAR_TILE, isAutotile, regularTileAtlasPos } from '../shared/autotile.js';
 import { autotileUV } from './tileAtlas.js';
+import { seamTileId } from '../world/seams.js';
 
 export const GROUND_ORDER = -100000;
 /** Relleno de costuras (world/seams.js): por debajo del suelo de cualquier mapa, que siempre lo tapa. */
@@ -87,8 +88,9 @@ export class TilemapView {
   }
 
   /**
-   * Relleno de costuras (world/seams.js#planSeams): cells = [{ x, y, sx, sy }] en casillas locales; cada casilla
-   * vacía copia las 3 capas de (sx, sy). Se dibuja en una sola malla bajo el suelo de todos los mapas.
+   * Exterior del mapa (world/seams.js#planSeams): cells en casillas locales, { x, y, ground, upper } (la capa 0 copia
+   * la casilla ground = [sx, sy] y las capas 1–2 la upper; null = nada), { x, y, ids } (patrón propio) o { x, y, sx, sy }
+   * (las 3 capas). Se dibuja en una sola malla bajo el suelo de todos los mapas (sin prioridades: nadie la pisa).
    */
   setSeamFill(cells) {
     this.seamCells = cells || [];
@@ -106,7 +108,7 @@ export class TilemapView {
     const quads = [];
     for (let layer = 0; layer < 3; layer++) {
       for (const c of this.seamCells) {
-        const id = map.data(c.sx, c.sy, layer);
+        const id = seamTileId(map, c, layer);
         if (id < 48) continue;
         const quad = this.quadFor(id, c.x, c.y, res);
         if (quad) quads.push(quad);

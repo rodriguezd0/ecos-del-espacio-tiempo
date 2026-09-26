@@ -1,7 +1,8 @@
 // Integración del sistema de campo de Zygarde con MapScene (una instancia por escena: scene.zygarde).
 // MapScene llama: applyDevParams(params) · onEnterMap(entry) · onFollowerRefresh() · update(dt, { paused })
-// tras World#update · drawUI(g) · dispose(). Aquí viven la montura (tecla R = E), el latido de detección,
-// la flecha de Detección mejorada, el rótulo «Células: n/m», la sesión de Buceo y el Salto de Convergencia.
+// tras World#update · drawUI(g) · dispose(). Aquí viven la montura (tecla R = E), el destello silencioso de la
+// Detección mejorada (sin latido ni pitido de proximidad: autor, 25-09-2026), el rótulo «Células: n/m», la sesión
+// de Buceo y el Salto de Convergencia.
 import { engine } from '../../core/engine.js';
 import { ui } from '../../ui/api.js';
 import './fx.js';
@@ -12,8 +13,8 @@ import { coreTalk } from '../../content/companion.js';
 import { registerFieldItem, registerFieldAction } from '../fieldActions.js';
 import { syncMount, setRiding, canRide, mountState, mountAllowed, isRiding, hasDiveArt } from './mount.js';
 import { DiveMeter, underwaterConfig, isShallow, diveLightRadius } from './dive.js';
-import { nearestCell, heartbeatInterval, heartbeatStrength, cellLabel, vectorAngle } from './detection.js';
-import { drawDiveMeter, drawDetectArrow, drawJumpOverlay } from './hud.js';
+import { nearestCell, shouldGlint, cellLabel, GLINT_INTERVAL, GLINT_STRENGTH } from './detection.js';
+import { drawDiveMeter, drawJumpOverlay } from './hud.js';
 import { diveDepleted, runZygardeAction } from './actions.js';
 import { remindMissing } from './scenes.js';
 import { naturalForm, joinCore, setForm } from './progression.js';
@@ -40,9 +41,8 @@ export class ZygardeField {
   constructor(scene) {
     this.scene = scene;
     this.t = 0;
-    this.nextBeat = 0;
-    this.beatFx = null;
-    this.near = null;
+    this.nextGlint = 0;
+    this.glintFx = null;
     this.dive = null; // { meter, vent: { x, y, dir }, bubble, lastSegments }
     this.jump = null; // { t, frames, skippable, resolve }
   }
@@ -69,8 +69,8 @@ export class ZygardeField {
     const def = entry?.def;
     if (!def) return;
     this.stopDive();
-    this.near = null;
-    this.nextBeat = this.t + 30;
+    this.glintFx?.set({ target: null, strength: 0 });
+    this.nextGlint = this.t + 60;
     if (isRiding(this.world) && !mountAllowed(def) && !mountState(this.world).forced) setRiding(this.world, false);
     if (underwaterConfig(def)) this.startDive(def);
     if (this.state.zygardeForm && !this.scene.cinematic) { // sin rótulo en montajes y créditos (aditivo B21)
@@ -174,39 +174,30 @@ export class ZygardeField {
   }
 
   // ------------------------------------------------------------ detección
-  actor() {
-    const m = mountState(this.world);
-    if (m.form && m.char?.visible) return m.char;
-    const core = this.world.core;
-    return core?.visible ? core : null;
-  }
-
-  updateHeartbeat(paused) {
+  /**
+   * Detección mejorada (60 células): la célula por recoger más cercana destella un instante, sin sonido, cuando
+   * el jugador está cerca (detection.js#shouldGlint). Sin la capacidad no hay ninguna señal de proximidad.
+   */
+  updateGlint(paused) {
     const w = this.world;
     const p = w.player;
-    const actor = this.state.zygardeForm ? this.actor() : null;
-    this.near = actor ? nearestCell(w.events, p.x, p.y) : null;
-    const interval = this.near ? heartbeatInterval(this.near.dist) : 0;
-    if (!interval) {
-      this.beatFx?.set({ strength: 0 });
+    const near = this.state.zygardeForm ? nearestCell(w.events, p.x, p.y) : null;
+    if (!shouldGlint(this.state, near) || near.dist === 0) {
+      this.glintFx?.set({ strength: 0 });
       return;
     }
-    if (!this.beatFx) {
+    if (!this.glintFx) {
       try {
-        this.beatFx = this.scene.effects.add('zygardeHeartbeat', { target: actor, dy: 20, strength: 0, fadeIn: 1 });
+        this.glintFx = this.scene.effects.add('zygardeGlint', { target: near.ev, dy: 22, strength: 0, fadeIn: 1 });
       } catch (err) {
-        console.warn('[zygarde] latido', err);
+        console.warn('[zygarde] destello de detección', err);
         return;
       }
     }
-    this.beatFx.set({ target: actor });
-    if (this.t < this.nextBeat) return;
-    this.nextBeat = this.t + interval;
-    const strength = heartbeatStrength(this.near.dist);
-    this.beatFx.set({ beatAt: this.scene.effects.time, strength });
-    if (!paused && !w.scriptBusy()) {
-      engine.audio?.playSE?.('Mining ping', { volume: Math.round(20 + strength * 45), pitch: Math.round(90 + strength * 30) });
-    }
+    this.glintFx.set({ target: near.ev });
+    if (paused || w.scriptBusy() || this.t < this.nextGlint) return;
+    this.nextGlint = this.t + GLINT_INTERVAL;
+    this.glintFx.set({ beatAt: this.scene.effects.time, strength: GLINT_STRENGTH });
   }
 
   /** Hundirse un poco al pisar barro/arena/nieve a pie (lectura del Terreno complicado). */
@@ -260,20 +251,12 @@ export class ZygardeField {
       this.updateDive();
       this.updateJump();
     }
-    this.updateHeartbeat(paused);
+    this.updateGlint(paused);
     this.updateSinking();
   }
 
   drawUI(g) {
     if (this.dive) drawDiveMeter(g, this.dive.meter, this.t);
-    const w = this.world;
-    if (this.near && this.state.zygardeAbility('detect') && !w.scriptBusy() && this.near.dist > 0) {
-      const p = w.player;
-      const cam = this.scene.camera;
-      const px = p.realX + 16 - cam.renderX;
-      const py = p.realY + 4 + (p.yOffset || 0) - cam.renderY;
-      drawDetectArrow(g, px, py, vectorAngle(this.near.dx, this.near.dy), this.t, heartbeatStrength(this.near.dist) || 0.3);
-    }
     if (this.jump) {
       const k = Math.min(1, this.jump.t / this.jump.frames);
       drawJumpOverlay(g, k, this.jump.t);
@@ -292,6 +275,6 @@ export class ZygardeField {
     this.jump?.resolve?.();
     this.jump = null;
     this.dive = null;
-    this.beatFx = null;
+    this.glintFx = null;
   }
 }
