@@ -6,11 +6,12 @@
 //   { t: 'st', m, x, y, d, s, k, j }        el jugador EMPIEZA un paso (o salto) hacia (x, y) del mapa m
 //   { t: 'at', m, x, y, d, k }              posición/orientación en reposo (warp, giro, cambio de modo)
 //   { t: 'ping', c }                        c: marca del cliente, se devuelve tal cual en 'pong'
+//   { t: 'me', name, gender }               cambia tu nombre/aspecto (p. ej. te uniste desde el título y luego creaste la partida)
 //   { t: 'dm', to, b }                      mensaje directo a otro jugador de la sala (b: objeto; combates, intercambios)
 // Servidor → cliente
 //   { t: 'welcome', id, room, peers: [peer] }  peer: { id, name, gender, av }
 //   { t: 'join', peer } · { t: 'leave', id } · { t: 'st'|'at', id, ...avatar } · { t: 'pong', c }
-//   { t: 'dm', from, b }
+//   { t: 'dm', from, b } · { t: 'peer', peer }  (otro jugador cambió de nombre o aspecto)
 //   { t: 'error', code, msg }
 
 export const PROTOCOL_VERSION = 1;

@@ -21,7 +21,14 @@ export class RoomHub {
     if (!member) return client.send({ t: 'error', code: 'no_room', msg: 'No estás en ninguna sala.' });
     if (msg.t === 'st' || msg.t === 'at') return this.relayAvatar(member, msg);
     if (msg.t === 'dm') return this.direct(member, msg);
+    if (msg.t === 'me') return this.rename(member, msg);
     return undefined;
+  }
+
+  rename(member, msg) {
+    member.name = sanitizeName(msg.name);
+    member.gender = sanitizeGender(msg.gender);
+    this.broadcast(member, { t: 'peer', peer: publicPeer(member) });
   }
 
   /** Mensaje directo a otro jugador de la MISMA sala (el contenido lo interpreta el juego). */

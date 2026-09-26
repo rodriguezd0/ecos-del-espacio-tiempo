@@ -61,6 +61,10 @@ export class RemotePlayers {
       this.charsetsFor?.(avatar.gender).then((cs) => avatar.setCharsets(cs)).catch((err) => console.warn('[net] charsets', err));
     }
     avatar.name = peer.name;
+    if (peer.gender && peer.gender !== avatar.gender) {
+      avatar.gender = peer.gender;
+      this.charsetsFor?.(avatar.gender).then((cs) => avatar.setCharsets(cs)).catch((err) => console.warn('[net] charsets', err));
+    }
     if (peer.av) this.place(avatar, peer.av);
     return avatar;
   }

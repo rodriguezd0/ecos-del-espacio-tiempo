@@ -76,6 +76,22 @@ test('salas: errores claros (versión, código, inexistente, llena, sin sala)', 
   assert.equal(late.last('error').code, 'full');
 });
 
+test('salas: quien entra desde el título cambia luego de nombre y aspecto; los mensajes directos no salen de la sala', () => {
+  const hub = new RoomHub();
+  const a = fakeClient('a');
+  const b = fakeClient('b');
+  const outsider = fakeClient('x');
+  hub.handle(a, hello('', 'Entrenador'));
+  hub.handle(b, hello(a.last('welcome').room));
+  hub.handle(outsider, hello(''));
+  hub.handle(a, { t: 'me', name: 'Ana', gender: 'F' });
+  assert.deepEqual(b.last('peer').peer, { id: 'a', name: 'Ana', gender: 'F', av: null });
+  hub.handle(a, { t: 'dm', to: 'b', b: { k: 'hola' } });
+  assert.deepEqual(b.last('dm'), { t: 'dm', from: 'a', b: { k: 'hola' } });
+  hub.handle(a, { t: 'dm', to: 'x', b: { k: 'hola' } });
+  assert.equal(outsider.last('dm'), undefined, 'otra sala');
+});
+
 test('salas: avatares inválidos no se reenvían; ping responde con la misma marca', () => {
   const hub = new RoomHub();
   const a = fakeClient('a');

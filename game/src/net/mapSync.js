@@ -35,6 +35,7 @@ export class MapNetSync {
     this.offs = [
       client.on('welcome', (m) => { this.remote.clear(); for (const p of m.peers || []) this.remote.addPeer(p); this.last = null; }),
       client.on('join', (m) => this.remote.addPeer(m.peer)),
+      client.on('peer', (m) => this.remote.addPeer(m.peer)),
       client.on('leave', (m) => this.remote.removePeer(m.id)),
       client.on('st', (m) => this.remote.applyStep(m.id, m)),
       client.on('at', (m) => this.remote.applyAt(m.id, m)),
@@ -70,6 +71,8 @@ export class MapNetSync {
   update(dt) {
     this.remote.update(dt);
     if (!this.client.online || !this.scene.world.map) return;
+    const me = this.scene.state?.player;
+    if (me?.name) this.client.updateProfile?.({ name: me.name, gender: me.gender });
     this.processInvites();
     const now = playerSnapshot(this.scene.world);
     const prev = this.last;

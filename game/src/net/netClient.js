@@ -69,6 +69,15 @@ export class NetClient {
     this.rtt = null;
   }
 
+  /** Cambia el nombre/aspecto con el que te ven los demás (se conserva para las reconexiones). */
+  updateProfile(profile) {
+    if (!this.profile) return;
+    const next = { name: profile.name, gender: profile.gender };
+    if (next.name === this.profile.name && next.gender === this.profile.gender) return;
+    this.profile = next;
+    this.send({ t: 'me', ...next });
+  }
+
   send(obj) {
     if (this.ws && this.ws.readyState === 1 && this.status === 'online') this.ws.send(JSON.stringify(obj));
   }
@@ -133,6 +142,9 @@ export class NetClient {
         break;
       case 'join':
         if (msg.peer?.id) this.peers.set(msg.peer.id, msg.peer);
+        break;
+      case 'peer':
+        if (msg.peer?.id && this.peers.has(msg.peer.id)) this.peers.set(msg.peer.id, { ...this.peers.get(msg.peer.id), ...msg.peer });
         break;
       case 'leave':
         this.peers.delete(msg.id);

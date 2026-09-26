@@ -29,7 +29,8 @@ async function offlineMenu(state) {
 }
 
 async function connect(code, state) {
-  const profile = { name: state.player.name, gender: state.player.gender };
+  // Desde el título aún no hay partida: nombre provisional; el mapa lo actualiza al empezar (net.updateProfile).
+  const profile = state?.player?.name ? { name: state.player.name, gender: state.player.gender } : { name: 'Entrenador', gender: 'M' };
   ui.toast('Conectando…');
   try {
     const room = await net.join(code, profile);
@@ -39,6 +40,15 @@ async function connect(code, state) {
   } catch (err) {
     await ui.message(err.message || 'No se pudo conectar.');
   }
+}
+
+/** Menú Online de la pantalla de título: entrar en una sala antes de empezar o cargar la partida. */
+export async function runTitleOnlineMenu() {
+  if (net.status === 'off') { await offlineMenu(null); return; }
+  const names = [...net.peers.values()].map((p) => p.name);
+  const who = names.length ? `Contigo: ${names.join(', ')}.` : 'Todavía no hay nadie más.';
+  const pick = await ui.choice(['Seguir', 'Salir de la sala'], { message: `Sala ${net.room}. ${who} Empieza o carga tu partida y os veréis en el mapa.`, cancel: 0 });
+  if (pick === 1) { net.leave(); ui.toast('Has salido de la sala.'); }
 }
 
 /** Elige a otro jugador de la sala (directo si solo hay uno). null si cancela o no hay nadie. */
