@@ -185,7 +185,7 @@ test('métricas: desplazamiento, sombra y velocidad de animación', () => {
   const sh = shadowPlacement({ front: [0, 2], shadow: [1, 0, 3], shadowSize: 3 }, 1, 100);
   assert.equal(sh.visible, true);
   assert.equal(sh.dx, 2);
-  assert.equal(sh.dy, 4 + 6 - 5);
+  assert.equal(sh.dy, 4 + 6 - 25, 'centro de la sombra H/4 por encima de la base (DBK)');
   assert.ok(Math.abs(sh.zoomX - 1.2) < 1e-9);
   assert.equal(shadowPlacement({ shadowSize: 0 }, 1, 100).visible, false);
   assert.equal(spriteFrameTicks({ animSpeed: 2 }), 4);

@@ -13,12 +13,16 @@ en pantalla; el 100% se completa en solitario; ninguna forma regional exigida qu
 
 ## 7.1 Curva de niveles
 
+> **Curva del principio rebajada — DECIDIDO (autor, 25-09-2026), DECISIONES X35:** B02–B04 más bajos y el orden B02 → B03
+> obligado (puente de la Ruta 2 hasta el P1). `tools/audit_progression.mjs` comprueba etapa a etapa que ningún mapa
+> alcanzable supere en más de 8 niveles el nivel esperado (test `tests/progression_audit.test.mjs`).
+
 | Tramo | Bloque | Salvajes | Entrenadores | Jefes | Nivel esperado del jugador |
 |---|---|---|---|---|---|
 | Apertura y Ruta 1 | B01 | 2–4 | 3–6 | Gael 5 | 6 |
-| P1 | B02 | 5–9 | 6–9 | Casilda 11–12 | 12 |
-| Interludio 1 | B03 | 7–12 | 9–13 | Gael 12–14 | 15 |
-| P2 | B04 | 12–20 | 14–18 | Técnicos 15–17; Leandro 19–21 | 21 |
+| P1 | B02 | 5–8 | 5–8 | Casilda 9–10 | 10 |
+| Interludio 1 | B03 | 6–10 | 7–11 | Gael 8–10 | 12 |
+| P2 | B04 | 11–18 | 13–17 | Técnicos 14–16; Leandro 17–19 | 19 |
 | Interludio 2 | B05 | 16–22 | 18–22 | Técnicos 18–20 (T02) | 23 |
 | P3 | B06 | 20–27 | 22–25 | Doble con Gael 22–25; Casia 23–25; Abril 26–28 | 28 |
 | Interludio 3 | B07 | 24–29 | 25–29 | — (Mega Aro) | 30 |
@@ -88,41 +92,41 @@ como parciales o de evento.
 
 | Método | Nv. | Especies (%) | Nota |
 |---|---|---|---|
-| Cueva / ruina | 5–9 | Geodude 30, Zubat 30, Machop 15, Nacli 15, Bonsly 6, Onix 4 |  |
-| Evento / regalo | 8 | Geodude | Geodude de la Cámara (D08), regalo opcional que espera si se rechaza |
+| Cueva / ruina | 5–8 | Geodude 30, Zubat 30, Machop 15, Nacli 15, Bonsly 6, Onix 4 |  |
+| Evento / regalo | 7 | Geodude | Geodude de la Cámara (D08), regalo opcional que espera si se rechaza |
 
-#### Villa Zaguán y Ruta 2 · etapa A · acceso: libre
+#### Villa Zaguán y Ruta 2 · etapa A · acceso: libre (Ruta 2 al sur del puente del arroyo: tras el P1, X35)
 
 | Método | Nv. | Especies (%) | Nota |
 |---|---|---|---|
-| Hierba (día) | 7–12 | Pidove 20, Fletchling 15, Pawmi 15, Buneary 15, Wooloo 15, Silcoon 5, Cascoon 5, Abra 5, Ralts 5 |  |
-| Hierba (noche) | 7–12 | Nickit 20, Buneary 15, Wooloo 15, Pidove 10, Pawmi 10, Abra 10, Ralts 10, Silcoon 5, Cascoon 5 |  |
-| Árbol de miel | 8–12 | Combee 30, Burmy 25, Cherubi 20, Aipom 19, Heracross 5, Munchlax 1 |  |
+| Hierba (día) | 5–8 · 6–10 | Pidove 20, Fletchling 15, Pawmi 15, Buneary 15, Wooloo 15, Silcoon 5, Cascoon 5, Abra 5, Ralts 5 | Zaguán y Explanada 5–8; Ruta 2 6–10 (X35) |
+| Hierba (noche) | 5–8 · 6–10 | Nickit 20, Buneary 15, Wooloo 15, Pidove 10, Pawmi 10, Abra 10, Ralts 10, Silcoon 5, Cascoon 5 | ídem |
+| Árbol de miel | 7–11 | Combee 30, Burmy 25, Cherubi 20, Aipom 19, Heracross 5, Munchlax 1 |  |
 | Caña Vieja | 8–12 | Magikarp 70, Goldeen 30 |  |
 | Nadar | 35–40 | Psyduck 60, Marill 40 | estanque; con Nadar (etapa F) |
 
-#### Ciudad Caudal (canales) · etapa A · acceso: libre
+#### Ciudad Caudal (canales) · etapa A · acceso: tras el P1 (puente de la Ruta 2, X35)
 
 | Método | Nv. | Especies (%) | Nota |
 |---|---|---|---|
-| Caña Vieja | 8–15 | Magikarp 60, Goldeen 25, Barboach 15 |  |
+| Caña Vieja | 8–13 | Magikarp 60, Goldeen 25, Barboach 15 |  |
 | Nadar | 35–40 | Buizel 50, Psyduck 30, Marill 20 | con Nadar (etapa F) |
 
 #### Ruta 3 y Garganta del Albo · etapa B · acceso: Correr
 
 | Método | Nv. | Especies (%) | Nota |
 |---|---|---|---|
-| Hierba (día) | 12–18 | Buizel 20, Wooper 20, Psyduck 15, Yanma 15, Azurill 13, Starly 10, Staravia 5, Riolu 2 |  |
-| Hierba (noche) | 12–18 | Kricketune 20, Murkrow 20, Wooper 20, Psyduck 15, Azurill 10, Yanma 10, Riolu 5 |  |
-| Cueva / ruina | 13–18 | Zubat 35, Geodude 30, Machop 20, Tinkatink 15 | grutas de la Garganta |
-| Caña Vieja | 12–15 | Magikarp 50, Barboach 50 |  |
+| Hierba (día) | 11–16 | Buizel 20, Wooper 20, Psyduck 15, Yanma 15, Azurill 13, Starly 10, Staravia 5, Riolu 2 |  |
+| Hierba (noche) | 11–16 | Kricketune 20, Murkrow 20, Wooper 20, Psyduck 15, Azurill 10, Yanma 10, Riolu 5 |  |
+| Cueva / ruina | 12–16 | Zubat 35, Geodude 30, Machop 20, Tinkatink 15 | grutas de la Garganta |
+| Caña Vieja | 11–14 | Magikarp 50, Barboach 50 |  |
 | Buceo | 45–50 | Barboach 60, Whiscash 40 | Pozo del Albo (etapa G) |
 
 #### Pilar de la Corriente (Escalera de Estanques) · etapa B · acceso: Correr
 
 | Método | Nv. | Especies (%) | Nota |
 |---|---|---|---|
-| Cueva / ruina | 15–20 | Wooper 30, Marill 25, Shellos 20, Psyduck 20, Golbat 5 | Shellos forma Mar Oeste |
+| Cueva / ruina | 13–18 | Wooper 30, Marill 25, Shellos 20, Psyduck 20, Golbat 5 | Shellos forma Mar Oeste |
 
 #### Ruta 4 · etapa C · acceso: vado abierto al restaurar P2
 
@@ -254,7 +258,7 @@ como parciales o de evento.
 |---|---|---|---|
 | Nadar | 42–50 | Tentacool 20, Wingull 15, Pelipper 10, Mantyke 10, Finneon 10, Frillish 10, Tentacruel 10, Bruxish 5, Shellos (Mar Este) 5, Mantine 5 |  |
 | Caña Buena | 30–40 | Remoraid 30, Clauncher 30, Wishiwashi 20, Corsola 20 | desde los muelles de Nexo y Caleta Sonda (tras P4) |
-| Supercaña | 45–50 | Gyarados 25, Lumineon 25, Octillery 20, Clawitzer 20, Dondozo 5, Tatsugiri 5 |  |
+| Supercaña | 40–46 | Gyarados 25, Lumineon 25, Octillery 20, Clawitzer 20, Dondozo 5, Tatsugiri 5 | desde los muelles con la Supercaña del B09 (X35; antes 45–50) |
 | Hierba | 30–38 | Pyukumuku 40, Flamigo 30, Wingull 30 | playas de la Ruta 15 y del Delta (tras P4) |
 | Visible fijo | 32–45 | Binacle 97, Barbaracle 3 | rocas de la costa |
 

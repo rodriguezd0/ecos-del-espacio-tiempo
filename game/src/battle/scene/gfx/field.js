@@ -7,6 +7,7 @@ import { backgroundMaterial, flatMaterial, spriteMaterial, GEOM } from './materi
 import { Particles } from './particles.js';
 import { BattleCamera } from '../camera.js';
 import { SCREEN_W, SCREEN_H, BASE_ELLIPSES } from '../layout.js';
+import { isLowResBackdrop } from '../setup.js';
 
 const BG_PARALLAX = 0.55;
 const TERRAIN_COLORS = {
@@ -29,6 +30,33 @@ function averageColor(img, x, y, w, h) {
     console.warn('[combate] No se pudo muestrear el fondo', err);
     return [120, 150, 90];
   }
+}
+
+/**
+ * Textura del fondo. Los fondos de Añil son 512×384 y se dibujan 1:1 (vecino más cercano). Los que en realidad son
+ * una imagen de 256×192 ampliada ×2 (setup.js#LOWRES_BACKDROPS, p. ej. Templo en las ruinas) se reducen a su
+ * resolución real y se amplían con filtrado lineal: se ven suaves en lugar de «muy pixelados».
+ */
+function backdropTexture(img, file) {
+  const name = String(file || '').match(/([^/]+)_bg\.[a-z]+$/i)?.[1] || '';
+  let tex;
+  if (isLowResBackdrop(name)) {
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(img.width / 2));
+    c.height = Math.max(1, Math.round(img.height / 2));
+    const g = c.getContext('2d');
+    g.imageSmoothingEnabled = true;
+    g.imageSmoothingQuality = 'high';
+    g.drawImage(img, 0, 0, c.width, c.height);
+    tex = rawTexture(c);
+    tex.magFilter = THREE.LinearFilter;
+    tex.minFilter = THREE.LinearFilter;
+  } else {
+    tex = rawTexture(img);
+  }
+  tex.wrapS = THREE.MirroredRepeatWrapping;
+  tex.wrapT = THREE.MirroredRepeatWrapping;
+  return tex;
 }
 
 const hex = (c) => `rgb(${c.map((v) => Math.max(0, Math.min(255, Math.round(v)))).join(',')})`;
@@ -95,9 +123,7 @@ export class BattleField {
       img = await engine.assets.tryImage(engine.assets.anil('Graphics/Battlebacks/Pradera_bg.png'));
     }
     if (img) {
-      const tex = rawTexture(img);
-      tex.wrapS = THREE.MirroredRepeatWrapping;
-      tex.wrapT = THREE.MirroredRepeatWrapping;
+      const tex = backdropTexture(img, img.src ? decodeURIComponent(img.src) : backdrop.file);
       this.ownedTextures.push(tex);
       const geo = new THREE.PlaneGeometry(1, 1);
       // UV de -1 a 2 (3×3 copias espejadas). En las capas y hacia abajo, y = -0.5 es el borde superior,
@@ -136,9 +162,7 @@ export class BattleField {
     if (!backdrop?.file || !this.bgMesh) return false;
     const img = await engine.assets.tryImage(engine.assets.anil(backdrop.file));
     if (!img || !this.bgMesh) return false;
-    const tex = rawTexture(img);
-    tex.wrapS = THREE.MirroredRepeatWrapping;
-    tex.wrapT = THREE.MirroredRepeatWrapping;
+    const tex = backdropTexture(img, backdrop.file);
     this.ownedTextures.push(tex);
     this.bgMesh.material.uniforms.map.value = tex;
     this.bgMesh.material.uniforms.uTone.value.set(...(backdrop.night ? [-0.22, -0.2, -0.04] : [0, 0, 0]));

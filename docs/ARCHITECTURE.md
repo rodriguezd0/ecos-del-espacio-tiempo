@@ -136,7 +136,7 @@ si hace falta convertir, en `migrate` subiendo `SAVE_VERSION` + test en `tests/i
 
 ## 4. Datos (`game/data`, generados por `npm run data`)
 
-`npm run data` = `extract_data.mjs` + `extract_tilesets.mjs` + `extract_audio.mjs` (índice de audio).
+`npm run data` = `extract_data.mjs` + `extract_tilesets.mjs` + `extract_audio.mjs` (índice de audio) + `extract_anims.mjs`.
 - `species.json`: `{ ID: { id, num, name, types[], baseStats{hp,atk,def,spe,spa,spd}, genderRatio, growthRate, baseExp, evs{}, catchRate, happiness, abilities[], hiddenAbilities[], moves[[lvl,MOVE]], tutorMoves[], eggMoves[], eggGroups[], height, weight, category, pokedex, evolutions[[target,method,param]], flags[], forms{…}, metrics{…} } }`
 - `moves.json`: `{ ID: { id, name, type, category, power, accuracy, pp, target, priority, functionCode, flags[], effectChance, description } }`
 - `items.json` (`pocket` 1–8, `price`, `fieldUse`, `battleUse`, `flags`, `move` para MT) + **`items_axis.json`**
@@ -147,6 +147,12 @@ si hace falta convertir, en `migrate` subiendo `SAVE_VERSION` + test en `tests/i
   Objetos clave y Tablillas (`content/story/tablets.js`) no se tiran ni se venden (`ui/logic/bagLogic.js#isProtectedItem`,
   `canToss`, `canSell`).
 - `abilities.json`, `types.json`, `trainer_types.json`, `tilesets.json`, `dex_axis.json` (inventario de 412; **no es roster final, D28**).
+- `species[ID].metrics` / `metricsFemale` / `forms[n].metrics`: métricas de sprites de combate COMPILADAS de Añil
+  (`Data/species_metrics.dat`, `tools/lib/speciesMetrics.mjs`; los PBS de métricas están desfasados en ~25 especies):
+  `{ back: [x, y(, escala)], front, shadow: [x, yEsp, yFrente], shadowSize?, altitude?, animSpeed, animSpeedFront? }`.
+- `anims/` (`tools/extract_anims.mjs`): animaciones de combate de Añil (`Data/PkmnAnimations.rxdata`):
+  `index.json` `{ moves, oppMoves, common, names }` (como `move2anim.dat`) y `<n>.json` por animación (cels compactos,
+  `tools/lib/anilAnims.mjs`), cargadas bajo demanda.
 
 Sprites de Pokémon (Añil): `/anil/Graphics/Pokemon/{Front,Back,Front shiny,Back shiny}/<ID>[_forma].png` (tiras
 horizontales), iconos `Icons/<ID>.png`, seguidores `Graphics/Characters/Followers[ shiny]/<ID>.png`, gritos `Audio/SE/Cries/<ID>.ogg`.
@@ -421,6 +427,21 @@ canCancel, party})` → índice|-1, `chooseItem(battler, {bag, party, firstActio
 animateMove, animateCommon, animateDamage, animateHP, animateStatus, animateStat, faint, switchOut, switchIn,
 throwBall, expGain, levelUp, changeForm, refresh, end`. `HeadlessBattleUI({ script, confirm, learnMove })` para tests.
 Presentación BW2 en `battle/scene/` (propietario: battle-scene). Aplicación del resultado: `battle/scene/results.js`.
+**Sprites y animaciones como en Añil** (correcciones del creador del 25-09-2026; tests `battle_sprites`, `battle_anims`):
+- `scene/layout.js` porta el plugin «Pokémon Animados para DBK»: `speciesMetrics(db, sp, forma, hembra)` (entradas
+  completas de forma/hembra), `spriteOffset`, `shadowPlacement` (sombra centrada H/4 sobre la base + métricas, como
+  `BattlerShadowSprite`), `spriteScale` (escala propia de la métrica), `spriteFrameTicks` (espalda/frente),
+  `stripFrames` y `spriteFileCandidates` (orden de `check_graphic_file`: variocolor → hembra → forma).
+- `scene/camera.js`: **zoom siempre 1** (`pixelPerfect`, paneo limitado a `MAX_PAN`): los zooms de 1,08–1,4 repartían
+  los píxeles de fondos y sprites de forma irregular («fondo muy pixelado», «humanos muy cuadrados»).
+- `scene/setup.js#LOWRES_BACKDROPS` (Templo, Blaine): fondos que son una imagen de 256×192 ampliada; `gfx/field.js`
+  los reduce a su resolución real y los amplía con filtrado lineal.
+- `scene/fx/anilAnimPlayer.js` + `anilAnimCore.js` (puro): reproductor de las animaciones de movimientos de Añil
+  (`PBAnimationPlayerX`/`pbAnimationCore`: 20 fps, focos usuario/objetivo/línea/pantalla, cels 0/1 = los propios
+  sprites, prioridades, mezcla, tono, fondos y frentes de color o imagen, SE; versión `OppMove` del rival, variantes
+  "hit N", animación por defecto del tipo). Oculta sombras y cajas de datos durante la animación. `fx/moveAnims.js` la usa
+  primero y deja las genéricas por estilo como respaldo (sin animación o sin hoja). Banco de captura fotograma a
+  fotograma: `node tools/cache/cb_anim_frames.mjs --move=BEATUP --user=0`.
 
 **Textos del combate**: todos los `pbDisplay*`/`pbDisplayConfirm` pasan por `fixSpanish` = `shared/spanish.js#contractArticles`
 («de/a + el|El» → «del/al»: «Los PS del Nacli rival», «No afecta al Pidove salvaje»; no toca «él» ni tildes/eñes
@@ -481,6 +502,11 @@ oscuridad con luces) → efectos luminosos → pasada final (destello, fundido, 
 - **Transiciones** (`ctx.transition`, quedan en negro hasta `scene.fx.clearTransition()`): `fade snakeSquares
   diagonalBubbleTL diagonalBubbleBR risingSplash bars spinBall mosaic zoomIn shrinkingPieces iris`.
 - Emociones: `! ? … ♪ ♥`. Día/noche: `render/dayNight.js` (reloj de juego, 1 min por segundo real, provisional TEC-06).
+- **Tamaño de los Pokémon en el mapa** (`render/followerSize.js`, puro; acompañante y encuentros visibles, claves
+  `follower:…`): las hojas Followers de Añil (arte ×2, 64–175 px por fotograma) se dibujan 1:1, pero si su mayor
+  dimensión opaca supera un presupuesto proporcional a la altura de la especie (58 px por 1,5 m; mínimo 48, máximo 96)
+  se encogen a 3/4 o 1/2 (píxel nítido): Onix 1/2, Yanma 3/4 (el creador los vio «enormes»). Zygarde queda fuera.
+  `render/charsets.js` mide la hoja al cargarla (`sheet.scale`) y `characterSprite.js` la aplica. Test: `follower_size`.
 - **Costuras entre mapas conectados** (`world/seams.js`, puro): la cámara no se limita por los lados con conexión, así
   que junto a un vecino de otro tamaño o desplazado quedaban casillas sin mapa (franjas negras). `planSeams(entries)`
   rellena cada casilla vacía que la cámara puede enseñar (`cameraReach`: margen 9×7 por los lados abiertos) repitiendo

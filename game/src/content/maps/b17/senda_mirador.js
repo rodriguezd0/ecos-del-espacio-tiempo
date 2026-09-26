@@ -1,5 +1,5 @@
 // Senda del Mirador (docs/CAMPANA.md B17 «Salida: la Senda del Mirador, en el borde norte de la Sima»; §1.4: N Ciudad
-// Caudal · S Sima del Eje; BGM Amenaza, fondo Espacio). Tileset 1. Por el vacío de la Sima asoma el panorama propio
+// Caudal · S Sima del Eje; BGM Amenaza; fondo Acantilado, antes Espacio). Tileset 1. Por el vacío de la Sima asoma el panorama propio
 // (assets/panoramas/b17_sima.png). Coordenadas: senda_layout.js · construcción: senda_build.js · eventos:
 // content/events/b17_senda.js y b17_torres.js · encuentros: content/encounters/b17.js. B18 la usa como entrada y
 // añade de forma aditiva su tramo final desde el extremo del tablero (README del bloque).
@@ -21,7 +21,9 @@ export default {
   height: H,
   outdoor: true,
   bgm: 'Amenaza',
-  battleback: 'Espacio',
+  // Fondo de combate de mirador de montaña: pinar al borde del acantilado con el cielo abierto (DECIDIDO (autor,
+  // 25-09-2026): «un fondo de pelea como en el espacio» no encaja aquí). Antes 'Espacio'.
+  battleback: 'Acantilado',
   start: { x: ARRIVAL.x, y: ARRIVAL.y, dir: ARRIVAL.dir },
   brushes: SENDA_BRUSHES,
   panorama: SIMA_PANORAMA,

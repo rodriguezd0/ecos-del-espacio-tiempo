@@ -185,19 +185,20 @@ test('encuentros de POKEDEX_DISTRIBUCION §7.3: Zaguán (día, noche, Caña Viej
   for (const k of ['grass', 'grassNight', 'fish_old']) assert.equal(sum(ZAGUAN_ENCOUNTERS[k]), 100, k);
   assert.equal(sum(RUINAS_ENCOUNTERS.cave), 100);
   assert.deepEqual(RUINAS_ENCOUNTERS.cave.map(([w, s]) => `${s}:${w}`), ['GEODUDE:30', 'ZUBAT:30', 'MACHOP:15', 'NACLI:15', 'BONSLY:6', 'ONIX:4']);
-  assert.ok(RUINAS_ENCOUNTERS.cave.every(([, , a, b]) => a === 5 && b === 9));
-  assert.ok(ZAGUAN_ENCOUNTERS.grass.every(([, , a, b]) => a === 7 && b === 12));
-  assert.deepEqual(GEODUDE_GIFT, { species: 'GEODUDE', level: 8 });
+  // Curva del principio rebajada (DECISIONES X35): ruinas 5–8, hierba 5–8 y Geodude 7.
+  assert.ok(RUINAS_ENCOUNTERS.cave.every(([, , a, b]) => a === 5 && b === 8));
+  assert.ok(ZAGUAN_ENCOUNTERS.grass.every(([, , a, b]) => a === 5 && b === 8));
+  assert.deepEqual(GEODUDE_GIFT, { species: 'GEODUDE', level: 7 });
 });
 
-test('entrenadores: Remo, Paco e Inés nv 6–9; Casilda Bonsly 11, Nacli 11, Hippopotas 12 con Chorro Arena', () => {
+test('entrenadores: Remo, Paco e Inés nv 5–8; Casilda Bonsly 9, Nacli 9, Hippopotas 10 con Chorro Arena', () => {
   for (const id of ['b02_excursionista_remo', 'b02_montanero_paco', 'b02_arqueologa_ines']) {
     const t = TRAINERS[id];
     assert.ok(t, id);
-    assert.ok(t.party.every((p) => p.level >= 6 && p.level <= 9), `${id}: niveles del tramo`);
+    assert.ok(t.party.every((p) => p.level >= 5 && p.level <= 8), `${id}: niveles del tramo`);
   }
   const c = TRAINERS.b02_casilda;
-  assert.deepEqual(c.party.map((p) => `${p.species}:${p.level}`), ['BONSLY:11', 'NACLI:11', 'HIPPOPOTAS:12']);
+  assert.deepEqual(c.party.map((p) => `${p.species}:${p.level}`), ['BONSLY:9', 'NACLI:9', 'HIPPOPOTAS:10']);
   assert.equal(c.party[2].ability, 'SANDSTREAM');
   assert.equal(c.sprite, 'casilda_front');
   assert.equal(c.overworld, 'casilda');

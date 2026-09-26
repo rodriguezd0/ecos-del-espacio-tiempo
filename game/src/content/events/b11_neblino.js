@@ -33,7 +33,7 @@ function fogLoopEvents() {
   const band = (tag, loop) => {
     for (let x = loop.x0; x <= loop.x1; x++) {
       out.push({
-        id: `niebla_${tag}_${x}`, x, y: loop.y, trigger: 'touch', when: when({ none: [P5] }),
+        id: `niebla_${tag}_${x}`, x, y: loop.y, trigger: 'touch', gate: true, when: when({ none: [P5] }),
         script: async (ctx) => {
           await ctx.fade('out', 24, [230, 222, 240]);
           await placePlayer(ctx, loop.back);

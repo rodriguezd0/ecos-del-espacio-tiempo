@@ -1,6 +1,7 @@
 // Geometría de la escena de combate (módulo PURO, sin DOM ni Three.js).
-// Portada de Battle::Scene de Añil (031_Scene/002 y 007) + plugin "Pokémon Animados para DBK":
-// sprites frontales ×2, traseros ×3, sombra = silueta aplastada, métricas × 2.
+// Portada de Battle::Scene de Añil (031_Scene/002 y 007) + plugin "Pokémon Animados para DBK" ([004] Game Data,
+// [006] Battler Sprites, [008] Deluxe Bitmap): sprites frontales ×2, traseros ×3 (o la escala de la métrica),
+// sombra = silueta aplastada centrada H/4 por encima de la base, métricas × 2, métricas de hembra.
 // Coordenadas en píxeles de pantalla (512×384, y hacia abajo) con la cámara en su vista por defecto.
 
 export const SCREEN_W = 512;
@@ -14,9 +15,15 @@ export const FRONT_SCALE = 2;
 export const BACK_SCALE = 3;
 export const SHADOW_OPACITY = 100 / 255;
 
-/** Escala del sprite de un combatiente según su bando (0 jugador → espalda ×3). */
-export function spriteScale(index) {
-  return (index & 1) === 0 ? BACK_SCALE : FRONT_SCALE;
+/**
+ * Escala del sprite de un combatiente según su bando (0 jugador → espalda ×3). El tercer valor de
+ * BackSprite/FrontSprite de la métrica la sustituye (SpeciesMetrics#back_sprite_scale / front_sprite_scale).
+ */
+export function spriteScale(index, metrics = null) {
+  const back = (index & 1) === 0;
+  const custom = Number((back ? metrics?.back : metrics?.front)?.[2]);
+  if (custom > 0) return custom;
+  return back ? BACK_SCALE : FRONT_SCALE;
 }
 
 /** Centro inferior del sprite de un combatiente (sin métricas), como pbBattlerPosition. */
@@ -42,16 +49,27 @@ export function trainerPosition(side, index = 0, count = 1) {
   return { x: ret[0], y: ret[1] };
 }
 
-/** Métricas efectivas de especie+forma (la forma sobrescribe). */
-export function speciesMetrics(db, species, form = 0) {
+/**
+ * Métricas de especie + forma + sexo, como GameData::SpeciesMetrics.get_species_form del plugin de Añil:
+ * la entrada de la forma ([ESPECIE,forma]) o de la hembra ([ESPECIE,,female], solo si la especie tiene la marca
+ * HasGenderedSprites) es COMPLETA; si no existe, se usan las de la especie base (una forma hembra sin entrada
+ * propia usa la de la especie base, no la de la hembra).
+ */
+export function speciesMetrics(db, species, form = 0, female = false) {
   const sp = db?.species?.[species];
   if (!sp) return {};
-  const base = sp.metrics || {};
-  const fm = form ? sp.forms?.[form]?.metrics : null;
-  return fm ? { ...base, ...fm } : base;
+  const fm = form ? sp.forms?.[form] : null;
+  const gendered = Boolean(female) && (fm?.flags || sp.flags || []).includes('HasGenderedSprites');
+  if (form) {
+    if (gendered && fm?.metricsFemale) return fm.metricsFemale;
+    if (fm?.metrics) return fm.metrics;
+  } else if (gendered && sp.metricsFemale) {
+    return sp.metricsFemale;
+  }
+  return sp.metrics || {};
 }
 
-/** Desplazamiento del sprite por métricas (apply_metrics_to_sprite). */
+/** Desplazamiento del sprite por métricas (apply_metrics_to_sprite): la altitud solo si la métrica la define. */
 export function spriteOffset(metrics, index) {
   const m = metrics || {};
   if ((index & 1) === 0) {
@@ -63,32 +81,72 @@ export function spriteOffset(metrics, index) {
 }
 
 /**
- * Colocación de la sombra (silueta negra aplastada): centro relativo a battlerPosition y zoom.
- * `height` = alto del sprite en pantalla (lado del frame × escala). A diferencia de DBK (que la centra
- * H/4 por encima de la base y queda tapada por el cuerpo), se apoya en la línea de los pies, como en BW.
+ * Colocación de la sombra (BattlerShadowSprite de DBK): silueta negra del frame actual con origen en su centro,
+ * en battlerPosition − H/4 + (métrica del sprite + ShadowSprite) × 2, con zoom_x = 1 + t·0,1 y
+ * zoom_y = 0,25 + t·0,025, donde t = ShadowSize − 1 si es positivo (1 por defecto → t = 0).
+ * `height` = alto del bitmap escalado (lado del frame × escala). ShadowSize 0 → sin sombra.
+ * Devuelve el centro relativo a battlerPosition.
+ *
+ * 25-09-2026 (el creador vio a Litten «flotando»): antes la sombra se apoyaba en la línea de los pies (−5 % de H)
+ * y, con las métricas de Añil (pensadas para el centro H/4 más arriba), quedaba 30–70 px por debajo del Pokémon.
  */
 export function shadowPlacement(metrics, index, height) {
   const m = metrics || {};
   const size0 = m.shadowSize ?? 1;
   if (size0 === 0) return { visible: false, dx: 0, dy: 0, zoomX: 0, zoomY: 0 };
-  const size = size0 > 0 ? size0 - 1 : 0;
+  const size = size0 > 0 ? size0 - 1 : size0;
   const [sx = 0, syBack = 0, syFront = 0] = m.shadow || [];
   const player = (index & 1) === 0;
   const [bx = 0, by = 0] = (player ? m.back : m.front) || [];
   return {
     visible: true,
     dx: bx * 2 + sx * 2,
-    dy: by * 2 + (player ? syBack : syFront) * 2 - Math.round(height * 0.05),
+    dy: by * 2 + (player ? syBack : syFront) * 2 - Math.floor(Math.round(height) / 4), // (height / 4).round de Ruby: división entera
     zoomX: 1 + size * 0.1,
     zoomY: 0.25 + size * 0.025,
   };
 }
 
-/** Pasos lógicos (60 Hz) por frame de la animación del sprite (DeluxeBitmap: speed/2 × 60 ms). */
-export function spriteFrameTicks(metrics) {
-  const s = Number(metrics?.animSpeed ?? 2);
+/**
+ * Pasos lógicos (60 Hz) por frame de la animación del sprite. DeluxeBitmapWrapper#update avanza cuando han
+ * pasado (speed/2 × ANIMATION_FRAME_DELAY 60) ms, comprobándolo en cada fotograma: ceil(retardo × 60).
+ * AnimationSpeed = espalda[,frente]: `animSpeedFront` solo para el frente.
+ */
+export function spriteFrameTicks(metrics, back = true) {
+  const raw = back ? metrics?.animSpeed : (metrics?.animSpeedFront ?? metrics?.animSpeed);
+  const s = Number(raw ?? 2);
   if (!(s > 0)) return 0;
-  return Math.max(1, Math.round((s / 2) * 0.06 * 60));
+  const delayMs = Math.round((s / 2) * 60);
+  return Math.max(1, Math.ceil((delayMs / 1000) * 60 - 1e-9));
+}
+
+/**
+ * Frames de una hoja de Pokémon (DeluxeBitmapWrapper#refresh): si el ancho supera el doble del alto es una tira de
+ * ceil(ancho/alto) frames cuadrados; si no, un único frame del tamaño de la imagen.
+ */
+export function stripFrames(width, height) {
+  if (width > height * 2) return { frames: Math.ceil(width / height), fw: height, fh: height };
+  return { frames: 1, fw: width, fh: height };
+}
+
+/**
+ * Rutas candidatas del sprite de un Pokémon en el orden de GameData::Species.check_graphic_file de Essentials:
+ * se prueban todas las combinaciones de factores (variocolor, hembra, forma) descartando primero el de menor
+ * prioridad (variocolor → hembra → forma). `folder` = 'Front' | 'Back'.
+ */
+export function spriteFileCandidates({ species, form = 0, female = false, shiny = false }, folder) {
+  const factors = [];
+  if (shiny) factors.push('shiny');
+  if (female) factors.push('female');
+  if (form) factors.push('form');
+  const out = [];
+  for (let i = 0; i < 2 ** factors.length; i++) {
+    const on = Object.fromEntries(factors.map((k, j) => [k, (i & (2 ** j)) === 0]));
+    const dir = on.shiny ? `${folder} shiny` : folder;
+    const name = `${species}${on.form ? `_${form}` : ''}${on.female ? '_female' : ''}`;
+    out.push(`Graphics/Pokemon/${dir}/${name}.png`);
+  }
+  return out;
 }
 
 /**

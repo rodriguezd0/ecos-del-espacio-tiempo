@@ -13,7 +13,9 @@
 //   · fragments / tablets: número (los aplica el modo desarrollador como ?fragments=N y ?tablets=N: F01…FN y las N
 //     primeras de content/story/tablets.js). Tablillas contadas al acabar el bloque que las resuelve (T03 y T05
 //     dependen de un Pilar posterior: cuentan en B07 y en B09b respectivamente).
-//   · party: curva de niveles de CAMPANA (nivel ~ de entrada de cada bloque). Inicial TURTWIG, Gael LITTEN y el
+//   · party: curva de niveles de CAMPANA (nivel ~ de entrada de cada bloque; B02–B05 con la curva del principio
+//     rebajada, DECISIONES X35). La auditoría de fugas (tools/audit_progression.mjs) usa el nivel más alto como el
+//     esperado de la etapa. Inicial TURTWIG, Gael LITTEN y el
 //     inicial que nadie eligió (SOBBLE) de Alerce al acabar el P2 (b04_inicial).
 //   · flyPoints: ids de lugar del atlas (ui/logic/regionMapData.js). El Vuelo solo existe tras 'fly' (fin de B16);
 //     antes, []. mesa_vientos se desbloquea por guion en la T14 (B17).
@@ -231,7 +233,7 @@ export const BLOCK_STARTS = Object.freeze([
     id: 'B02', title: 'Pilar del Umbral (P1)',
     map: 'villa_zaguan', x: 19, y: 3, dir: 2,
     vars: { ...STARTERS },
-    party: [['TURTWIG', 9], ['STARLY', 7]],
+    party: [['TURTWIG', 8], ['STARLY', 6]],
     zygarde: { abilities: [], form: 'core', cells: 5, cores: 1 },
     fragments: 0, tablets: 0,
     items: { POTION: 3, POKEBALL: 5 }, keyItems: [], flyPoints: [], money: 3500, pokedex: true,
@@ -241,7 +243,7 @@ export const BLOCK_STARTS = Object.freeze([
     id: 'B03', title: 'Zaguán, Ruta 2 y Caudal',
     map: 'villa_zaguan', x: 19, y: 14, dir: 4,
     vars: { ...STARTERS },
-    party: [['TURTWIG', 14], ['STARLY', 12], ['SHINX', 12]],
+    party: [['TURTWIG', 12], ['STARLY', 10], ['SHINX', 10]],
     zygarde: { abilities: Z_RUN, form: '10', cells: 12, cores: 1 },
     fragments: 1, tablets: 0,
     items: { ...I_EARLY }, keyItems: K_B02, flyPoints: [], money: 5000, pokedex: true,
@@ -251,7 +253,7 @@ export const BLOCK_STARTS = Object.freeze([
     id: 'B04', title: 'Pilar de la Corriente (P2)',
     map: 'ciudad_caudal', x: 1, y: 4, dir: 4,
     vars: { ...STARTERS },
-    party: [['TURTWIG', 17], ['STARAVIA', 15], ['SHINX', 14], ['BUIZEL', 14]],
+    party: [['TURTWIG', 14], ['STARLY', 13], ['SHINX', 12], ['BUIZEL', 12]],
     zygarde: { abilities: Z_RUN, form: '10', cells: 15, cores: 1 },
     fragments: 1, tablets: 1,
     items: { ...I_B04 }, keyItems: K_B03, flyPoints: [], money: 7000, pokedex: true,
@@ -261,7 +263,7 @@ export const BLOCK_STARTS = Object.freeze([
     id: 'B05', title: 'Molino del Diezmo, Ruta 4 y Brontia',
     map: 'molino_diezmo', x: 7, y: 10, dir: 8,
     vars: { ...STARTERS },
-    party: [['GROTLE', 22], ['STARAVIA', 20], ['LUXIO', 20], ['BUIZEL', 19], ['SOBBLE', 15]],
+    party: [['GROTLE', 20], ['STARAVIA', 18], ['LUXIO', 18], ['BUIZEL', 17], ['SOBBLE', 15]],
     zygarde: { abilities: Z_RUN, form: '10', cells: 17, cores: 1 },
     fragments: 2, tablets: 1,
     items: { ...I_B04 }, keyItems: K_B03, flyPoints: [], money: 10000, pokedex: true,

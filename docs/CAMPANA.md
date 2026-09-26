@@ -128,7 +128,7 @@ primer mapa del Volcán Tizón y los Palafitos dentro del mapa de la Ruta 8.
 |---|---|---|---|---|---|---|---|
 | **Villa Alba** (X01) | Pueblo de piedemonte entre bosque | 7 | 46×36 (Map233) | N Laberinto · S Ruta 1 | Casa (Mamá cura), Laboratorio de Alerce (puerta del fondo cerrada hasta el epílogo), casa de Gael, 2 casas. Sin Centro ni tienda | X04 (nostálgica) | Inicio |
 | **Villa Zaguán** | Aldea de huertos a la salida del bosque | 1 | 40×36 | N Ruta 1 · O explanada del P1 · S Ruta 2 | **Primer Centro Pokémon**, tienda, Arboleda de los Nombres, campanario, Casa del Dintel (Casilda) | PrismaVilla2 | Libre |
-| **Ciudad Caudal** (historial) | Ciudad fluvial de canales y esclusas | 3 + autotile agua | 64×56 | N Ruta 2 · NO Ruta 3 · E Ruta 4 · S Senda del Mirador | Centro, tienda, Casa de las Esclusas (Leandro), Barrio de los Molinos, pescador (Caña Vieja), mercado fluvial, tutor, estación (tras P4) | CiudadCeleste | Libre |
+| **Ciudad Caudal** (historial) | Ciudad fluvial de canales y esclusas | 3 + autotile agua | 64×56 | N Ruta 2 · NO Ruta 3 · E Ruta 4 · S Senda del Mirador | Centro, tienda, Casa de las Esclusas (Leandro), Barrio de los Molinos, pescador (Caña Vieja), mercado fluvial, tutor, estación (tras P4) | CiudadCeleste | Tras el P1 (puente de la Ruta 2, X35) |
 | **Villa Brontia** (historial) | Meseta con molinos y campanario | 1 | 44×40 | O Ruta 4 · E Ruta 5 · N Ruta 11 · S Ruta 6 | Centro, tienda, subestación, campanario de Sixto, casa de Abril, corrales de Wooloo, posada, estación | PuebloMarengo | Vado de la Ruta 4 (tras P2) |
 | **Ciudad Estrato** (historial) | Ciudad minera en cañón escalonado | 5 | 56×48 | N Ruta 6 · E Dunas de Ceniza · O Ruta 7 | Centro, tienda, Mina Galena, Escuela del Pico, oficinas del Consorcio, casa de Fermín, mercado de minerales (tras P4), estación | CiudadVerde | Ruta 6 (tras P3) |
 | **Ciudad Lúmina** (historial) | Capital cultural | 3 (museo con piezas de 1) | 72×64 | E Ruta 7 · NO Ruta 8 · S Ruta 14 · N Mirador Sur | Centro, Grandes Almacenes (Cordón Unión, piedras), **Museo de las Eras**, estación central, guardería, Parque de las Eras, tienda de trastos, pastelería, Hotel Mirador, tutor | CiudadAzulona | Ruta 7 (tras P4) |
@@ -148,7 +148,7 @@ No se usan «Aldea Glífica» (su función la cumple el Santuario de los Glifos 
 |---|---|---|---|---|---|---|
 | **Ruta 1** | Bosque y claros | 7 | 30×60 | N Villa Alba · S Zaguán · O cruce a Ruta 10 · E Cerro del Alba | Ruta 1 | Libre. Cuesta de grava al mirador (Correr); cornisa del Cerro del Alba (Trepar) |
 | **Laberinto de la Profundidad** (X03) | Laberinto privado de setos y piedra | 7 / 2 | 40×34 | S Villa Alba | Amenaza | Solo en la apertura; después la familia Arenzana lo cierra. Nodo de la Red de Convergencia en el postgame |
-| **Ruta 2** | Pradera, estanque, puentes | 1 | 30×70 | N Zaguán · S Caudal | Ruta 2 | Libre. Rampa (Correr), estanque (Nadar) |
+| **Ruta 2** | Pradera, estanque, puentes | 1 | 30×70 | N Zaguán · S Caudal | Ruta 2 | Libre hasta el puente del arroyo; al sur, tras el P1 (X35). Rampa (Correr), estanque (Nadar) |
 | **Ruta 3** | Ribera con cuestas de grava | 1 | 40×50 | SE Caudal · NO Garganta | PrismaRuta1 | **Correr** |
 | **Garganta del Albo** | Desfiladero con cascadas | 1 + 2 | 40×40 | S Ruta 3 · Pilar de la Corriente | PrismaRuta1 | Correr (Pozo del Albo: Buceo; pared: Trepar) |
 | **Ruta 4** | Vega inundable y subida a la meseta | 1 | 80×30 | O Caudal · E Brontia | Ruta 3 | **Vado abierto al restaurar P2** |
@@ -396,8 +396,8 @@ propio aljibe, el mar del sur y el norte helado: anticipan N1–N5 sin texto.
 
 | Estado | Capacidades y hitos | Se abre | Células alcanzables (acum.) | Umbral siguiente | Margen |
 |---|---|---|---|---|---|
-| S0 | Core (N1) | Villa Alba, Ruta 1, Ruta 10 baja, Zaguán, P1, Ruta 2, Caudal | **14** (10 obligatorias antes del núcleo) | Correr: 10 + P1 | +4 |
-| S1 | Correr | Rampas, Ruta 3, Garganta, **P2** | **24** | Embestida: 18 | +6 |
+| S0 | Core (N1) | Villa Alba, Ruta 1, Ruta 10 baja, Zaguán, P1, Ruta 2 hasta el puente del arroyo (cerrado hasta el P1, X35) | **12** (10 obligatorias antes del núcleo) | Correr: 10 + P1 | +2 |
+| S1 | Correr (y P1) | Ruta 2 (tramo sur), Caudal, rampas, Ruta 3, Garganta, **P2** | **24** | Embestida: 18 | +6 |
 | S2 | P2 restaurado; Embestida | Ruta 4 (vado), Brontia, Ruta 5, Meseta, Colector (N2), **P3** | **34** | Terreno: 25 + N2 (N2 solo pide Embestida) | +9 |
 | S3 | P3 restaurado; Terreno | Ruta 6, Estrato, Mina, Dunas, **P4** | 34 + parte de D | — | — |
 | S4 | P4 restaurado | Ruta 7, Lúmina, Reserva, Nexo, Ruta 15, Caleta Sonda, Marisma, Mnemos, **P5** | **46** (A–D) | Trepar: 35 + P5 | +11 |
@@ -412,6 +412,7 @@ propio aljibe, el mar del sur y el norte helado: anticipan N1–N5 sin texto.
 
 | Puerta | Condición | Se obtiene en | Correcta |
 |---|---|---|---|
+| G0 puente de la Ruta 2 (X35) | P1 | Ruinas del Dintel (S0) | Sí |
 | G1 cuestas de grava | Correr | P1 y células A (S0) | Sí |
 | G2 vado de la Ruta 4 | P2 | Garganta (tras G1) | Sí |
 | G3 troncos | Embestida (18) | A+B = 24 (tras G1) | Sí |
@@ -602,7 +603,7 @@ B01 se mantiene íntegro. Ajustes compatibles, sin reescribir escenas:
   7. Casilda entrega la **Libreta de pistas** (`CLUENOTEBOOK`): «Mi madre apuntaba aquí lo que decían las piedras.
      Yo nunca le hice caso.» Dentro hay un calco con la primera pista (T01).
 - **Mazmorra: Ruinas del Dintel** (luz limitada que ilumina el Core; entrenadores Excursionista Remo, Arqueóloga Inés,
-  Montañero Paco, nv 6–9):
+  Montañero Paco, nv 5–8, X35):
   1. *Antesala* (C010). Inscripción: «El primero mira al alba. El segundo, al agua que no se va. El tercero, a quien
      entra.»
   2. *Galería de los Dinteles* (C011). Tres piedras giratorias en tres alcobas (D08). La primera se orienta al este
@@ -611,16 +612,17 @@ B01 se mantiene íntegro. Ajustes compatibles, sin reescribir escenas:
      casillas o menos. Equivocarse no penaliza: la piedra vuelve a girar.
   3. *Cámara de Geodude* (C012). Con las tres piedras se desliza un muro: un **Geodude** encajado en una grieta desde
      los temblores. El jugador lo saca (interacción A mantenido); agradecido, **rompe la roca** que corta el paso (D08).
-     Después ofrece acompañar al jugador (regalo opcional, nv 8; si se rechaza, espera en la cámara).
+     Después ofrece acompañar al jugador (regalo opcional, nv 7; si se rechaza, espera en la cámara).
   4. *Cámara de la Guardiana*: combate.
   5. *Núcleo*.
-- **Combate: Casilda** — Bonsly 11, Nacli 11, Hippopotas 12 (Chorro Arena/tormenta de arena). Motivo: «Si esto va a
+- **Combate: Casilda** — Bonsly 9, Nacli 9, Hippopotas 10 (X35; antes 11/11/12) (Chorro Arena/tormenta de arena). Motivo: «Si esto va a
   despertar por alguien, que sea por alguien capaz de defenderlo.» Si el jugador pierde: reaparece en la antesala, se
   habla con Casilda y cura («Otra vez. Con cabeza.»).
 - **Cambio en el mundo:** las puertas de Zaguán vuelven a cerrar; cesan los temblores alrededor de Villa Alba (los
   Starly vuelven a los tejados).
 - **Recompensas:** Fragmento 1, Arca, **Correr** (10%), Libreta, pista T01, 3 Pociones y 2 Cuerdas Huida (Casilda).
-- **Salida:** `p1_restored`, `zyg_10`, `b02_libreta`. Nivel ~12.
+- **Salida:** `p1_restored`, `zyg_10`, `b02_libreta`. Nivel ~10 (X35). El P1 abre el puente del arroyo de la Ruta 2
+  (los temblores cesan; hasta entonces un operario de Zaguán no deja pasar: X35).
 
 ### B03 — Interludio 1: Zaguán, Ruta 2 y llegada a Caudal
 
@@ -633,7 +635,7 @@ B01 se mantiene íntegro. Ajustes compatibles, sin reescribir escenas:
   2. Lía, en el Centro de Zaguán, entrega el **Repartir Exp** (`EXPSHARE`) de parte de Alerce (desactivable).
   3. Ruta 2 (rampa de grava si ya tiene Correr, C015) y llegada a Caudal.
   4. **Gael, combate B2**, en el puente de entrada: «Encontré una célula. Se me escapó de las manos… hacia ti.»
-     Equipo: Starly 12, Riolu 12, inicial 14.
+     Equipo: Starly 8, Riolu 9, inicial 10 (X35; antes 12/12/14).
   5. Alerce llama por la Pokédex: «¿Balizas de tres patas en la Garganta? …Da igual. Id con cuidado.» (subtexto:
      reconoce el instrumental).
   6. El molinero **Anselmo** abre la pista T02 («La muela del Diezmo pesa como un río»). El pescador da la **Caña
@@ -643,21 +645,21 @@ B01 se mantiene íntegro. Ajustes compatibles, sin reescribir escenas:
 ### B04 — Pilar de la Corriente (P2) (D09: acceso por Correr, sin Nadar)
 
 - **Mapas:** `ruta_3`, `garganta_albo`, `pilar_corriente` (15 + kit tinte azul, 40×40, un solo mapa de estanques).
-- **Entrada:** Correr; nivel ~15.
+- **Entrada:** Correr; nivel ~12 (X35).
 - **Problema humano:** el Albo se ha vuelto errático y el barrio bajo de Caudal se inunda. **Leandro Alcántara** (38,
   **orgullo**), Maestre de Esclusas, se niega a recibir ayuda: su casa lleva trescientos años «llevando el río a mano»
   y ha empeorado las cosas manipulando las esclusas. Genesis ha plantado **balizas de resonancia** en la Garganta que
   agravan las crecidas.
 - **Secuencia:**
   1. Ruta 3 por las **cuestas de grava**, solo transitables montado (C016–C018).
-  2. Retirar tres balizas: tres combates contra técnicos (nv 15–17; Magnemite, Bronzor, Solosis). Las balizas se
+  2. Retirar tres balizas: tres combates contra técnicos (nv 14–16, X35; Magnemite, Bronzor, Solosis). Las balizas se
      recogen (objeto de historia, no se venden).
   3. Mientras, **Gael evacúa el barrio bajo** con sus Pokémon; Leandro y Gael chocan («Nadie te ha pedido nada,
      chaval.» / «Por eso lo hago yo.»).
   4. Leandro reta al jugador dentro del Pilar para «ver si sabe dónde pisa».
   5. Escalera de Estanques y núcleo.
 - **Mazmorra: Escalera de Estanques** (seis estanques escalonados E1–E6 alrededor del núcleo; 4 entrenadores
-  Pescador/Buceadora, nv 15–19):
+  Pescador/Buceadora, nv 14–17, X35):
   - **Reglas.** Un estanque **lleno** levanta losas flotantes (puentes). Uno **vacío** deja caminar por su fondo
     (palancas, objetos y las células C021–C023). Cuatro compuertas C1–C4 dejan pasar el agua cuesta abajo, de E1 a E6.
     La **noria** sube el agua de E6 a E1, solo con su engranaje enganchado; la palanca del engranaje está en el fondo
@@ -667,14 +669,14 @@ B01 se mantiene íntegro. Ajustes compatibles, sin reescribir escenas:
     de C3; (2) cerrar C2 y abrir C3: E4 se vacía y se engancha la noria; (3) abrir C4: E6 se llena, la noria gira y
     suben las losas de E2; (4) por esas losas se llega al mando de C2 y se abre. Ciclo completo.
   - Sin temporizador; una palanca en la entrada devuelve todo al estado inicial.
-- **Combate: Leandro** — Barboach 19, Buizel 19, Marill 20, Quagsire 21. Reintento: se le vuelve a hablar.
+- **Combate: Leandro** — Barboach 17, Buizel 17, Marill 18, Quagsire 19 (X35; antes 19/19/20/21). Reintento: se le vuelve a hablar.
 - **Respuesta:** Leandro: «Trescientos años girando llaves… y el río solo necesitaba que alguien lo escuchara.» Al día
   siguiente da las gracias al jugador en la plaza, a lo grande.
 - **Cambio en el mundo:** el Albo recupera su cauce; los molinos vuelven a girar (salvo el del Diezmo, T02); se abre el
   **vado de la Ruta 4**; vuelve la pesca.
 - **Recompensas:** Fragmento 2, verso II. Alerce viaja a Caudal para ver el río y entrega **el inicial que nadie
   eligió** (X13): «Lleva días mirando la puerta.» Pista T03.
-- **Salida:** `p2_restored`. Nivel ~21.
+- **Salida:** `p2_restored`. Nivel ~19 (X35).
 
 ### B05 — Interludio 2: el Molino del Diezmo, Ruta 4 y Villa Brontia
 
@@ -1033,7 +1035,8 @@ B01 se mantiene íntegro. Ajustes compatibles, sin reescribir escenas:
      3 Piedras Lunares y encuentros nocturnos de Clefairy en el jardín; el Círculo pasa a ser destino de Vuelo.
   4. **Vigilia:** cada Guardián sostiene su Pilar. En Caudal se reúnen Leandro, Olmedo y Alerce: «Van a intentarlo por
      la fuerza.»
-- **Salida:** la Senda del Mirador, en el borde norte de la Sima. `b17_vigilia`.
+- **Salida:** la Senda del Mirador, en el borde norte de la Sima. `b17_vigilia`. Hasta el P8 la Senda está cerrada
+  desde Caudal (verja con candado de la Casa de las Esclusas y rápidos del Albo, X35); fondo de combate Acantilado.
 
 ### B18 — Pilar de la Convergencia (P9) (D18)
 
@@ -1310,7 +1313,7 @@ Sobble → Turtwig.
 | Combate | Lugar | Equipo |
 |---|---|---|
 | B1 | Villa Alba (B01) | Inicial 5 |
-| B2 | Puente de Caudal | Starly 12, Riolu 12, inicial 14 |
+| B2 | Puente de Caudal | Starly 8, Riolu 9, inicial 10 (X35) |
 | Doble (aliado) | Parque Eólico | Staravia 24, inicial evolucionado 25 |
 | B3 | Museo de Lúmina | Staravia 32, Lucario 32, Gabite 31, Absol 32, inicial evolucionado 34 |
 | B4 | Pie del Monte | Staraptor 41, Lucario 41, Gabite 41, Absol 42, inicial final 43 |

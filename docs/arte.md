@@ -365,3 +365,29 @@ El masculino se rehízo con un kit propio, separado de las plantillas del elenco
    (`?scene=sprites&char=protagonista_f`); después se pueden borrar `heads_protas.mjs` y las ramas `legacy`.
 
 Tests: `tests/prota_kit.test.mjs` (partes, capas, rebote, espejo, mochila, proporciones 17 + 12 filas, jinete).
+
+## 10. Sprites de combate humanos: calidad de origen (revisión del 25-09-2026) — para una tarea de arte posterior
+
+El creador vio los sprites de combate de los humanos «muy cuadrados». Causa técnica (ya corregida en
+`battle/scene/camera.js`): la cámara del combate ampliaba ×1,3–1,4 en la entrada y ×1,08–1,14 al enfocar, con muestreo
+al vecino más cercano, así que los píxeles de arte (2×2) salían como bloques irregulares de 2 y 3 px. Ahora el zoom es
+siempre 1 y **no se amplían de más**: todos se dibujan 1:1 (frame 160×160 = nativo 80×80 ×2, como los de Añil; medido
+con `tools/cache/cb_pixscale.mjs`: todos tienen píxel de 2×2 exacto).
+
+Aun a escala correcta, **todo el arte de combate propio es de baja calidad de origen** (no se ha redibujado nada):
+
+| Sprite | Problema observado |
+|---|---|
+| `protagonista_m_back` | Cabeza y mochila como bloques rectangulares que llenan el frame (112×156 px, 64 % de relleno); solo 19 colores, sombreado plano. |
+| `protagonista_f_back` | Igual que el masculino y aún más macizo (75 % de relleno, 14 colores); diseño pendiente (D30). |
+| `gael_front`, `profesor_front`, `guardiana_front` | Figura rígida de frente que ocupa casi todo el alto (148–156 px frente a ~120 de los de Añil), torso rectangular con los brazos pegados, piernas como dos columnas. |
+| `leandro_front`, `abril_front`, `fermin_front`, `olvido_front`, `sol_front` | Mismo esqueleto frontal («4 cabezas») con contorno recto; el atrezo (llave, pico, libreta) no rompe la silueta. |
+| `vertice_front`, `casia_front`, `garrido_front` | Batas y trajes como rectángulos con poco volumen; 25–29 colores y casi sin sombreado. |
+| `genesis_tecnico_front`, `genesis_tecnica_front` | Uniforme simétrico en bloque; los dos son el mismo cuerpo con cambios mínimos. |
+
+Referencia de calidad: los entrenadores de Añil (`Graphics/Trainers`, p. ej. `CHICO.png`, `CAZABICHOS.png`) ocupan
+~120 px de alto con un 37–41 % de relleno de su caja (poses dinámicas, silueta abierta, antialias de color) frente al
+55–75 % de los propios. Una pasada de arte debería: bajar la figura a ~120 px dentro del frame de 160, abrir la
+silueta (pose en 3/4, brazos separados, peso en una pierna), sombrear en 3–4 tonos por material y rehacer las
+espaldas de los protagonistas con la mochila integrada en la silueta. Mientras tanto, las clases genéricas de Añil
+(`content/anilClasses.js`) no tienen este problema.

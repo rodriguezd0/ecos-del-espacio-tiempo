@@ -1,15 +1,21 @@
 // Cámara del combate al estilo de Negro 2/Blanco 2 (emulada en 2D): encuadre (centro + zoom) que se
 // interpola suavemente, balanceo en reposo, sacudidas y paralaje (el fondo se mueve menos que el campo).
 // La matemática es PURA (se prueba en Node); `apply` escribe la transformación en grupos de Three.js.
+//
+// 25-09-2026 (el creador: «fondo de pelea muy pixelado», «sprites de humanos muy cuadrados»): los fondos de Añil
+// (512×384) y los sprites (arte ×2, Pokémon ×2/×3) solo se ven bien a escala entera; los zooms de 1,08–1,4 con
+// muestreo al vecino más cercano repartían los píxeles de forma irregular (bloques de 2 y 3 px). La cámara conserva
+// paneos, balanceo y sacudidas, pero el zoom es siempre 1 (`pixelPerfect`) y los desplazamientos son enteros.
 import { SCREEN_W, SCREEN_H } from './layout.js';
 
 export const CAMERA_PRESETS = Object.freeze({
   default: { x: SCREEN_W / 2, y: SCREEN_H / 2, zoom: 1 },
-  introFoe: { x: 384, y: 150, zoom: 1.4 },
-  introTrainer: { x: 372, y: 140, zoom: 1.3 },
-  focusFoe: { x: 340, y: 168, zoom: 1.14 },
-  focusPlayer: { x: 196, y: 222, zoom: 1.08 },
-  wide: { x: SCREEN_W / 2, y: SCREEN_H / 2 + 6, zoom: 1.02 },
+  // Con zoom 1 los paneos son cortos: más allá se verían los bordes espejados del fondo.
+  introFoe: { x: SCREEN_W / 2 + 24, y: SCREEN_H / 2 - 8, zoom: 1 },
+  introTrainer: { x: SCREEN_W / 2 + 24, y: SCREEN_H / 2 - 8, zoom: 1 },
+  focusFoe: { x: SCREEN_W / 2 + 28, y: SCREEN_H / 2 - 10, zoom: 1 },
+  focusPlayer: { x: SCREEN_W / 2 - 24, y: SCREEN_H / 2 + 10, zoom: 1 },
+  wide: { x: SCREEN_W / 2, y: SCREEN_H / 2 + 6, zoom: 1 },
 });
 
 /**
@@ -29,6 +35,20 @@ export function worldToScreen(view, x, y, f = 1) {
   return { x: x * t.scale + t.tx, y: y * t.scale + t.ty };
 }
 
+/** Paneo máximo desde el centro con zoom 1 (px de campo): más allá asoman los bordes espejados del fondo. */
+export const MAX_PAN = Object.freeze({ x: 32, y: 16 });
+
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+/** Objetivo de cámara pixel-perfect: zoom 1 y paneo limitado a MAX_PAN alrededor del centro. */
+export function pixelPerfectView(p) {
+  return {
+    x: clamp(p.x, SCREEN_W / 2 - MAX_PAN.x, SCREEN_W / 2 + MAX_PAN.x),
+    y: clamp(p.y, SCREEN_H / 2 - MAX_PAN.y, SCREEN_H / 2 + MAX_PAN.y),
+    zoom: 1,
+  };
+}
+
 export class BattleCamera {
   constructor() {
     this.view = { ...CAMERA_PRESETS.default }; // encuadre actual
@@ -40,12 +60,13 @@ export class BattleCamera {
     this.shakeFrames = 0;
     this.shakeT = 0;
     this.offset = { x: 0, y: 0 };
+    this.pixelPerfect = true; // zoom siempre 1 (ver cabecera)
   }
 
   /** Cambia el objetivo. `speed` 0..1 (1 = instantáneo). */
   to(preset, speed = 0.08) {
     const p = typeof preset === 'string' ? CAMERA_PRESETS[preset] || CAMERA_PRESETS.default : preset;
-    this.target = { x: p.x, y: p.y, zoom: p.zoom };
+    this.target = this.pixelPerfect ? pixelPerfectView(p) : { x: p.x, y: p.y, zoom: p.zoom };
     this.speed = speed;
   }
 

@@ -195,6 +195,9 @@ function details(b) {
   ]) b.stamp(s, x, y);
   // Orilla oeste del codo del río junto a la verja: vallada, para que la Senda solo se tome por su camino
   b.paint('valla_blanca_v', span(SOUTH_EXIT.x1 + 1, SOUTH_EXIT.x1 + 1, SOUTH_EXIT.gate.y, H - 1));
+  // …y la orilla este igual: su franja de guijarros bajaba a la Senda sin pasar por la verja (auditoría de fugas,
+  // DECISIONES X35).
+  b.paint('valla_blanca_v', span(RIVER.v.x1 + 1, RIVER.v.x1 + 1, SOUTH_EXIT.gate.y, H - 1));
   // Carteles (los textos son eventos de content/events/b03_caudal.js)
   for (const [x, y] of [[NORTH_ENTRY.x1 + 2, 6], [LOCK.sign.x, LOCK.sign.y], [12, 25], [60, 45]]) b.stamp('cartel_madera', x, y);
   // Rocas en el río

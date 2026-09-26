@@ -1,11 +1,13 @@
-// Animaciones genéricas de movimientos por estilo (moveStyle.js) y tipo. No hay una animación por
-// movimiento: se combinan cámara, tono de pantalla, partículas del tipo y sonidos PRSFX de Añil.
+// Animaciones de movimientos. Primero la de Añil del propio movimiento (anilAnimPlayer.js: Data/PkmnAnimations de
+// Essentials); si no existe o no carga, una genérica por estilo (moveStyle.js) y tipo que combina cámara, tono de
+// pantalla, partículas del tipo y sonidos PRSFX de Añil.
 import { classifyMove } from '../moveStyle.js';
 import {
   burstAt, impactAt, ringAt, projectile, beam, charge, lunge, aura, soundWaves, rainOn, focusCamera, recipe,
 } from './primitives.js';
 import { rand } from '../gfx/particles.js';
 import { lerp, Ease } from '../timeline.js';
+import { playAnilMoveAnimation } from './anilAnimPlayer.js';
 
 const scaleTone = (t, k) => (t ? [t[0] * k, t[1] * k, t[2] * k, 0] : null);
 
@@ -191,6 +193,13 @@ export async function playMoveAnimation(fx, { user, targets, move, hitNum = 0 })
   const info = classifyMove(move);
   const list = targets.length ? targets : (user !== null && user !== undefined ? [user] : []);
   if (!list.length) return;
+  if (!fx.minimal) {
+    try {
+      if (await playAnilMoveAnimation(fx, { user, targets, move, hitNum })) return;
+    } catch (err) {
+      console.warn(`[combate] Animación de Añil de ${move?.id} fallida; se usa la genérica`, err);
+    }
+  }
   fx.moveSE(move, info);
   if (fx.minimal) {
     await fx.tasks.wait(8);

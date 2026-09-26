@@ -99,6 +99,11 @@ arco T01 en las mismas casillas); `maps/b02/zaguan_centro.js` añade `...liaCent
   puente; antes se podía cruzar el río por las pasarelas de la esclusa (o irse a la Ruta 3) sin la escena. Bordes
   cerrados: el oeste solo se abre en el sendero de la ribera (y 3–5) y el río; la orilla x 48 junto a la verja de la
   Senda del Mirador está vallada (el enlace futuro solo entra por x 44–47).
+- **Cierres de progresión (DECISIONES X35, `content/events/progression_gates.js`):** el puente del primer arroyo de la
+  Ruta 2 (x 13–15, y 15) tiene barrera de obras y un operario hasta el P1 (Caudal y Gael B2 llegan después de
+  Casilda; quien venga del sur con una partida antigua pasa hablando con él). La Senda del Mirador (x 44–47, y 52) se
+  cierra con una verja con candado hasta el P8, y los rápidos del Albo (x 49–52, y 55) impiden bajar nadando; la orilla
+  este (x 53) también está vallada. La auditoría `tools/audit_progression.mjs` los comprueba.
 
 ## Pruebas rápidas
 

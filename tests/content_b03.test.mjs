@@ -143,21 +143,22 @@ test('encuentros: tablas de POKEDEX_DISTRIBUCION (pesos 100, niveles y especies 
     assert.equal(sum(table), 100, `${name} suma 100`);
     for (const [, sp] of table) assert.ok(db.species[sp], `${name}: ${sp}`);
   }
-  assert.ok(RUTA_2.grass.every((r) => r[2] === 7 && r[3] === 12), 'hierba de la Ruta 2: 7–12');
-  assert.ok(CAUDAL.fish_old.every((r) => r[2] === 8 && r[3] === 15), 'Caña Vieja de Caudal: 8–15');
+  // Curva del principio rebajada (DECISIONES X35).
+  assert.ok(RUTA_2.grass.every((r) => r[2] === 6 && r[3] === 10), 'hierba de la Ruta 2: 6–10');
+  assert.ok(CAUDAL.fish_old.every((r) => r[2] === 8 && r[3] === 13), 'Caña Vieja de Caudal: 8–13');
   assert.deepEqual(ruta2.encounters, RUTA_2);
   assert.deepEqual(caudal.encounters, CAUDAL);
 });
 
-test('entrenadores: curva del Interludio 1 (9–13) y Gael B2 con Starly 12, Riolu 12 e inicial con ventaja 14', () => {
+test('entrenadores: curva del Interludio 1 (7–11) y Gael B2 con Starly 8, Riolu 9 e inicial con ventaja 10', () => {
   for (const [id, t] of Object.entries(trainers)) {
     if (id === 'gael_2') continue;
-    for (const p of t.party) assert.ok(p.level >= 9 && p.level <= 13, `${id}: ${p.species} ${p.level}`);
+    for (const p of t.party) assert.ok(p.level >= 7 && p.level <= 11, `${id}: ${p.species} ${p.level}`);
   }
   const s = newState();
   s.setVar('starter', 'SOBBLE');
   const party = trainers.gael_2.party(s);
-  assert.deepEqual(party.map((p) => [p.species, p.level]), [['STARLY', 12], ['RIOLU', 12], ['TURTWIG', 14]]);
+  assert.deepEqual(party.map((p) => [p.species, p.level]), [['STARLY', 8], ['RIOLU', 9], ['TURTWIG', 10]]);
   assert.equal(trainers.gael_2.canLose, true);
 });
 

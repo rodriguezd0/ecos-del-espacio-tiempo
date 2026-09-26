@@ -160,6 +160,35 @@ mecánica en tal momento. Zygarde es un legendario serio… No le importas de na
 - **Célula en el mapa:** solo el sprite original del autor (`zygarde_celula`), quieta y apoyada en el suelo: sin
   animación, sin flotar, sin brillo hexagonal ni luz propia, con opacidad 210/255 para que se vea sin llamar la atención.
 
+**X35 — Curva del principio y fugas de progresión** (DECIDIDO (autor, 25-09-2026); prevalece sobre CAMPANA §2.5 S0,
+B02–B04, §6.3 B2 y POKEDEX_DISTRIBUCION §7.1). Palabras del autor: «Apenas salgo de elegir el inicial, que es nivel 6,
+en la primera ciudad tengo que pelear contra mi rival y ya es nivel 12: es mucha diferencia, tendría que ser menos
+nivel. […] En la Senda del Mirador peleo contra Óscar, nivel 60, con un fondo de pelea como en el espacio, justo abajo
+de Ciudad Caudal: seguimos en el inicio, como máximo nivel 30.»
+
+- **Curva del principio rebajada.** Zaguán y Explanada 5–8 (antes 7–12); Ruinas del Dintel 5–8 y sus entrenadores
+  5–8 (antes 6–9); **Casilda 9/9/10** (antes 11/11/12); Geodude de la Cámara 7. Ruta 2: hierba 6–10, miel 7–11,
+  entrenadores 7–10; Caudal: entrenadores 10–11, Caña Vieja 8–13. **Gael B2: Starly 8, Riolu 9, inicial 10** (antes
+  12/12/14). B04 dos niveles menos: hierba 11–16, grutas 12–16, Pilar 13–18, entrenadores 13–17, técnicos 14–16,
+  **Leandro 17/17/18/19**. Desde B05 la curva no cambia (B05 ya empieza en 18–22).
+- **Orden B02 → B03 obligado.** El puente del arroyo de la Ruta 2 tiene los tablones sueltos por los temblores: un
+  operario del concejo de Zaguán no deja pasar hasta el P1 (`progression_gates.js#ruta2BridgeGate`). Así Caudal y el
+  B2 de Gael llegan después de Casilda (S0 de CAMPANA §2.5 queda en «Ruta 2 hasta el puente»; C013 pasa a S1). Una
+  partida guardada que ya estuviera en Caudal (`b03_gael_b2`) no queda encerrada: el operario la deja pasar.
+- **Senda del Mirador cerrada hasta el P8.** Verja de hierro con candado y cartel de la Casa de las Esclusas
+  («desprendimientos hacia la Sima») en el camino sur de Caudal, y los rápidos del Albo en el borde sur del río (con
+  Nadar no se baja nadando); la orilla este del río, vallada como la oeste. Se abre con `p8_restored` (B17). Los
+  entrenadores de la Senda y del Mirador Sur solo existen tras el P8: el tipo de evento `trainer` ignoraba su `when`
+  (corregido en `world/eventTypes.js`). Fondo de combate de la Senda: **Acantilado** (antes Espacio).
+- **Auditoría de fugas** (`tools/audit_progression.mjs`, test `tests/progression_audit.test.mjs`): por cada etapa
+  (estado de entrada de B01–B21 del modo desarrollador) recorre el mundo con la pasabilidad real y las capacidades de
+  Zygarde de ese momento y falla si un mapa alcanzable tiene entrenadores o salvajes más de 8 niveles por encima del
+  nivel esperado. Fugas que encontró y cierres: (1) Caudal y la Senda desde el principio (arriba); (2) el prado del
+  cerro de los molinos de **Brontia** llegaba al borde norte y salía a la **Ruta 11** (nv 53–57) sin pasar por el
+  hielo-eco: el pinar de la meseta sigue ahora por encima del cerro; (3) la **Supercaña** del B09 pescaba en el Mar del
+  Sur a 45–50 con el jugador a ~38: su tabla pasa a 40–46. Los cierres de contacto que devuelven al jugador
+  (`blockedLink` de los bloques, niebla del Neblino) llevan `gate: true` para que la auditoría los trate como muros.
+
 **Nota técnica detectada (propuesta TEC-07):** `tools/extract_data.mjs` descarta los campos vacíos de `Evolutions`, por
 lo que `species.json` pierde o desalinea las evoluciones con parámetro vacío (`Happiness`, `Trade`: Golbat, Buneary,
 Chansey, Cleffa, Pichu, Munchlax, Riolu, Azurill, Togepi, Pawmo, Kadabra, Graveler, Machoke, Haunter, Gurdurr, Eevee).

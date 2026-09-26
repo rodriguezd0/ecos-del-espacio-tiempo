@@ -14,8 +14,10 @@ const rc = (r) => cells(r.x, r.y, r.w, r.h);
 const key = (x, y) => `${x},${y}`;
 
 function paintBorders(b) {
-  // Norte: pinar de la meseta, abierto en la calle norte
-  b.paint('bosque_pinos', [...cells(0, 0, 20, 4), ...cells(24, 0, 4, 2)]);
+  // Norte: pinar de la meseta, abierto SOLO en la calle norte (la del hielo-eco). El pinar sigue por encima del cerro
+  // de los molinos (x 28–41): antes ese prado llegaba al borde y se salía a la Ruta 11 (nivel 53–55) sin pasar por el
+  // hielo (auditoría de fugas, DECISIONES «DECIDIDO (autor, 25-09-2026)»).
+  b.paint('bosque_pinos', [...cells(0, 0, 20, 4), ...cells(24, 0, 4, 2), ...cells(28, 0, 14, 2)]);
   b.paint('bosque_mixto', [...cells(0, 4, 2, 2)]);
   // Oeste y este: arboleda abierta en las calles
   b.paint('bosque_mixto', [...cells(0, 22, 2, 14)]);

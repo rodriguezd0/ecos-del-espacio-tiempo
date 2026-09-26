@@ -135,5 +135,5 @@ export function blockedLink(prefix, cells, text, back, face) {
     await ctx.say(text);
     await ctx.move('player', [back], { through: false });
   };
-  return cells.map(([x, y]) => ({ id: `${prefix}_${x}_${y}`, x, y, trigger: 'touch', script }));
+  return cells.map(([x, y]) => ({ id: `${prefix}_${x}_${y}`, x, y, trigger: 'touch', gate: true, script }));
 }

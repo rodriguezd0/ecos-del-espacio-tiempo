@@ -16,6 +16,7 @@ uniform vec4 uRect;
 uniform float uOpacity;
 uniform vec4 uColor;
 uniform vec3 uTone;
+uniform float uGray;
 uniform float uClipV;
 uniform vec4 uStripe;
 uniform float uStripeT;
@@ -26,6 +27,7 @@ void main() {
   vec4 c = texture2D(map, mix(uRect.xy, uRect.zw, vUv));
   if (c.a < 0.01) discard;
   if (uSilhouette > 0.5) { gl_FragColor = vec4(0.0, 0.0, 0.0, uOpacity); return; }
+  if (uGray > 0.0) c.rgb = mix(c.rgb, vec3(dot(c.rgb, vec3(0.299, 0.587, 0.114))), uGray);
   c.rgb += uTone;
   if (uStripe.a > 0.0) {
     // Franjas finas que se desplazan (subida/bajada de características, estados)
@@ -109,6 +111,7 @@ export function spriteMaterial(tex = null) {
     uOpacity: { value: 1 },
     uColor: { value: new THREE.Vector4(1, 1, 1, 0) },
     uTone: { value: new THREE.Vector3(0, 0, 0) },
+    uGray: { value: 0 },
     uClipV: { value: 1.01 },
     uStripe: { value: new THREE.Vector4(0, 0, 0, 0) },
     uStripeT: { value: 0 },
@@ -146,6 +149,28 @@ export function backgroundMaterial(tex) {
     uTone: { value: new THREE.Vector3(0, 0, 0) },
     uAlpha: { value: 1 },
   });
+}
+
+const SPRITE_BLENDS = {
+  0: { blending: THREE.NormalBlending },
+  1: { blending: THREE.AdditiveBlending },
+  // Resta de RGSS (blend_type 2): destino − origen·alfa
+  2: { blending: THREE.CustomBlending, blendEquation: THREE.ReverseSubtractEquation, blendSrc: THREE.SrcAlphaFactor, blendDst: THREE.OneFactor },
+};
+
+/** Modo de mezcla de RGSS (0 normal, 1 suma, 2 resta) en un material de sprite. */
+export function setSpriteBlend(material, type = 0) {
+  const key = SPRITE_BLENDS[type] ? type : 0;
+  if (material.userData.blend === key) return;
+  const b = SPRITE_BLENDS[key];
+  material.blending = b.blending;
+  if (b.blendEquation !== undefined) {
+    material.blendEquation = b.blendEquation;
+    material.blendSrc = b.blendSrc;
+    material.blendDst = b.blendDst;
+  }
+  material.userData.blend = key;
+  material.needsUpdate = true;
 }
 
 /** Quad con origen abajo-centro (y hacia abajo, v = 0 arriba). */

@@ -22,7 +22,11 @@ export const RUTA_8 = Object.freeze({
   fish_good: t([[70, 'BARBOACH', 33, 38], [25, 'GOLDEEN', 33, 38], [5, 'WHISCASH', 33, 38]]),
 });
 
-/** Mar del Sur (superficie): Nadar 42–50, Caña Buena desde los muelles 30–40 y Supercaña 45–50. */
+/**
+ * Mar del Sur (superficie): Nadar 42–50, Caña Buena desde los muelles 30–40 y Supercaña 40–46. La Supercaña se
+ * recibe en Caleta Sonda en el B09 (nivel ~38) y se pesca desde los muelles sin Nadar: antes 45–50 era una fuga de
+ * nivel (auditoría de progresión, DECISIONES X35 «DECIDIDO (autor, 25-09-2026)»).
+ */
 const SEA_WATER = t([
   [20, 'TENTACOOL', 42, 50], [15, 'WINGULL', 42, 50], [10, 'PELIPPER', 42, 50], [10, 'MANTYKE', 42, 50],
   [10, 'FINNEON', 42, 50], [10, 'FRILLISH', 42, 50], [10, 'TENTACRUEL', 42, 50], [5, 'BRUXISH', 42, 50],
@@ -30,8 +34,8 @@ const SEA_WATER = t([
 ]);
 const SEA_GOOD = t([[30, 'REMORAID', 30, 40], [30, 'CLAUNCHER', 30, 40], [20, 'WISHIWASHI', 30, 40], [20, 'CORSOLA', 30, 40]]);
 const SEA_SUPER = t([
-  [25, 'GYARADOS', 45, 50], [25, 'LUMINEON', 45, 50], [20, 'OCTILLERY', 45, 50], [20, 'CLAWITZER', 45, 50],
-  [5, 'DONDOZO', 45, 50], [5, 'TATSUGIRI', 45, 50],
+  [25, 'GYARADOS', 40, 46], [25, 'LUMINEON', 40, 46], [20, 'OCTILLERY', 40, 46], [20, 'CLAWITZER', 40, 46],
+  [5, 'DONDOZO', 40, 46], [5, 'TATSUGIRI', 40, 46],
 ]);
 
 /** Playas de la Ruta 15 (hierba de la arena, tras P4): 30–38. */

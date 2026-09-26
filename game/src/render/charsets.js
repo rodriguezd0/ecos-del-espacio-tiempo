@@ -7,6 +7,7 @@
 //   'asset:ruta.png'           game/assets/ruta.png
 import { engine } from '../core/engine.js';
 import { loadRawTexture } from './textures.js';
+import { followerScale, sheetContentExtent, parseFollowerKey } from './followerSize.js';
 
 const cache = new Map();
 let registryPromise = null;
@@ -50,6 +51,7 @@ export async function charsetUrls(key) {
 /**
  * Carga una hoja → { tex, width, height, frameW, frameH, offset } o null si no existe.
  * `offset` = true si el nombre contiene "offset" (Essentials lo dibuja 16 px más abajo).
+ * `scale` = escala de dibujo (1; < 1 para los seguidores de Añil demasiado grandes, ver followerSize.js).
  */
 export function loadCharset(key) {
   if (!key) return Promise.resolve(null);
@@ -59,7 +61,10 @@ export function loadCharset(key) {
         try {
           const tex = await loadRawTexture(url);
           const img = tex.image;
-          return { key, url, tex, width: img.width, height: img.height, frameW: img.width / 4, frameH: img.height / 4, offset: /offset/i.test(key) };
+          return {
+            key, url, tex, width: img.width, height: img.height, frameW: img.width / 4, frameH: img.height / 4,
+            offset: /offset/i.test(key), scale: followerSheetScale(key, img),
+          };
         } catch { /* probar la siguiente */ }
       }
       console.warn(`Gráfico de personaje no encontrado: "${key}"`);
@@ -67,6 +72,26 @@ export function loadCharset(key) {
     })());
   }
   return cache.get(key);
+}
+
+/** Escala de una hoja de seguidor (1 para el resto de gráficos o si no se puede medir). */
+function followerSheetScale(key, img) {
+  const f = parseFollowerKey(key);
+  if (!f) return 1;
+  try {
+    const c = document.createElement('canvas');
+    c.width = img.width;
+    c.height = img.height;
+    const g = c.getContext('2d', { willReadFrequently: true });
+    g.drawImage(img, 0, 0);
+    const extent = sheetContentExtent(g.getImageData(0, 0, img.width, img.height).data, img.width, img.height);
+    const sp = engine.data?.species?.[f.species];
+    const height = (f.form ? sp?.forms?.[f.form]?.height : null) ?? sp?.height;
+    return followerScale(extent, height, f.species);
+  } catch (err) {
+    console.warn(`[charsets] No se pudo medir el seguidor ${key}`, err);
+    return 1;
+  }
 }
 
 /** Charsets del jugador (andar/correr/surf) según género, con arte provisional de Axis si existe. */

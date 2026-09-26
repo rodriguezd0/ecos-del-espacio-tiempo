@@ -111,9 +111,11 @@ export class CharacterSprite {
       if (this.key !== want || !sheet) return;
       this.sheet = sheet;
       this.material.uniforms.map.value = sheet.tex;
-      this.frameH = sheet.frameH;
+      // frameH = alto dibujado (con la escala de los seguidores grandes); uFrameH = píxeles del fotograma (arbustos).
+      const k = sheet.scale || 1;
+      this.frameH = sheet.frameH * k;
       this.material.uniforms.uFrameH.value = sheet.frameH;
-      this.mesh.scale.set(sheet.frameW, sheet.frameH, 1);
+      this.mesh.scale.set(sheet.frameW * k, sheet.frameH * k, 1);
     });
   }
 
@@ -156,7 +158,7 @@ export class CharacterSprite {
       u.uRect.value.set((col * s.frameW) / s.width, (row * s.frameH) / s.height, ((col + 1) * s.frameW) / s.width, ((row + 1) * s.frameH) / s.height);
     }
     u.uOpacity.value = ch.opacity / 255;
-    u.uBush.value = ch.bushDepth || 0;
+    u.uBush.value = (ch.bushDepth || 0) / (this.sheet?.scale || 1); // en píxeles del fotograma
     const x = Math.round(ch.screenX() + ox);
     const yOff = this.sheet?.offset ? 16 : 0;
     const y = Math.round(ch.screenY() + oy - (ch.bobHeight || 0) + yOff);

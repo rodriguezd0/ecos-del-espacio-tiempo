@@ -45,6 +45,18 @@ export const BACKDROP_ALIASES = Object.freeze({
   distortion: 'MundoDistorsion', sky: 'Cielo', temple: 'Templo', ruins: 'Templo', bridge: 'PuenteMadera',
 });
 
+/**
+ * Fondos de Añil que en realidad son una imagen de 256×192 ampliada ×2 (bloques de 2×2 casi uniformes y emborronados:
+ * medido con tools/cache/cb_bgblock.mjs el 25-09-2026). Dibujados tal cual se ven «muy pixelados» (el creador lo
+ * notó en las ruinas, que usan Templo); gfx/field.js los reduce a su resolución real y los amplía con filtrado lineal.
+ */
+export const LOWRES_BACKDROPS = Object.freeze(['Templo', 'Blaine']);
+
+/** ¿El fondo (nombre de Añil, sin _bg) es de baja resolución ampliada? */
+export function isLowResBackdrop(name) {
+  return LOWRES_BACKDROPS.includes(name);
+}
+
 const ENV_BACKDROP = Object.freeze({
   Grass: 'Pradera', TallGrass: 'Pradera', Sand: 'Playa', Rock: 'Monte', Ice: 'snow', Snow: 'snow',
   Cave: 'Cueva', Volcano: 'Volcan', Forest: 'Bosque', Puddle: 'Pradera',

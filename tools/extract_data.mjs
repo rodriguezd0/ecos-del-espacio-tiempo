@@ -5,6 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { parsePBS, list, int, num, tuples } from './lib/pbs.mjs';
+import { loadMarshal } from './lib/marshal.mjs';
+import { applyCompiledMetrics } from './lib/speciesMetrics.mjs';
 import { GENERAL_336, PARADOX_7, ULTRA_11, LEGENDARY_58, ID_NORMALIZATIONS, splitNames } from './axis_dex_source.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -84,33 +86,10 @@ function extractSpecies() {
     const form = int(sec.args[0]);
     sp.forms[form] = speciesFields(sec.fields);
   }
-  // Métricas de sprites (offsets de batalla y sombra). Archivos posteriores sobrescriben.
-  const metricFiles = ['pokemon_metrics.txt', 'pokemon_metrics_forms.txt', 'pokemon_metrics_Gen_9_Pack.txt', 'pokemon_metrics_female.txt'];
-  for (const file of metricFiles) {
-    const full = path.join(PBS, file);
-    if (!fs.existsSync(full)) continue;
-    for (const sec of parsePBS(full)) {
-      const sp = species[sec.section];
-      if (!sp) continue;
-      const f = sec.fields;
-      const m = {};
-      if (f.BackSprite) m.back = list(f.BackSprite).map(Number);
-      if (f.FrontSprite) m.front = list(f.FrontSprite).map(Number);
-      if (f.FrontSpriteAltitude) m.altitude = int(f.FrontSpriteAltitude);
-      if (f.ShadowX) m.shadowX = int(f.ShadowX);
-      if (f.ShadowSize) m.shadowSize = int(f.ShadowSize);
-      if (f.ShadowSprite) m.shadow = list(f.ShadowSprite).map(Number);
-      if (f.AnimationSpeed) m.animSpeed = num(f.AnimationSpeed);
-      const form = sec.args[0] !== undefined ? int(sec.args[0]) : 0;
-      const isFemale = file.includes('female');
-      if (form === 0 && !isFemale) sp.metrics = { ...(sp.metrics || {}), ...m };
-      else if (isFemale) sp.metricsFemale = { ...(sp.metricsFemale || {}), ...m };
-      else {
-        sp.forms[form] = sp.forms[form] || {};
-        sp.forms[form].metrics = { ...(sp.forms[form].metrics || {}), ...m };
-      }
-    }
-  }
+  // Métricas de sprites (offsets de combate, sombra, velocidad): las COMPILADAS que usa Añil (Data/species_metrics.dat);
+  // los PBS pokemon_metrics*.txt están desfasados en ~25 especies (ver tools/lib/speciesMetrics.mjs).
+  const compiled = loadMarshal(fs.readFileSync(path.join(ROOT, 'Pokemon Anil V4.13', 'Data', 'species_metrics.dat')));
+  console.log(`Métricas compiladas aplicadas: ${applyCompiledMetrics(species, compiled)}`);
   return species;
 }
 

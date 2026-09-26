@@ -186,6 +186,21 @@ export class BattleScene extends Scene {
     }
   }
 
+  /**
+   * Durante una animación de Añil se ocultan las sombras (pbSaveShadows) y las cajas de datos
+   * (HIDE_DATABOXES_DURING_MOVES de DBK). Devuelve la función que las restaura.
+   */
+  hideForAnimation() {
+    const shadows = this.battlers.map((b) => b?.shadowVisible);
+    const boxes = this.boxes.map((b) => b?.visible);
+    for (const b of this.battlers) if (b) b.shadowVisible = false;
+    for (const b of this.boxes) if (b) b.visible = false;
+    return () => {
+      this.battlers.forEach((b, i) => { if (b) b.shadowVisible = shadows[i]; });
+      this.boxes.forEach((b, i) => { if (b) b.visible = boxes[i]; });
+    };
+  }
+
   moveSE(move, info) {
     const key = String(move?.id || '').toUpperCase();
     this.se(moveSounds?.get(key) || TYPE_SE[info.type]);
@@ -201,6 +216,9 @@ export class BattleScene extends Scene {
       get minimal() { return scene.minimal; },
       caughtBall: null,
       sprite: (i) => (scene.battlers[i]?.visible ? scene.battlers[i] : null),
+      battler: (i) => scene.battlers[i] || null,
+      get layer() { return scene.field.fieldLayer; },
+      hideForAnimation: () => scene.hideForAnimation(),
       point: (i) => {
         const s = scene.battlers[i];
         return s?.atlas ? s.center : focusPoint(i, scene.sideSizes[i % 2] || 1);

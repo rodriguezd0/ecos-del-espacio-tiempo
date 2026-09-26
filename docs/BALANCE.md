@@ -48,6 +48,19 @@ posteriores las incidencias salen como diagnóstico y no rompen `npm test`.
   forman parte de una escena (p. ej. T02 en el molino, el Parque en B06) son combates de guion.
 - Los combates de Gael B2–B5 continúan la historia aunque el jugador pierda (cambia su frase); B6 hay que ganarlo.
 
+## Curva y fugas de progresión
+
+- La curva por zona está en `docs/POKEDEX_DISTRIBUCION.md` §7.1; el principio (B02–B04) se rebajó por petición del
+  autor (DECISIONES X35): Casilda 9–10, Gael B2 8–10, Leandro 17–19. El dinero no cambia de fórmula: con el nivel más
+  bajo del último Pokémon baja el premio (Casilda 1000, Gael B2 600, Leandro 1900).
+- **Ningún mapa alcanzable puede superar en más de 8 niveles el nivel esperado de la etapa.** Lo comprueba
+  `tools/audit_progression.mjs` (test `tests/progression_audit.test.mjs`) para cada etapa B01–B21: estado de entrada
+  del modo desarrollador (`game/src/dev/devBlocks.js`, el nivel esperado es el más alto de su equipo de referencia),
+  pasabilidad real y capacidades de Zygarde de ese momento. Entrenadores con visión y salvajes (hierba, cueva, agua con
+  Nadar, pesca con la caña que se lleva) cuentan; los combates de guion no. Si aparece una fuga, se cierra con una
+  barrera diegética o se ajustan los niveles. Los eventos `touch` que devuelven al jugador llevan `gate: true` (los
+  `blockedLink` de los bloques ya lo ponen) para que la auditoría los trate como muros.
+
 ## Otros
 
 - Alfa: multiplicador ×1.2 de estadísticas, ~3 % en encuentros aleatorios (provisional D29).

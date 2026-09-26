@@ -10,9 +10,12 @@
 
 const decoder = new TextDecoder('utf-8');
 
-export function loadMarshal(buffer) {
+export function loadMarshal(buffer, { keepIvars = false } = {}) {
   const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
   const reader = new MarshalReader(bytes);
+  // keepIvars: las variables de instancia de un 'I' sobre un objeto/array (p. ej. PBAnimation < Array con
+  // @name, @graphic…) se copian como propiedades sin '@'. Por defecto se descartan (comportamiento histórico).
+  reader.keepIvars = keepIvars;
   const major = reader.byte();
   const minor = reader.byte();
   if (major !== 4 || minor !== 8) throw new Error(`Versión Marshal no soportada ${major}.${minor}`);
@@ -101,9 +104,11 @@ class MarshalReader {
       case 0x49: { // 'I' ivars sobre el siguiente objeto (típicamente String)
         const obj = this.read();
         const n = this.fixnum();
+        const keep = this.keepIvars && obj !== null && typeof obj === 'object';
         for (let i = 0; i < n; i++) {
-          this.symbol();
-          this.read();
+          const key = this.symbol();
+          const value = this.read();
+          if (keep) obj[key.replace(/^@/, '')] = value;
         }
         return obj;
       }

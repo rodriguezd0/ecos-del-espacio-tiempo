@@ -147,7 +147,7 @@ export function blockedLink(prefix, cells, text, back, face, extra = {}) {
     await ctx.say(typeof text === 'function' ? text(ctx.state) : text);
     await ctx.move('player', [back], { through: false });
   };
-  return cells.map(([x, y]) => ({ id: `${prefix}_${x}_${y}`, x, y, trigger: 'touch', script, ...extra }));
+  return cells.map(([x, y]) => ({ id: `${prefix}_${x}_${y}`, x, y, trigger: 'touch', gate: true, script, ...extra }));
 }
 
 /** Rectángulo como lista de celdas. */
