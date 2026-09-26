@@ -128,6 +128,15 @@ Gael, postgame y DLC), `docs/TABLILLAS.md` (T01–T15, museo, Crónica, Libreta)
 | X30 | Tamaño del Monte del Portal (DECIDIDO-DEV, B12) | `montana_portal` queda en **50×50** (el atlas de CAMPANA §1.4 decía 50×70): el mapa del prólogo se amplía 6 columnas al este (macizo con la repisa de la cascada y su gruta, poza mayor) sin mover coordenadas; crecer 20 filas obligaría a desplazar el prólogo o la llegada (17,48) desde el campamento del B11. La subida se completa con la Ruta 10 alta y el campamento (B11) | Biblia §4 (el lugar del prólogo, reconocible); CAMPANA §1.8 (producción) |
 | X31 | Calzada del Rey y Sima del Eje (DECIDIDO-DEV, B19) | Los Peregrinos cruzan «por su Calzada, a pie, o no se llega» (por eso nunca volaron a la Peña); Casandra rompe la regla y cruza con su Noivern al ver alzarse el último tramo, y su Noivern trajo años atrás la Salamencita del nido de la cima. Tramos de T15: piedras forzadas que aguantan un paso (hay que pisarlas todas y acabar junto a la aguja; reiniciables). `sima_eje`: sendero del oeste entre las bajadas de B17 (Metagrossita) y, al este, la Calzada que baja de la Peña hasta el Umbral; su último tramo solo se alza con la Tabla Draco. El Mirador de la Calzada se visita desde el P4 (Peregrinos esperando, sin piedras) | TABLILLAS T15 («estabilizar los tramos… en tres puntos», «la Libreta tiene el camino completo al fondo»); CAMPANA B19 y §1.4 |
 
+**X33 — Multijugador online** (DECIDIDO-DEV y pedido del usuario, 25-09; función del juego, no de la historia):
+
+- **Salas:** con código de 4 caracteres, hasta 8 jugadores, desde «Online» en el menú de pausa.
+- **Combate 1 contra 1:** con niveles reales (decisión del usuario).
+- **Combate doble en equipo:** dos jugadores contra dos entrenadores de IA máxima. Cada rival lleva 3 Pokémon totalmente evolucionados de Axis, al nivel del Pokémon más alto de ambos jugadores y con IV perfectos.
+- **En ambos modos:** los equipos se curan en copia; no hay objetos, experiencia ni dinero, y la partida no cambia (perder no te devuelve al Centro Pokémon).
+- **Rendirse y desconexiones:** se puede rendir. Si el otro jugador se desconecta, en el 1 contra 1 ganas tú; en el doble en equipo pierden los dos.
+- **Pendientes pedidos por el usuario:** intercambios, chat y emotes.
+
 **Nota técnica detectada (propuesta TEC-07):** `tools/extract_data.mjs` descarta los campos vacíos de `Evolutions`, por
 lo que `species.json` pierde o desalinea las evoluciones con parámetro vacío (`Happiness`, `Trade`: Golbat, Buneary,
 Chansey, Cleffa, Pichu, Munchlax, Riolu, Azurill, Togepi, Pawmo, Kadabra, Graveler, Machoke, Haunter, Gurdurr, Eevee).
