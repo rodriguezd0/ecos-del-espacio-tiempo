@@ -16,6 +16,9 @@
 //     por id existen
 //   - células: ids únicos, coinciden con content/zygarde/cells.js (si existe) y con el catálogo del bloque 1
 //   - flags leídos por when() en los mapas del Bloque 1 se ponen en algún guion (o los pone otro bloque)
+//   - arte de cada mapa (avisos, tools/lib/map_qa.mjs): árboles cortados, stamps que pisan árboles u otros stamps
+//     sólidos, eventos visibles dentro de un árbol y rocas de agua (`roca` + `agua`) sin agua debajo; el listado
+//     completo por mapa lo escribe tools/qa_maps.mjs en docs/QA_MAPAS.md
 // Uso: node tools/validate_content.mjs [--quiet] [--json]   (sale con código 1 si hay errores)
 // API: import { validateContent } from './validate_content.mjs' → { report, stats }.
 import path from 'node:path';
@@ -26,6 +29,7 @@ import { World } from '../game/src/world/world.js';
 import { GameState } from '../game/src/core/state.js';
 import { buildMapNode } from './lib/map_node.mjs';
 import { TRAIN, FERRY } from '../game/src/world/transport.js';
+import { qaMap, qaWarnings } from './lib/map_qa.mjs';
 import {
   ROOT, Report, loadDb, mapFile, checkEvents, checkWarps, checkConnections, checkEncounters, checkTrainers,
   jsFiles, scanScripts, flagsReadByWhen, arrivalProblem, openSides, entrySeeds, scanScriptWarps, checkWarpReach,
@@ -96,6 +100,15 @@ function checkMapWorld(report, file, entry) {
     }
   }
   return solids;
+}
+
+/** Arte del mapa (tools/lib/map_qa.mjs): árboles cortados, solapes, rocas de agua en tierra → avisos. */
+async function checkMapArt(report, file, res) {
+  try {
+    for (const w of qaWarnings(await qaMap(res))) report.warn(file, w);
+  } catch (err) {
+    report.warn(file, `arte: no se pudo revisar (${err.message})`);
+  }
 }
 
 /** Llegadas de tren y ferri (world/transport.js) a mapas registrados: casilla válida. */
@@ -212,6 +225,7 @@ export async function validateContent() {
     ctx.solids[id] = checkMapWorld(report, file, entry);
     checkEvents(report, file, def, entry.map, ctx);
     checkEncounters(report, file, def, db);
+    await checkMapArt(report, file, res);
     if (file.startsWith(B01_DIR)) b01Defs.push(def);
   }
   // 2.ª pasada: lo que depende de otros mapas (warps, conexiones, llegadas y alcanzabilidad).

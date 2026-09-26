@@ -3,14 +3,18 @@
 // tag en game/data/tilesets.json para todos los tilesets que usan esa imagen. Idempotente.
 // Se ejecuta al final de `npm run data` (que regenera atlas y tilesets.json desde Añil).
 //
-// Uso: node tools/stamps_extra.mjs [Imagen ...] [--check]
-//   --check  no escribe: comprueba que el overlay está aplicado (sale con código 1 si no).
+// También aplica las correcciones de pasabilidad de tiles de Añil (content/stamps/passPatches.js: rocas, flores).
+//
+// Uso: node tools/stamps_extra.mjs [Imagen ...] [--check] [--pass-only]
+//   --check      no escribe: comprueba que el overlay está aplicado (sale con código 1 si no).
+//   --pass-only  solo las correcciones de pasabilidad (no toca los atlas).
 // Hoja de referencia: tools/cache/stamps/extra/<Imagen>.png
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PNG } from 'pngjs';
 import { EXTRA_LAYOUTS, EXTRA_PIECES, extraTiles, validateLayout, terrainPatchCells } from '../game/src/content/stamps/extraTiles.js';
+import { passPatchCells } from '../game/src/content/stamps/passPatches.js';
 import { regularTileAtlasPos, FIRST_REGULAR_TILE } from '../game/src/shared/autotile.js';
 import { drawKitPiece, hasKitArt } from './stamps_extra_art.mjs';
 import { drawTerrain, hasTerrainArt } from './stamps_extra_terrain.mjs';
@@ -172,23 +176,38 @@ function processImage(image, db, { check }) {
   return problems;
 }
 
+/** Aplica (o comprueba) las correcciones de pasabilidad (content/stamps/passPatches.js) en todos los tilesets. */
+function processPassPatches(db, { check }) {
+  const problems = [];
+  for (const ts of Object.values(db.tilesets)) {
+    if (!ts?.passages) continue;
+    for (const p of passPatchCells(ts)) {
+      if (ts.passages[p.id] === p.passage) continue;
+      if (check) problems.push(`tileset ${ts.id} (${ts.image}): pasaje de ${p.what} (${p.id}) sin corregir`);
+      else ts.passages[p.id] = p.passage;
+    }
+  }
+  return problems;
+}
+
 /** Comprueba sin escribir que el overlay está aplicado; devuelve la lista de problemas. */
 export function checkOverlay(images = Object.keys(EXTRA_LAYOUTS)) {
   const db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-  return images.flatMap((image) => processImage(image, db, { check: true }));
+  return [...images.flatMap((image) => processImage(image, db, { check: true })), ...processPassPatches(db, { check: true })];
 }
 
 function main() {
   const args = process.argv.slice(2);
   const check = args.includes('--check');
   const images = args.filter((a) => !a.startsWith('--'));
-  const list = images.length ? images : Object.keys(EXTRA_LAYOUTS);
+  const list = args.includes('--pass-only') ? [] : (images.length ? images : Object.keys(EXTRA_LAYOUTS));
   const db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
   const problems = [];
   for (const image of list) {
     if (!EXTRA_LAYOUTS[image]) throw new Error(`Sin overlay definido para ${image}`);
     problems.push(...processImage(image, db, { check }));
   }
+  problems.push(...processPassPatches(db, { check }));
   if (check) {
     if (problems.length) {
       console.error(`Overlay desactualizado (${problems.length}):\n  ${problems.slice(0, 20).join('\n  ')}\nEjecuta: node tools/stamps_extra.mjs`);

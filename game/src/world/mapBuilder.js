@@ -40,6 +40,8 @@ export class MapBuilder {
    *   isEmpty?: (tileId) => bool  tiles totalmente transparentes (no se copian desde stamps `src`)
    *   anilMap?: (mapId) => { width, height, layers } para stamps `from` sin hornear (solo Node)
    *   warn?: (msg) => void
+   *   openSides?: { north, south, east, west } lados con conexión (se pasan a los pinceles delegados)
+   *   reserved?: ['x,y'] casillas con evento, warp o llegada: un pincel no se extiende fuera de su trazo sobre ellas
    */
   constructor(opts) {
     const { width, height } = opts;
@@ -63,6 +65,9 @@ export class MapBuilder {
     this.warned = new Set();
     this.markers = [];
     this.stampsPlaced = [];
+    this.treeTiles = [];
+    this.openSides = opts.openSides || {}; // lados con conexión ({ north: true, … }): el bosque cierra las costuras
+    this.reserved = new Set(opts.reserved || []); // 'x,y' con evento/warp: los pinceles no se extienden sobre ellas
   }
 
   warnOnce(msg) {
@@ -223,8 +228,24 @@ export class MapBuilder {
       this.warnOnce(`MapBuilder: pincel complejo ${Object.keys(def).join('/')} requiere content/stamps/brushes.js; se omite`);
       return;
     }
-    const writes = this.painter(def, cells, { seed: this.seed, width: this.width, height: this.height, tileset: this.tileset });
-    for (const w of writes) this.set(layer ?? w.layer, w.x, w.y, w.id);
+    const canExtend = (x, y) => this.inBounds(x, y) && !this.get(1, x, y) && !this.get(2, x, y) && !this.reserved.has(`${x},${y}`);
+    const writes = this.painter(def, cells, {
+      seed: this.seed, width: this.width, height: this.height, tileset: this.tileset, openSides: this.openSides, canExtend,
+    });
+    for (const w of writes) {
+      const L = layer ?? w.layer;
+      this.set(L, w.x, w.y, w.id);
+      if (w.tree) this.markTree(w.x, w.y, L, w.id, w.tree === 'tip', w.blocker);
+    }
+  }
+
+  /**
+   * Anota un tile de árbol (punta de copa o cuerpo) para el sellado de puntas (world/treeTips.js): una punta con algo
+   * encima (otro árbol, un obstáculo, un evento o el borde del mapa) se vuelve a bloquear al crear el GameMap.
+   */
+  markTree(x, y, layer, id, tip, blocker = 0) {
+    if (!this.inBounds(x, y)) return;
+    this.treeTiles.push({ i: x + y * this.width, layer, id, tip, blocker: blocker || 0 });
   }
 
   /**
@@ -360,8 +381,33 @@ export class MapBuilder {
     }
     const info = { name, x, y, w: grids.w, h: grids.h, door: def.door ? { x: x + def.door[0], y: y + def.door[1] } : null };
     this.stampsPlaced.push(info);
+    if ((def.tags || []).includes('arbol') && opts.layer === undefined) this.markStampTree(grids, x, y);
     if (info.door) this.mark('door', info.door.x, info.door.y, { stamp: name });
     return info;
+  }
+
+  /** Árbol suelto (stamp `arbol`): su cuerpo cuenta como «árbol encima» para las puntas de copa del bosque. */
+  markStampTree(grids, x, y) {
+    for (let l = 0; l < LAYERS; l++) {
+      const g = grids.layers[l];
+      if (!g) continue;
+      for (let j = 0; j < grids.h; j++) {
+        for (let i = 0; i < grids.w; i++) {
+          const id = g[i + j * grids.w];
+          if (!id) continue;
+          const top = !(j > 0 && grids.layers.some((q) => q && q[i + (j - 1) * grids.w]));
+          const at = this.inBounds(x + i, y + j) ? this.layers[l][x + i + (y + j) * this.width] : 0;
+          if (at === id) this.markTree(x + i, y + j, l, id, top);
+          else if (at) this.markTree(x + i, y + j, this.layerOf(x + i, y + j, id), id, top);
+        }
+      }
+    }
+  }
+
+  /** Capa en la que quedó `id` en una casilla (tras apilar), o 0. */
+  layerOf(x, y, id) {
+    for (let L = 0; L < LAYERS; L++) if (this.get(L, x, y) === id) return L;
+    return 0;
   }
 
   /** Rejillas por capa de un stamp en cualquiera de sus formatos. */
@@ -436,6 +482,7 @@ export class MapBuilder {
       layers: this.layers,
       markers: this.markers.slice(),
       stamps: this.stampsPlaced.slice(),
+      treeTiles: this.treeTiles.slice(),
     };
   }
 }

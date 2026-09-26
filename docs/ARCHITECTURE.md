@@ -206,6 +206,16 @@ Brushes: `{ tile, variants }`, `{ autotile: slot }`, `{ nine: [x,y] }`, `pattern
 el brush `agua` + `orilla` (el autotile de agua de Añil solo tiene válidos sus 4 bloques interiores).
 Kit de Pilar, tinte por Pilar, tiles propios y biblioteca por bioma: §12.
 
+**Bosques y puntas de copa** (reglas completas en `docs/stamps.md` «Bosques»). El pincel `forest`
+(`content/stamps/forest.js`) solo dibuja árboles enteros (separación flexible, árbol pequeño en tramos de 2–4 filas,
+completa fuera del trazo solo en casillas libres) y alinea los pares de columnas con el borde del mapa. `buildMap` le
+pasa al MapBuilder `openSides` (lados con conexión) y `reserved` (casillas de eventos, warps, `start`, `flyPoint`),
+que llegan al pintor como `opts.openSides` / `opts.canExtend(x, y)`. Las escrituras de árbol (`tree: 'tip'|'body'`) y
+los stamps `arbol` quedan en `built.treeTiles`; `createEntry` llama a `world/treeTips.js#sealTreeTips(built, tileset,
+def)`, que deja pasar por detrás la punta de arriba del todo solo si encima hay una casilla que ya se pisa (si no, la
+cambia por su copia sellada de `tileset.sealedTips`, generada por `tools/tree_tips.mjs`). Correcciones de pasabilidad
+de la decoración (rocas, flores): `content/stamps/passPatches.js` (§12).
+
 ### Eventos (`world/mapEvent.js`, tipos en `world/eventTypes.js`)
 ```js
 { id, x, y, name?,
@@ -862,7 +872,15 @@ brillo animado: `dir 2` roca agrietada, `4` tronco agrietado, `6` vetas verdes d
 ```
 Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset), `tools/stamps_demo.mjs` (+
 `stamps_demo_campaign.mjs`: kit y tintes, costa, nieve, oriental, sala solemne, ciudad, barreras). Tests:
-`tests/stamps.test.mjs`, `tests/stamps_campaign.test.mjs`.
+`tests/stamps.test.mjs`, `tests/stamps_campaign.test.mjs`, `tests/map_rules.test.mjs`.
+
+**Reglas sistémicas de mapas (26-09)** — bosque de árboles enteros y puntas de copa transitables (§5, `forest.js`,
+`world/treeTips.js`, `tools/tree_tips.mjs` en `npm run data`); pasabilidad de la decoración en
+`content/stamps/passPatches.js` (`PASSAGE_PATCHES` por imagen y `AUTOTILE_PASSAGE_PATCHES` por nombre de autotile; los
+aplica `tools/stamps_extra.mjs`, `--pass-only` sin tocar atlas). QA: `tools/lib/map_qa.mjs` (árboles cortados, stamps
+sobre árboles o sobre otros sólidos, eventos dentro de árboles, copas sobre la capa 1, rocas de agua en tierra; avisos
+en `validate_content`), `tools/check_seams.mjs` (costuras: árboles partidos, objetos cortados, suelo que salta; PNG en
+`tools/cache/seams/`) y `tools/qa_maps.mjs` → `docs/QA_MAPAS.md` (listado por mapa para los agentes de mapas).
 
 ## 13. Bloque 6: Pilar del Impulso (propietario: b06; detalle en `content/maps/b06/README.md`)
 

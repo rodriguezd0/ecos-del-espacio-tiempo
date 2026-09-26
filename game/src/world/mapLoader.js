@@ -2,6 +2,7 @@
 // (navegador) y las herramientas/tests de Node, que aportan las dependencias.
 import { MapBuilder } from './mapBuilder.js';
 import { GameMap } from './gameMap.js';
+import { sealTreeTips } from './treeTips.js';
 
 /** Valida los campos mínimos de una definición de mapa. */
 export function validateMapDef(def) {
@@ -17,6 +18,15 @@ export function validateMapDef(def) {
     if (!Number.isInteger(w.x) || !Number.isInteger(w.y) || !w.to) throw new Error(`Mapa ${def.id}: warp inválido ${JSON.stringify(w)}`);
   }
   return def;
+}
+
+/** Casillas 'x,y' que un pincel no debe tapar fuera de su trazo: eventos, warps, `start` y `flyPoint`. */
+function reservedCells(def) {
+  const out = [];
+  for (const p of [...(def.events || []), ...(def.warps || []), def.start, def.flyPoint]) {
+    if (p && Number.isInteger(p.x) && Number.isInteger(p.y)) out.push(`${p.x},${p.y}`);
+  }
+  return out;
 }
 
 /**
@@ -42,13 +52,19 @@ export function buildMap(def, deps = {}) {
     isEmpty: deps.isEmpty,
     anilMap: deps.anilMap,
     warn: deps.warn,
+    openSides: Object.fromEntries((def.connections || []).map((c) => [c.dir, true])),
+    reserved: reservedCells(def),
   });
   def.build(b);
   return b.build();
 }
 
-/** Entrada de mapa lista para World: { id, def, map: GameMap, offset }. */
+/**
+ * Entrada de mapa lista para World: { id, def, map: GameMap, offset }. Antes sella las puntas de copa que tienen algo
+ * encima (world/treeTips.js; modifica built.layers, es idempotente).
+ */
 export function createEntry(def, built, tilesetData) {
+  sealTreeTips(built, tilesetData, def);
   const map = new GameMap({ id: def.id, def, built, tileset: tilesetData });
   return { id: def.id, def, map, offset: { x: 0, y: 0 }, events: null };
 }

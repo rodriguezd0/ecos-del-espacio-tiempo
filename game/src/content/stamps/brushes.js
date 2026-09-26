@@ -19,8 +19,8 @@
 //   { nine: 'ids', ids: [[tl,t,tr],[l,c,r],[bl,b,br]] } igual, con IDs explícitos (piezas no contiguas)
 //   { cave: { floor, void, ring } }                    sala de cueva rectangular con paredes (ver paintCave)
 //   { forest: { trees: [[x, y], ...], size: [2, 6], period: [2, 4] } }
-//                                                      bosque de árboles de 2×6 apilados cada 4 filas; filas 0..3 en
-//                                                      capa `layer` (2), filas 4..5 (tronco) en `trunkLayer` (1)
+//                                                      bosque de árboles ENTEROS de 2×6 apilados ~cada 4 filas (forest.js);
+//                                                      copas en capa `layer` (2), troncos y filas tapadas en `trunkLayer` (1)
 //   { cliff: { src: [x, y], rows: [r0, r1, face...] } } masa rocosa: 3 columnas (izq/centro/der) × filas
 //                                                      (borde superior, cuerpo, cara ×n), convexa (capa 1)
 //   { terrace: { rim, side, face } }                   terraza de muros finos convexa (ver paintTerrace) (capa 1)
@@ -29,7 +29,7 @@
 //                                                      línea con extremos (salientes, vallas) (capa 1)
 //   { edge2: { src: [x, y], fill? } }                   borde doble 5×5 (playas: espuma + arena) (capa 1)
 import { resolveAutotileId, FIRST_REGULAR_TILE } from '../../shared/autotile.js';
-import { FOREST_DENSE } from './forestDense.js';
+import { paintForest } from './forest.js';
 import { BEACH_CORNERS, BEACH_CORNER_SRC } from './beachCorners.js';
 
 const tileId = (x, y) => FIRST_REGULAR_TILE + y * 8 + x;
@@ -114,74 +114,8 @@ function paintNine(brush, cells, opts) {
   return out;
 }
 
-/** Tile vacío y bloqueante (prioridad 0) presente en todos los tilesets exteriores de Añil (1, 3, 5, 6, 7, 9). */
-export const FOREST_BLOCKER_TILE = 503;
-
-/**
- * Bosque: árboles de size[0]×size[1] anclados en rejilla period[0]×period[1]. Las columnas se alinean con el
- * mínimo x del trazo; las filas se alinean para que el tronco del árbol inferior acabe en la última fila
- * de cada par de columnas. Solo se dibujan las celdas dentro de la máscara.
- */
-function paintForest(brush, cells, opts) {
-  const f = brush.forest;
-  const [tw, th] = f.size || [2, 6];
-  const [pxp, pyp] = f.period || [2, 4];
-  const crownRows = f.crownRows ?? pyp;
-  const layer = brush.layer ?? 2;
-  const trunkLayer = brush.trunkLayer ?? 1;
-  const inside = makeMask(cells, opts);
-  const minX = Math.min(...cells.map((c) => c[0]));
-  const byCol = new Map();
-  for (const [x, y] of cells) {
-    const ax = minX + Math.floor((x - minX) / pxp) * pxp;
-    const cur = byCol.get(ax) || { top: Infinity, bottom: -Infinity };
-    byCol.set(ax, { top: Math.min(cur.top, y), bottom: Math.max(cur.bottom, y) });
-  }
-  // Variantes «bosque denso» (tools/forest_dense.mjs): mismas piezas sin el césped en sombra entre árboles.
-  const denseMap = FOREST_DENSE[opts.tileset] || null;
-  const dense = (id) => (denseMap && denseMap[id]) || id;
-  const out = [];
-  for (const [ax, { top, bottom }] of byCol) {
-    let hasBelow = false; // se recorre de abajo arriba: ¿hay un árbol dibujado justo debajo de este?
-    for (let ay = bottom - th + 1; ay + th - 1 >= top; ay -= pyp) {
-      // Un árbol cuya copa empieza por encima del borde del bosque (dentro del mapa) no se dibuja: solo se
-      // verían sus filas de tronco con césped detrás de las puntas de la primera fila de copas ("árboles
-      // cortados"). Sus casillas de tronco conservan el bloqueo con un tile invisible (las puntas de copa son
-      // transitables y dejarían un pasillo por el borde). Si la copa sale por el borde superior del mapa sí
-      // se dibuja (el bosque continúa fuera).
-      if (ay + crownRows - 1 < top && ay >= 0) {
-        const blocker = f.blocker ?? FOREST_BLOCKER_TILE;
-        for (let dy = crownRows; dy < th; dy++) {
-          for (let dx = 0; dx < tw; dx++) {
-            if (inside(ax + dx, ay + dy)) out.push({ x: ax + dx, y: ay + dy, layer: trunkLayer, id: blocker });
-          }
-        }
-        continue;
-      }
-      // por defecto un mismo tipo de árbol por columna (las copas apiladas encajan); mix: 'tree' varía por árbol
-      const h = f.mix === 'tree' ? cellHash(ax, ay, opts.seed) : cellHash(ax, 0, opts.seed);
-      const tree = f.trees[Math.floor(h * f.trees.length)];
-      for (let dy = 0; dy < th; dy++) {
-        // Filas intermedias de la copa: variante densa (sin la franja de césped entre los dos árboles de la
-        // unidad). Si otro árbol queda debajo, sus puntas tapan el tronco de este: en esas filas se pinta el
-        // follaje bajo de la copa (denso) en vez del tronco con césped. Sin árbol debajo, la base conserva su
-        // tronco y su sombra sobre el suelo (borde inferior del bosque).
-        const trunkRow = dy >= crownRows;
-        let srcRow = dy;
-        if (trunkRow && hasBelow) srcRow = Math.max(0, crownRows - 1 + (dy - crownRows));
-        const useDense = dy > 0 && (!trunkRow || hasBelow);
-        for (let dx = 0; dx < tw; dx++) {
-          const x = ax + dx; const y = ay + dy;
-          if (!inside(x, y)) continue;
-          const id = tileId(tree[0] + dx, tree[1] + srcRow);
-          out.push({ x, y, layer: trunkRow ? trunkLayer : layer, id: useDense ? dense(id) : id });
-        }
-      }
-      hasBelow = true;
-    }
-  }
-  return out;
-}
+// Bosque (árboles enteros apilados, puntas de copa transitables): content/stamps/forest.js
+export { FOREST_BLOCKER_TILE } from './forest.js';
 
 /**
  * Masa rocosa convexa. Filas desde src: [borde superior, cuerpo, cara × faceRows]. Columnas: `width`

@@ -58,7 +58,7 @@ lib.byTag('edificio');                          // stamps por etiqueta
 | `autotile` | `{ autotile: slot }` | Autotile resuelto por vecinos (agua de cueva, flores animadas, **cascadas**) |
 | `nine` | `{ nine: [x, y], inner?, fill? }` / `{ nine: 'ids', ids }` | Borde 3×3 + esquinas cóncavas 2×2 (orden NO, NE / SO, SE) |
 | `edge2` | `{ edge2: { src: [x, y], fill? } }` | Borde doble 5×5 (playas de arena con espuma sobre el agua); las esquinas cóncavas de `playa` usan tiles generados (`tools/beach_corners.mjs`) |
-| `forest` | `{ forest: { trees, size, period } }` | Bosque de árboles 2×6 apilados cada 4 filas (copas capa 2, troncos capa 1) |
+| `forest` | `{ forest: { trees, size, period, small?, mix? } }` | Bosque de árboles ENTEROS 2×6 apilados ~cada 4 filas (copas capa 2, troncos capa 1; ver «Bosques») |
 | `cliff` | `{ cliff: { src, width, faceRows, rows? } }` | Macizo convexo con cara (acantilados, cerezal) |
 | `terrace` | `{ terrace: { rim, side, face } }` | Terraza de muros finos convexa (ancho ≥ 5) |
 | `room` | `{ room: { wall, floor, floorShade, void, frame } }` | Habitación interior con marco (capas 0 y 2) |
@@ -145,8 +145,8 @@ Nada de esto es canon: los stamps son piezas gráficas; la distribución de cada
 - **Salas `from`** (recortes de mapas de Añil): úsalas como plantilla; se horneaban con sus muebles, así que los
   eventos (PC, mostradores, estatuas) los pone el mapa. Revisa las del mismo tileset: `sala_trono` en 11 y
   `sala_octogonal` en 8 cambian algunos tiles de color (el horneado avisa).
-- **Bosque**: ancho par; alto ideal 4k+2 para que la última fila sea de troncos. Un tipo de árbol por columna
-  (`mix: 'tree'` para variar árbol a árbol).
+- **Bosque**: cualquier alto sirve (el pincel reparte árboles enteros, ver «Bosques»); ancho par. Un tipo de árbol por
+  columna (`mix: 'tree'` para variar árbol a árbol).
 - **Salidas de interior**: `salida_casa` / `salida_lab` se colocan con la esquina en (puertaX − 2 | − 1, fila
   inferior del suelo); el warp queda en `door` (fila del marco).
 - **Bocas de cueva** sobre una sala con suelo x0..x1, y0..y1: `boca_norte` en (x, y0 − 4), `salida_luz_sur`
@@ -163,6 +163,57 @@ Nada de esto es canon: los stamps son piezas gráficas; la distribución de cada
 - **Correcciones de terrain** (`TERRAIN_PATCHES` en `extraTiles.js`, las aplica la misma herramienta): la orilla y la
   playa de ExteriorSafari (6) pasan a ser agua navegable como en Exterior1 (en Añil bloqueaban sin tag de agua).
 - **Mar decorativo**: `mar` (9) y `luna_panorama` (3) no tienen terrain de agua; para agua navegable usa `agua`.
+
+## Bosques (pincel `forest`, `content/stamps/forest.js`)
+
+Un árbol de bosque de Añil tiene tres partes: la **punta de la copa** (fila 0, pasaje libre y prioridad: se pasa por
+detrás), el **cuerpo de la copa** (bloquea, se dibuja sobre el jugador) y el **tronco** (bloquea). Reglas del pincel:
+
+- **Solo árboles enteros.** Cada par de columnas se divide en tramos verticales continuos del trazo; en cada tramo el
+  árbol de abajo apoya el tronco en la última fila y el de arriba empieza con la punta en la primera. En medio se
+  reparten los árboles con separación flexible (2–5 filas en vez de 4 fijas): no queda ninguna copa sin punta.
+- **Tramos bajos**: de 2 a 4 filas usan el árbol **pequeño** (2×4) de la misma especie (`SMALL_TREES` en `forest.js`,
+  o `forest.small` en el pincel); si aun así no cabe, el árbol se **completa hacia arriba, fuera del trazo**. Un par de
+  columnas con una sola dentro del trazo se completa hacia fuera. Solo se completa fuera del **rectángulo** del trazo (un
+  hueco dentro es un claro a propósito) y sobre casillas **libres** (capas 1–2 vacías al pintar y sin evento, warp,
+  `start` ni `flyPoint`); si no, el árbol queda recortado y `tools/qa_maps.mjs` lo lista.
+- **Costuras**: los pares de columnas se alinean con el borde oeste del mapa (o el este si el trazo solo toca ese), así
+  el bosque llega entero al borde; el tronco del último árbol cae en la última fila y el mapa de abajo empieza con
+  puntas (dos árboles enteros, sin medios). Una franja de 1–3 filas pegada a un borde norte **con conexión** no pinta
+  troncos sueltos: deja el suelo con el bloqueo invisible (503) y el bosque del vecino cierra la costura.
+- **Puntas de copa transitables** (como en Añil): la punta de arriba del todo se pisa si **encima no hay nada** que
+  lo impida. `world/treeTips.js` (al crear el GameMap) la **sella** si encima hay otro árbol (bosque o stamp
+  `arbol`), un tile que no se pisa (acantilado, agua, valla, edificio…), un evento o el borde del mapa: cambia la punta
+  por su copia sellada (mismo dibujo, pasaje 0x0F; `tools/tree_tips.mjs` → `tilesets.json` `sealedTips`). Así la
+  franja de puntas nunca abre atajos: cada punta libre tiene encima una casilla que ya se pisaba.
+- Filas tapadas por el árbol de debajo → capa `trunkLayer` con la variante «bosque denso»; el pincel marca sus
+  escrituras con `tree: 'tip' | 'body'` (el MapBuilder las guarda en `built.treeTiles` para el sellado).
+
+## Pasabilidad de la decoración (`content/stamps/passPatches.js`)
+
+Correcciones sobre los datos de Añil que aplica `node tools/stamps_extra.mjs` (también `--pass-only`, y `--check`):
+
+| Pieza | Antes (Añil) | Ahora |
+|---|---|---|
+| Cima de `roca_turquesa` / `roca_grande` (1, 6, 7), `cristal_grande` (7) | se pasaba por detrás («flotar» sobre la roca) | bloquea |
+| `roca_gris` (7) | se pisaba entera | bloquea |
+| `lupinos` (1, 3, 5, 7, 9) | bloqueaban | flores altas: se pasa por detrás; base: se pisa (efecto arbusto) |
+| `flor_amarilla_grande` / `flor_lila_grande` (autotiles florAmarillaGrande / florLilaGrande) | la base bloqueaba | se pisa (efecto arbusto) |
+
+- Siguen como en Añil: `mata` de ExteriorSafari (la Ruta 14 la usa de seto de la Reserva, barrera de historia) y las
+  rocas de cueva (`CAVE_ROCK_TOPS`: los puzles de la Cámara de los Contrapesos, el Tizón y la Gruta Escarcha cuentan
+  su cima como suelo; aplicarlo exige rehacer esos trazados).
+- **Rocas de agua** (`roca_agua`, `roca_agua_grande`, etiquetas `roca` + `agua`): solo sobre agua; el validador avisa
+  si alguna casilla no tiene agua debajo. En tierra usa `roca_gris`, `roca_grande`, `roca_peque`…
+
+## Herramientas de QA de mapas
+
+| Comando | Para qué |
+|---|---|
+| `node tools/qa_maps.mjs [mapa…] [--no-png]` | Regenera `docs/QA_MAPAS.md`: por mapa, árboles cortados, stamps sobre árboles, stamps sólidos pisándose, eventos visibles dentro de un árbol, copas sobre caminos/hierba y rocas de agua en tierra (+ costuras) |
+| `node tools/check_seams.mjs [mapa…] [--depth=6] [--scale=0.5]` | Costuras de cada conexión: árboles partidos, objetos cortados por el borde y suelo que cambia de golpe; PNG por conexión en `tools/cache/seams/` |
+| `node tools/validate_content.mjs` | Incluye las mismas comprobaciones de arte como avisos (una línea por categoría y mapa) |
+| `node tools/tree_tips.mjs [--check]` | Genera las puntas de copa selladas al final de los atlas exteriores |
 
 ## Herramientas
 
@@ -887,7 +938,7 @@ revisa la hoja con `preview_stamps --only=<nombre>` y ejecuta los tests.
 | `jardin_vallado` | 8×4 | 1 |  | jardin, flor, valla | Valla blanca con dos jardineras de tulipanes y flores (Pueblo Paleta) |
 | `seto_largo` | 10×2 | 1 |  | seto | Seto florido largo (10×2) |
 | `cerezo_grande` | 7×9 | 2 |  | oriental, arbol, cerezo | Cerezo grande en flor con dos troncos (7×9) |
-| `cerezo` | 4×5 | 2 |  | oriental, arbol, cerezo | Cerezo en flor (4×5) |
+| `cerezo` | 5×6 | 2 |  | oriental, arbol, cerezo | Cerezo en flor (5×6, copa entera) |
 | `lluvia_petalos` | 5×3 | 1 |  | oriental, cerezo, suelo | Corro de pétalos caídos sobre la hierba (5×3) |
 | `nenufares` | 2×2 | 2 |  | agua, decoracion | Nenúfares con flor (2×2, sobre el agua) |
 | `secadero` | 2×2 | 2 |  | puerto, pesca | Secadero de redes/pescado (2×2) |

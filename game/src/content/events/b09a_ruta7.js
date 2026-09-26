@@ -127,7 +127,8 @@ function detailEvents(open) {
     { id: 'cartel_calzada', type: 'sign', x: 55, y: 9, text: RUTA7_TEXT.signNorth },
     { id: 'objeto_r7_1', type: 'item', x: 3, y: 10, item: 'SUPERREPEL' },
     { id: 'objeto_r7_2', type: 'item', x: 36, y: 7, item: 'ELIXIR' },
-    { id: 'objeto_r7_3', type: 'item', x: 27, y: 11, item: 'NUGGET', hidden: true },
+    // al pie de la arboleda (26–31, 9–12; árboles enteros desde el pincel de bosque de 26-09): se coge desde el sur
+    { id: 'objeto_r7_3', type: 'item', x: 27, y: 12, item: 'NUGGET', hidden: true },
     { id: 'objeto_r7_4', type: 'item', x: 87, y: 23, item: 'FULLHEAL' },
     // El Core habla al entrar en la ruta por cualquier lado (el campo abierto del este no deja cerrar una franja).
     { id: 'llegada_auto', x: 0, y: 0, trigger: 'auto', when: when({ none: [F.r7Arrival] }), script: arrival },
