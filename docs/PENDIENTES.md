@@ -3,9 +3,10 @@
 Actualizado: 25-09-2026. Prioridad actual: **multijugador** (pedido del usuario, va antes que todo lo demás).
 
 ## 0. En curso — Multijugador online (salas)
-- Fase 1: servidor WebSocket en `server.mjs`, salas con código, ver a los demás jugadores moverse en el mapa (baja latencia).
-- Fase 2: combates entre jugadores (link battle).
-- Fase 3: intercambios.
+- Fase 1 HECHA (d94e15d): salas con código, ver a los demás jugadores moverse en el mapa (baja latencia), entrada Online.
+- Fase 2 HECHA: combate 1 contra 1 (niveles reales) y doble en equipo contra entrenadores de IA máxima (X33).
+- Fase 3: intercambios, chat de texto y emotes (pedidos por el usuario).
+- Revisar: en dobles contra dos entrenadores, el sprite de un entrenador rival sigue en pantalla durante el combate.
 
 ## 1. Trabajo apartado (git stash)
 `git stash@{0}` («pausa 25-09 …») guarda trabajo a medias. Hay que hacer `git stash pop` antes de reanudarlo.

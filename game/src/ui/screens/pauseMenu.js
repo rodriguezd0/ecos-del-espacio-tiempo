@@ -109,7 +109,7 @@ class PauseMenuScene extends UIScene {
       case 'card': await ui.openTrainerCard(); return null;
       case 'save': await ui.openSave(); return null;
       case 'options': await ui.openOptions(); return null;
-      case 'online': await (await import('../../net/onlineMenu.js')).runOnlineMenu(engine.state); return null;
+      case 'online': return (await import('../../net/onlineMenu.js')).runOnlineMenu(engine.state);
       default: return null;
     }
   }

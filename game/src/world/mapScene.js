@@ -39,6 +39,7 @@ import { daycareStep } from './daycare.js'; // guardería: contador del huevo de
 import { PanoramaLayer } from '../render/panorama.js'; // B12: fondo de mapa (vacío del Mundo Distorsión)
 import { ImpossibleField } from './impossible/field.js'; // B12: espacio imposible (vacío, anclas, puentes)
 import { MapNetSync } from '../net/mapSync.js'; // multijugador: otros jugadores de la sala online
+import { handleInvite } from '../net/linkFlow.js'; // multijugador: combates online (registra la acción 'online')
 
 export const DEFAULT_MAP = 'dev_test';
 // [PROVISIONAL] Ritmo del reloj de juego: 1 minuto de juego por segundo real (TEC-06; ritmo por decidir).
@@ -71,7 +72,7 @@ export default class MapScene extends Scene {
     this.zygarde = new ZygardeField(this);
     this.zygarde.applyDevParams(params);
     this.impossible = new ImpossibleField(this); // B12: espacio imposible (def.impossible)
-    this.net = new MapNetSync(this, { charsetsFor: playerCharsets });
+    this.net = new MapNetSync(this, { charsetsFor: playerCharsets, onInvite: handleInvite });
     this.world.player.setCharsets(await playerCharsets(this.state.player.gender));
     const saved = this.state.player;
     const resume = !params.map && Boolean(saved.mapId);

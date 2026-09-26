@@ -9,6 +9,8 @@ const NAME_COLOR = '#f8f8f8';
 const NAME_SHADOW = '#303848';
 const HUD_MARGIN = 4;
 const NAME_LIFT = 4; // px por encima de la cabeza
+const INVITE_MAX_AGE_MS = 25000; // el que invita espera 30 s: una invitación más vieja ya no vale
+const MODES_ALLOWED = new Set(['pvp', 'coop']);
 
 /** Estado del jugador tal como se anuncia a la sala. */
 export function playerSnapshot(world) {
@@ -18,8 +20,15 @@ export function playerSnapshot(world) {
 }
 
 export class MapNetSync {
-  constructor(scene, { client = net, charsetsFor } = {}) {
+  /**
+   * opts.onInvite(invite): la escena lo ejecuta como guion cuando el jugador está libre (net/linkFlow.js#handleInvite).
+   * invite = { from, s, mode, name, at }.
+   */
+  constructor(scene, { client = net, charsetsFor, onInvite = null, now = () => Date.now() } = {}) {
     this.scene = scene;
+    this.onInvite = onInvite;
+    this.now = now;
+    this.invites = [];
     this.client = client;
     this.remote = new RemotePlayers(scene.world, { charsetsFor });
     this.last = null;
@@ -29,7 +38,8 @@ export class MapNetSync {
       client.on('leave', (m) => this.remote.removePeer(m.id)),
       client.on('st', (m) => this.remote.applyStep(m.id, m)),
       client.on('at', (m) => this.remote.applyAt(m.id, m)),
-      client.on('status', (s) => { if (s === 'off') this.remote.clear(); }),
+      client.on('status', (s) => { if (s === 'off') { this.remote.clear(); this.invites = []; } }),
+      client.on('dm', (m) => this.receiveDirect(m)),
     ];
     if (client.online) for (const p of client.peers.values()) this.remote.addPeer(p);
     scene.world.remote = this.remote;
@@ -41,10 +51,26 @@ export class MapNetSync {
     if (this.scene.world.remote === this.remote) this.scene.world.remote = null;
   }
 
+  receiveDirect(m) {
+    if (m.b?.k !== 'invite' || !MODES_ALLOWED.has(m.b.mode) || typeof m.b.s !== 'string') return;
+    const name = this.client.peers.get(m.from)?.name || 'Alguien';
+    this.invites.push({ from: m.from, s: m.b.s, mode: m.b.mode, name, at: this.now() });
+  }
+
+  /** Atiende la invitación más antigua si el jugador está libre (sin guion, menú, combate ni paso a medias). */
+  processInvites() {
+    const scene = this.scene;
+    if (!this.invites.length || !this.onInvite || !scene.ready || scene.world.scriptBusy() || scene.world.player.busy()) return;
+    const invite = this.invites.shift();
+    if (this.now() - invite.at > INVITE_MAX_AGE_MS || !this.client.peers.has(invite.from)) return;
+    scene.runScript((ctx) => this.onInvite(ctx, invite), null, 'invitación online');
+  }
+
   /** Llamar cada fotograma DESPUÉS de world.update (el paso ya ha empezado y la velocidad es la definitiva). */
   update(dt) {
     this.remote.update(dt);
     if (!this.client.online || !this.scene.world.map) return;
+    this.processInvites();
     const now = playerSnapshot(this.scene.world);
     const prev = this.last;
     const moved = !prev || now.m !== prev.m || now.x !== prev.x || now.y !== prev.y;

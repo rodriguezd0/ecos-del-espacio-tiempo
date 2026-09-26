@@ -138,7 +138,7 @@ Object.assign(Battle.prototype, {
       for (let i = 0; i <= this.maxBattlerIndex(); i++) {
         const b = this.battlers[i];
         if (!b) continue;
-        const entry = { battler: b, speed: b.pbSpeed(), subAbility: 0, subItem: 0, sub: 0, pri: 0, tie: randomOrder[i] };
+        const entry = { battler: b, speed: b.pbSpeed(), subAbility: 0, subItem: 0, sub: 0, pri: 0, tie: randomOrder[this.canonicalIndex(i)] };
         const ch = this.choices[b.index];
         if (ch.action === 'UseMove' || ch.action === 'Shift') {
           if (ch.action === 'UseMove') {
@@ -293,7 +293,7 @@ Object.assign(Battle.prototype, {
     const b = this.battlers[idx];
     return this.ask('chooseAction', b.view(), {
       firstAction,
-      canRun: firstAction && this.wildBattle() && this.canRun,
+      canRun: firstAction && ((this.wildBattle() && this.canRun) || Boolean(this.link)), // online: rendirse
       canSwitch: this.canSwitch,
       canUseItems: this.internalBattle,
       wild: this.wildBattle(),

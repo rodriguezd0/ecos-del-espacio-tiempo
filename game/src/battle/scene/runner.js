@@ -9,6 +9,7 @@ import { buildBattleConfig } from './setup.js';
 import { applyBattleResult, storeCaught, storedMessage, finalizeBattleResult } from './results.js';
 import { BattleScene } from './battleScene.js';
 import { SceneBattleUI } from './sceneUI.js';
+import { installLink } from '../link/linkBattle.js';
 
 const MAX_NICKNAME = 12;
 
@@ -66,6 +67,8 @@ export async function runSceneBattle(request = {}, { state = engine.state, db = 
   const scene = new BattleScene(meta);
   const sceneUI = new SceneBattleUI(scene);
   const battle = new Battle(config, sceneUI); // valida la configuración antes de mostrar nada
+  // Combate online (net/linkSession.js): decisiones del otro jugador por la red. Se pasa state = null: no toca la partida.
+  if (request.link) installLink(battle, request.link);
   sceneUI.attach(battle);
   // push() resuelve al desapilar: se espera aparte a que la escena termine de cargar.
   let entered;

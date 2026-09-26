@@ -1,11 +1,14 @@
-// Entrada «Online» del menú de pausa: crear una sala, unirse con un código, ver quién está y salir.
+// Entrada «Online» del menú de pausa: crear una sala, unirse con un código, retar a otro jugador (1 contra 1 o
+// doble en equipo contra entrenadores expertos) y salir. Devuelve null o una acción para el mapa
+// ({ type: 'online', op: 'battle', mode, peerId }, la ejecuta net/linkFlow.js ya con el menú cerrado).
 import { ui } from '../ui/api.js';
 import { net } from './netClient.js';
 import { normalizeRoomCode, ROOM_CODE_LENGTH } from './protocol.js';
+import { MODES, cannotBattle } from './linkSession.js';
 
 export async function runOnlineMenu(state) {
-  if (net.status === 'off') return offlineMenu(state);
-  return roomMenu();
+  if (net.status === 'off') { await offlineMenu(state); return null; }
+  return roomMenu(state);
 }
 
 async function offlineMenu(state) {
@@ -14,15 +17,15 @@ async function offlineMenu(state) {
     cancel: 2,
   });
   if (pick === 0) return connect('', state);
-  if (pick !== 1) return;
+  if (pick !== 1) return undefined;
   const typed = await ui.textEntry({ title: 'Código de la sala', initial: '', maxLength: ROOM_CODE_LENGTH });
-  if (!typed) return;
+  if (!typed) return undefined;
   const code = normalizeRoomCode(typed);
   if (!code) {
     await ui.message(`El código tiene ${ROOM_CODE_LENGTH} letras o números (sin O, I, 0 ni 1).`);
-    return;
+    return undefined;
   }
-  await connect(code, state);
+  return connect(code, state);
 }
 
 async function connect(code, state) {
@@ -38,16 +41,30 @@ async function connect(code, state) {
   }
 }
 
-async function roomMenu() {
+/** Elige a otro jugador de la sala (directo si solo hay uno). null si cancela o no hay nadie. */
+async function pickPeer(prompt) {
+  const peers = [...net.peers.values()];
+  if (!peers.length) { await ui.message('Todavía no hay nadie más en la sala.'); return null; }
+  if (peers.length === 1) return peers[0];
+  const i = await ui.choice([...peers.map((p) => p.name), 'Cancelar'], { message: prompt, cancel: peers.length });
+  return peers[i] || null;
+}
+
+async function roomMenu(state) {
   const names = [...net.peers.values()].map((p) => p.name);
   const who = names.length ? `Contigo: ${names.join(', ')}.` : 'Todavía no hay nadie más.';
-  const pick = await ui.choice(['Seguir', 'Salir de la sala'], {
-    message: `Sala ${net.room}. ${who}`,
-    cancel: 0,
-  });
-  if (pick !== 1) return;
-  if (await ui.confirm('¿Salir de la sala?')) {
+  const options = [MODES.pvp.short, MODES.coop.short, 'Salir de la sala', 'Seguir'];
+  const pick = await ui.choice(options, { message: `Sala ${net.room}. ${who}`, cancel: 3 });
+  if (pick === 0 || pick === 1) {
+    const why = cannotBattle(state);
+    if (why) { await ui.message(why); return null; }
+    const mode = pick === 0 ? 'pvp' : 'coop';
+    const peer = await pickPeer(pick === 0 ? '¿A quién quieres retar?' : '¿Con quién quieres formar equipo?');
+    return peer ? { type: 'online', op: 'battle', mode, peerId: peer.id } : null;
+  }
+  if (pick === 2 && await ui.confirm('¿Salir de la sala?')) {
     net.leave();
     ui.toast('Has salido de la sala.');
   }
+  return null;
 }

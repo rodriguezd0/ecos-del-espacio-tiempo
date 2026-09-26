@@ -6,9 +6,11 @@
 //   { t: 'st', m, x, y, d, s, k, j }        el jugador EMPIEZA un paso (o salto) hacia (x, y) del mapa m
 //   { t: 'at', m, x, y, d, k }              posición/orientación en reposo (warp, giro, cambio de modo)
 //   { t: 'ping', c }                        c: marca del cliente, se devuelve tal cual en 'pong'
+//   { t: 'dm', to, b }                      mensaje directo a otro jugador de la sala (b: objeto; combates, intercambios)
 // Servidor → cliente
 //   { t: 'welcome', id, room, peers: [peer] }  peer: { id, name, gender, av }
 //   { t: 'join', peer } · { t: 'leave', id } · { t: 'st'|'at', id, ...avatar } · { t: 'pong', c }
+//   { t: 'dm', from, b }
 //   { t: 'error', code, msg }
 
 export const PROTOCOL_VERSION = 1;
@@ -18,7 +20,8 @@ export const ROOM_CODE_LENGTH = 4;
 // Sin letras/dígitos que se confunden al dictarlos (O/0, I/1).
 export const ROOM_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 export const MAX_NAME_LENGTH = 12;
-export const MAX_MESSAGE_BYTES = 1024;
+// Un equipo completo viaja en un mensaje directo (combates, intercambios): unos 1–5 KB.
+export const MAX_MESSAGE_BYTES = 32 * 1024;
 
 const DIRS = new Set([2, 4, 6, 8]);
 const KINDS = new Set(['walk', 'run', 'surf']);

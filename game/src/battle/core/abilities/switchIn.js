@@ -29,7 +29,7 @@ S.add('UNNERVE', announce((b) => `¡${b.pbOpposingTeam()} está muy nervioso y n
 S.add('ACOMETIDA', announce((b) => `¡${b.pbThis()} entra a combatir con furia desmedida!`)); // Añil
 
 S.add('ANTICIPATION', (a, battler, battle) => {
-  if (!battler.pbOwnedByPlayer()) return;
+  if (!battle.pbRevealsAbilityInfo(battler)) return;
   const types = battler.pbTypes(true);
   const found = battle.allOtherSideBattlers(battler.index).some((b) => b.moves.some((m) => {
     if (m.statusMove()) return false;
@@ -147,7 +147,7 @@ const FOREWARN_POWER = {
   PowerLowerWithUserHP: 80, PowerHigherWithTargetWeight: 80,
 };
 S.add('FOREWARN', (a, battler, battle) => {
-  if (!battler.pbOwnedByPlayer()) return;
+  if (!battle.pbRevealsAbilityInfo(battler)) return;
   let highest = 0;
   let names = [];
   for (const b of battle.allOtherSideBattlers(battler.index)) {
@@ -165,8 +165,8 @@ S.add('FOREWARN', (a, battler, battle) => {
 });
 
 S.add('FRISK', (a, battler, battle) => {
-  if (!battler.pbOwnedByPlayer()) return;
-  const foes = battle.allOtherSideBattlers(battler.index).filter((b) => b.item);
+  if (!battle.pbRevealsAbilityInfo(battler)) return;
+  const foes =battle.allOtherSideBattlers(battler.index).filter((b) => b.item);
   if (foes.length === 0) return;
   splash(battle, battler, () => {
     for (const b of foes) battle.pbDisplay(`¡${battler.pbThis()} ha cacheado a ${b.pbThis(true)} y ha hallado ${b.itemName()}!`);

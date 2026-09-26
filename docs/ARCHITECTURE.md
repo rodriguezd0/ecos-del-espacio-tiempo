@@ -1097,4 +1097,21 @@ Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset
 - **Pruebas:**
   - `tests/net_*.test.mjs`, incluido un servidor real con dos clientes.
   - `node tools/net_smoke.mjs`: dos Chrome en la Ruta 1.
-- **Pendiente:** combates entre jugadores (fase 2) e intercambios (fase 3), ver `docs/PENDIENTES.md`.
+- **Mensajes directos** (`{ t: 'dm', to, b }`): el servidor solo los reenvía dentro de la misma sala. Los usan los
+  combates y, más adelante, los intercambios.
+- **Combates online** (`battle/link/linkBattle.js`, `net/linkSession.js`, `net/linkFlow.js`):
+  - Cada navegador simula el MISMO combate (semilla del anfitrión y los dos equipos). Solo viajan las decisiones de
+    los humanos (`cmd` por turno, `sw` por relevo), cada una con la suma de control del estado; si no cuadra, el
+    combate acaba en empate.
+  - **1 contra 1:** cada lado se ve en el bando 0 (`link.mirror` en el invitado). El desempate de velocidad usa
+    `battle.canonicalIndex`, y Alerta/Cacheo/Anticipación se anuncian siempre (`pbRevealsAbilityInfo`), para gastar
+    el mismo azar en los dos lados.
+  - **Doble en equipo:** la simulación es idéntica; solo cambia `battle.localOwner` (el anfitrión en la posición 0 y
+    el compañero en la 2). Los rivales de IA (`net/coopTrainers.js`) los genera el anfitrión y los envía.
+  - `installLink` sustituye `pbCommandPhase` (primero el humano local, luego el intercambio y después la IA),
+    `pbSwitchInBetween`, `pbRunMenu` (rendirse) y `pbEndOfBattle`.
+  - El runner recibe `request.link` y `state = null`, así que no toca la partida.
+  - Las invitaciones llegan a `MapNetSync` y se atienden cuando el jugador está libre.
+- **Pruebas:** `tests/net_link_battle.test.mjs` (dos motores reales con elecciones al azar: 24 combates 1 contra 1 y
+  10 en equipo, siempre a la par) y `node tools/net_battle_smoke.mjs --mode=pvp|coop` (dos Chrome).
+- **Pendiente:** intercambios, chat y emotes (ver `docs/PENDIENTES.md`).

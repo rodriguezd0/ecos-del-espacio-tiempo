@@ -20,7 +20,16 @@ export class RoomHub {
     const member = this.members.get(client.id);
     if (!member) return client.send({ t: 'error', code: 'no_room', msg: 'No estás en ninguna sala.' });
     if (msg.t === 'st' || msg.t === 'at') return this.relayAvatar(member, msg);
+    if (msg.t === 'dm') return this.direct(member, msg);
     return undefined;
+  }
+
+  /** Mensaje directo a otro jugador de la MISMA sala (el contenido lo interpreta el juego). */
+  direct(member, msg) {
+    const target = typeof msg.to === 'string' ? this.members.get(msg.to) : null;
+    if (!target || target.room !== member.room || target === member) return;
+    if (!msg.b || typeof msg.b !== 'object' || Array.isArray(msg.b)) return;
+    target.client.send({ t: 'dm', from: member.client.id, b: msg.b });
   }
 
   join(client, msg) {

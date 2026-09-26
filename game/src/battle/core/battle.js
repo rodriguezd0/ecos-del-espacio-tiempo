@@ -60,6 +60,9 @@ export class Battle {
     this.decision = 0;
     this.caughtPokemon = [];
     this.internalBattle = true;
+    // Combate enlazado (online, battle/link/linkBattle.js): qué entrenador del bando 0 es «el jugador» en ESTA pantalla.
+    this.localOwner = 0;
+    this.link = null;
     this.canRun = cfg.rules.canRun !== false;
     this.canLose = !!cfg.rules.canLose;
     this.canSwitch = cfg.rules.canSwitch !== false;
@@ -188,8 +191,15 @@ export class Battle {
   }
   pbOwnedByPlayer(idxBattler) {
     if (this.opposes(idxBattler)) return false;
-    return this.pbGetOwnerIndexFromBattlerIndex(idxBattler) === 0;
+    return this.pbGetOwnerIndexFromBattlerIndex(idxBattler) === this.localOwner;
   }
+  /**
+   * Índice canónico de un combatiente: el mismo en las dos simulaciones de un combate online entre jugadores (cada una
+   * se ve a sí misma en el bando 0, así que los bandos van cambiados). Fuera de línea es el mismo índice.
+   */
+  canonicalIndex(idx) { return this.link?.mirror ? idx ^ 1 : idx; }
+  /** ¿Se anuncia la información de una habilidad (Alerta, Cacheo…)? Online, siempre: mismo azar en ambos lados. */
+  pbRevealsAbilityInfo(battler) { return this.link ? true : battler.pbOwnedByPlayer(); }
   pbNumPositions(side, idxTrainer) {
     let ret = 0;
     for (let i = 0; i < this.pbSideSize(side); i++) if (this.pbGetOwnerIndexFromBattlerIndex(i * 2 + side) === idxTrainer) ret += 1;
