@@ -66,11 +66,15 @@ Object.assign(Battler.prototype, {
   pbObedienceCheck(choice) {
     if (this.usingMultiTurnAttack()) return true;
     if (choice.action !== 'UseMove') return true;
-    if (!this.battle.internalBattle || !this.battle.pbOwnedByPlayer(this.index)) return true;
-    const badges = this.battle.player[0].badges || 0;
+    if (!this.battle.internalBattle) return true;
+    // Online en equipo (battle.link): se comprueba igual para los dos humanos en las dos simulaciones (mismo azar).
+    const human = this.battle.link ? !this.opposes() : this.battle.pbOwnedByPlayer(this.index);
+    if (!human) return true;
+    const owner = this.battle.link ? this.battle.pbGetOwnerFromBattlerIndex(this.index) : this.battle.player[0];
+    const badges = owner?.badges || 0;
     const badgeLevel = badges >= 8 ? 100 : 10 * (badges + 1);
     let disobedient = false;
-    const foreign = this.pokemon.ot && this.battle.player[0].id != null && this.pokemon.ot.id !== this.battle.player[0].id;
+    const foreign = this.pokemon.ot && owner?.id != null && this.pokemon.ot.id !== owner.id;
     if (Settings.ANY_HIGH_LEVEL_POKEMON_CAN_DISOBEY || (Settings.FOREIGN_HIGH_LEVEL_POKEMON_CAN_DISOBEY && foreign)) {
       if (this.level > badgeLevel) {
         const a = Math.floor(((this.level + badgeLevel) * this.battle.pbRandom(256)) / 256);

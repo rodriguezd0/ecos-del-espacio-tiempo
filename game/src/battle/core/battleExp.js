@@ -9,55 +9,68 @@ import {
 import { evYield } from './pokemonUtil.js';
 
 Object.assign(Battle.prototype, {
+  /**
+   * Entrenadores del bando 0 que ganan experiencia: el jugador; en un combate en equipo online (battle.link) también
+   * el compañero humano, en las dos simulaciones por igual.
+   */
+  expOwners() {
+    return this.link?.mode === 'coop' ? this.player.map((_t, i) => i) : [0];
+  },
+
   async pbGainExp() {
     if (!this.internalBattle || !this.expGain) return;
-    const p1 = this.pbParty(0);
-    const expAll = !!this.player[0].expAll || (this.bag.EXPALL || 0) > 0;
     for (const b of this.battlers) {
       if (!b || !b.opposes()) continue;
       if (b.participants.length === 0) continue;
       if (!(b.isFainted() || b.captured)) continue;
       if (!b.pokemon) continue;
-      let numPartic = 0;
-      for (const idx of b.participants) if (this.able(p1[idx]) && this.pbIsOwner(0, idx)) numPartic += 1;
-      const expShare = [];
-      if (!expAll) {
-        this.eachInTeam(0, 0, (pkmn, i) => {
-          if (!this.able(pkmn)) return;
-          if (pkmn.heldItem !== 'EXPSHARE' && this.initialItems[0][i] !== 'EXPSHARE') return;
-          expShare.push(i);
-        });
-      }
-      if (numPartic > 0 || expShare.length > 0 || expAll) {
-        const gainers = [];
-        this.eachInTeam(0, 0, (pkmn, i) => {
-          if (!this.able(pkmn)) return;
-          if (!b.participants.includes(i) && !expShare.includes(i)) return;
-          gainers.push(i);
-        });
-        for (const i of gainers) {
-          this.pbGainEVsOne(i, b);
-          await this.pbGainExpOne(i, b, numPartic, expShare, expAll, b.participants.includes(i));
-        }
-        if (expShare.length > numPartic && p1.length > 1) {
-          this.pbDisplayPaused('¡Tus otros Pokémon también ganaron puntos de experiencia!');
-        }
-        if (expAll) {
-          let showMessage = true;
-          const others = [];
-          this.eachInTeam(0, 0, (pkmn, i) => {
-            if (!this.able(pkmn) || b.participants.includes(i) || expShare.includes(i)) return;
-            others.push(i);
-          });
-          for (const i of others) {
-            if (showMessage) this.pbDisplayPaused('¡Tus otros Pokémon también ganaron puntos de experiencia!');
-            showMessage = false;
-            this.pbGainEVsOne(i, b);
-            await this.pbGainExpOne(i, b, numPartic, expShare, expAll, false);
-          }
-        }
-      }
+      for (const owner of this.expOwners()) await this.pbGainExpFrom(b, owner);
       b.participants = [];
+    }
+  },
+
+  /** Experiencia del rival derrotado `b` para el equipo del entrenador `owner` del bando 0. */
+  async pbGainExpFrom(b, owner) {
+    const p1 = this.pbParty(0);
+    const expAll = !!this.player[owner].expAll || (owner === 0 && (this.bag.EXPALL || 0) > 0);
+    const ownsParty = (idx) => this.pbGetOwnerIndexFromPartyIndex(0, idx) === owner;
+    let numPartic = 0;
+    for (const idx of b.participants) if (this.able(p1[idx]) && ownsParty(idx)) numPartic += 1;
+    const expShare = [];
+    if (!expAll) {
+      this.eachInTeam(0, owner, (pkmn, i) => {
+        if (!this.able(pkmn)) return;
+        if (pkmn.heldItem !== 'EXPSHARE' && this.initialItems[0][i] !== 'EXPSHARE') return;
+        expShare.push(i);
+      });
+    }
+    if (numPartic === 0 && expShare.length === 0 && !expAll) return;
+    const gainers = [];
+    this.eachInTeam(0, owner, (pkmn, i) => {
+      if (!this.able(pkmn)) return;
+      if (!b.participants.includes(i) && !expShare.includes(i)) return;
+      gainers.push(i);
+    });
+    for (const i of gainers) {
+      this.pbGainEVsOne(i, b);
+      await this.pbGainExpOne(i, b, numPartic, expShare, expAll, b.participants.includes(i), owner);
+    }
+    const mine = owner === this.localOwner;
+    if (mine && expShare.length > numPartic && p1.length > 1) {
+      this.pbDisplayPaused('¡Tus otros Pokémon también ganaron puntos de experiencia!');
+    }
+    if (!expAll) return;
+    let showMessage = mine;
+    const others = [];
+    this.eachInTeam(0, owner, (pkmn, i) => {
+      if (!this.able(pkmn) || b.participants.includes(i) || expShare.includes(i)) return;
+      others.push(i);
+    });
+    for (const i of others) {
+      if (showMessage) this.pbDisplayPaused('¡Tus otros Pokémon también ganaron puntos de experiencia!');
+      showMessage = false;
+      this.pbGainEVsOne(i, b);
+      await this.pbGainExpOne(i, b, numPartic, expShare, expAll, false, owner);
     }
   },
 
@@ -79,7 +92,7 @@ Object.assign(Battle.prototype, {
     pkmn.evs = evs;
   },
 
-  async pbGainExpOne(idxParty, defeated, numPartic, expShare, expAll, showMessages = true) {
+  async pbGainExpOne(idxParty, defeated, numPartic, expShare, expAll, showMessages = true, owner = 0) {
     const pkmn = this.pbParty(0)[idxParty];
     const sp = speciesData(this.db, pkmn.species, pkmn.form);
     const maxExp = expForLevel(sp.growthRate, MAX_LEVEL);
@@ -118,10 +131,10 @@ Object.assign(Battle.prototype, {
     } else {
       exp = Math.floor(exp / 7);
     }
-    const playerId = this.player[0].id;
+    const playerId = this.player[owner]?.id;
     const isOutsider = !!(pkmn.ot && playerId != null && pkmn.ot.id != null && pkmn.ot.id !== playerId);
     if (isOutsider) exp = Math.floor(exp * 1.5);
-    if ((this.bag.EXPCHARM || 0) > 0) exp = Math.floor((exp * 3) / 2);
+    if (owner === 0 && (this.bag.EXPCHARM || 0) > 0) exp = Math.floor((exp * 3) / 2);
     let mod = ItemEffects.triggerExpGainModifier(pkmn.heldItem, pkmn, exp);
     if (mod < 0) mod = ItemEffects.triggerExpGainModifier(this.initialItems[0][idxParty], pkmn, exp);
     if (mod >= 0) exp = mod;

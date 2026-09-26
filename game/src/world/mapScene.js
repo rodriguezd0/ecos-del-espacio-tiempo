@@ -32,14 +32,14 @@ import { CrisisSky } from '../content/story/crisisSky.js';
 import { stormWeather } from './rest.js';
 import { ZygardeField } from './zygarde/field.js';
 import { surfaceHere } from './zygarde/actions.js';
-import { openSides } from './seams.js';
+import { buildBorderPattern } from './borderFill.js'; // exterior del mapa con patrón propio (def.border.brush)
 import { nearestFreeSpot } from './waterAccess.js';
 import { eggStep } from './eggs.js'; // B11: pasos de los huevos del equipo y eclosión
 import { daycareStep } from './daycare.js'; // guardería: contador del huevo de la pareja depositada
 import { PanoramaLayer } from '../render/panorama.js'; // B12: fondo de mapa (vacío del Mundo Distorsión)
 import { ImpossibleField } from './impossible/field.js'; // B12: espacio imposible (vacío, anclas, puentes)
 import { MapNetSync } from '../net/mapSync.js'; // multijugador: otros jugadores de la sala online
-import { handleInvite } from '../net/linkFlow.js'; // multijugador: combates online (registra la acción 'online')
+import { handleInvite, tryCoopBattle } from '../net/linkFlow.js'; // multijugador: combates online (registra la acción 'online')
 import { installDevMenuKey } from '../dev/devRuntime.js'; // modo desarrollador: F9 (docs/MODO_DESARROLLADOR.md)
 
 export const DEFAULT_MAP = 'dev_test';
@@ -148,6 +148,7 @@ export default class MapScene extends Scene {
     const entry = createEntry(def, built, res.tileset);
     entry.res = res;
     entry.torches = findTorches(entry);
+    entry.borderPattern = buildBorderPattern(def, { library: lib.library || undefined, paintBrush: lib.paintBrush, warn: (m) => console.warn(`[${id}:borde] ${m}`) });
     return entry;
   }
 
@@ -181,7 +182,7 @@ export default class MapScene extends Scene {
     }
     this.refreshFollower();
     placeChainBehind(p, this.world.followers);
-    this.camera.setBounds(def.width, def.height, openSides(def));
+    this.camera.setBounds(def.width, def.height);
     this.camera.follow(p);
     this.camera.snapToTarget();
     await this.loadNeighbors(entry);
@@ -222,7 +223,7 @@ export default class MapScene extends Scene {
   onConnectionCrossed(next, prev, { ox, oy }) {
     this.camera.x += ox * 32;
     this.camera.y += oy * 32;
-    this.camera.setBounds(next.def.width, next.def.height, openSides(next.def));
+    this.camera.setBounds(next.def.width, next.def.height);
     this.visible.clear();
     this.state.setPosition(next.id, this.world.player.x, this.world.player.y, this.world.player.direction);
     this.applyEnvironment(next.def);
@@ -334,7 +335,10 @@ export default class MapScene extends Scene {
     }
   }
 
-  startBattle(config) { return runBattle(this, config); }
+  /** Combate; con compañero de equipo online en este mapa, los combates contra entrenadores se juegan juntos. */
+  async startBattle(config) {
+    return (await tryCoopBattle(this, config)) || runBattle(this, config);
+  }
   startWildBattle(enc) { return runWildBattle(this, enc); }
 
   forceEncounter() {

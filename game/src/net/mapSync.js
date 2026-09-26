@@ -12,7 +12,8 @@ const NAME_SHADOW = '#303848';
 const HUD_MARGIN = 4;
 const NAME_LIFT = 4; // px por encima de la cabeza
 const INVITE_MAX_AGE_MS = 25000; // el que invita espera 30 s: una invitación más vieja ya no vale
-const MODES_ALLOWED = new Set(['pvp', 'coop', 'trade']);
+const MODES_ALLOWED = new Set(['pvp', 'trade', 'team', 'coopBattle']);
+const COOP_BATTLE_MAX_AGE_MS = 4000; // el anfitrión espera 5 s antes de combatir solo
 
 /** Estado del jugador tal como se anuncia a la sala. */
 export function playerSnapshot(world) {
@@ -59,7 +60,7 @@ export class MapNetSync {
   receiveDirect(m) {
     if (m.b?.k !== 'invite' || !MODES_ALLOWED.has(m.b.mode) || typeof m.b.s !== 'string') return;
     const name = this.client.peers.get(m.from)?.name || 'Alguien';
-    this.invites.push({ from: m.from, s: m.b.s, mode: m.b.mode, name, at: this.now() });
+    this.invites.push({ from: m.from, s: m.b.s, mode: m.b.mode, name, at: this.now(), body: m.b });
   }
 
   /** ¿Puede el jugador atender algo ahora (sin guion, menú, combate ni paso a medias)? */
@@ -71,8 +72,10 @@ export class MapNetSync {
   /** Atiende la invitación más antigua si el jugador está libre. */
   processInvites() {
     if (!this.invites.length || !this.onInvite || !this.playerFree()) return;
-    const invite = this.invites.shift();
-    if (this.now() - invite.at > INVITE_MAX_AGE_MS || !this.client.peers.has(invite.from)) return;
+    const urgent = this.invites.findIndex((v) => v.mode === 'coopBattle'); // el anfitrión solo espera unos segundos
+    const invite = urgent >= 0 ? this.invites.splice(urgent, 1)[0] : this.invites.shift();
+    const maxAge = invite.mode === 'coopBattle' ? COOP_BATTLE_MAX_AGE_MS : INVITE_MAX_AGE_MS;
+    if (this.now() - invite.at > maxAge || !this.client.peers.has(invite.from)) return;
     this.scene.runScript((ctx) => this.onInvite(ctx, invite), null, 'invitación online');
   }
 

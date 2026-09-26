@@ -1,18 +1,17 @@
-// Sesiones entre dos jugadores de la sala (combate 1 contra 1 o doble en equipo): invitación, aceptación, reparto de
-// equipos y semilla, y el canal ordenado de mensajes que usa battle/link/linkBattle.js durante el combate.
+// Sesiones entre dos jugadores de la sala: el canal ordenado de mensajes (LinkChannel) que usan los combates
+// (battle/link/linkBattle.js), los intercambios y el equipo, y el combate 1 contra 1 (invitación, equipos, semilla).
+// El combate en equipo contra entrenadores de la historia está en net/coopBattle.js.
 //
-// Invitación (mensajes directos 'dm', campo `s` = id de sesión):
-//   A → B { k: 'invite', mode }                 B → A { k: 'accept', party, megaRing, gender } | { k: 'decline', why }
-//   A → B { k: 'start', seed, party, megaRing, foes? }   (A es el anfitrión: posición canónica 0)
+// Invitación 1 contra 1 (mensajes directos 'dm', campo `s` = id de sesión):
+//   A → B { k: 'invite', mode: 'pvp' }          B → A { k: 'accept', party, megaRing, gender } | { k: 'decline', why }
+//   A → B { k: 'start', seed, party, megaRing }   (A es el anfitrión: posición canónica 0)
 //   durante el combate: { k: 'cmd' | 'sw', … } en los dos sentidos · { k: 'abort' } si algo falla al empezar
 import { net } from './netClient.js';
 import { linkParty } from '../battle/link/linkBattle.js';
-import { coopTrainers, coopLevel } from './coopTrainers.js';
 
 export const INVITE_TIMEOUT_MS = 30000;
 export const MODES = Object.freeze({
   pvp: { label: 'un combate', short: 'Combate 1 contra 1' },
-  coop: { label: 'un combate doble en equipo contra entrenadores expertos', short: 'Combate doble en equipo' },
 });
 const HUMAN_SPRITE = { M: 'anil:aspirante', F: 'anil:aspirante_f' };
 const MEGA_KEY_ITEMS = ['MEGARING', 'MEGABRACELET', 'KEYSTONE', 'MEGACUFF', 'MEGACHARM'];
@@ -81,10 +80,10 @@ function contribution(state, db) {
 }
 
 /**
- * Petición de combate para world/battleFlow + battle/scene/runner (request.link activa battle/link/linkBattle.js).
+ * Petición de combate 1 contra 1 para battle/scene/runner (request.link activa battle/link/linkBattle.js).
  * role: 'host' | 'guest'. me/peer: { name, gender, party, megaRing }.
  */
-export function linkBattleRequest({ mode, role, me, peer, seed, foes = null, channel }) {
+export function linkBattleRequest({ mode = 'pvp', role, me, peer, seed, channel }) {
   const host = role === 'host';
   const base = {
     type: 'trainer',
@@ -96,25 +95,15 @@ export function linkBattleRequest({ mode, role, me, peer, seed, foes = null, cha
     battleback: 'Ciudad',
     time: 'day',
   };
-  const link = { mode, remoteName: peer.name, send: (b) => channel.send(b), next: () => channel.next() };
-  if (mode === 'pvp') {
-    return {
-      ...base,
-      format: 'single',
-      player: { name: me.name, gender: me.gender, party: me.party, bag: {}, megaRing: me.megaRing, expAll: false },
-      trainer: { id: 'online', name: peer.name, class: '', sprite: HUMAN_SPRITE[peer.gender] || HUMAN_SPRITE.M, party: peer.party, megaRing: peer.megaRing, ai: 0, loseText: '¡Buen combate!' },
-      link: { ...link, mirror: !host, localOwner: 0, localIdx: 0, remoteIdx: 1 },
-    };
-  }
-  // Equipo: el anfitrión es siempre el entrenador 0 del bando 0 (posición 0) y el compañero el 1 (posición 2).
-  const [first, second] = host ? [me, peer] : [peer, me];
   return {
     ...base,
-    format: 'double',
-    player: { name: first.name, gender: me.gender, party: first.party, bag: {}, megaRing: first.megaRing, expAll: false },
-    ally: { name: second.name, party: second.party, megaRing: second.megaRing, skill: 0 },
-    trainers: foes,
-    link: { ...link, mirror: false, localOwner: host ? 0 : 1, localIdx: host ? 0 : 2, remoteIdx: host ? 2 : 0 },
+    format: 'single',
+    player: { name: me.name, gender: me.gender, party: me.party, bag: {}, megaRing: me.megaRing, expAll: false },
+    trainer: { id: 'online', name: peer.name, class: '', sprite: HUMAN_SPRITE[peer.gender] || HUMAN_SPRITE.M, party: peer.party, megaRing: peer.megaRing, ai: 0, loseText: '¡Buen combate!' },
+    link: {
+      mode, remoteName: peer.name, send: (b) => channel.send(b), next: () => channel.next(),
+      mirror: !host, localOwner: 0, localIdx: 0, remoteIdx: 1,
+    },
   };
 }
 
@@ -135,9 +124,8 @@ export async function inviteToBattle({ peer, mode, state, db, client = net }) {
     const me = contribution(state, db);
     const other = { name: peer.name, gender: reply.gender, party: reply.party, megaRing: Boolean(reply.megaRing) };
     const seed = randomSeed();
-    const foes = mode === 'coop' ? coopTrainers(db, { level: coopLevel(me.party, other.party), seed: seed ^ 0x5bd1e995 }) : null;
-    channel.send({ k: 'start', seed, party: me.party, megaRing: me.megaRing, gender: me.gender, foes });
-    return { channel, request: linkBattleRequest({ mode, role: 'host', me, peer: other, seed, foes, channel }) };
+    channel.send({ k: 'start', seed, party: me.party, megaRing: me.megaRing, gender: me.gender });
+    return { channel, request: linkBattleRequest({ mode, role: 'host', me, peer: other, seed, channel }) };
   } catch (err) {
     channel.close();
     throw err;
@@ -165,5 +153,5 @@ export async function answerInvite({ invite, accepted, state, db, client = net }
     throw new Error(`${invite.name} ha cancelado el combate.`);
   }
   const peer = { name: invite.name, gender: start.gender, party: start.party, megaRing: Boolean(start.megaRing) };
-  return { channel, request: linkBattleRequest({ mode: invite.mode, role: 'guest', me, peer, seed: start.seed, foes: start.foes, channel }) };
+  return { channel, request: linkBattleRequest({ mode: invite.mode, role: 'guest', me, peer, seed: start.seed, channel }) };
 }

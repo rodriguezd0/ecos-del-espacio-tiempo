@@ -132,7 +132,7 @@ Gael, postgame y DLC), `docs/TABLILLAS.md` (T01–T15, museo, Crónica, Libreta)
 
 - **Salas:** con código de 4 caracteres, hasta 8 jugadores, desde «Online» en el menú de pausa.
 - **Combate 1 contra 1:** con niveles reales (decisión del usuario).
-- **Combate doble en equipo:** dos jugadores contra dos entrenadores de IA máxima. Cada rival lleva 3 Pokémon totalmente evolucionados de Axis, al nivel del Pokémon más alto de ambos jugadores y con IV perfectos.
+- **Jugar en equipo** (corregido por el usuario el 26-09: «la idea es contra los entrenadores de la historia»): dos jugadores forman equipo. Cuando un entrenador de la historia reta a uno de ellos con el compañero en el mismo mapa, combaten los dos juntos contra él en un doble, con su equipo real. Cuenta para las dos partidas: experiencia, dinero, movimientos, evoluciones y entrenador derrotado. Los jefes con fases y los combates que ya son dobles siguen siendo individuales. El modo anterior contra dos entrenadores inventados se ha quitado.
 - **En ambos modos:** los equipos se curan en copia; no hay objetos, experiencia ni dinero, y la partida no cambia (perder no te devuelve al Centro Pokémon).
 - **Rendirse y desconexiones:** se puede rendir. Si el otro jugador se desconecta, en el 1 contra 1 ganas tú; en el doble en equipo pierden los dos.
 - **Pendientes pedidos por el usuario:** intercambios, chat y emotes.

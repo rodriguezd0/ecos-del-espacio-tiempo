@@ -5,6 +5,7 @@ import { ui } from '../ui/api.js';
 import { net } from './netClient.js';
 import { normalizeRoomCode, ROOM_CODE_LENGTH } from './protocol.js';
 import { MODES, cannotBattle } from './linkSession.js';
+import { team, leaveTeam } from './coopBattle.js';
 
 export async function runOnlineMenu(state) {
   if (net.status === 'off') { await offlineMenu(state); return null; }
@@ -63,20 +64,30 @@ async function pickPeer(prompt) {
 async function roomMenu(state) {
   const names = [...net.peers.values()].map((p) => p.name);
   const who = names.length ? `Contigo: ${names.join(', ')}.` : 'Todavía no hay nadie más.';
-  const options = [MODES.pvp.short, MODES.coop.short, 'Intercambiar', 'Salir de la sala', 'Seguir'];
-  const pick = await ui.choice(options, { message: `Sala ${net.room}. ${who} (Tecla E: globos y chat.)`, cancel: 4 });
+  const inTeam = Boolean(team.partnerId);
+  const teamLine = inTeam ? ` Equipo: ${team.partnerName}.` : '';
+  const options = [inTeam ? 'Deshacer el equipo' : 'Formar equipo', MODES.pvp.short, 'Intercambiar', 'Salir de la sala', 'Seguir'];
+  const pick = await ui.choice(options, { message: `Sala ${net.room}. ${who}${teamLine} (Tecla E: globos y chat.)`, cancel: 4 });
+  if (pick === 0) {
+    if (inTeam) {
+      if (await ui.confirm(`¿Deshacer el equipo con ${team.partnerName}?`)) { leaveTeam(); ui.toast('Equipo deshecho.'); }
+      return null;
+    }
+    const peer = await pickPeer('¿Con quién quieres formar equipo?');
+    return peer ? { type: 'online', op: 'team', peerId: peer.id } : null;
+  }
+  if (pick === 1) {
+    const why = cannotBattle(state);
+    if (why) { await ui.message(why); return null; }
+    const peer = await pickPeer('¿A quién quieres retar?');
+    return peer ? { type: 'online', op: 'battle', mode: 'pvp', peerId: peer.id } : null;
+  }
   if (pick === 2) {
     const peer = await pickPeer('¿Con quién quieres intercambiar?');
     return peer ? { type: 'online', op: 'trade', peerId: peer.id } : null;
   }
-  if (pick === 0 || pick === 1) {
-    const why = cannotBattle(state);
-    if (why) { await ui.message(why); return null; }
-    const mode = pick === 0 ? 'pvp' : 'coop';
-    const peer = await pickPeer(pick === 0 ? '¿A quién quieres retar?' : '¿Con quién quieres formar equipo?');
-    return peer ? { type: 'online', op: 'battle', mode, peerId: peer.id } : null;
-  }
   if (pick === 3 && await ui.confirm('¿Salir de la sala?')) {
+    leaveTeam();
     net.leave();
     ui.toast('Has salido de la sala.');
   }

@@ -1,7 +1,7 @@
 // Combates online en paso a paso (battle/link/linkBattle.js): dos motores REALES, cada uno con su interfaz que elige
 // al azar (movimientos, cambios, a veces rendirse), unidos por un canal en memoria. Deben ir siempre a la par (misma
 // suma de control cada turno) y terminar con resultados coherentes: 1 contra 1 con los bandos cambiados en cada lado,
-// y dobles en equipo contra la IA con la misma simulación en los dos.
+// y en equipo contra entrenadores REALES de la historia (IA) con la misma simulación, experiencia y movimientos.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -12,7 +12,9 @@ import { createRng } from '../game/src/battle/core/rng.js';
 import { buildBattleConfig } from '../game/src/battle/scene/setup.js';
 import { installLink, battleChecksum, linkParty } from '../game/src/battle/link/linkBattle.js';
 import { linkBattleRequest } from '../game/src/net/linkSession.js';
-import { coopTrainers, coopLevel, coopSpeciesPool } from '../game/src/net/coopTrainers.js';
+import { coopStoryRequest, resolveCoopTrainer, applyCoopResult, playerContribution, coopEligible } from '../game/src/net/coopBattle.js';
+import { TRAINERS, getTrainer } from '../game/src/content/trainers/index.js';
+import { GameState } from '../game/src/core/state.js';
 
 const db = { ...baseDb, dex: JSON.parse(fs.readFileSync(new URL('../game/data/dex_axis.json', import.meta.url))) };
 
@@ -86,9 +88,8 @@ async function play(mode, seed, { forfeit = null } = {}) {
   const guestTeam = seed % 2 ? team(seed, 3, 50) : team(seed + 7, 3, 50);
   const host = human('Ana', 'F', hostTeam);
   const guest = human('Beto', 'M', guestTeam);
-  const foes = mode === 'coop' ? coopTrainers(db, { level: coopLevel(host.party, guest.party), seed: seed * 31 }) : null;
-  const reqHost = linkBattleRequest({ mode, role: 'host', me: host, peer: guest, seed, foes, channel: toGuest });
-  const reqGuest = linkBattleRequest({ mode, role: 'guest', me: guest, peer: host, seed, foes: JSON.parse(JSON.stringify(foes)), channel: toHost });
+  const reqHost = linkBattleRequest({ mode, role: 'host', me: host, peer: guest, seed, channel: toGuest });
+  const reqGuest = linkBattleRequest({ mode, role: 'guest', me: guest, peer: host, seed, channel: toHost });
   const sims = [reqHost, reqGuest].map((req, i) => {
     const { config } = buildBattleConfig(req, { db });
     const ui = new RandomUI(seed * 10 + i, { forfeitTurn: forfeit === i ? 3 : -1 });
@@ -113,41 +114,106 @@ test('1 contra 1 online: 24 combates al azar, siempre a la par y con resultados 
   }
 });
 
-test('dobles en equipo contra la IA: 10 combates al azar, misma simulación y mismo resultado', { timeout: 180000 }, async () => {
-  for (let seed = 1; seed <= 10; seed++) {
-    const { sims, results } = await play('coop', seed);
-    const [h, g] = results;
-    assert.ok(!sims.some((s) => s.linkEnd === 'desync'), `semilla ${seed}: desincronía`);
-    assert.equal(h.outcome, g.outcome, `semilla ${seed}`);
-    assert.ok(h.turns >= 2, `semilla ${seed}: combate real`);
-    assert.equal(h.turns, g.turns);
-    assert.equal(battleChecksum(sims[0]), battleChecksum(sims[1]));
-    assert.equal(sims[0].battlers[2].pbOwnedByPlayer(), false, 'para el anfitrión, la posición 2 es su compañero');
-    assert.equal(sims[1].battlers[2].pbOwnedByPlayer(), true, 'para el compañero, la posición 2 es la suya');
-  }
-});
-
-test('rendirse: quien se rinde pierde; contra otro jugador, el otro gana; en equipo, pierden los dos', { timeout: 60000 }, async () => {
+test('1 contra 1: quien se rinde pierde y el otro gana', { timeout: 60000 }, async () => {
   const pvp = await play('pvp', 5, { forfeit: 1 });
   assert.deepEqual(pvp.results.map((r) => r.outcome), ['win', 'lose']);
   assert.deepEqual(pvp.sims.map((s) => s.linkEnd), ['remoteForfeit', 'forfeit']);
-  const coop = await play('coop', 5, { forfeit: 0 });
-  assert.deepEqual(coop.results.map((r) => r.outcome), ['lose', 'lose']);
 });
 
-test('rivales del combate en equipo: evolucionados, de Axis, al nivel más alto y deterministas por semilla', () => {
-  const pool = coopSpeciesPool(db);
-  assert.ok(pool.length >= 20);
-  const a = coopTrainers(db, { level: 42, seed: 9 });
-  const b = coopTrainers(db, { level: 42, seed: 9 });
-  assert.deepEqual(a.map((t) => t.party.map((p) => p.species)), b.map((t) => t.party.map((p) => p.species)));
-  for (const t of a) {
-    assert.equal(t.ai, 100);
-    for (const p of t.party) {
-      assert.equal(p.level, 42);
-      assert.ok(pool.includes(p.species));
-      assert.equal(p.ivs.spe, 31);
+// ---------------------------------------------------------------- en equipo contra la historia
+/** Interfaz al azar que además decide si aprende movimientos nuevos. */
+class RandomLearnUI extends RandomUI {
+  async learnMove(pokemon) {
+    const r = Math.floor(this.rand() * (pokemon.moves.length + 1));
+    return r >= pokemon.moves.length ? null : r;
+  }
+}
+
+/** Entrenadores de la historia con al menos `min` Pokémon (los primeros del registro, orden estable). */
+function storyTrainers(min) {
+  return Object.keys(TRAINERS).filter((id) => (TRAINERS[id].party || []).length >= min).slice(0, 8);
+}
+
+function humanFromTeam(name, gender, id, list) {
+  const st = GameState.create({ name, gender });
+  st.player.id = id;
+  for (const p of list) st.addPokemon(p);
+  return { state: st, me: playerContribution(st) };
+}
+
+async function playCoop(trainerId, seed) {
+  const [toGuest, toHost] = channelPair();
+  const trainer = resolveCoopTrainer({ trainer: trainerId }, { db, state: null, getTrainer });
+  const top = Math.max(...trainer.party.map((p) => p.level));
+  const lv = Math.max(5, top - 2); // algo por debajo: suben de nivel y aprenden movimientos durante el combate
+  const host = humanFromTeam('Ana', 'F', 1, team(seed, 2, lv));
+  const guest = humanFromTeam('Beto', 'M', 2, team(seed + 3, 2, lv));
+  const reqs = [
+    coopStoryRequest({ role: 'host', host: host.me, guest: guest.me, trainer, seed, channel: toGuest }),
+    coopStoryRequest({ role: 'guest', host: JSON.parse(JSON.stringify(host.me)), guest: guest.me, trainer: JSON.parse(JSON.stringify(trainer)), seed, channel: toHost }),
+  ];
+  const sims = reqs.map((req, i) => {
+    const { config } = buildBattleConfig(req, { db });
+    const battle = new Battle(config, new RandomLearnUI(seed * 10 + i, { switchRate: 0.1 }));
+    installLink(battle, req.link);
+    return battle;
+  });
+  const results = await Promise.all(sims.map((b) => b.run()));
+  return { sims, results, host, guest };
+}
+
+const expOf = (party) => (party || []).reduce((a, p) => a + (p?.exp || 0), 0);
+
+test('en equipo contra entrenadores de la historia: misma simulación, experiencia para los dos y movimientos sincronizados', { timeout: 240000 }, async () => {
+  const ids = storyTrainers(1);
+  assert.ok(ids.length >= 4);
+  let wins = 0;
+  for (const [i, id] of ids.entries()) {
+    const seed = 100 + i;
+    const { sims, results, host, guest } = await playCoop(id, seed);
+    const [h, g] = results;
+    assert.ok(!sims.some((s) => s.linkEnd === 'desync'), `${id}: desincronía`);
+    assert.equal(h.outcome, g.outcome, `${id}: mismo resultado`);
+    assert.equal(h.turns, g.turns, `${id}: mismos turnos`);
+    assert.equal(battleChecksum(sims[0]), battleChecksum(sims[1]), `${id}: mismo estado final`);
+    assert.deepEqual(h.playerParty, g.playerParty, `${id}: el equipo del anfitrión igual en las dos pantallas`);
+    assert.deepEqual(h.allyParty, g.allyParty, `${id}: el del compañero también (movimientos aprendidos incluidos)`);
+    assert.equal(sims[0].battlers[2].pbOwnedByPlayer(), false, 'para el anfitrión, la posición 2 es su compañero');
+    assert.equal(sims[1].battlers[2].pbOwnedByPlayer(), true, 'para el compañero, la posición 2 es la suya');
+    if (h.outcome === 'win') {
+      wins += 1;
+      assert.ok(expOf(h.playerParty) > expOf(host.me.party), `${id}: el anfitrión gana experiencia`);
+      assert.ok(expOf(h.allyParty) > expOf(guest.me.party), `${id}: el compañero también`);
     }
   }
-  assert.equal(coopLevel([{ level: 12 }], [{ level: 30 }, { level: 99, egg: true }]), 30);
+  assert.ok(wins >= 2, `se ganan varios combates (${wins})`);
 });
+
+test('en equipo: el resultado se aplica a cada partida respetando huevos y posiciones', () => {
+  const st = GameState.create({ name: 'Beto' });
+  const a = createPokemon(db, 'PIKACHU', 10, { rng: () => 0.5 });
+  const egg = { ...createPokemon(db, 'EEVEE', 1, { rng: () => 0.5 }), egg: true };
+  const b = createPokemon(db, 'MACHOP', 10, { rng: () => 0.5 });
+  st.setParty([a, egg, b]);
+  const { slots, party } = playerContribution(st);
+  assert.deepEqual(slots, [0, 2]);
+  const grown = party.map((p) => ({ ...p, level: p.level + 1, exp: p.exp + 500 }));
+  const money = st.player.money;
+  const { evolutions } = applyCoopResult(st, db, { result: { allyParty: grown, moneyChange: 300, seen: ['GEODUDE'] }, role: 'guest', slots, levelsBefore: [10, 10] });
+  assert.equal(st.party[1].egg, true, 'el huevo sigue en su sitio');
+  assert.equal(st.party[0].level, 11);
+  assert.equal(st.party[2].level, 11);
+  assert.equal(st.player.money, money + 300);
+  assert.ok(st.data.dex.seen.GEODUDE);
+  assert.deepEqual(evolutions, []);
+});
+
+test('en equipo: solo combates normales contra un entrenador (no dobles, jefes con fases ni salvajes)', () => {
+  assert.equal(coopEligible({ type: 'trainer', trainer: 'x' }), true);
+  assert.equal(coopEligible({ trainer: 'x', format: 'double' }), false);
+  assert.equal(coopEligible({ trainer: 'x', phases: [{}] }), false);
+  assert.equal(coopEligible({ trainer: 'x', trainers: ['a', 'b'] }), false);
+  assert.equal(coopEligible({ type: 'wild', wild: { species: 'PIKACHU' } }), false);
+  assert.equal(coopEligible({ trainer: 'x', noCoop: true }), false);
+});
+

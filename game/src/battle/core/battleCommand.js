@@ -293,7 +293,7 @@ Object.assign(Battle.prototype, {
     const b = this.battlers[idx];
     return this.ask('chooseAction', b.view(), {
       firstAction,
-      canRun: firstAction && ((this.wildBattle() && this.canRun) || Boolean(this.link)), // online: rendirse
+      canRun: firstAction && ((this.wildBattle() && this.canRun) || this.link?.mode === 'pvp'), // online 1v1: rendirse
       canSwitch: this.canSwitch,
       canUseItems: this.internalBattle,
       wild: this.wildBattle(),

@@ -507,13 +507,31 @@ oscuridad con luces) → efectos luminosos → pasada final (destello, fundido, 
   dimensión opaca supera un presupuesto proporcional a la altura de la especie (58 px por 1,5 m; mínimo 48, máximo 96)
   se encogen a 3/4 o 1/2 (píxel nítido): Onix 1/2, Yanma 3/4 (el creador los vio «enormes»). Zygarde queda fuera.
   `render/charsets.js` mide la hoja al cargarla (`sheet.scale`) y `characterSprite.js` la aplica. Test: `follower_size`.
-- **Costuras entre mapas conectados** (`world/seams.js`, puro): la cámara no se limita por los lados con conexión, así
-  que junto a un vecino de otro tamaño o desplazado quedaban casillas sin mapa (franjas negras). `planSeams(entries)`
-  rellena cada casilla vacía que la cámara puede enseñar (`cameraReach`: margen 9×7 por los lados abiertos) repitiendo
-  el borde (periodo 2) del mapa cargado más cercano (empate por id: no cambia al cruzar); `WorldView.syncSeams` lo
-  rehace al cambiar el mapa actual, los vecinos o sus desplazamientos y `TilemapView.setSeamFill` lo dibuja en una
-  malla bajo el suelo de todos los mapas (`SEAM_ORDER`). Solo decorado (no se pisa); mapas sin conexiones, sin relleno.
-  Test: `tests/world_seams.test.mjs` (ninguna casilla visible vacía en los mapas conectados de B01–B06).
+- **Cámara como en Pokémon** (`render/camera.js`, decisión del creador 26-09): sigue SIEMPRE al jugador centrado, también
+  junto a bordes y esquinas; solo un mapa que cabe entero en pantalla (≤ 16×12) se queda centrado en él (como Añil).
+  `setBounds(w, h)` ya no limita. Paneos de guion (`ctx.camera.pan/reset/follow`) centran exactamente la casilla pedida.
+- **Exterior de los mapas** (`world/seams.js` + `world/borderFill.js`, puros): «más allá del borde sigue habiendo mapa».
+  Donde hay conexión se ve el vecino; `planSeams(entries)` rellena el resto del anillo que la cámara puede enseñar
+  (`cameraReach`: mapa + 10×8 casillas) con el borde de un mapa cargado, como los bloques de borde oficiales:
+  - Quién rellena cada casilla: un mapa del que prolonga una columna (encima/debajo) o una fila (a un lado) antes que
+    uno en diagonal; el hueco entre un mapa de arriba/abajo y otro de al lado es entero del que lo cubre con menos
+    profundidad (`verticalWins`): fronteras rectas por la prolongación de un borde, sin diagonales que partan árboles.
+    Solo depende de los rectángulos relativos: al cruzar una conexión el relleno visible no cambia.
+  - Qué se copia (`def.border`, por defecto `'edge'`): cada fila/columna del borde repite su periodo (bosque, césped,
+    agua, camino…) con su fase; la banda de árboles que bordea el norte/sur (≤ 6 casillas hasta la primera vacía, en
+    ≥ 40 % de las columnas) se repite por unidades completas; si no, salta un objeto suelto del borde (farola, cartel:
+    no se repite) o usa el periodo mayoritario del lado. Suelo (capa 0) y decorado (1–2) se analizan aparte, pero
+    bajo un árbol copiado va el suelo de su propia casilla. `{ brush }`: patrón propio (pincel del tileset o del mapa,
+    p. ej. `'bosque'`, un id de agua…) pintado con el MapBuilder en un anillo de 12×10 (`buildBorderPattern`, al
+    cargar el mapa en `MapScene.loadEntry`). `'none'`/`false`: negro.
+  - Negro (como en Pokémon): interiores (tilesets 4, 8, 10, 11), mapas que caben en pantalla, mapas con panorama o
+    espacio imposible, y salas «flotando» en negro (`edgeVoid`: contorno ≥ 25 % sin tiles o, en cuevas, ≥ 40 % de una
+    misma casilla lisa, que se repite). Un vecino sin relleno no reclama casillas (no deja agujeros junto a él).
+  - `WorldView.syncSeams` rehace el plan al cambiar el mapa actual, los vecinos o sus desplazamientos;
+    `TilemapView.setSeamFill` lo dibuja en UNA malla por mapa (autotiles animados) bajo el suelo de todos los mapas
+    (`SEAM_ORDER`). Solo decorado: `World.entryAt` no lo ve, no se pisa.
+  Tests: `tests/world_seams.test.mjs` (cámara; ninguna casilla visible vacía en los exteriores de B01–B06),
+  `tests/border_fill.test.mjs`. Vista previa: `node tools/preview_border.mjs <id> [--outline]`.
 - Recursos: tilesets y texturas cacheadas globalmente; al cambiar de mapa se liberan geometrías/materiales de
   tilemaps, sprites, partículas de clima y efectos (verificado con `tools/perf_map.mjs`: 0 fugas en 20 warps).
   Rendimiento medido (mapa 120×120 con 40 NPC, headless): lógica ≈0,1 ms/frame, dibujo ≈0,6 ms/frame (CPU).
@@ -1134,8 +1152,21 @@ Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset
   - **1 contra 1:** cada lado se ve en el bando 0 (`link.mirror` en el invitado). El desempate de velocidad usa
     `battle.canonicalIndex`, y Alerta/Cacheo/Anticipación se anuncian siempre (`pbRevealsAbilityInfo`), para gastar
     el mismo azar en los dos lados.
-  - **Doble en equipo:** la simulación es idéntica; solo cambia `battle.localOwner` (el anfitrión en la posición 0 y
-    el compañero en la 2). Los rivales de IA (`net/coopTrainers.js`) los genera el anfitrión y los envía.
+  - **En equipo contra la historia** (`net/coopBattle.js`, petición del usuario 26-09):
+    - Dos jugadores forman equipo desde «Online → Formar equipo».
+    - Cuando un entrenador reta a uno de ellos (`MapScene.startBattle` → `linkFlow.tryCoopBattle`) y el compañero está
+      en el mismo mapa y libre, el combate es doble: los dos contra ese entrenador real (`coopEligible`: combates
+      normales, sin dobles, jefes con fases ni salvajes).
+    - Las dos simulaciones son idénticas; solo cambia `battle.localOwner` (el anfitrión en la posición 0 y el
+      compañero en la 2).
+    - Cuenta de verdad: experiencia para los dos (`battle.expOwners`), obediencia igual en ambos lados, dinero y
+      evoluciones. «Aprender movimiento» lo decide el dueño y se envía (`lm`).
+    - Cada partida aplica su parte (`applyCoopResult`, respetando los huevos) y marca al entrenador como derrotado
+      (`coopMark`).
+    - Si pierden, cada uno vuelve a su punto de cura.
+    - Si el compañero se desconecta, el combate se interrumpe sin ganador.
+    - No se usan objetos de la Mochila en ningún combate online.
+    - Prueba: `node tools/net_coop_smoke.mjs`.
   - `installLink` sustituye `pbCommandPhase` (primero el humano local, luego el intercambio y después la IA),
     `pbSwitchInBetween`, `pbRunMenu` (rendirse) y `pbEndOfBattle`.
   - El runner recibe `request.link` y `state = null`, así que no toca la partida.

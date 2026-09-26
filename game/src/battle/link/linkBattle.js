@@ -64,12 +64,17 @@ export function applyChoice(battle, idx, c) {
  *         send(msg), next(): Promise<msg> (siguiente mensaje del otro humano; { gone: true } si se desconecta) }
  */
 export function installLink(battle, link) {
+  const pvp = link.mode === 'pvp';
   battle.link = link;
   battle.localOwner = link.localOwner ?? 0;
-  battle.internalBattle = false; // sin objetos, obediencia, experiencia ni dinero (como los combates por cable)
+  // Contra otro jugador: sin obediencia, experiencia ni dinero (como los combates por cable). En equipo contra un
+  // entrenador de la historia el combate cuenta de verdad: experiencia, dinero y obediencia para los dos.
+  battle.internalBattle = !pvp;
   battle.switchStyle = false;
-  battle.expGain = false;
-  battle.moneyGain = false;
+  if (pvp) {
+    battle.expGain = false;
+    battle.moneyGain = false;
+  }
   battle.linkForfeit = false;
   battle.linkEnd = null; // 'forfeit' | 'remoteForfeit' | 'gone' | 'desync'
 
@@ -78,14 +83,47 @@ export function installLink(battle, link) {
     if (text) battle.pbDisplayPaused(text);
     battle.decision = decision;
   };
-  // Se rinde el otro humano: contra él, ganas; en equipo, perdéis los dos.
-  const remoteQuit = (reason, text) => endWith(link.mode === 'pvp' ? 1 : 2, reason, text);
+  // El otro humano se va: contra él, ganas; en equipo, el combate se interrumpe sin ganador (como una huida).
+  const remoteQuit = (reason, text) => endWith(pvp ? 1 : 3, reason, pvp ? text : `${text} El combate se interrumpe.`);
 
-  battle.pbRunMenu = async function pbRunMenuLink(idx) {
-    if (!(await this.pbDisplayConfirm('¿Quieres rendirte?'))) return false;
-    this.linkForfeit = true;
-    this.choices[idx] = { action: 'Run', move: null, target: -1, priority: 0 };
-    return true;
+  // Los objetos de la Mochila no se usan online (cada jugador tiene la suya y las simulaciones deben coincidir).
+  battle.pbItemMenu = async function pbItemMenuLink() {
+    this.pbDisplayPaused('En los combates online no se pueden usar objetos de la Mochila.');
+    return false;
+  };
+
+  if (pvp) {
+    battle.pbRunMenu = async function pbRunMenuLink(idx) {
+      if (!(await this.pbDisplayConfirm('¿Quieres rendirte?'))) return false;
+      this.linkForfeit = true;
+      this.choices[idx] = { action: 'Run', move: null, target: -1, priority: 0 };
+      return true;
+    };
+  }
+
+  // Aprender movimiento al subir de nivel (en equipo): decide el dueño del Pokémon y el otro recibe su respuesta.
+  const baseLearnMove = battle.pbLearnMove;
+  battle.pbLearnMove = async function pbLearnMoveLink(idxParty, newMove) {
+    this.learnOwner = this.pbGetOwnerIndexFromPartyIndex(0, idxParty);
+    try {
+      return await baseLearnMove.call(this, idxParty, newMove);
+    } finally {
+      this.learnOwner = null;
+    }
+  };
+  const baseAsk = battle.ask;
+  battle.ask = async function askLink(method, ...args) {
+    if (method !== 'learnMove' || this.learnOwner == null) return baseAsk.call(this, method, ...args);
+    if (this.learnOwner === this.localOwner) {
+      const r = await baseAsk.call(this, method, ...args);
+      link.send({ k: 'lm', r: r ?? null });
+      return r;
+    }
+    await this.flush(); // que se vea «… quiere aprender …» mientras decide el compañero
+    const msg = await link.next();
+    if (msg.gone) { remoteQuit('gone', `${link.remoteName} se ha desconectado.`); return null; }
+    if (msg.k !== 'lm') { endWith(5, 'desync', 'La conexión se ha desincronizado. El combate termina en empate.'); return null; }
+    return msg.r;
   };
 
   battle.pbCommandPhase = async function pbCommandPhaseLink() {

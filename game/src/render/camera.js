@@ -1,5 +1,6 @@
-// Cámara del mapa: sigue al jugador (centrado como Essentials), respeta los límites del mapa salvo en
-// los lados con conexión, paneos suaves para escenas y temblor de pantalla.
+// Cámara del mapa, como en Pokémon: sigue SIEMPRE al jugador centrado, también junto a los bordes y esquinas (lo de
+// fuera lo dibujan los mapas vecinos y el relleno de borde de world/seams.js; en interiores, negro). Solo un mapa que
+// cabe entero en la pantalla se queda quieto, centrado (como en Añil). Paneos suaves para escenas y temblor.
 import { SCREEN_W, SCREEN_H } from '../core/screen.js';
 
 const TILE = 32;
@@ -10,15 +11,21 @@ export class Camera {
     this.x = 0;
     this.y = 0;
     this.target = null;
-    this.bounds = { w: SCREEN_W, h: SCREEN_H, open: {} };
+    this.bounds = { w: SCREEN_W, h: SCREEN_H };
     this.pan = null;
     this.shakeState = null;
     this.shakeX = 0;
     this.shakeY = 0;
   }
 
-  setBounds(widthTiles, heightTiles, open = {}) {
-    this.bounds = { w: widthTiles * TILE, h: heightTiles * TILE, open };
+  /** Tamaño del mapa actual (casillas). Ya no limita la cámara: solo decide si el mapa cabe entero en pantalla. */
+  setBounds(widthTiles, heightTiles) {
+    this.bounds = { w: widthTiles * TILE, h: heightTiles * TILE };
+  }
+
+  /** ¿El mapa actual cabe entero en la pantalla? (entonces la cámara se queda centrada en él). */
+  get mapFitsScreen() {
+    return this.bounds.w <= SCREEN_W && this.bounds.h <= SCREEN_H;
   }
 
   follow(target) {
@@ -27,22 +34,11 @@ export class Camera {
     this.pan = null;
   }
 
-  /** Esquina superior izquierda deseada para centrar el punto (px, py) (centro de casilla). */
+  /** Esquina superior izquierda para centrar el punto (px, py) (centro de casilla); mapa pequeño: centrado en él. */
   desiredFor(px, py) {
-    let x = px - SCREEN_W / 2;
-    let y = py - SCREEN_H / 2;
-    const { w, h, open } = this.bounds;
-    if (w <= SCREEN_W) x = (w - SCREEN_W) / 2;
-    else {
-      if (!open.west) x = Math.max(0, x);
-      if (!open.east) x = Math.min(w - SCREEN_W, x);
-    }
-    if (h <= SCREEN_H) y = (h - SCREEN_H) / 2;
-    else {
-      if (!open.north) y = Math.max(0, y);
-      if (!open.south) y = Math.min(h - SCREEN_H, y);
-    }
-    return { x, y };
+    const { w, h } = this.bounds;
+    if (this.mapFitsScreen) return { x: (w - SCREEN_W) / 2, y: (h - SCREEN_H) / 2 };
+    return { x: px - SCREEN_W / 2, y: py - SCREEN_H / 2 };
   }
 
   targetCenter() {

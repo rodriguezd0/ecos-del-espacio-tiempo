@@ -86,6 +86,8 @@ const EXPANDERS = {
           trainer: d.trainer || null,
           opponent: { name: d.name, trainerType: d.trainerType, party: d.party, ...(d.opponent || {}) },
           endSpeech: d.defeat,
+          // Online en equipo (net/coopBattle.js): el compañero también lo marca como derrotado en su partida.
+          coopMark: { mapId: ctx.world.current?.id, eventId: ev.id },
           ...(d.battle || {}),
         });
         if (outcome === 'win') ctx.setSelfSwitch('A', true);
