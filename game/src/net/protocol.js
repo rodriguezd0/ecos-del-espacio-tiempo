@@ -6,11 +6,13 @@
 //   { t: 'st', m, x, y, d, s, k, j }        el jugador EMPIEZA un paso (o salto) hacia (x, y) del mapa m
 //   { t: 'at', m, x, y, d, k }              posición/orientación en reposo (warp, giro, cambio de modo)
 //   { t: 'ping', c }                        c: marca del cliente, se devuelve tal cual en 'pong'
-//   { t: 'me', name, gender }               cambia tu nombre/aspecto (p. ej. te uniste desde el título y luego creaste la partida)
+//   { t: 'chat', text } · { t: 'emo', k }    mensaje de chat / globo de emoción para toda la sala
+//   { t: 'me', name, gender }              cambia tu nombre/aspecto (p. ej. te uniste desde el título y luego creaste la partida)
 //   { t: 'dm', to, b }                      mensaje directo a otro jugador de la sala (b: objeto; combates, intercambios)
 // Servidor → cliente
 //   { t: 'welcome', id, room, peers: [peer] }  peer: { id, name, gender, av }
 //   { t: 'join', peer } · { t: 'leave', id } · { t: 'st'|'at', id, ...avatar } · { t: 'pong', c }
+//   { t: 'chat', id, text } · { t: 'emo', id, k }
 //   { t: 'dm', from, b } · { t: 'peer', peer }  (otro jugador cambió de nombre o aspecto)
 //   { t: 'error', code, msg }
 
@@ -30,6 +32,17 @@ const MAP_ID = /^[a-z0-9_]{1,64}$/;
 const COORD_LIMIT = 4096;
 const MIN_SPEED = 1;
 const MAX_SPEED = 8;
+
+export const MAX_CHAT_LENGTH = 80;
+/** Globos de emoción que se pueden enviar (los de render/emotes.js). */
+export const NET_EMOTES = Object.freeze(['!', '?', '…', '♪', '♥']);
+
+/** Texto de chat limpio (sin control, espacios compactados, recortado) o null si queda vacío. */
+export function sanitizeChat(raw) {
+  if (typeof raw !== 'string') return null;
+  const text = raw.replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, MAX_CHAT_LENGTH);
+  return text || null;
+}
 
 /** Código de sala normalizado (mayúsculas, solo el alfabeto) o null si no es válido. */
 export function normalizeRoomCode(raw) {

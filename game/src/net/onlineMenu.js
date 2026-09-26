@@ -63,8 +63,12 @@ async function pickPeer(prompt) {
 async function roomMenu(state) {
   const names = [...net.peers.values()].map((p) => p.name);
   const who = names.length ? `Contigo: ${names.join(', ')}.` : 'Todavía no hay nadie más.';
-  const options = [MODES.pvp.short, MODES.coop.short, 'Salir de la sala', 'Seguir'];
-  const pick = await ui.choice(options, { message: `Sala ${net.room}. ${who}`, cancel: 3 });
+  const options = [MODES.pvp.short, MODES.coop.short, 'Intercambiar', 'Salir de la sala', 'Seguir'];
+  const pick = await ui.choice(options, { message: `Sala ${net.room}. ${who} (Tecla E: globos y chat.)`, cancel: 4 });
+  if (pick === 2) {
+    const peer = await pickPeer('¿Con quién quieres intercambiar?');
+    return peer ? { type: 'online', op: 'trade', peerId: peer.id } : null;
+  }
   if (pick === 0 || pick === 1) {
     const why = cannotBattle(state);
     if (why) { await ui.message(why); return null; }
@@ -72,7 +76,7 @@ async function roomMenu(state) {
     const peer = await pickPeer(pick === 0 ? '¿A quién quieres retar?' : '¿Con quién quieres formar equipo?');
     return peer ? { type: 'online', op: 'battle', mode, peerId: peer.id } : null;
   }
-  if (pick === 2 && await ui.confirm('¿Salir de la sala?')) {
+  if (pick === 3 && await ui.confirm('¿Salir de la sala?')) {
     net.leave();
     ui.toast('Has salido de la sala.');
   }

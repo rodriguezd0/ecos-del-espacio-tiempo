@@ -1,16 +1,18 @@
 // Puente entre la escena del mapa y la sala online: cada fotograma compara el jugador con lo último enviado y
 // anuncia el paso EN EL MISMO FOTOGRAMA en que empieza (sin esperar a un tick de red), y aplica lo que llega de
-// los demás a RemotePlayers. También dibuja los nombres sobre los avatares y el indicador de sala.
+// los demás a RemotePlayers. También dibuja los nombres sobre los avatares, el chat (net/social.js) y el indicador
+// de sala, y atiende las invitaciones (combates, intercambios) y la tecla R (globos y chat) con el jugador libre.
 import { RemotePlayers } from './remotePlayers.js';
 import { net } from './netClient.js';
 import { drawText } from '../ui/core/text.js';
+import { SocialLayer } from './social.js';
 
 const NAME_COLOR = '#f8f8f8';
 const NAME_SHADOW = '#303848';
 const HUD_MARGIN = 4;
 const NAME_LIFT = 4; // px por encima de la cabeza
 const INVITE_MAX_AGE_MS = 25000; // el que invita espera 30 s: una invitación más vieja ya no vale
-const MODES_ALLOWED = new Set(['pvp', 'coop']);
+const MODES_ALLOWED = new Set(['pvp', 'coop', 'trade']);
 
 /** Estado del jugador tal como se anuncia a la sala. */
 export function playerSnapshot(world) {
@@ -21,7 +23,7 @@ export function playerSnapshot(world) {
 
 export class MapNetSync {
   /**
-   * opts.onInvite(invite): la escena lo ejecuta como guion cuando el jugador está libre (net/linkFlow.js#handleInvite).
+   * opts.onInvite(ctx, invite): la escena lo ejecuta como guion cuando el jugador está libre (net/linkFlow.js).
    * invite = { from, s, mode, name, at }.
    */
   constructor(scene, { client = net, charsetsFor, onInvite = null, now = () => Date.now() } = {}) {
@@ -44,11 +46,13 @@ export class MapNetSync {
     ];
     if (client.online) for (const p of client.peers.values()) this.remote.addPeer(p);
     scene.world.remote = this.remote;
+    this.social = new SocialLayer(this);
   }
 
   dispose() {
     for (const off of this.offs) off();
     this.offs = [];
+    this.social.dispose();
     if (this.scene.world.remote === this.remote) this.scene.world.remote = null;
   }
 
@@ -58,13 +62,24 @@ export class MapNetSync {
     this.invites.push({ from: m.from, s: m.b.s, mode: m.b.mode, name, at: this.now() });
   }
 
-  /** Atiende la invitación más antigua si el jugador está libre (sin guion, menú, combate ni paso a medias). */
-  processInvites() {
+  /** ¿Puede el jugador atender algo ahora (sin guion, menú, combate ni paso a medias)? */
+  playerFree() {
     const scene = this.scene;
-    if (!this.invites.length || !this.onInvite || !scene.ready || scene.world.scriptBusy() || scene.world.player.busy()) return;
+    return Boolean(scene.ready) && !scene.world.scriptBusy() && !scene.world.player.busy();
+  }
+
+  /** Atiende la invitación más antigua si el jugador está libre. */
+  processInvites() {
+    if (!this.invites.length || !this.onInvite || !this.playerFree()) return;
     const invite = this.invites.shift();
     if (this.now() - invite.at > INVITE_MAX_AGE_MS || !this.client.peers.has(invite.from)) return;
-    scene.runScript((ctx) => this.onInvite(ctx, invite), null, 'invitación online');
+    this.scene.runScript((ctx) => this.onInvite(ctx, invite), null, 'invitación online');
+  }
+
+  /** Tecla R (E del teclado) con el jugador libre: globos de emoción y chat. */
+  checkSocialKey() {
+    if (!this.scene.world.input?.pressed?.('R') || !this.playerFree()) return;
+    this.scene.runScript(() => this.social.openMenu(), null, 'chat online');
   }
 
   /** Llamar cada fotograma DESPUÉS de world.update (el paso ya ha empezado y la velocidad es la definitiva). */
@@ -74,6 +89,7 @@ export class MapNetSync {
     const me = this.scene.state?.player;
     if (me?.name) this.client.updateProfile?.({ name: me.name, gender: me.gender });
     this.processInvites();
+    this.checkSocialKey();
     const now = playerSnapshot(this.scene.world);
     const prev = this.last;
     const moved = !prev || now.m !== prev.m || now.x !== prev.x || now.y !== prev.y;
@@ -85,7 +101,7 @@ export class MapNetSync {
     this.last = now;
   }
 
-  /** Nombres sobre los avatares y el indicador «Sala ABCD · n · ms» (coordenadas de pantalla). */
+  /** Nombres sobre los avatares, chat e indicador «Sala ABCD · n · ms» (coordenadas de pantalla). */
   drawUI(g) {
     if (this.client.status === 'off') return;
     const view = this.scene.worldView;
@@ -97,6 +113,7 @@ export class MapNetSync {
         font: 'small', color: NAME_COLOR, shadow: NAME_SHADOW, align: 'center',
       });
     }
+    this.social.drawUI(g);
     drawText(g, hudText(this.client), 512 - HUD_MARGIN, 384 - HUD_MARGIN - 18, {
       font: 'small', color: NAME_COLOR, shadow: NAME_SHADOW, align: 'right',
     });

@@ -1,7 +1,7 @@
 // Salas del multijugador (lógica pura, sin sockets): altas/bajas, código de sala y reenvío de avatares.
 // `client` es cualquier objeto con { id, send(obj) }; server/multiplayer.mjs lo conecta con WebSocket.
 import {
-  PROTOCOL_VERSION, MAX_ROOM_PLAYERS, normalizeRoomCode, randomRoomCode, sanitizeAvatar, sanitizeGender, sanitizeName,
+  PROTOCOL_VERSION, MAX_ROOM_PLAYERS, NET_EMOTES, sanitizeChat, normalizeRoomCode, randomRoomCode, sanitizeAvatar, sanitizeGender, sanitizeName,
 } from '../game/src/net/protocol.js';
 
 const MAX_CODE_ATTEMPTS = 50;
@@ -22,7 +22,14 @@ export class RoomHub {
     if (msg.t === 'st' || msg.t === 'at') return this.relayAvatar(member, msg);
     if (msg.t === 'dm') return this.direct(member, msg);
     if (msg.t === 'me') return this.rename(member, msg);
+    if (msg.t === 'chat') return this.chat(member, msg);
+    if (msg.t === 'emo' && NET_EMOTES.includes(msg.k)) return this.broadcast(member, { t: 'emo', id: member.client.id, k: msg.k });
     return undefined;
+  }
+
+  chat(member, msg) {
+    const text = sanitizeChat(msg.text);
+    if (text) this.broadcast(member, { t: 'chat', id: member.client.id, text });
   }
 
   rename(member, msg) {

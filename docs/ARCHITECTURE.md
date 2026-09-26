@@ -1114,4 +1114,21 @@ Herramientas: `tools/stamps_scan.mjs` (catálogo visual de objetos de un tileset
   - Las invitaciones llegan a `MapNetSync` y se atienden cuando el jugador está libre.
 - **Pruebas:** `tests/net_link_battle.test.mjs` (dos motores reales con elecciones al azar: 24 combates 1 contra 1 y
   10 en equipo, siempre a la par) y `node tools/net_battle_smoke.mjs --mode=pvp|coop` (dos Chrome).
-- **Pendiente:** intercambios, chat y emotes (ver `docs/PENDIENTES.md`).
+- **Desde el título** (`net/onlineMenu.js#runTitleOnlineMenu`): se entra en una sala antes de empezar o cargar la
+  partida, con un nombre provisional. El mapa lo actualiza con `{ t: 'me' }` (el servidor lo reparte con `peer`).
+- **Chat y globos** (`net/social.js`, mensajes `chat` y `emo`):
+  - La tecla R (E del teclado) abre un menú rápido con ! ? … ♪ ♥ y «Escribir mensaje».
+  - El mensaje se escribe en un `<input>` real que no deja pasar las teclas al juego.
+  - Cada mensaje sale en una burbuja sobre quien habla y en un registro abajo a la izquierda.
+- **Intercambios** (`net/trade.js`, `net/tradeLogic.js`):
+  - Es un proceso simétrico: oferta, revisión (se pueden ver los datos) y decisión de ambos.
+  - El Pokémon recibido se valida estrictamente.
+  - No se puede ofrecer a Zygarde ni quedarse sin un Pokémon que no sea Huevo.
+  - Se registra en la Pokédex y se aplica la evolución por intercambio.
+  - Si la partida ya se había guardado, se guarda sola tras el cambio (para que no se duplique recargando).
+  - Prueba: `node tools/net_trade_smoke.mjs`.
+- **Partidas en el disco del servidor** (`server/saves.mjs`, `core/saveSync.js`):
+  - Se guardan en `saves/<dueño>/ranura<N>.json`, con escritura atómica.
+  - Al guardar o borrar se copian al servidor; al arrancar, se reconcilian por `savedAt` (gana la más reciente).
+  - «Cargar partida → Importar partida → Desde el servidor» recupera cualquier partida, aunque el navegador haya
+    perdido su id.

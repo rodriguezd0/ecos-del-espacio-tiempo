@@ -7,6 +7,7 @@ import { registerFieldAction } from '../world/fieldActions.js';
 import { battleIntro } from '../world/battleFlow.js';
 import { net } from './netClient.js';
 import { inviteToBattle, answerInvite, MODES } from './linkSession.js';
+import { inviteToTrade, answerTradeInvite, runTrade } from './trade.js';
 
 const OUTCOME_TEXT = {
   pvp: { win: '¡Has ganado el combate!', lose: 'Has perdido el combate.', draw: 'El combate ha terminado en empate.' },
@@ -58,8 +59,29 @@ async function challenge(ctx, action) {
   return true;
 }
 
+/** Proponer un intercambio (acción del menú Online). */
+async function offerTrade(ctx, action) {
+  const peer = net.peers.get(action.peerId);
+  if (!peer) { await ui.message('Ese jugador ya no está en la sala.'); return false; }
+  ui.toast(`Esperando la respuesta de ${peer.name}…`);
+  let channel;
+  try {
+    channel = await inviteToTrade({ peer });
+  } catch (err) {
+    await ui.message(err.message);
+    return false;
+  }
+  return runTrade(ctx, channel, peer.name);
+}
+
 /** Invitación recibida (desde MapNetSync, con el jugador libre en el mapa). */
 export async function handleInvite(ctx, invite) {
+  if (invite.mode === 'trade') {
+    const accepted = await ui.confirm(`${invite.name} quiere intercambiar Pokémon contigo. ¿Aceptas?`);
+    const channel = answerTradeInvite({ invite, accepted });
+    if (channel) await runTrade(ctx, channel, invite.name);
+    return;
+  }
   const accepted = await ui.confirm(`${invite.name} te propone ${MODES[invite.mode]?.label || 'un combate'}. ¿Aceptas?`);
   let session;
   try {
@@ -73,6 +95,7 @@ export async function handleInvite(ctx, invite) {
 
 registerFieldAction('online', async (ctx, action) => {
   if (action.op === 'battle') return challenge(ctx, action);
+  if (action.op === 'trade') return offerTrade(ctx, action);
   console.warn('[online] acción desconocida', action);
   return false;
 });
