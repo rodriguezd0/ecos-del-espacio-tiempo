@@ -51,7 +51,7 @@ Puntos de Vuelo: Nexo (39,12), Caleta Sonda (30,10).
 
 | Paso | Dónde | Condición | Pone |
 |---|---|---|---|
-| Llegada: golpeteo de las bombas; el Core: «El agua de aquí está enferma.» | franja x 47, y 62–67 | `!b09_marisma_llegada` | `b09_marisma_llegada` |
+| Llegada: golpeteo de las bombas; el Core: «El agua de aquí está enferma.» | franja x 47, y 63–66 | `!b09_marisma_llegada` | `b09_marisma_llegada` |
 | **Doña Remedios**: cura, fija el punto de cura y da la **segunda pista de T08** (descubrimiento directo si no estaba abierta) | `palafitos_remedios` (6,5) | — | `b09_t08_remedios`, T08 paso 2 |
 | **Alerce** llega por el puente: «Quería ver el agua con mis propios ojos.» / «No. Las muestras las tomo yo.»; carga el lector en la Pokédex | al salir de la casa (17,31) | remedios y `!alerce` | `b09_t08_alerce` |
 | **Tres técnicos de Genesis** (combates de guion, `bossBattle`, reintento sin pérdida en su casilla `front`: delante de los dos que miran al sur y a la espalda del que mira al oeste, (17,16)) | bombas (35,45), (40,10), (15,14); técnicos (36,47), (41,12), (16,16) | vista 3 | `b09_t08_bomba_1..3`, `b09_t08_bombas` |

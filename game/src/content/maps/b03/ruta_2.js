@@ -45,9 +45,9 @@ function paintBorders(b) {
   const blocks = [
     ['bosque', 0, 0, 2, 70], ['bosque_mixto', 28, 0, 2, 70],
     ['bosque', 2, 0, 2, 2], ['bosque_pinos', 18, 0, 10, 2],
-    ['bosque_mixto', 24, 12, 4, 6], ['bosque', 2, 12, 2, 6],
-    ['bosque_pinos', 2, 47, 2, 12], ['bosque', 26, 36, 2, 10],
-    ['bosque_mixto', 22, 58, 6, 12], ['bosque', 2, 62, 8, 8],
+    ['bosque_mixto', 24, 10, 4, 6], ['bosque', 2, 10, 2, 6], // hasta la orilla del primer arroyo (y 16)
+    ['bosque_pinos', 2, 46, 2, 6], ['bosque_pinos', 2, 54, 2, 6], // a los dos lados del segundo arroyo ['bosque', 26, 36, 2, 10],
+    ['bosque_mixto', 20, 58, 8, 12], ['bosque', 2, 62, 10, 8], // la arboleda cierra la llegada a Caudal
   ];
   for (const [brush, x, y, w, h] of blocks) b.paint(brush, rect(x, y, w, h));
 }
@@ -115,27 +115,26 @@ function paintDetails(b) {
   // Hierba alta (encuentros)
   for (const [x, y, w, h] of [[18, 3, 7, 7], [4, 23, 7, 8], [20, 37, 6, 8], [4, 56, 7, 5], [20, 47, 6, 4]]) b.rect(null, x, y, w, h, 'hierba_alta');
   // Saliente: atajo hacia el sur desde el alto
-  b.rect(null, 3, 46, 8, 1, 'saliente');
+  b.rect(null, 4, 46, 7, 1, 'saliente');
   // Flores amarillas de la pradera
-  b.paint('flores_amarillas', [...rect(17, 12, 3, 2), ...rect(5, 32, 3, 2), ...rect(19, 60, 3, 2), ...rect(8, 19, 3, 2)]);
+  b.paint('flores_amarillas', [...rect(17, 12, 3, 2), ...rect(5, 32, 3, 2), ...rect(17, 61, 3, 2), ...rect(8, 19, 3, 2)]);
   // Árbol de miel y árboles sueltos
   b.stamp('arbol', HONEY_TREE.x, HONEY_TREE.y);
   for (const [s, x, y] of [
     ['arbol', 21, 11], ['pino', 9, 11], ['arbol', 6, 11], ['pino', 17, 47], ['arbol', 6, 48],
-    ['arbol', 18, 64], ['pino', 11, 60], ['arbol', 24, 18],
+    ['arbol', 24, 18],
   ]) b.stamp(s, x, y);
   for (const [s, x, y] of [
     ['flores_rosas', 12, 3], ['flores_blancas', 17, 6], ['macizo_flores', 17, 21], ['flores_rosas', 17, 33],
     ['flores_blancas', 13, 38], ['macizo_flores', 10, 50], ['flores_rosas', 17, 58], ['flores_blancas', 12, 66],
     ['guijarros', 16, 18], ['guijarros', 12, 19], ['brotes', 20, 21], ['brotes', 11, 32], ['tocon', 21, 45],
-    ['setas', 3, 21], ['lupinos', 5, 19], ['roca_gris', 20, 55], ['brotes', 24, 57], ['tocon', 9, 63],
+    ['setas', 3, 21], ['lupinos', 5, 19], ['roca_gris', 20, 55], ['brotes', 24, 57], ['tocon', 12, 63],
     ['arbustos', 22, 20], ['roca_grande', 23, 45], ['lupinos', 18, 56], ['flores_blancas', 26, 22],
-    ['macizo_flores', 4, 44], ['brotes', 19, 13], ['setas', 25, 11], ['guijarros', 17, 50], ['flores_rosas', 4, 13],
+    ['macizo_flores', 4, 44], ['brotes', 19, 13], ['setas', 22, 9], ['guijarros', 12, 49], ['flores_rosas', 4, 13],
     ['flores_blancas', 21, 35], ['macizo_flores', 23, 34],
   ]) b.stamp(s, x, y);
   b.stamp('cartel_ruta', 17, 1);
   b.stamp('cartel_ruta', 17, 65);
-  b.stamp('banco', 17, 60);
   b.stamp('tablon_anuncios', 10, 47);
 }
 

@@ -4,6 +4,7 @@
 // la frase de Gael. La célula que «se le escapó» es C014 y queda en la pasarela de la Esclusa mayor.
 import { F, SPEAKER, SPRITE, say, when, zygardeEmote, B03_CELLS } from './b03_common.js';
 import { GAEL, BRIDGES } from '../maps/b03/caudal_layout.js';
+import { walkEventTo } from './b01_town_path.js';
 import { getTrainer } from '../trainers/index.js';
 
 const G = SPEAKER.gael;
@@ -65,7 +66,9 @@ async function cellFlight(ctx, from) {
 
 /** Gael cruza el puente hacia el sur: se queda ayudando en el barrio bajo (B04: evacuación; b04_caudal.js). */
 async function gaelLeaves(ctx) {
-  await ctx.move('gael', ['down', 'down', 'down', 'down', 'down', 'down'], { speed: 4 });
+  // Baja andando por la plaza, camino del barrio bajo, hasta salir de la vista (antes desaparecía a 6 pasos).
+  const walked = await walkEventTo(ctx, 'gael', GAEL.exit.x, GAEL.exit.y + 10, { speed: 4.5, fallback: false });
+  if (!walked) await ctx.move('gael', ['down', 'down', 'down', 'down', 'down', 'down'], { speed: 4 });
   ctx.erase('gael');
 }
 

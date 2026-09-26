@@ -21,7 +21,7 @@ function paintBorders(b) {
   b.paint('bosque_mixto', [...cells(0, 4, 2, 2)]);
   // Oeste y este: arboleda abierta en las calles
   b.paint('bosque_mixto', [...cells(0, 22, 2, 14)]);
-  b.paint('bosque_pinos', [...cells(42, 34, 2, 2), ...cells(42, 0, 2, 4)]);
+  b.paint('bosque_pinos', cells(42, 0, 2, 4));
   // Sur: cara de la meseta (terraza que cubre todo el pueblo) con la escalera de bajada al cañón
   b.blob(null, cells(-3, -3, W + 6, MESETA_EDGE.faceY + 6), 'terraza');
 }
@@ -49,7 +49,7 @@ function paintPlaza(b) {
   b.stamp('banco', 24, 23);
   b.stamp('banco', 16, 24 - 1);
   b.stamp('tablon_anuncios', 27, 17);
-  b.stamp('papelera', 28, 22);
+  b.stamp('papelera', 27, 22);
   for (const [x, y] of LAMPS) b.stamp('farola_hierro', x, y);
   b.stamp('macizo_flores', 17, 15);
   b.stamp('flores_rosas', 19, 15);
@@ -59,7 +59,7 @@ function paintNorthWest(b) {
   b.stamp('jardinera_flores', 6, 15);
   b.stamp('maquinas_expendedoras', 8, 12);
   b.stamp('arbol', 17, 9);
-  b.stamp('pino', 7, 2 + 2);
+  b.stamp('pino', 8, 4); // entre el Centro y la tienda, sin pisar el tejado del Centro
   b.stamp('flores_blancas', 16, 14);
   b.stamp('buzon_rojo', 15, 12);
   b.rect(null, 2, 16, 1, 2, 'flores_amarillas');
@@ -73,7 +73,7 @@ function paintNorthEast(b) {
   b.rect(null, 36, 1, 5, 2, 'hierba_alta');
   b.stamp('lupinos', 39, 4);
   b.stamp('flores_blancas', 35, 8);
-  b.stamp('roca_gris', 41, 3);
+  b.stamp('roca_gris', 40, 3);
   b.stamp('roca_peque', 38, 11);
   b.stamp('brotes', 42, 8);
   b.stamp('guijarros', 41, 12);
@@ -102,11 +102,10 @@ function paintSouthWest(b) {
 }
 
 function paintSouthEast(b) {
-  b.stamp('poste_electrico', 30, 21 + 1);
+  b.stamp('poste_electrico', 29, 22); // entre la farola y la subestación, sin pisar ninguna
   b.stamp('barriles', 40, 35); // (el poste de 6 filas no cabía aquí: su sombra caía sobre la cara de la meseta)
   b.stamp('barrera_obras', 40, 23);
   b.stamp('macizo_flores', 26, 26);
-  b.stamp('flores_rosas', 30, 26);
   b.stamp('cajas_madera', 33, 34);
   b.stamp('banco', 26, 36);
   b.stamp('flores_blancas', 31, 36);

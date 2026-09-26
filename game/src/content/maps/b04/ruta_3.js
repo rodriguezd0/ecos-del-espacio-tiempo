@@ -1,21 +1,25 @@
 // Ruta 3 (docs/CAMPANA.md B04 y §1.4: ribera con cuestas de grava; tileset 1, 40×50; SE Ciudad Caudal, NO
 // Garganta del Albo). Acceso solo con Correr: las tres cuestas de grava (tipo `gravelSlope`) se suben montado en el
 // 10 %. Células C016–C018 (una por cuesta). Geometría: ruta_3_layout.js. Eventos: content/events/b04_ruta3.js.
+// Composición (26-09): árboles enteros y nunca sobre las caras de las terrazas ni junto a las cascadas; las cuestas
+// quedan despejadas (sin rocas ni matas alrededor) y cada camino lleva a algún sitio.
 import { zoneDefaults } from '../../services/zones.js';
 import { RUTA_3 } from '../../encounters/b04.js';
 import { ruta3Events, ruta3Connections } from '../../events/b04_ruta3.js';
 import {
-  W, H, rect, TERRACES, RIVER, FALLS, SLOPES, PATH, DOCK, TALL_GRASS, EAST_EXIT,
+  W, H, rect, TERRACES, RIVER, FALLS, SLOPES, PATH, DOCK, TALL_GRASS, EAST_EXIT, FORESTS,
 } from './ruta_3_layout.js';
 
 const cellsOf = (list) => list.flatMap((r) => rect(...r));
 const tid = (col, row) => 384 + row * 8 + col;
-/** Tablón del puente vertical de Exterior1 (columnas 0–2, filas 524/525 alternas; la última con remate). */
+/** Tablón del puente vertical de Exterior1 (columnas 0–2, filas 524/525 alternas). */
 const PLANK = (i, j) => tid(i, j % 2 === 0 ? 524 : 525);
 
 function paintTerrain(b) {
   b.fill(null, 'cesped');
   for (const t of [TERRACES.media, TERRACES.alta, TERRACES.mirador]) b.blob(null, rect(...t), 'terraza');
+  // Las terrazas siguen más allá del borde oeste (otra orilla): sin el muro lateral que el pincel pone en x 0.
+  for (let y = 0; y < H; y++) if (!FALLS.some(([, fy, , fh]) => y >= fy && y < fy + fh)) b.set(1, 0, y, 0);
 }
 
 /** El Albo: agua con orilla por tramos y cascadas en las caras de las terrazas. */
@@ -30,9 +34,9 @@ function paintRiver(b) {
   // Muelle de tablones hacia el agua (el pescador faena desde él): tablones del puente de Exterior1.
   const [dx, dy, dw, dh] = DOCK;
   for (let j = 0; j < dh; j++) for (let i = 0; i < dw; i++) b.set(1, dx + i, dy + j, PLANK(i, j));
-  b.stamp('roca_agua', 4, 20);
-  b.stamp('roca_agua', 30, 41);
-  b.stamp('roca_agua', 3, 34);
+  // Bajo los tablones la capa 0 deja de ser agua (si no, mirando a lo largo del muelle saltaba el aviso de nadar).
+  for (let j = 0; j < dh; j++) for (let i = 0; i < dw; i++) if (mask.has(`${dx + i},${dy + j}`)) b.set(0, dx + i, dy + j, tid(0, 0));
+  for (const [x, y] of [[4, 20], [3, 34], [30, 41], [21, 40], [36, 40]]) b.stamp('roca_agua', x, y);
 }
 
 function paintPaths(b) {
@@ -41,36 +45,34 @@ function paintPaths(b) {
   for (const g of TALL_GRASS) b.rect(null, ...g, 'hierba_alta');
 }
 
-/** Bosque de la otra orilla, arboledas de las terrazas y detalles. */
+/** Bosques enteros y árboles sueltos en las cimas (lejos de las caras y de las cuestas). */
 function paintTrees(b) {
-  // Bosque de la otra orilla: tres masas distintas para que no se lea como una hilera repetida.
-  b.paint('bosque_pinos', rect(0, 43, 14, 7));
-  b.paint('bosque_mixto', rect(14, 43, 12, 7));
-  b.paint('bosque', rect(26, 43, 14, 7));
-  b.paint('bosque', rect(28, 0, 2, 9));
-  b.paint('bosque_mixto', rect(6, 12, 2, 14));
+  for (const [brush, ...r] of FORESTS) b.paint(brush, rect(...r));
   for (const [s, x, y] of [
-    ['pino', 25, 4], ['arbol', 17, 6], ['pino', 9, 26], ['arbol', 35, 13], ['pino', 30, 21], ['arbol', 16, 24],
-    ['pino', 11, 30], ['arbol', 34, 30], ['arbol_alto', 36, 18], ['pino_alto', 26, 23],
-    // Franja de la orilla oeste (al otro lado del Albo): pinos por tramos, sin tapar las caras de las terrazas.
-    ['pino', 0, 1], ['pino', 0, 5], ['pino', 0, 12], ['pino_alto', 0, 16], ['pino', 0, 22], ['pino', 0, 30], ['pino', 0, 34],
+    // Terraza media
+    ['arbol', 9, 22], ['pino', 28, 21], ['arbol', 35, 18], ['pino', 37, 14], ['arbol', 18, 23],
+    // Vega baja
+    ['pino', 9, 35], ['arbol', 31, 35],
   ]) b.stamp(s, x, y);
 }
 
 function paintDetails(b) {
   for (const [s, x, y] of [
-    ['roca_gris', 19, 14], ['roca_grande', 31, 16], ['roca_peque', 8, 29], ['roca_gris', 25, 38],
-    ['arbustos', 19, 34], ['tocon', 21, 36], ['flores_rosas', 17, 33], ['setas', 38, 36], ['arbustos', 37, 20],
-    ['tocon', 33, 26], ['flores_blancas', 13, 28],
-    ['tocon', 12, 23], ['setas', 11, 26], ['troncos', 32, 23], ['tronco_caido_h', 16, 2],
-    ['flores_blancas', 20, 12], ['flores_rosas', 30, 13], ['macizo_flores', 24, 18], ['flores_blancas', 36, 2],
-    ['flores_rosas', 37, 4], ['lupinos', 34, 1], ['guijarros', 21, 26], ['guijarros', 14, 8], ['brotes', 27, 30],
-    ['flores_blancas', 12, 35], ['macizo_flores', 30, 31], ['brotes', 7, 34], ['guijarros', 24, 29],
+    // Terraza alta
+    ['tronco_caido_h', 26, 7], ['flores_blancas', 16, 7], ['setas', 12, 2], ['brotes', 14, 2],
+    // Mirador
+    ['lupinos', 33, 2], ['flores_blancas', 36, 3], ['flores_rosas', 37, 4], ['macizo_flores', 33, 0],
+    // Terraza media
+    ['roca_gris', 8, 12], ['roca_grande', 32, 23], ['tocon', 31, 25], ['flores_rosas', 16, 18],
+    ['macizo_flores', 24, 15], ['flores_blancas', 30, 14], ['troncos', 11, 24],
+    ['brotes', 7, 24], ['flores_blancas', 33, 21],
+    // Vega baja
+    ['roca_gris', 27, 30], ['arbustos', 12, 36], ['tocon', 20, 36], ['flores_rosas', 34, 38],
+    ['macizo_flores', 32, 31], ['setas', 38, 36], ['brotes', 29, 38],
   ]) b.stamp(s, x, y);
-  b.stamp('cartel_ruta', 35, 30); // cartel de la ruta a la llegada desde Caudal
+  b.stamp('cartel_ruta', 35, 30); // cartel de la ruta a la llegada desde Caudal (evento en 36,31)
   b.stamp('cartel_madera', 21, 31); // aviso de la grava
   b.stamp('cartel_madera', 37, 1); // mirador
-  b.stamp('banco', 34, 2);
 }
 
 export default {

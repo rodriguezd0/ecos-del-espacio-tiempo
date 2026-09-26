@@ -28,7 +28,7 @@ export default {
     b.stamp('sofa', 10, 4);
     b.stamp('ventana_cortinas', 3, 2);
     b.stamp('fregadero', 1, 2);
-    b.stamp('planta', 10, 8);
+    b.stamp('planta', 9, 8);
     b.rect(null, 3, 8, 4, 1, 'alfombra_beige');
   },
 

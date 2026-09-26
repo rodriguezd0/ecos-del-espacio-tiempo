@@ -61,9 +61,10 @@ function forests(b) {
   b.paint('bosque_pinos', rect(0, 0, 11, 3));
   raggedForest(b, ['bosque_pinos', 'bosque_pinos', 'bosque_mixto'], 20, 0, 41, 3, { clipTop: true, clipBottom: true });
   raggedForest(b, ['bosque_mixto', 'bosque_pinos'], 54, 0, 59, 19, { clipTop: true, seed: 3 });
-  b.paint('bosque_pinos', rect(0, 9, 1, 13));
+  b.paint('bosque_pinos', rect(0, 10, 1, 13)); // pino pequeño entero (sin tapar el borde del camino del oeste)
   // Tramo bajo: bosque al pie de la terraza en el oeste, a poniente del Albo y en los bordes sur y este.
-  b.paint('bosque_mixto', rect(0, 17, 10, 19));
+  // (al pie de la terraza solo caben 3 filas: matorral en vez de árboles, que quedarían sin copa)
+  for (const [s, x, y] of [['arbustos', 0, 17], ['arbustos', 2, 18], ['arbustos', 5, 17], ['tocon', 4, 19], ['arbustos', 8, 18]]) b.stamp(s, x, y);
   raggedForest(b, FORESTS, 0, 26, 5, 39, { clipBottom: true, seed: 4 });
   raggedForest(b, FORESTS, 12, 34, 19, 39, { clipBottom: true, seed: 5 });
   raggedForest(b, FORESTS, 24, 32, 41, 39, { clipBottom: true, seed: 6 });
@@ -113,7 +114,7 @@ function lowlandDetails(b, reserved) {
   // Claro con estanque, flores y tocones.
   b.rect(null, 38, 28, 4, 3, 'estanque');
   b.rect(null, 38, 23, 3, 2, 'flores_azules');
-  b.stamp('cartel_ruta', 55, 18);
+  b.stamp('cartel_ruta', 53, 18);
   b.stamp('cartel_madera', 24, 19);
   const opts = { avoid: reserved };
   decorate(b, [
@@ -121,7 +122,7 @@ function lowlandDetails(b, reserved) {
     ['arbol', 30, 30], ['pino', 12, 19], ['arbol', 16, 17], ['arbol', 26, 23], ['arbustos', 47, 17],
     // Rocas, tocones, leña y matas.
     ['roca_gris', 32, 18], ['roca_turquesa_peque', 40, 18], ['troncos', 42, 18], ['roca_turquesa', 15, 21],
-    ['tocon', 17, 22], ['arbustos', 10, 22], ['tocon', 37, 31], ['arbustos', 1, 24], ['tocon', 53, 18],
+    ['tocon', 17, 22], ['arbustos', 10, 22], ['tocon', 37, 31], ['arbustos', 1, 24], ['tocon', 51, 17],
     ['roca_gris', 27, 29], ['setas', 36, 30], ['setas', 25, 28], ['setas', 33, 32],
     ['arbustos', 22, 17], ['arbustos', 38, 17],
   ], opts);

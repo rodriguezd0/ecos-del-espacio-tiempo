@@ -53,9 +53,10 @@ function paintGround(b) {
 function paintForests(b) {
   for (const [x, y, w, h, brush] of FORESTS) b.paint(brush || 'bosque_pinos', rect(x, y, x + w - 1, y + h - 1));
   for (const [s, x, y] of [
-    ['pino', 12, 30], ['arbol', 17, 32], ['pino', 12, 35], ['arbol', 17, 36], ['arbol', 30, 30], ['pino', 36, 18],
-    ['arbol', 0, 24], ['pino', 2, 26], ['roca_gris', 32, 26], ['lupinos', 28, 27], ['flores_blancas', 3, 23],
-    ['flores_rosas', 27, 22], ['macizo_flores', 5, 27], ['brotes', 33, 20], ['roca_gris', 37, 20], ['guijarros', 29, 19],
+    // (los árboles de la avenida, bajo las farolas; nada sobre la senda del oeste)
+    ['pino', 12, 32], ['arbol', 17, 32], ['brotes', 12, 37], ['arbol', 17, 36], ['arbol', 30, 30], ['pino', 36, 18],
+    ['pino', 2, 26], ['roca_gris', 32, 26], ['lupinos', 27, 26], ['flores_blancas', 3, 23],
+    ['flores_rosas', 27, 22], ['macizo_flores', 4, 27], ['brotes', 33, 20], ['roca_gris', 38, 20], ['guijarros', 29, 19],
   ]) b.stamp(s, x, y);
 }
 
@@ -63,9 +64,9 @@ function paintMirador(b) {
   // barandilla sobre el borde, abierta en el estribo (x 19–21), la bajada (x 3–4) y el espolón (x 26–35)
   b.paint('valla_blanca', [...rect(0, RIM_Y, 2, RIM_Y), ...rect(5, RIM_Y, 18, RIM_Y), ...rect(22, RIM_Y, 25, RIM_Y), ...rect(36, RIM_Y, 39, RIM_Y)]);
   for (const [s, x, y] of [
-    ['estatua', 9, 22], ['estatua_2', 21, 22], ['farola_hierro', 12, 17], ['farola_hierro', 19, 17], ['farola_hierro', 7, 20],
-    ['farola_hierro', 24, 20], ['jardinera_flores', 6, 24], ['jardinera_flores', 22, 24], ['papelera', 12, 26],
-    ['cartel_madera', 17, 30], ['cartel_madera', 8, 24], ['farola_hierro', 12, 27], ['farola_hierro', 17, 27],
+    ['estatua', 9, 22], ['estatua_2', 21, 22], ['farola_hierro', 12, 17], ['farola_hierro', 19, 17], ['farola_hierro', 7, 19],
+    ['farola_hierro', 24, 19], ['jardinera_flores', 6, 24], ['jardinera_flores', 22, 24], ['papelera', 12, 26],
+    ['cartel_madera', 18, 29], ['cartel_madera', 9, 24], ['farola_hierro', 12, 27], ['farola_hierro', 17, 27],
     ['flores_blancas', 11, 16], ['flores_rosas', 20, 16], ['macizo_flores', 7, 16],
   ]) b.stamp(s, x, y);
 }

@@ -62,7 +62,7 @@ function forests(b) {
   b.paint('bosque_pinos', rect(38, 2, 39, 5));
   b.paint('bosque_pinos', rect(36, 9, 39, 19));
   b.paint('bosque_mixto', rect(0, 24, 39, 27));
-  b.paint('bosque_pinos', rect(0, 14, 2, 23));
+  b.paint('bosque_pinos', rect(0, 14, 1, 23)); // (ancho par: la orilla del Albo empieza en x 3)
 }
 
 function ground(b) {

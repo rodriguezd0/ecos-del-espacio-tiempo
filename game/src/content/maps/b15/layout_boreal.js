@@ -22,7 +22,7 @@ export const BOREAL = Object.freeze({
     tienda: { stamp: 'tienda_turquesa', x: 15, y: 12, door: { x: 18, y: 17 } },
     posada: { stamp: 'edificio_naranja', x: 27, y: 11, door: { x: 29, y: 17 } },
     casa: { stamp: 'casa_gris', x: 33, y: 12, door: { x: 36, y: 16 } },
-    observatorio: { stamp: 'casa_cupula', x: 26, y: -1, door: { x: 27, y: 4 } },
+    observatorio: { stamp: 'casa_cupula', x: 26, y: 0, door: { x: 27, y: 5 } }, // entera: la cúpula no se corta con los Lagos
     talleres: { stamp: 'edificio_turquesa_ancho', x: 31, y: 24, door: { x: 34, y: 29 } },
     cabana: { stamp: 'cabana_turquesa', x: 9, y: 30, door: { x: 11, y: 36 } },
   },
@@ -33,7 +33,7 @@ export const BOREAL = Object.freeze({
   tower: { x: 21, y: 29, footprint: [[20, 29], [22, 29], [20, 28], [21, 28], [22, 28]] },
   flyPoint: { x: 21, y: 32, dir: 8 },
   /** Boca de la Gruta Escarcha (cueva_ladera en el borde este) y salida al Lago Viejo (franja del borde noreste). */
-  cave: { stamp: { x: 41, y: 15 }, door: { x: 41, y: 17 }, arrival: { x: 40, y: 17, dir: 4 } },
+  cave: { stamp: { x: 42, y: 15 }, door: { x: 42, y: 17 }, arrival: { x: 41, y: 17, dir: 4 } },
   lakeExit: { x: 43, y0: 3, y1: 5 },
   /** Patio de los Talleres: bloques de hielo, trineo y tallas. */
   yard: { x0: 30, y0: 31, x1: 42, y1: 36, blocks: [[31, 33], [32, 33], [38, 32], [40, 34]], sled: { x: 35, y: 33 }, sculptures: [[37, 35, 0], [39, 35, 2], [41, 32, 1]] },

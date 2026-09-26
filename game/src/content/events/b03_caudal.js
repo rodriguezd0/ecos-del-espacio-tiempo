@@ -163,7 +163,7 @@ export function caudalEvents(open = {}) {
     ...doors(open),
     ...pendingLinks(open),
     // Carteles
-    { id: 'cartel_entrada', type: 'sign', x: NORTH_ENTRY.x1 + 2, y: 6, text: TEXT.entrada },
+    { id: 'cartel_entrada', type: 'sign', x: NORTH_ENTRY.sign.x, y: NORTH_ENTRY.sign.y, text: TEXT.entrada },
     { id: 'cartel_esclusa', type: 'sign', x: LOCK.sign.x, y: LOCK.sign.y, text: TEXT.esclusa },
     { id: 'cartel_molinos', type: 'sign', x: 12, y: 25, text: TEXT.molinos },
     { id: 'cartel_mercado', type: 'sign', x: 43, y: 43, text: TEXT.barrioBajo },

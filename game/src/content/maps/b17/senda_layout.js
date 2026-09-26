@@ -96,7 +96,7 @@ export const REST = Object.freeze({ x0: 6, y0: 9, x1: 13, y1: 15 });
 /** Personajes y detalles. */
 export const SPOTS = Object.freeze({
   sign: Object.freeze({ x: 13, y: 3 }), // cartel de la senda
-  restSign: Object.freeze({ x: 9, y: 10 }),
+  restSign: Object.freeze({ x: 10, y: 10 }),
   hiker: P(10, 13, 6), // excursionista del descansadero (siempre)
   painter: P(20, 25, 2), // pintor en el mirador (antes del P8)
   miradorSign: Object.freeze({ x: 21, y: 28 }),

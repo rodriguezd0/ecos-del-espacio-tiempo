@@ -4,7 +4,8 @@
 import { F, SPEAKER, SPRITE, GREEN, say, core, fx, walk } from './b02_common.js';
 import { ROOM, placeCasilda, setRoom, casildaRoom } from './b02_ruinas_casilda.js';
 import { slideSlab } from './b02_ruinas_salas.js';
-import { NUCLEO, PASSAGES } from '../maps/b02/ruinas_dintel_layout.js';
+import { NUCLEO, PASSAGES, ENTRANCE } from '../maps/b02/ruinas_dintel_layout.js';
+import { walkEventTo } from './b01_town_path.js';
 
 const C = SPEAKER.casilda;
 /** Flag auxiliar: el Arca ya se abrió (cambia el gráfico de la caja durante la escena). */
@@ -67,9 +68,9 @@ async function openShortcut(ctx) {
   await ctx.camera.reset(24);
   if (casildaRoom(ctx.state) === ROOM.nucleo) {
     await say(ctx, C, 'Ya está. Fuera tiene que ser tarde. Vamos.');
-    await ctx.fade('out', 12);
+    // Sale andando por el atajo hacia la entrada (antes, fundido y desaparecía); fuera la espera la explanada.
+    await walkEventTo(ctx, 'casilda', ENTRANCE.arrive.x, ENTRANCE.arrive.y, { speed: 4.5, fallback: false });
     setRoom(ctx, ROOM.fuera);
-    await ctx.fade('in', 12);
   }
 }
 

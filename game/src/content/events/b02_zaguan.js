@@ -19,7 +19,7 @@ function signs() {
       : 'TABLÓN DEL CONCEJO\n«Mientras sigan los temblores, cerrad las puertas con tranca. Y no os acerquéis a las ruinas.»', { skin: 'signskin' });
   };
   return [
-    sign('cartel_norte', 17, 2, 'VILLA ZAGUÁN\nEl umbral del bosque.', 'sign hgss town'),
+    sign('cartel_norte', 17, 6, 'VILLA ZAGUÁN\nEl umbral del bosque.', 'sign hgss town'),
     sign('cartel_sur', 17, 30, 'RUTA 2 ↓\nHacia Ciudad Caudal.', 'sign hgss dir'),
     sign('cartel_oeste', 2, 15, 'RUINAS DEL DINTEL ←\nPilar del Umbral.', 'sign hgss dir'),
     { id: 'tablon_0', type: 'sign', x: 16, y: 21, script: board },

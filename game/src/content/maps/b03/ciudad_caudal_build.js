@@ -56,7 +56,7 @@ function dockWalk(b, x, y0, y1) {
 function forests(b) {
   const blocks = [
     // Norte (troncos en y 3) con hueco para la entrada, el sendero de la ribera y las casas del paseo
-    ['bosque', 0, 0, 10, 2], ['bosque', 6, 2, 4, 2], ['bosque_mixto', 16, 0, 12, 4], ['bosque', 36, 0, 4, 2], ['bosque_mixto', 48, 0, 16, 6],
+    ['bosque', 6, 0, 4, 4], ['bosque_mixto', 16, 0, 12, 4], ['bosque', 36, 0, 4, 6], ['bosque_mixto', 48, 0, 16, 6],
     // Oeste y este (el oeste queda cerrado de y 14 a 55: el único paso a la Ruta 3 es el sendero de la ribera)
     ['bosque', 0, 14, 2, 16], ['bosque', 0, 30, 2, 14], ['bosque', 0, 44, 2, 12], ['bosque_mixto', 62, 6, 2, 22], ['bosque_mixto', 62, 32, 2, 24],
     // Sur (el hueco de x 44–47 es la Senda del Mirador)
@@ -68,19 +68,18 @@ function forests(b) {
 /** Celdas de adoquín (calles, paseos, plaza, muelles). */
 function pavementCells() {
   const cells = [
-    ...span(NORTH_ENTRY.x0, NORTH_ENTRY.x1, 0, 8), // entrada desde la Ruta 2
-    ...span(0, 5, WEST_EXIT.y0, WEST_EXIT.y1), ...span(3, 5, WEST_EXIT.y1 + 1, PROMENADE.y0 - 1), // sendero de la ribera (Ruta 3)
-    ...span(0, PROMENADE.x1, PROMENADE.y0, PROMENADE.y1), // Paseo del Albo (orilla norte)
+    ...span(NORTH_ENTRY.x0, NORTH_ENTRY.x1, NORTH_ENTRY.paveY, 8), // entrada desde la Ruta 2 (desde el arco)
+    ...span(3, PROMENADE.x1, PROMENADE.y0, PROMENADE.y1), // Paseo del Albo (orilla norte), desde el sendero de la ribera
     ...span(11, 13, 7, 7), ...span(43, 45, 7, 7), // delante de las puertas del paseo
-    ...span(0, 48, 14, 15), // paseo de la orilla sur
+    ...span(2, 48, 14, 15), // paseo de la orilla sur (el bosque del oeste lo cierra)
     ...span(16, 46, 16, 33), // plaza mayor
     ...span(2, 7, 25, 39), ...span(3, 7, 24, 24), // calle de los molinos (orilla oeste)
     ...span(11, 16, 25, 29), // calle de los molinos (orilla este)
     ...span(11, 47, 38, 39), ...span(18, 47, 34, 37), // muelle del Mercado fluvial
     ...span(22, 47, 43, 51), // Barrio bajo
-    ...span(SOUTH_EXIT.x0, SOUTH_EXIT.x1, 43, 55), // hacia la Senda del Mirador
+    ...span(SOUTH_EXIT.x0, SOUTH_EXIT.x1, 43, 50), // hacia la Senda del Mirador (luego, camino de tierra)
     ...span(13, 21, 49, 50), // paseo del Jardín del Canal
-    ...span(53, 63, EAST_EXIT.y0 - 1, EAST_EXIT.y1 + 1), // Camino de la Vega (Ruta 4)
+    ...span(53, 59, EAST_EXIT.y0 - 1, EAST_EXIT.y1 + 1), // Camino de la Vega (Ruta 4; luego, camino de tierra)
     ...span(53, 60, 20, 27), // vivienda del este
     ...span(53, 61, 32, 47), // explanada de la estación
   ];
@@ -137,10 +136,12 @@ function bridges(b) {
   for (const w of LOCK.walks) dockWalk(b, w.x, w.y0, w.y1);
   const p = SPOTS.pier;
   dockWalk(b, p.x, p.y, p.y + p.h - 1); // embarcadero del mercado
+  // Solo bajo el tablero que se pisa: bajo las barandillas (medio transparentes) sigue el agua del río, sin la franja
+  // de agua clara que se veía a los lados del puente (la barandilla ya impide nadar desde el puente, waterAccess.js).
   dryUnderDecks(b, [
-    ...span(e.x, e.x + 6, e.y0, e.y1), ...span(m.x, m.x + 6, m.y0, m.y1),
-    ...span(BRIDGES.mills.x0, BRIDGES.mills.x1, BRIDGES.mills.y, BRIDGES.mills.y + 3),
-    ...span(BRIDGES.east.x0, BRIDGES.east.x1, BRIDGES.east.y, BRIDGES.east.y + 3),
+    ...span(e.x + 1, e.x + 5, e.y0, e.y1), ...span(m.x + 1, m.x + 5, m.y0, m.y1),
+    ...span(BRIDGES.mills.x0, BRIDGES.mills.x1, BRIDGES.mills.y + 1, BRIDGES.mills.y + 2),
+    ...span(BRIDGES.east.x0, BRIDGES.east.x1, BRIDGES.east.y + 1, BRIDGES.east.y + 2),
     ...LOCK.walks.flatMap((w) => span(w.x, w.x + 2, w.y0, w.y1)),
     ...span(p.x, p.x + p.w - 1, p.y, p.y + p.h - 1),
   ]);
@@ -157,12 +158,13 @@ function buildings(b) {
 }
 
 function details(b) {
+  b.stamp('arco_puente', NORTH_ENTRY.gate.x, NORTH_ENTRY.gate.y); // puerta de la ciudad (entrada desde la Ruta 2)
   // Plaza: rosetón, farolas, bancos, estatuas y jardineras
   b.stamp('roseton_plaza', 29, 20);
   for (const [s, x, y] of [
-    ['farola', 27, 17], ['farola', 35, 17], ['farola', 27, 27], ['farola', 35, 27], ['farola_rosa', 16, 14], ['farola_rosa', 46, 14],
-    ['jardinera_flores', 25, 27], ['jardinera_flores', 34, 27], ['estatua', 26, 21], ['estatua_2', 35, 21],
-    ['papelera', 33, 31], ['buzon_rojo', 24, 23], ['fuente_grande', 18, 28], ['arbol', 23, 29], ['pino', 42, 32],
+    ['farola', 27, 17], ['farola', 35, 17], ['farola', 28, 27], ['farola', 32, 27], ['farola_rosa', 16, 14], ['farola_rosa', 46, 14],
+    ['jardinera_flores', 25, 27], ['jardinera_flores', 34, 27], ['estatua', 26, 22], ['estatua_2', 35, 22],
+    ['papelera', 33, 31], ['buzon_rojo', 24, 23], ['fuente_grande', 18, 28], ['arbol', 22, 28], ['pino', 42, 32],
     ['flores_rosas', 25, 17], ['flores_blancas', 26, 18], ['flores_rosas', 36, 18], ['flores_blancas', 34, 17],
     ['tablon_anuncios_2', 29, 31],
   ]) b.stamp(s, x, y);
@@ -184,8 +186,8 @@ function details(b) {
   // Jardín del Canal (suroeste): arboleda, parterres y un estanque de piedra
   for (const [s, x, y] of [
     ['arbol', 2, 43], ['pino', 5, 44], ['arbol', 19, 43], ['arbol', 16, 44], ['estatuas_gemelas', 9, 44],
-    ['jardinera_flores', 4, 48], ['jardinera_flores', 14, 46], ['lupinos', 7, 48], ['macizo_flores', 12, 48],
-    ['flores_rosas', 3, 47], ['flores_blancas', 18, 48], ['seto_corto', 20, 47], ['farola', 12, 43],
+    ['jardinera_flores', 4, 48], ['jardinera_flores', 12, 46], ['lupinos', 7, 48], ['macizo_flores', 10, 48],
+    ['flores_rosas', 3, 47], ['flores_blancas', 18, 48], ['seto_corto', 20, 47], ['farola', 15, 43],
   ]) b.stamp(s, x, y);
   b.stamp('troncos', 2, 26);
   // Prado del noreste (al otro lado del codo del río): que no quede vacío
@@ -199,7 +201,7 @@ function details(b) {
   // DECISIONES X35).
   b.paint('valla_blanca_v', span(RIVER.v.x1 + 1, RIVER.v.x1 + 1, SOUTH_EXIT.gate.y, H - 1));
   // Carteles (los textos son eventos de content/events/b03_caudal.js)
-  for (const [x, y] of [[NORTH_ENTRY.x1 + 2, 6], [LOCK.sign.x, LOCK.sign.y], [12, 25], [60, 45]]) b.stamp('cartel_madera', x, y);
+  for (const [x, y] of [[NORTH_ENTRY.sign.x, NORTH_ENTRY.sign.y], [LOCK.sign.x, LOCK.sign.y], [12, 25], [60, 45]]) b.stamp('cartel_madera', x, y);
   // Rocas en el río
   for (const [x, y] of [[6, 11], [19, 12], [51, 22], [50, 41]]) b.stamp('roca_agua', x, y);
   // Cierre de la Senda del Mirador (se quita cuando exista el mapa)
@@ -224,6 +226,12 @@ export function buildCaudal(b, { southOpen = false } = {}) {
   });
   b.paint('adoquin_c', pav);
   b.paint('bordillo', pav);
+  // El camino de arena de la Ruta 2 sigue hasta el arco de entrada de la ciudad (sin salto brusco en la costura).
+  b.paint('camino_arena', span(NORTH_ENTRY.x0, NORTH_ENTRY.x1, 0, NORTH_ENTRY.paveY - 1));
+  // Sendero de la ribera (Ruta 3): el mismo camino de tierra de la ruta hasta el Paseo del Albo.
+  b.paint('camino_tierra', [...span(0, 5, WEST_EXIT.y0, WEST_EXIT.y1), ...span(3, 5, WEST_EXIT.y1 + 1, PROMENADE.y0 - 1)]);
+  // Y los caminos de la Vega (Ruta 4) y de la Senda del Mirador salen de la ciudad en tierra, como en sus mapas.
+  b.paint('camino_tierra', [...span(60, W - 1, EAST_EXIT.y0, EAST_EXIT.y1), ...span(SOUTH_EXIT.x0, SOUTH_EXIT.x1, 51, H - 1)]);
   water(b);
   bridges(b);
   buildings(b);

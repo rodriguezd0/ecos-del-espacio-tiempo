@@ -129,13 +129,13 @@ async function ballBeforeIntro(ctx) {
 
 // ----------------------------------------------------------------------------- eventos del mapa
 
-/** Poké Balls (gráfico de tile) sobre la mesa y sus disparadores desde el frente. */
+/** Poké Balls enteras (gráfico de objeto; el tile 688 solo era la mitad de arriba) sobre la mesa y sus disparadores desde el frente. */
 function ballEvents() {
   const out = [];
   STARTERS.forEach((sp, i) => {
     const x = LAB.table.x + i;
     const present = (s) => !taken(s, sp);
-    out.push({ id: `bola_${sp}`, x, y: LAB.table.y, tileId: 688, when: present, solid: true, trigger: 'action', script: (ctx) => pick(ctx, i) });
+    out.push({ id: `bola_${sp}`, x, y: LAB.table.y, sprite: 'Object ball', dir: 2, directionFix: true, walkAnime: false, shadow: false, alwaysOnTop: true, when: present, solid: true, trigger: 'action', script: (ctx) => pick(ctx, i) });
     out.push({ id: `bola_${sp}_frente`, x, y: LAB.table.y + 1, when: present, trigger: 'action', noOver: true, script: (ctx) => pick(ctx, i) });
   });
   return out;

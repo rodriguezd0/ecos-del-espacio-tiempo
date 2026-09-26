@@ -10,7 +10,7 @@ Guion: `docs/CAMPANA.md` «B10», §1 (atlas: Mnemos entre la Ruta 8 y la Ruta 9
 
 | id | Archivo | Tamaño | TS | Notas |
 |---|---|---|---|---|
-| `aldea_mnemos` | `aldea_mnemos.js` + `mnemos_build.js` | 48×44 | 9 | Aldea de bambú, cerezos y archivos (tres cerezales en claros del bosque, sin bosque debajo). Plaza con estrado y farolillos, terraza alta del Santuario (escalera roja), estanque de lotos con islote (C074, Nadar), bambú tras la casa de té (C045), risco del este (Trepar) con la **Losa del Olvido** (Spiritomb), árbol de miel. **Niebla del olvido** (`001-Fog01`) hasta `p5_restored`: el camino del norte da vueltas. BGM `PrismaVilla1` |
+| `aldea_mnemos` | `aldea_mnemos.js` + `mnemos_build.js` | 48×44 | 9 | Aldea de bambú, cerezos y archivos (tres cerezos en claros del bosque, sin bosque debajo). Plaza con estrado y farolillos, terraza alta del Santuario (escalera roja), estanque de lotos con islote (C074, Nadar), bambú tras la casa de té (C045), risco del este (Trepar) con la **Losa del Olvido** (Spiritomb), árbol de miel. **Niebla del olvido** (`001-Fog01`) hasta `p5_restored`: el camino del norte da vueltas. BGM `PrismaVilla1` |
 | `mnemos_centro` | `mnemos_centro.js` | plantilla | — | Centro Pokémon (`pokemonCenterMap`) + una viajera |
 | `mnemos_herbolario` | `mnemos_herbolario.js` | 15×12 | — | Tienda (`shopMap`) + hierbas y Miel. Elio en el mostrador (saludo según la historia) y Tomé |
 | `mnemos_casa_te` | `mnemos_casa_te.js` | 15×12 | 4 | Casa de té de Sabina (regalo: Sinistea) y el pozo de B11 (`teaHouseWellEvents`) |

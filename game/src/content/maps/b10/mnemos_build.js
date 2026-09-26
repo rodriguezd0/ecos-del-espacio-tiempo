@@ -18,13 +18,13 @@ export const MNEMOS_BRUSHES = Object.freeze({
   valla_madera_v: { line: { src: [2, 584, 1, 3], axis: 'v' }, layer: 2, desc: 'Valla baja de madera (vertical)' },
 });
 
-/** Cerezal que asoma entre el bosque junto a la salida sur (rosa sobre verde). */
-const CEREZALES = Object.freeze([rectCells(36, 38, 4, 6)]);
 /**
- * Junto a la salida norte, cerezos sueltos (copa redonda) en un claro del bosque: un cerezal en el borde del mapa
- * enseñaba la copa cortada en seco contra los pies de los árboles del Neblino.
+ * Cerezos sueltos (copa redonda) en claros del bosque, junto a las salidas norte y sur: un cerezal en el borde del mapa
+ * enseñaba la copa cortada en seco contra los pies de los árboles del Neblino. La x es impar: el claro (x + 1…x + 4)
+ * cae en pares de columnas enteros del bosque (sin medios árboles a los lados).
  */
-const NORTH_CHERRIES = Object.freeze([[15, 0], [28, 0]]);
+const NORTH_CHERRIES = Object.freeze([[15, 0], [27, 0]]);
+const SOUTH_CHERRIES = Object.freeze([[35, FOREST.south]]);
 /** Claro del bosque de cada cerezo (ancho; la copa, de 5, asoma una casilla sobre el bosque del oeste). */
 const CLEARING_W = 4;
 
@@ -32,19 +32,23 @@ function paintForest(b) {
   const f = FOREST;
   const n = EXITS.north; const s = EXITS.south;
   // El bosque deja hueco a los cerezos: pintados encima, sus troncos semitransparentes dejaban ver los del bosque.
-  const clearings = NORTH_CHERRIES.map(([x]) => rectCells(x + 1, 0, CLEARING_W, f.north));
-  const cherry = new Set([...CEREZALES, ...clearings].flat().map(([x, y]) => key(x, y)));
+  const clearings = [
+    ...NORTH_CHERRIES.map(([x]) => rectCells(x + 1, 0, CLEARING_W, f.north)),
+    ...SOUTH_CHERRIES.map(([x, y]) => rectCells(x + 1, y, CLEARING_W, H - y)),
+  ];
+  const cherry = new Set(clearings.flat().map(([x, y]) => key(x, y)));
   const free = (cells) => cells.filter(([x, y]) => !cherry.has(key(x, y)));
-  const north = rectCells(0, 0, W, f.north).filter(([x]) => x < n.x0 || x > n.x1);
+  // (la columna al este del camino norte, sin pareja en el bosque, es una linde de bambú: BAMBOO.loose + bloqueo)
+  const north = rectCells(0, 0, W, f.north).filter(([x]) => x < n.x0 || x > n.x1 + 1);
   const south = rectCells(0, f.south, W, H - f.south).filter(([x]) => x < s.x0 || x > s.x1);
   const west = rectCells(0, f.north, f.west, f.south - f.north);
   const east = rectCells(f.east, f.north, W - f.east, f.south - f.north);
   b.paint('bosque', free([...north.filter(([x]) => x < n.x0), ...west, ...south.filter(([x]) => x < s.x0)]));
   b.paint('bosque_mixto', free([...north.filter(([x]) => x > n.x1), ...east, ...south.filter(([x]) => x > s.x1)]));
-  for (const cells of CEREZALES) b.paint('cerezal', cells);
-  for (const [x, y] of NORTH_CHERRIES) b.stamp('cerezo', x, y);
+  for (const [x, y] of [...NORTH_CHERRIES, ...SOUTH_CHERRIES]) b.stamp('cerezo', x, y);
   // El claro sigue siendo bosque para el paso: bajo la copa no se camina (ni se llega al borde del mapa).
   for (const [x, y] of clearings.flat()) if (!b.get(1, x, y)) b.set(1, x, y, FOREST_BLOCKER_TILE);
+  for (let y = 0; y < f.north; y++) if (!b.get(1, n.x1 + 1, y)) b.set(1, n.x1 + 1, y, FOREST_BLOCKER_TILE);
 }
 
 function paintTerrace(b) {

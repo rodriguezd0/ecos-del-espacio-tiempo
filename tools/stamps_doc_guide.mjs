@@ -212,9 +212,14 @@ Correcciones sobre los datos de Añil que aplica \`node tools/stamps_extra.mjs\`
 | Comando | Para qué |
 |---|---|
 | \`node tools/qa_maps.mjs [mapa…] [--no-png]\` | Regenera \`docs/QA_MAPAS.md\`: por mapa, árboles cortados, stamps sobre árboles, stamps sólidos pisándose, eventos visibles dentro de un árbol, copas sobre caminos/hierba y rocas de agua en tierra (+ costuras) |
-| \`node tools/check_seams.mjs [mapa…] [--depth=6] [--scale=0.5]\` | Costuras de cada conexión: árboles partidos, objetos cortados por el borde y suelo que cambia de golpe; PNG por conexión en \`tools/cache/seams/\` |
+| \`node tools/check_seams.mjs [mapa…] [--depth=6] [--scale=0.5]\` | Costuras de cada conexión: árboles partidos, objetos cortados por el borde (salvo si el vecino dibuja su resto) y suelo que cambia de golpe (sin contar paredes que no se pisan ni casillas bajo una copa entera); PNG por conexión en \`tools/cache/seams/\` |
+| \`tools/qa_maps_notes.mjs\` | Avisos revisados como falsos positivos (mapa, categoría, recuento y motivo) y constancia del progreso: \`qa_maps.mjs\` los marca «(rev.)» en \`docs/QA_MAPAS.md\` mientras el recuento no cambie |
 | \`node tools/validate_content.mjs\` | Incluye las mismas comprobaciones de arte como avisos (una línea por categoría y mapa) |
 | \`node tools/tree_tips.mjs [--check]\` | Genera las puntas de copa selladas al final de los atlas exteriores |
+
+Caminos en las costuras (\`game/src/content/maps/pathBlend.js\`): \`edgeMask(b, cells)\` como \`mask\` de un camino que sale por
+el borde (sigue en el vecino sin su borde de hierba) y \`blendPath(b, { from, to, blend, fromMask, toMask, fromCells })\` para
+pasar de un camino a otro de material distinto (arena → tierra) con el borde irregular del nuevo sobre el viejo, como en Añil.
 
 ## Herramientas
 

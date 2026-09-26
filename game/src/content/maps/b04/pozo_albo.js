@@ -34,7 +34,7 @@ export default {
     b.paint('mancha_gris', rect(15, 11, 3, 2));
     for (const [x, y] of [[10, 6], [17, 8], [12, 13], [16, 14]]) b.stamp('roca_grande_gris', x, y);
     for (const [x, y] of [[8, 14], [15, 6], [7, 6], [21, 11]]) b.stamp('roca_musgo_gris', x, y);
-    for (const [x, y] of [[6, 13], [14, 9], [19, 9]]) b.stamp('roca_peque_gris', x, y);
+    for (const [x, y] of [[6, 13], [14, 8], [19, 9]]) b.stamp('roca_peque_gris', x, y);
     b.stamp('cristales', 13, 10);
     b.stamp('gota_cristal', 4, 11);
     b.stamp('pilar_zocalo_gastado', 21, 6);

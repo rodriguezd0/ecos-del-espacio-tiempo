@@ -3,6 +3,7 @@
 // paso entre dos peñas cerrado por troncos rajados (Embestida); rincón norte con C028 tras otros troncos; este:
 // el altiplano con hierba alta, pinos torcidos y un otero con escalera. Coordenadas en ./layout.js (RUTA5).
 import { RUTA5 } from './layout.js';
+import { blendPath } from '../pathBlend.js';
 
 const R = RUTA5;
 export const rect = (x0, y0, x1, y1) => {
@@ -42,7 +43,6 @@ function peñas(b) {
   ]) b.stamp(n, x, y);
   // Hondonada del norte (C028): pinos alrededor; se entra por el sur, donde hay otro tronco.
   b.paint('bosque_pinos', rect(NOOK.x1 + 1, 2, NOOK.x1 + 2, NOOK.y1 + 1));
-  b.paint('bosque_pinos', rect(NOOK.x0, 2, NOOK.x1, 2));
   b.paint('camino_tierra', rect(NOOK.x0 + 1, NOOK.y0 + 1, NOOK.x1 - 1, NOOK.y1));
   b.stamp('tocon', NOOK.x0 + 1, NOOK.y0 + 1);
   b.stamp('setas', NOOK.x1 - 1, NOOK.y0 + 2);
@@ -102,16 +102,16 @@ function details(b) {
   // Nada encima del camino (rocas, pinos y matas lo bordean): las piezas de flor y matojo llevan su propia hierba.
   for (const [n, x, y] of [
     ['poste_electrico', 5, 18], ['poste_electrico', 14, 18], ['poste_electrico', 22, 21],
-    ['pino', 4, 33], ['arbol', 12, 33], ['pino', 23, 26], ['pino', 40, 21], ['arbol', 55, 21],
+    ['pino', 4, 33], ['arbol', 12, 32], ['pino', 23, 27], ['pino', 40, 21], ['arbol', 55, 21],
     ['pino', 53, 17], ['roca_grande', 18, 23], ['roca_gris', 25, 13], ['roca_peque', 38, 18], ['roca_grande', 47, 11],
     ['roca_gris', 56, 17], ['arbustos', 10, 23], ['arbustos', 38, 11], ['tocon', 50, 12], ['tocon', 40, 35],
-    ['roca_peque', 20, 13], ['arbustos', 55, 33], ['roca_grande', 16, 35], ['roca_peque', 44, 35],
+    ['roca_peque', 20, 13], ['arbustos', 55, 33], ['roca_peque', 44, 35],
   ]) b.stamp(n, x, y);
   for (const [n, x, y] of [
     ['flores_blancas', 3, 23], ['flores_rosas', 15, 23], ['brotes', 9, 24], ['guijarros', 20, 22], ['flores_blancas', 25, 20],
     ['macizo_flores', 43, 17], ['brotes', 46, 17], ['flores_rosas', 55, 18], ['guijarros', 43, 12], ['flores_blancas', 52, 17],
     ['guijarros', 57, 26], ['flores_blancas', 45, 34], ['brotes', 25, 23], ['flores_rosas', 42, 34], ['brotes', 38, 35],
-    ['flores_rosas', 12, 35], ['flores_blancas', 57, 12], ['lupinos', 24, 3], ['brotes', 17, 3], ['flores_rosas', 21, 4],
+    ['flores_rosas', 14, 35], ['flores_blancas', 57, 12], ['lupinos', 24, 3], ['brotes', 17, 3], ['flores_rosas', 21, 4],
     ['flores_blancas', 54, 11],
   ]) b.stamp(n, x, y);
   b.stamp('cartel_ruta', 3, 15);
@@ -127,4 +127,21 @@ export function buildRuta5(b) {
   peñas(b);
   otero(b);
   details(b);
+  westBlend(b);
+}
+
+/**
+ * Costura con Villa Brontia: la calle de arena del pueblo sigue dos casillas y la tierra de la ruta entra sobre ella con
+ * su borde irregular (sin cambio de material en la misma línea de la costura).
+ */
+function westBlend(b) {
+  const { y0, y1 } = R.west;
+  const onRoad = (y) => y >= y0 && y <= y1;
+  blendPath(b, {
+    from: 'camino_arena', to: 'camino_tierra',
+    blend: rect(2, y0, 2, y1),
+    fromCells: rect(0, y0, 1, y1),
+    fromMask: (x, y) => onRoad(y) && x <= 3,
+    toMask: (x, y) => onRoad(y) && x >= 2,
+  });
 }

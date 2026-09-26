@@ -148,7 +148,7 @@ export function ruta2Events(opts) {
     { id: 'cartel_estanque', type: 'sign', x: 16, y: 25, text: TEXT.pond },
     // Viajero en el banco antes de Caudal
     {
-      id: 'viajero', x: 20, y: 61, sprite: 'anil:guiri', dir: 4, move: 'look', trigger: 'action',
+      id: 'viajero', x: 18, y: 59, sprite: 'anil:guiri', dir: 4, move: 'look', trigger: 'action',
       script: async (ctx) => {
         await say(ctx, 'Viajero', 'Vengo de Caudal. La ciudad está patas arriba: por la mañana el agua se sale de los canales y por la noche los deja secos.');
         await say(ctx, 'Viajero', 'El Maestre de Esclusas dice que lo tiene controlado. Nadie le cree, pero nadie se lo dice.');

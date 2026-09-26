@@ -24,16 +24,16 @@ export default {
     b.fill(null, 'vacio');
     b.rect(null, 1, 1, 13, 10, 'habitacion_casa');
     b.stamp('salida_casa', E.x - 2, E.y);
-    b.stamp('mesa_comedor', 2, 5);
+    b.stamp('mesa_comedor', 3, 5); // junto a la estantería, sin pisarla
     b.stamp('cama', 9, 3);
-    b.stamp('cama', 11, 6);
+    b.stamp('cama', 11, 7);
     b.stamp('estanteria_roja', 1, 3);
     b.stamp('reloj_pared', 5, 2);
     b.stamp('ventana_cortinas', 6, 2);
     b.stamp('planta', 13, 3);
     b.stamp('planta_alta', 1, 8);
     b.rect(null, 4, 8, 3, 2, 'alfombra_azul');
-    b.stamp('taza', 3, 6);
+    b.stamp('taza', 4, 6);
   },
 
   warps: exitWarps(E.x, E.y, { map: 'villa_boreal', x: OUT.x, y: OUT.y + 1, dir: 2 }),

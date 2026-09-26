@@ -10,8 +10,11 @@
 export const W = 64;
 export const H = 56;
 
-/** Entrada desde la Ruta 2 (norte): x 30–33 (= x 13–16 de la Ruta 2). */
-export const NORTH_ENTRY = Object.freeze({ x0: 30, x1: 33, offset: 17 });
+/**
+ * Entrada desde la Ruta 2 (norte): x 30–33 (= x 13–16 de la Ruta 2). El camino de arena de la ruta llega hasta el
+ * arco de entrada (`arco_puente`, 8×5, hueco x 30–33) y el adoquín empieza bajo el arco (`paveY`), como en Añil.
+ */
+export const NORTH_ENTRY = Object.freeze({ x0: 30, x1: 33, offset: 17, paveY: 4, gate: { x: 28, y: 3 }, sign: { x: 27, y: 7 } });
 /** Salidas pendientes de otros bloques (maps/b03/pending_links.js). */
 export const WEST_EXIT = Object.freeze({ y0: 3, y1: 5 }); // Ruta 3 (B04), sendero de la ribera río arriba
 /** Paseo del Albo (orilla norte), del sendero de la ribera a la Esclusa mayor. */

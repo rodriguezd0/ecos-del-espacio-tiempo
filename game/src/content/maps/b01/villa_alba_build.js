@@ -112,7 +112,7 @@ function paintSouthWest(b) {
   b.stamp('flores_blancas', 17, 24);
   b.stamp('flores_rosas', 18, 25);
   b.stamp('buzon_rojo', 5, 24);
-  b.stamp('arbol', 6, 26);
+  b.stamp('flores_rosas', 7, 27);
   b.stamp('roca_turquesa_peque', 13, 29);
 }
 
@@ -123,12 +123,12 @@ function paintSouthEast(b) {
   b.stamp('farola', 29, 20);
   b.stamp('buzon_rojo', 37, 25);
   b.paint('flores_azules', cells(29, 25, 2, 1));
-  b.stamp('lupinos', 34, 29);
+  b.stamp('flores_blancas', 34, 29);
+  b.stamp('flores_rosas', 30, 29);
 }
 
 function paintPlaza(b) {
   b.stamp('farola', 16, 10);
-  b.stamp('banco', 17, 23);
   b.stamp('papelera', 17, 13);
 }
 

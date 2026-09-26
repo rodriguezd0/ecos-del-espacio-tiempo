@@ -28,9 +28,10 @@ export const STREETS = Object.freeze({
   westStreet: [20, 13, 4, 25],
   eastStreet: [47, 13, 5, 16],
   plaza: [20, 28, 33, 10], // Plaza de las Eras
-  avenue: [52, 29, 20, 5], // Avenida del Este (la salida es y 30–33)
+  avenue: [52, 29, 17, 5], // Avenida del Este (la salida es y 30–33)
+  avenueEnd: [69, 30, 3, 4], // último tramo, a la altura de la salida (encima entra la tierra de la Ruta 7)
   southAvenue: [34, 38, 4, 26],
-  crossStreet: [38, 48, 34, 3], // Calle de los Almacenes
+  crossStreet: [38, 48, 32, 3], // Calle de los Almacenes (acaba en el bosque del borde este)
   westBlock: [2, 21, 18, 3], // calle de los bloques del oeste
   westLane: [2, 13, 3, 8],
   parkGate: [28, 48, 6, 3],
@@ -75,7 +76,7 @@ export const YARD = Object.freeze({ x: 58, y: 2, w: 13, h: 7 });
 /** Parque de las Eras (suroeste). */
 export const PARK = Object.freeze({
   x: 2, y: 38, w: 30, h: 20,
-  grass: [[3, 40, 8, 6], [11, 51, 8, 6], [21, 51, 8, 5]],
+  grass: [[3, 42, 8, 4], [11, 51, 8, 6], [21, 51, 8, 5]], // (la de arriba empieza bajo los troncos de los árboles)
   pond: [20, 40, 6, 4],
   monument: { x: 12, y: 40 }, // estatuas gemelas «las Eras»
 });

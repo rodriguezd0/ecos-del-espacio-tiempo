@@ -64,7 +64,7 @@ export function buildPresente2(b) {
 export function buildAntea2(b) {
   b.fill(0, 'cesped');
   // Marco: bosquecillo al norte y a los lados; el puerto al sur.
-  b.paint('bosque', [...rect(0, 0, 10, 4), ...rect(22, 0, 31, 3), ...rect(0, 5, 1, 18), ...rect(30, 4, 31, 18)]);
+  b.paint('bosque', [...rect(0, 0, 9, 4), ...rect(22, 0, 31, 3), ...rect(0, 5, 1, 18), ...rect(30, 4, 31, 18)]);
   b.paint('agua', rect(0, 19, 31, 23));
   b.paint('orilla', rect(0, 19, 31, 23));
   // Calle del puerto (arena) y el muelle.

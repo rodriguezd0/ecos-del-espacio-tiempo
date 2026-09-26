@@ -58,7 +58,11 @@ function paintStreets(b) {
 
 function paintArboleda(b) {
   const a = ARBOLEDA;
-  b.paint('cesped_claro', cells(a.area.x, a.area.y + 1, a.area.w, a.area.h - 1));
+  // Césped claro alrededor de los árboles (no debajo: las copas taparían el borde del césped).
+  const under = new Set([
+    ...cells(a.founder.x, a.founder.y, 2, 6), ...a.trees.flatMap(([x, y]) => cells(x, y, 2, 4)),
+  ].map(([x, y]) => `${x},${y}`));
+  b.paint('cesped_claro', cells(a.area.x, a.area.y + 1, a.area.w, a.area.h - 1).filter(([x, y]) => !under.has(`${x},${y}`)));
   b.stamp('arbol_alto', a.founder.x, a.founder.y);
   a.trees.forEach(([x, y], i) => b.stamp(i % 2 ? 'pino' : 'arbol', x, y));
   // placas con los nombres al pie de cada árbol (y la del Fundador, más grande)
@@ -118,16 +122,16 @@ function paintSouth(b) {
 
 function paintPlaza(b) {
   b.stamp('tablon_anuncios', 16, 20);
-  b.stamp('banco', 27, 18);
+  b.stamp('flores_blancas', 28, 18);
   b.stamp('farola', 17, 10);
   b.stamp('farola', 22, 19);
   b.stamp('papelera', 30, 18);
   b.stamp('buzon_rojo', 22, 24);
-  b.stamp('cartel_madera', 17, 2);
+  b.stamp('cartel_madera', 17, 6); // al pie del bosque, junto a la calle (antes dentro de un árbol)
   b.stamp('cartel_madera', 17, 30);
   b.stamp('cartel_madera', 2, 15);
   b.stamp('flores_blancas', 22, 13);
-  b.stamp('macizo_flores', 20, 21);
+  b.stamp('macizo_flores', 16, 23); // fuera de la calle mayor (antes cruzaba el camino junto a la farola)
 }
 
 /** Florecillas y matojos sueltos sobre césped libre (deterministas). */

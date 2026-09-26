@@ -10,6 +10,7 @@
 import { ROOMS, ROOM4 } from './layout.js';
 import { rect, placeFree, cellSet, key } from './paint.js';
 import { cellHash } from '../../../world/mapBuilder.js';
+import { FOREST_BLOCKER_TILE } from '../../stamps/forest.js';
 
 const R = ROOMS[4];
 const BAL = ROOM4.balcony;
@@ -90,9 +91,12 @@ export function buildAntea4(b) {
 export function buildPrimigenia4(b) {
   b.fill(0, 'cesped');
   const res = reserved4();
-  b.paint('bosque', [...rect(0, 0, 31, 3), ...rect(0, 4, 1, 25), ...rect(30, 4, 31, 25), ...rect(2, 24, 29, 25)]);
+  // Franja del sur en su propio trazo (2 filas: los árboles se completan hacia arriba, enteros); bajo la senda, matorral.
+  b.paint('bosque', [...rect(2, 24, 13, 25), ...rect(18, 24, 29, 25)]);
+  b.paint('bosque', [...rect(0, 0, 31, 3), ...rect(0, 4, 1, 25), ...rect(30, 4, 31, 25)]);
+  for (const x of [14, 16]) b.stamp('arbustos', x, 24);
+  for (const [x, y] of rect(14, 24, 17, 25)) b.set(1, x, y, FOREST_BLOCKER_TILE); // el matorral cierra como la selva
   // Senda del sur (se entra en la selva pulsando abajo al final: sala 3) y risco del noroeste.
-  b.paint('camino_tierra', rect(15, 21, 17, 23));
   b.paint('acantilado', [...rect(2, 4, BAL.x1 + 2, BAL.y1 + 3)]);
   // La sima inundada (la Fosa antes de que hubiera ciudad) y el manantial natural.
   b.paint('agua', rect(12, 4, 20, 8));
@@ -101,15 +105,15 @@ export function buildPrimigenia4(b) {
   const tall = [
     ...rect(3, 16, 8, 21), ...rect(5, 15, 9, 18), ...rect(22, 18, 28, 22), ...rect(20, 20, 24, 23), ...rect(24, 5, 28, 9),
     ...rect(26, 8, 28, 11), ...rect(10, 21, 13, 23),
-  ].filter(([x, y]) => !res.has(key(x, y)));
+  ].filter(([x, y]) => !res.has(key(x, y)) && y <= 21);
   b.paint('hierba_alta', tall);
   b.paint('cesped_claro', rect(11, 12, 22, 17));
-  b.paint('camino_tierra', rect(15, 22, 17, 23));
+  b.paint('camino_tierra', rect(15, 21, 17, 23));
   for (const [x, y] of [[11, 19], [27, 15]]) b.stamp('roca_turquesa', x, y);
   b.stamp('tocon_gigante', 23, 5);
-  b.stamp('cristales', 3, 22);
+  b.stamp('cristales', 3, 5); // sobre el risco del noroeste
   b.stamp('tronco_caido_h', 13, 10);
-  b.stamp('tronco_caido_v', 12, 21);
+  b.stamp('tronco_caido_v', 13, 19);
   const free = (x, y) => x >= 2 && x <= 29 && y >= 5 && y <= 23 && !b.get(2, x, y);
   placeFree(b, [
     ['brotes', 12, 14, 1, 1], ['setas', 20, 14, 1, 1], ['lupinos', 5, 13, 3, 2], ['guijarros', 18, 21, 1, 1], ['arbustos', 25, 11, 2, 2],

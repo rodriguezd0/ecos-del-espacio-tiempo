@@ -36,6 +36,17 @@ async function gaelWaits(ctx) {
   ctx.setFlag(F.gaelWaits);
 }
 
+/**
+ * Gael va andando de su sitio junto al dintel (SCENE.gael) a donde espera (SCENE.gaelWait) por la plaza: primero
+ * hacia el este y luego hacia abajo, casillas que se pisan (la página nueva, `gael_espera`, aparece donde acaba).
+ */
+async function walkGaelAside(ctx) {
+  const g = ctx.world?.events?.find((e) => e.id === 'gael');
+  if (!g || g.erased) return;
+  await moveCharTo(ctx, 'gael', SCENE.gaelWait.x, SCENE.gaelWait.y, { speed: 3 });
+  ctx.face('gael', 'up');
+}
+
 // ─── Paso 3: Casilda bloquea el paso ─────────────────────────────────────────────────────────────
 
 async function gateScene(ctx) {
@@ -64,8 +75,12 @@ async function gateScene(ctx) {
   ctx.face('casilda', 'right');
   await say(ctx, C, 'Tú, espera aquí.');
   await ctx.emote('gael', '…');
+  // Gael se aparta andando hasta donde esperará (antes aparecía allí de golpe al cambiar de página).
+  await walkGaelAside(ctx);
   ctx.face('casilda', 'up');
-  await ctx.move('casilda', ['up', 'up'], { speed: 3 });
+  // Casilda cruza el dintel y entra por la boca de la roca (fila de debajo de la boca y un paso más: desaparece).
+  await ctx.move('casilda', ['up', 'up', 'up', 'up'], { speed: 3 });
+  ctx.erase('casilda');
   ctx.se('Door enter');
   ctx.setVar(ROOM_VAR, ROOM.antesala);
   ctx.setFlag(F.casildaJoined);

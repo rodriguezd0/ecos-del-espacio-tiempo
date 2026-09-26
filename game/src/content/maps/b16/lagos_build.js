@@ -40,9 +40,10 @@ function greenMask() {
   const set = new Set();
   const add = (list) => { for (const [x, y] of list) set.add(`${x},${y}`); };
   add(rect(ISLAND.x0, ISLAND.y0, ISLAND.x1, ISLAND.y1));
-  add(roundRect(2, 41, 11, 54, 3));
-  add(roundRect(17, 51, 27, 55, 2));
-  add(roundRect(41, 48, 53, 55, 3));
+  // (los prados acaban antes del pinar del sur: bajo los pinos sigue la nieve)
+  add(roundRect(2, 41, 11, 53, 3));
+  add(roundRect(17, 51, 27, 53, 2));
+  add(roundRect(41, 48, 53, 53, 3));
   add(rect(SENTIR_ISLET.x0, SENTIR_ISLET.y0, SENTIR_ISLET.x1, SENTIR_ISLET.y1));
   add(rect(SABER_ISLET.x0, SABER_ISLET.y0, SABER_ISLET.x1, SABER_ISLET.y1));
   return (x, y) => set.has(`${x},${y}`);
@@ -61,9 +62,16 @@ function paintSnow(b, water) {
     return false;
   };
   const snow = b.cellsWhere((x, y) => !wet.has(`${x},${y}`) && !green(x, y) && !(near(x, y) && y > 6 && y < 42));
-  b.paint('nieve_parche', snow);
+  // Fuera del mapa cuenta como nieve: sin borde de hierba en los lados (la costura con Boreal sigue nevada).
+  const snowSet = new Set(snow.map(([x, y]) => `${x},${y}`));
+  // Bajo los troncos del pinar también es nieve (no asoma césped): capa 0 nevada donde la nieve no tiene borde (las
+  // casillas del borde del parche conservan el césped debajo: su canto suave se dibuja sobre él).
+  const isSnow = (x, y) => snowSet.has(`${x},${y}`) || !b.inBounds(x, y);
+  const inner = snow.filter(([x, y]) => [-1, 0, 1].every((dy) => [-1, 0, 1].every((dx) => isSnow(x + dx, y + dy))));
+  b.paint('nieve', inner, { layer: 0 });
+  b.paint('nieve_parche', snow, { mask: (x, y) => snowSet.has(`${x},${y}`) || !b.inBounds(x, y) });
   // matas nevadas sueltas sobre la nieve
-  for (const [x, y] of [[5, 7], [49, 8], [8, 41], [50, 42], [18, 56 - 2]]) b.stamp('arbusto_nevado', x, y);
+  for (const [x, y] of [[5, 7], [49, 8], [8, 41], [49, 42]]) b.stamp('arbusto_nevado', x, y);
 }
 
 /** Lenguas de tierra entre los lagos: pinos nevados sueltos, rocas en la orilla y matas. */
@@ -93,7 +101,7 @@ function paintCliff(b) {
   for (const [x, dy] of [[0, -1], [3, -2], [8, -1], [11, -2], [17, -1], [21, -2], [25, -1], [34, -2], [37, -1], [41, -2], [46, -1], [50, -2], [54, -1], [57, -2]]) {
     b.stamp(x % 2 ? 'pino_nevado_peque' : 'pino_nevado', x, dy - (x % 2 ? 0 : 2));
   }
-  for (const [x, y] of [[5, 1], [14, 0], [31, 1], [44, 0], [52, 2]]) b.stamp('arbusto_nevado', x, y);
+  for (const [x, y] of [[5, 1], [14, 0], [31, 1], [43, 0], [51, 2]]) b.stamp('arbusto_nevado', x, y);
   // la repisa norte: nieve y rocas al pie del acantilado
   for (const x of [NORTH_LEDGE.x0 + 2, 26, 40]) b.stamp('roca_peque', x, NORTH_LEDGE.y);
 }
@@ -103,11 +111,11 @@ function paintForest(b) {
   b.paint('bosque_nevado', rect(56, 6, 59, 59));
   b.paint('bosque_nevado', rect(4, 54, 11, 59));
   b.paint('bosque_nevado', rect(16, 54, 55, 59));
-  for (const [s, x, y] of [['pino_nevado_peque', 31, 50], ['pino_nevado_peque', 36, 50], ['arbusto_nevado', 32, 53]]) b.stamp(s, x, y);
+  for (const [s, x, y] of [['pino_nevado_peque', 31, 50], ['arbusto_nevado', 33, 53]]) b.stamp(s, x, y);
   // lindes del bosque junto al camino: pinos pequeños y matas nevadas
   for (const [s, x, y] of [
-    ['pino_nevado_peque', 16, 52], ['arbusto_nevado', 19, 55], ['tocon_nevado', 26, 53],
-    ['pino_nevado_peque', 4, 38], ['pino_nevado_peque', 52, 39], ['pino_nevado_peque', 44, 54], ['arbusto_nevado', 48, 55],
+    ['tocon_nevado', 26, 53],
+    ['pino_nevado_peque', 4, 38], ['pino_nevado_peque', 52, 39],
   ]) b.stamp(s, x, y);
 }
 
@@ -163,11 +171,11 @@ function paintShore(b) {
   b.stamp('tienda_campana', CAMP.tent.x, CAMP.tent.y);
   b.stamp('barrera_obras', 46, 42);
   // Prados: hierba alta, flores y rocas
-  b.paint('hierba_alta', GRASS);
+  b.paint('hierba_alta', GRASS.filter(([x, y]) => !b.get(2, x, y))); // (no bajo las copas del pinar)
   for (const [s, x, y] of [
-    ['flores_blancas', 2, 49], ['flores_rosas', 11, 44], ['lupinos', 6, 52], ['roca_gris', 10, 52],
+    ['flores_rosas', 11, 44], ['lupinos', 6, 52], ['roca_gris', 10, 52],
     ['flores_blancas', 42, 49], ['lupinos', 52, 51], ['roca_grande', 48, 48], ['flores_rosas', 26, 53],
-    ['roca_gris', 6, 40], ['arbusto_nevado', 49, 40], ['tocon_nevado', 55, 46], ['roca_peque', 2, 41],
+    ['roca_gris', 6, 40], ['arbusto_nevado', 49, 40], ['tocon_nevado', 55, 46],
     ['planta_nevada', 20, 45], ['tocon_nevado', 16, 46], ['arbusto_nevado', 18, 43],
   ]) b.stamp(s, x, y);
 }

@@ -82,7 +82,7 @@ export const SPOTS = Object.freeze({
   cefiro: P(6, 28, 4), // cuidador anciano, junto a la cabaña de Aurora
   nube: P(13, 24, 6), // cuidador joven con su Swablu
   nubeSwablu: P(14, 24, 4),
-  sign: Object.freeze({ x: 21, y: 31 }),
+  sign: Object.freeze({ x: 22, y: 31 }),
   bell: Object.freeze({ x: 21, y: 24 }),
 });
 

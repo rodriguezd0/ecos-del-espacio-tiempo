@@ -67,7 +67,7 @@ function paintVillage(b) {
   for (const [s, x, y] of [['tocon', 23, 16], ['troncos', 25, 16], ['arbustos', 21, 13], ['tocon', 27, 13]]) b.stamp(s, x, y);
   // detalles del caserío
   for (const [s, x, y] of [
-    ['campana', 21, 24], ['cartel_madera', 21, 31], ['buzon_rojo', 9, 27], ['troncos', 9, 23], ['banco', 12, 26],
+    ['campana', 21, 24], ['cartel_madera', 22, 31], ['buzon_rojo', 9, 27], ['troncos', 9, 23], ['banco', 11, 26],
     ['macizo_flores', 4, 30], ['flores_blancas', 11, 30], ['flores_rosas', 13, 31], ['lupinos', 26, 20],
     ['jardinera_flores', 27, 27], ['farola_hierro', 14, 26], ['farola_hierro', 21, 28],
   ]) b.stamp(s, x, y);

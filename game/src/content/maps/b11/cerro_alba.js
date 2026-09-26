@@ -33,7 +33,8 @@ function build(b) {
   b.blob(null, rect(C.summit.x0, C.summit.y0, C.summit.x1, C.summit.y1), 'terraza');
   b.stamp('escalera_terraza_ancha', C.summit.stairs - 2, C.summit.y1 - 2);
   // Sendero de la base hasta la pared de raíces y vereda gastada de la escalera al mirador.
-  b.paint('camino_tierra', [...rect(4, 24, 6, 29), ...rect(4, 23, 12, 24)]);
+  // (la vereda hacia la pared es de una fila: la de abajo es la de las puntas de los pinos)
+  b.paint('camino_tierra', [...rect(4, 24, 6, 29), ...rect(4, 23, 12, 23)]);
   // Cima: estrado de losas con el brasero.
   b.stamp('estrado', 9, 1);
   const avoid = reserved();
@@ -50,8 +51,8 @@ function build(b) {
     ['flores_rosas', 8, 5], ['brotes', 15, 7], ['flores_blancas', 17, 8], ['flores_rosas', 7, 28],
     ['lupinos', 16, 12], ['macizo_flores', 5, 13], ['flores_rosas', 13, 19], ['flores_blancas', 8, 17],
   ], { avoid });
-  b.rect(null, 14, 16, 3, 2, 'flores_amarillas');
-  b.rect(null, 5, 3, 2, 2, 'flores_amarillas');
+  b.rect(null, 14, 17, 3, 2, 'flores_amarillas');
+  b.rect(null, 5, 6, 2, 1, 'flores_amarillas');
 }
 
 export default {

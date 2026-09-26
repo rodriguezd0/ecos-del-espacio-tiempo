@@ -83,7 +83,7 @@ export const ITEMS = Object.freeze([
 /** Decorado (stamps de Exterior3). Las farolas (1×5) se colocan con la base en la cubierta. */
 export const PROPS = Object.freeze([
   ['contenedores', 26, 11], ['contenedores', 30, 11], ['tuberias', 9, 11], ['deposito', 4, 28],
-  ['aparcamiento', 4, 11], ['chapa_metal', 21, 13], ['chapa_metal', 17, 32], ['barrera_obras', 16, 11],
+  ['aparcamiento', 4, 11], ['chapa_metal', 21, 13], ['chapa_metal', 17, 32], ['barrera_obras', 16, 12],
   ['aerogenerador', 12, 28], ['boca_incendios', 5, 18], ['farola_hierro', 16, 7], ['farola_hierro', 22, 7],
   ['farola_hierro', 11, 15], ['farola_hierro', 26, 27],
   // Detalles de las cubiertas (sin cerrar pasos: el test de alcance lo comprueba).

@@ -11,7 +11,7 @@ export const ARCHIVO_ROOM = Object.freeze({
   stairsArrival: Object.freeze({ x: 18, y: 6, dir: 2 }), // al subir del Archivo Hondo
   // Estanterías (estanteria_roja 2×3) en pasillos: la base bloquea.
   stacks: Object.freeze([[3, 7], [5, 7], [3, 11], [5, 11], [15, 7], [17, 7], [15, 11], [17, 11]]),
-  wallShelves: Object.freeze([[3, 2], [5, 2], [7, 2], [13, 2], [15, 2]]),
+  wallShelves: Object.freeze([[3, 2], [5, 2], [7, 2], [14, 2]]), // (x 9–13: los ordenadores)
   scanners: Object.freeze([Object.freeze({ x: 9, y: 7 }), Object.freeze({ x: 12, y: 7 })]), // fotocopiadora 2×2
   table: Object.freeze({ x: 9, y: 11 }), // mesa de lectura (mesa_lab_verde 3×2)
   // Personajes

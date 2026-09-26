@@ -35,7 +35,7 @@ function build(b) {
   b.paint('mancha_gris', cells(e.x1 - 4, e.y0, 4, 2));
   for (const [s, x, y] of [
     ['tronco_h_gris', 7, 20], ['tronco_h_gris', 19, 20], ['roca_grande_gris', 21, 24], ['matojo_cueva_gris', 6, 23],
-    ['roca_peque_gris', 11, 25], ['cartel', 9, 20], ['musgo_rocas', 17, 25],
+    ['roca_peque_gris', 11, 25], ['cartel', 10, 20], ['musgo_rocas', 17, 25],
   ]) if (b.hasStamp(s)) b.stamp(s, x, y);
   for (const x of [8, 20]) b.stamp('antorcha', x, e.y0 - 2);
   b.stamp('salida_luz_sur_gris', CERRO.exit.stamp.x, CERRO.exit.stamp.y);

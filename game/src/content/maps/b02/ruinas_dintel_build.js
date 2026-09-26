@@ -153,7 +153,7 @@ function paintNucleo(b) {
   b.paint('pilar_canal_v', cells(31, 18, 1, 5));
   b.paint('pilar_canal_v', cells(40, 20, 1, 3));
   for (const [n, x, y] of [
-    ['pilar_arista_grande', 31, 15], ['pilar_arista', 38, 15], ['pilar_columna', 32, 16], ['pilar_columna', 38, 16],
+    ['pilar_arista', 38, 14], ['pilar_columna', 32, 17], ['pilar_columna', 38, 16],
     ['pilar_glifo', 37, 22], ['pilar_glifo_2', 33, 23],
   ]) b.stamp(n, x, y);
 }

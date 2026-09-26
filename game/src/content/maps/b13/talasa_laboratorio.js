@@ -26,8 +26,8 @@ export default {
     b.stamp('lab_ordenadores', 2, 1);
     b.stamp('pizarras', 8, 2);
     b.stamp('lab_ordenadores', 20, 1);
-    b.stamp('maquina_lab', 1, 9);
-    b.stamp('maquina_lab', 22, 9);
+    b.stamp('maquina_lab', 1, 8); // (encima de las estanterías, sin pisarlas)
+    b.stamp('maquina_lab', 22, 8);
     b.stamp('estanteria_lab', 1, 13);
     b.stamp('estanteria_lab', 23, 13);
     b.stamp('fotocopiadora', 17, 12);

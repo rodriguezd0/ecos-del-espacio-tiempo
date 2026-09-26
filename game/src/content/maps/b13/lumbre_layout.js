@@ -28,15 +28,16 @@ export const MOON_ROCK_FRONT = Object.freeze({ x: 11, y: 19, dir: 2 });
 export const GROTTO_ENTRY = Object.freeze({ x: 9, y: 12 }); // llegada en lumbre_gruta
 
 export const TORII = Object.freeze({ stamp: 'torii_rosa', x: 8, y: 2 });
-export const LANTERNS = Object.freeze([[7, 8], [16, 8], [7, 15], [16, 15], [8, 18], [14, 18]]);
-export const TREES = Object.freeze([['cerezo', 3, 8], ['cerezo', 17, 8], ['cerezo', 3, 13], ['cerezo', 17, 13]]);
-export const GRASS = Object.freeze([[4, 6, 3, 2], [16, 6, 3, 2], [8, 17, 1, 1]]);
+export const LANTERNS = Object.freeze([[8, 8], [15, 8], [8, 15], [15, 15], [8, 18], [14, 18]]);
+/** Cerezos simétricos (5×6) en dos pisos que no se tocan (filas 7–12 y 13–18), junto a los farolillos y sin pisarlos. */
+export const TREES = Object.freeze([['cerezo', 3, 7], ['cerezo', 16, 7], ['cerezo', 3, 13], ['cerezo', 16, 13]]);
+export const GRASS = Object.freeze([[4, 6, 3, 1], [17, 6, 3, 1], [8, 17, 1, 1]]);
 /** Flores sueltas del prado (1×1, pisables): sin «corros» de pétalos en cuadro, que dejaban un marco rosa. */
 export const FLOWERS = Object.freeze([
-  ['flores_rosas', 7, 11], ['flores_rosas', 15, 9], ['flores_rosas', 8, 16], ['flores_rosas', 14, 16], ['flores_rosas', 15, 13],
-  ['flores_rosas', 10, 8], ['flores_blancas', 7, 10], ['flores_blancas', 16, 10], ['flores_blancas', 9, 8], ['flores_blancas', 13, 17],
+  ['flores_rosas', 8, 11], ['flores_rosas', 15, 9], ['flores_rosas', 8, 16], ['flores_rosas', 14, 16], ['flores_rosas', 15, 13],
+  ['flores_rosas', 10, 8], ['flores_blancas', 8, 10], ['flores_blancas', 15, 10], ['flores_blancas', 9, 8], ['flores_blancas', 13, 17],
 ]);
-export const STONE_LANTERNS = Object.freeze([[5, 5], [18, 5], [4, 19], [19, 19]]);
+export const STONE_LANTERNS = Object.freeze([[5, 5], [18, 5], [3, 19], [20, 19]]);
 export const BENCH = Object.freeze({ x: 14, y: 19 }); // banco 3×1 en la playa del sur (x 14–16)
 
 /** Barca de remos de Lucía varada en la playa del oeste (hasta que vuelve a Caleta). */

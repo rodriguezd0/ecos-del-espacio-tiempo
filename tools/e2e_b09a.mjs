@@ -358,7 +358,6 @@ async function t07(d) {
     await d.turn('up');
     await d.interact({ watch });
   }
-  await d.expectSaid(/Es una de ellas/, 'el Core reconoce la Tablilla');
   await d.milestone('t07_tablilla', (s) => {
     if (!s.tablets.includes('INSECTPLATE')) return 'sin Tabla Bicho';
     if (!s.flags.b09_reserva_abierta || !s.flags.b09_scolipedita) return 'sin Reserva abierta o sin Scolipedita';

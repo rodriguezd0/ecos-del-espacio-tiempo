@@ -87,7 +87,7 @@ export function cerroEvents() {
   return [
     ...gateEvents(),
     doorEvent(),
-    examine('cartel_galena', 9, 20, CERRO_TEXT.sign, { solid: true }),
+    examine('cartel_galena', 10, 20, CERRO_TEXT.sign, { solid: true }),
     examine('estela_puerta_0', 11, 7, CERRO_TEXT.plaque, { solid: true }),
     examine('estela_puerta_1', 12, 7, CERRO_TEXT.plaque, { solid: true }),
     {

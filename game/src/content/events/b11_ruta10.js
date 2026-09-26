@@ -87,7 +87,7 @@ function itemEvents() {
 function signEvents() {
   const examine = (id, x, y, text) => ({ id, x, y, trigger: 'action', noOver: true, script: async (ctx) => { await ctx.say(text); } });
   return [
-    { id: 'cartel_ruta10', type: 'sign', x: 56, y: 19, text: RUTA10_TEXT.sign, skin: 'sign hgss dir' },
+    { id: 'cartel_ruta10', type: 'sign', x: 54, y: 19, text: RUTA10_TEXT.sign, skin: 'sign hgss dir' },
     { id: 'cartel_cruce', type: 'sign', x: 24, y: 19, text: RUTA10_TEXT.junction, skin: 'sign hgss dir' },
     { id: 'cartel_pinar', type: 'sign', x: 31, y: 11, text: RUTA10_TEXT.pinar },
     examine('orilla_albo', 11, 25, RUTA10_TEXT.bank),

@@ -43,7 +43,7 @@ el agua (sin cortes de casilla).
 | `ruta_13` norte | x 13–15, y 0 | `villa_boreal` sur (x 20–22) | offset −7 / +7 |
 | `villa_boreal` norte | x 20–23, y 0 | `lagos_alma` (B16) | `links.js#PENDING_LINKS`: `north`, offset 8 (Lagos: sur en x 12–15, offset −8). Activa (B16 registrado). Si faltara el mapa, eventos `sendero_lagos_*` cierran el paso con aviso neutro. |
 | `villa_boreal` oeste | mar, x 0 | `mar_boreal` este | offset 0 |
-| `villa_boreal` cueva | (41,17), llegada (40,17) | `gruta_escarcha` (24,34) | salida de la gruta: y 35, x 23–25 pulsando abajo |
+| `villa_boreal` cueva | (42,17), llegada (41,17) | `gruta_escarcha` (24,34) | salida de la gruta: y 35, x 23–25 pulsando abajo |
 | `villa_boreal` noreste | x 43, y 3–5 (pulsar derecha) | `boreal_lago` (1, 12–14) | vuelta: x 0 pulsando izquierda → (42, 3–5) |
 | `villa_boreal` muelle | llegada del ferri (3,28) | Ciudad Nexo | parada `boreal` en `world/transport.js` |
 | `gruta_escarcha` boca | (12,19) empujando desde (12,20) | `gruta_escarcha_2` (21,6) | vuelta: (21,5) empujando arriba |

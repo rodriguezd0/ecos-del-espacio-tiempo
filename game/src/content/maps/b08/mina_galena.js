@@ -24,7 +24,7 @@ function build(b) {
   for (const x of [14, 29]) b.stamp('antorcha', x, R.vestibulo.y0 - 2);
   for (const [s, x, y] of [
     ['tronco_h', 13, 27], ['tronco_h', 28, 27], ['carteles_dobles', 24, 26], ['roca_grande', 30, 30], ['matojo_cueva', 12, 30],
-    ['pepita', 26, 32], ['roca_peque', 13, 29],
+    ['pepita', 26, 32], ['roca_peque', 14, 30],
   ]) b.stamp(s, x, y);
   // Galería principal y montacargas.
   for (const [s, x, y] of [['tronco_v', 16, 20], ['roca_musgo', 26, 21], ['escombros', 22, 7], ['roca_grande', 18, 8], ['cartel', 33, 16]]) b.stamp(s, x, y);

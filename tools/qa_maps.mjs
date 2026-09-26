@@ -11,6 +11,7 @@ import { buildMapNode } from './lib/map_node.mjs';
 import { qaMap } from './lib/map_qa.mjs';
 import { mapFile } from './validate_content_lib.mjs';
 import { checkSeams, seamLine } from './check_seams.mjs';
+import { reviewedNote, PROGRESS } from './qa_maps_notes.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
@@ -40,17 +41,29 @@ export function clusters(cells) {
 const rng = (a, b) => (a === b ? `${a}` : `${a}–${b}`);
 const box = (c) => `x ${rng(c.x0, c.x1)}, y ${rng(c.y0, c.y1)}`;
 
-function mapSection(id, file, qa) {
+function mapSection(id, file, qa, n) {
   const lines = [`### ${id}`, '', `\`${file}\``, ''];
-  const add = (title, items) => { if (items.length) lines.push(`- **${title}** (${items.length}): ${items.join('; ')}`); };
-  add('Árboles cortados', clusters(qa.cutTrees).map((c) => `${box(c)} (${c.n})`));
-  add('Stamps sobre árboles', qa.stampOverlaps.filter((o) => o.other === 'árbol').map((o) => `\`${o.name}\` en (${o.x},${o.y})`));
-  add('Stamps sólidos pisando otro', qa.stampOverlaps.filter((o) => o.other !== 'árbol').map((o) => `\`${o.name}\` (${o.x},${o.y}) sobre \`${o.other}\``));
-  add('Eventos visibles dentro de un árbol', qa.treeEvents.map((e) => `\`${e.id}\` (${e.type}) en (${e.x},${e.y})`));
-  add('Copa de árbol sobre camino/hierba/pieza de la capa 1', clusters(qa.groundUnderTrees).map((c) => `${box(c)} (${c.n})`));
-  add('Rocas de agua sin agua debajo', qa.waterRocks.map((r) => `\`${r.name}\` en (${r.x},${r.y})`));
+  const add = (cat, title, items) => {
+    if (!items.length) return;
+    lines.push(`- **${title}** (${items.length}): ${items.join('; ')}`);
+    const note = reviewedNote(id, cat, n[cat]);
+    if (note) lines.push(`  - *Revisado, falso positivo*: ${note}.`);
+  };
+  add('cut', 'Árboles cortados', clusters(qa.cutTrees).map((c) => `${box(c)} (${c.n})`));
+  add('onTree', 'Stamps sobre árboles', qa.stampOverlaps.filter((o) => o.other === 'árbol').map((o) => `\`${o.name}\` en (${o.x},${o.y})`));
+  add('solid', 'Stamps sólidos pisando otro', qa.stampOverlaps.filter((o) => o.other !== 'árbol').map((o) => `\`${o.name}\` (${o.x},${o.y}) sobre \`${o.other}\``));
+  add('events', 'Eventos visibles dentro de un árbol', qa.treeEvents.map((e) => `\`${e.id}\` (${e.type}) en (${e.x},${e.y})`));
+  add('under', 'Copa de árbol sobre camino/hierba/pieza de la capa 1', clusters(qa.groundUnderTrees).map((c) => `${box(c)} (${c.n})`));
+  add('rocks', 'Rocas de agua sin agua debajo', qa.waterRocks.map((r) => `\`${r.name}\` en (${r.x},${r.y})`));
   lines.push('');
   return lines;
+}
+
+/** Celda de la tabla: recuento, con «(rev.)» si está revisado como falso positivo. */
+function cellText(r, k) {
+  const v = r.n[k];
+  if (!v) return '';
+  return reviewedNote(r.id, k, v) ? `${v} (rev.)` : `${v}`;
 }
 
 const count = (qa) => ({
@@ -77,6 +90,7 @@ async function main() {
   }
   const seams = await checkSeams({ only, png: !args.includes('--no-png'), scale: 0.5 });
   const bad = rows.filter((r) => r.error || Object.values(r.n).some(Boolean));
+  const reviewedMaps = bad.filter((r) => !r.error && Object.entries(r.n).every(([k, v]) => !v || reviewedNote(r.id, k, v))).length;
   const total = rows.reduce((t, r) => { for (const [k, v] of Object.entries(r.n || {})) t[k] = (t[k] || 0) + v; return t; }, {});
   const md = [
     '# QA de mapas: árboles, solapes y costuras',
@@ -95,13 +109,15 @@ async function main() {
     `Total: ${rows.length} mapas, ${bad.length} con avisos — ${total.cut || 0} casillas de árbol cortado, ${total.onTree || 0}`,
     `stamps sobre árboles, ${total.solid || 0} stamps sólidos pisando otro, ${total.events || 0} eventos dentro de árboles,`,
     `${total.under || 0} casillas de copa sobre capa 1, ${total.rocks || 0} rocas de agua en tierra; ${seams.filter((s) => s.error || s.trees.length || s.objects.length || s.ground.length).length}/${seams.length} costuras con problemas.`,
+    `De los mapas con avisos, ${reviewedMaps} solo tienen falsos positivos ya revisados (\`tools/qa_maps_notes.mjs\`; «(rev.)» en la tabla).`,
     '',
+    ...PROGRESS,
     '## Resumen por mapa',
     '',
     '| Mapa | Árboles cortados | Stamps sobre árboles | Sólidos pisándose | Eventos en árbol | Copa sobre capa 1 | Rocas de agua |',
     '|---|---|---|---|---|---|---|',
     ...bad.map((r) => (r.error ? `| ${r.id} | no construye: ${r.error} | | | | | |`
-      : `| ${r.id} | ${r.n.cut || ''} | ${r.n.onTree || ''} | ${r.n.solid || ''} | ${r.n.events || ''} | ${r.n.under || ''} | ${r.n.rocks || ''} |`)),
+      : `| ${r.id} | ${['cut', 'onTree', 'solid', 'events', 'under', 'rocks'].map((k) => cellText(r, k)).join(' | ')} |`)),
     '',
     '## Costuras entre mapas conectados',
     '',
@@ -109,7 +125,7 @@ async function main() {
     '',
     '## Detalle por mapa',
     '',
-    ...bad.filter((r) => !r.error).flatMap((r) => mapSection(r.id, r.file, r.qa)),
+    ...bad.filter((r) => !r.error).flatMap((r) => mapSection(r.id, r.file, r.qa, r.n)),
   ];
   fs.writeFileSync(out, `${md.join('\n')}\n`);
   console.log(`${path.relative(ROOT, out)}: ${bad.length}/${rows.length} mapas con avisos; costuras con problemas: ${seams.filter((s) => s.trees?.length || s.objects?.length || s.ground?.length).length}/${seams.length}`);

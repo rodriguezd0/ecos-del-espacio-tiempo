@@ -88,7 +88,7 @@ function parkEvents() {
     { id: 'galladita', type: 'item', x: 16, y: 40, item: 'GALLADITE', hidden: true },
     { id: 'objeto_parque_1', type: 'item', x: 29, y: 56, item: 'REVIVE' },
     { id: 'objeto_parque_2', type: 'item', x: 3, y: 56, item: 'HEARTSCALE', hidden: true },
-    { id: 'objeto_ciudad_1', type: 'item', x: 69, y: 55, item: 'SUPERREPEL' },
+    { id: 'objeto_ciudad_1', type: 'item', x: 67, y: 55, item: 'SUPERREPEL' },
   ];
 }
 

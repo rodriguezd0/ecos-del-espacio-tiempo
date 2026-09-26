@@ -243,7 +243,7 @@ function railEvents() {
 function signEvents() {
   return [
     examine('cartel_ciudad', 23, 3, ESTRATO_TEXT.townSign, { solid: true }),
-    examine('cartel_ciudad_oeste', 3, 21, ESTRATO_TEXT.townSign, { solid: true }),
+    examine('cartel_ciudad_oeste', 4, 21, ESTRATO_TEXT.townSign, { solid: true }),
     examine('cartel_escuela', 32, 8, ESTRATO_TEXT.schoolSign, { solid: true }),
   ];
 }

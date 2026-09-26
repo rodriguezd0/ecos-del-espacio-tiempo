@@ -123,7 +123,8 @@ export function buildTramo7Bottom(b) {
   for (let y = T7.northPool.y0; y <= T7.grate.y; y++) for (let x = C.x0; x <= C.x1; x++) if (!tunnel.has(key(x, y))) wall.push([x, y]);
   b.paint('macizo_hielo', wall);
   const reserved = around([[T7.caracola.x, T7.caracola.y], [T7.caracola.stand.x, T7.caracola.stand.y], [12, 8], [12, 7], [12, 6], [12, 5], [T7.item.x, T7.item.y], ...T7.vents]);
-  decorate(b, [['roca_agua_grande', 17, 8, 2, 2], ['roca_agua', 9, 12, 1, 1], ['pilar_columna_quebrada', 15, 11, 1, 2]], reserved);
+  // (rocas del fondo: las «de agua» llevan su corro de espuma y solo van en superficie)
+  decorate(b, [['roca_musgo_hielo', 17, 8, 2, 2], ['roca_peque_hielo', 9, 11, 1, 2], ['pilar_columna_quebrada', 15, 11, 1, 2]], reserved);
 }
 
 /** Eco seco de la cisterna (tileset 2): losas limpias y, al norte, obra recién tallada donde hoy está el túnel. */

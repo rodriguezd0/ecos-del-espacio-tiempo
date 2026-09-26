@@ -14,7 +14,7 @@ export const PILOTES = Object.freeze({
   vent2: { x: 8, y: 14 },
   cell: { key: 'cell_talasa_3', x: 31, y: 31 },
   pillars: [], // se calculan abajo
-  kelp: [[6, 20], [10, 30], [26, 12], [33, 22], [17, 35], [6, 34], [36, 14]],
+  kelp: [[7, 19], [12, 29], [27, 14], [33, 22], [17, 35], [6, 34], [36, 14]], // (entre los pilotes, sin pisarlos)
   items: [{ id: 'objeto_pilotes_1', x: 5, y: 26, item: 'BIGPEARL', hidden: true }, { id: 'objeto_pilotes_2', x: 34, y: 27, item: 'REVIVE' }],
 });
 

@@ -30,7 +30,7 @@ export default {
     b.rect(null, 15, 12, 5, 3, 'mancha');
     b.rect(null, 17, 6, 4, 3, 'estanque');
     for (const [x, y] of [[4, 11], [21, 13], [9, 14]]) b.stamp('roca_grande', x, y);
-    for (const [x, y] of [[14, 6], [7, 12], [19, 10]]) b.stamp('roca_musgo', x, y);
+    for (const [x, y] of [[15, 6], [7, 12], [19, 10]]) b.stamp('roca_musgo', x, y);
     b.stamp('cristales', 9, 5);
     for (const [x, y] of [[12, 9], [16, 15], [6, 15]]) b.stamp('roca_peque', x, y);
     b.stamp('chorro_agua', 18, 4);

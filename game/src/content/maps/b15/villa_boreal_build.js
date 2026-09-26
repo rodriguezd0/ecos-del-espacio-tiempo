@@ -29,7 +29,7 @@ const PLAZA = Object.freeze(rect(B.plaza.x0, B.plaza.y0, B.plaza.x1, B.plaza.y1)
 
 /** Huella de cada edificio (con su sombra) para que ni árboles ni detalles la pisen. */
 const BUILDING_CELLS = Object.freeze(union(
-  rect(8, 10, 14, 20), rect(15, 12, 21, 19), rect(27, 11, 32, 18), rect(33, 12, 38, 18), rect(26, 0, 30, 6),
+  rect(8, 10, 14, 20), rect(15, 12, 21, 19), rect(27, 11, 32, 18), rect(33, 12, 38, 18), rect(26, 0, 30, 7),
   rect(31, 24, 37, 31), rect(9, 30, 14, 38),
 ));
 
@@ -63,10 +63,14 @@ function streets(b) {
 
 function buildings(b) {
   for (const bd of Object.values(BD)) b.stamp(bd.stamp, bd.x, bd.y);
+  // El Observatorio (entero dentro del mapa: la cúpula no se corta en la costura con los Lagos) apoya su puerta en la
+  // loma; la última fila del stamp (sombra) caería sobre el borde de la terraza: se quita y queda el borde.
+  const obs = BD.observatorio;
+  for (let x = obs.x; x < obs.x + 5; x++) b.set(2, x, obs.y + 7, 0);
   const cave = B.cave.stamp;
   b.stamp('cueva_ladera', cave.x, cave.y);
-  b.stamp('roca_grande', cave.x - 1, cave.y - 2);
-  b.stamp('roca_gris', cave.x + 1, cave.y - 1);
+  b.stamp('roca_grande', cave.x - 2, cave.y - 2);
+  b.stamp('roca_gris', cave.x, cave.y - 1);
 }
 
 function yard(b) {
@@ -83,7 +87,7 @@ function furniture(b) {
   b.stamp('banco', 17, 2); b.stamp('estatua_2', 14, 3);
   b.stamp('cartel_madera', 23, 22);
   b.stamp('buzon_rojo', 26, 16);
-  b.stamp('maquinas_expendedoras', 13, 21 - 2);
+  b.stamp('maquinas_expendedoras', 19, 19); // junto a la puerta de la tienda (la farola de la esquina queda libre)
 }
 
 export function buildBoreal(b) {
@@ -97,7 +101,9 @@ export function buildBoreal(b) {
   const events = borealEvents({ lagosOpen: false });
   const eventCells = events.filter((e) => Number.isInteger(e.x)).map((e) => [e.x, e.y]);
   const clear = union(grow(BOREAL_PATHS, 1, 1), grow(PLAZA, 1, 1), grow(BUILDING_CELLS, 1, 1), grow(eventCells, 1, 1),
-    rect(B.yard.x0 - 1, B.yard.y0 - 1, B.yard.x1 + 1, B.yard.y1 + 2), rect(0, 0, 7, B.height - 1), rect(12, 0, 36, 9));
+    rect(B.yard.x0 - 1, B.yard.y0 - 1, B.yard.x1 + 1, B.yard.y1 + 2), rect(0, 0, 7, B.height - 1), rect(12, 0, 36, 9),
+    // boca de la Gruta Escarcha con sus rocas y leñera/empalizada de los Talleres: sin pinos encima
+    rect(B.cave.stamp.x - 2, B.cave.stamp.y - 2, B.width - 1, B.cave.stamp.y + 3), rect(38, 24, 41, 30));
   const open = openMask([clear], 0);
   snowForest(b, { width: B.width, height: B.height, seed: 41, open });
   const reserved = reservedFrom(events, [...BOREAL_PATHS, ...PLAZA]);

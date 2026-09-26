@@ -28,7 +28,7 @@ Arte propio del bloque (PROVISIONAL, D30): `node tools/b02_assets.mjs [--preview
 | `villa_zaguan` casa de la vecina | 13,25 | `zaguan_casa_vecina` | 6,9 ↑ |
 | `villa_zaguan` casa de los hortelanos | 26,25 | `zaguan_casa_huerto` | 7,10 ↑ |
 | Interiores (felpudo, pulsar ↓) | — | `villa_zaguan` | casilla bajo su puerta, mirando ↓ |
-| `explanada_umbral` boca de la ruina | 15,8 · 16,8 | `ruinas_dintel` | 21,34 ↑ |
+| `explanada_umbral` boca de la ruina | 14–16,9 (hueco oscuro tallado en la cara del macizo, detrás del dintel) | `ruinas_dintel` | 21,34 ↑ |
 | `ruinas_dintel` claridad de la entrada | 21,35 (empujar ↓) | `explanada_umbral` | 15,13 ↓ |
 
 Las puertas de Exterior1 (y la claridad de la cueva) están sobre tiles **no pasables**: el warp salta al empujar contra

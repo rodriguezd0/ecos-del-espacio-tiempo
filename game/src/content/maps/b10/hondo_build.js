@@ -54,7 +54,7 @@ function paintLectura(b) {
   b.stamp('pilar_columna_quebrada', 44, 21);
   b.stamp('pilar_glifo', 36, 17);
   b.stamp('pilar_glifo_2', 33, 17);
-  b.stamp('pilar_arista_grande', 43, 12);
+  b.stamp('pilar_arista_grande', 42, 13); // bajo la vitrina, sin pisarla
 }
 
 function paintRollos(b) {

@@ -5,6 +5,7 @@
 import { F, SPEAKER, SPRITE, when, say } from './b02_common.js';
 import { ANTESALA, GALERIA, CAMARA, NUCLEO } from '../maps/b02/ruinas_dintel_layout.js';
 import { solvedCount } from './b02_puzzle.js';
+import { walkEventTo } from './b01_town_path.js';
 
 const C = SPEAKER.casilda;
 
@@ -45,6 +46,17 @@ export function placeCasilda(ctx) {
   if (!ev || !spot) return;
   ev.moveTo(spot.x, spot.y);
   ev.direction = spot.dir || 2;
+}
+
+/**
+ * Cambia de sala y Casilda va ANDANDO hasta su sitio por las salas y pasos de la ruina (antes se recolocaba de
+ * golpe). Sin camino (o sin mundo, en Node) se recoloca como setRoom.
+ */
+export async function walkToRoom(ctx, room, opts = {}) {
+  ctx.setVar(ROOM_VAR, room);
+  const spot = casildaSpot(ctx.state);
+  if (!spot) return;
+  await walkEventTo(ctx, 'casilda', spot.x, spot.y, { face: spot.dir || 2, ...opts });
 }
 
 /** Cambia de sala (variable) y recoloca. */

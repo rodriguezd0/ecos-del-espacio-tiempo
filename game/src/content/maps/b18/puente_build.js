@@ -43,8 +43,8 @@ function paintLanding(b) {
   b.stamp('tienda_campana', CAMP.tent.x, CAMP.tent.y);
   b.stamp('troncos', CAMP.logs.x, CAMP.logs.y);
   b.stamp('pilar_placa_unown', SIGNS.stele.x, SIGNS.stele.y);
-  // Esquinas del rellano: columnas y losas de eco de los Custodios
-  for (const [x, y] of [[13, 7], [27, 7], [13, 12], [27, 12]]) b.stamp('pilar_columna', x, y - 2);
+  // Esquinas del rellano: columnas y losas de eco de los Custodios (al oeste, la tienda de Alerce ocupa la esquina)
+  for (const [x, y] of [[27, 7], [27, 12]]) b.stamp('pilar_columna', x, y - 2);
   b.stamp('pilar_losa_eco', 23, 10);
   for (const [x, y] of [[12, 10], [28, 9], [24, 12]]) b.stamp(x % 2 ? 'pilar_glifo' : 'pilar_glifo_2', x, y);
 }

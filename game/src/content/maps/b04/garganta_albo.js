@@ -65,11 +65,11 @@ function paintMill(b) {
 
 function paintTrees(b) {
   b.paint('bosque_pinos', rect(29, 26, 4, 6));
-  b.paint('bosque_mixto', rect(24, 36, 9, 4));
+  b.paint('bosque_mixto', rect(24, 36, 10, 4)); // ancho par: sin medio árbol junto a la repisa este
   for (const w of LOWER_WOODS) b.paint('bosque_pinos', rect(...w));
   for (const [s, x, y] of [
-    ['pino', 20, 27], ['arbol', 26, 32], ['pino', 29, 9], ['pino', 17, 9], ['arbol', 29, 14], ['pino', 21, 10],
-    ['pino', 26, 19], ['pino', 7, 14], ['arbol', 8, 17], ['pino', 30, 17],
+    ['pino', 20, 26], ['arbol', 26, 32], ['pino', 17, 9], ['arbol', 29, 13],
+    ['pino', 26, 19], ['pino', 7, 14], ['pino', 30, 17],
     // Pinos agarrados a las repisas de la roca, en el tramo bajo del desfiladero.
     ['pino', 3, 25], ['pino', 3, 30], ['pino_alto', 3, 34], ['pino', 35, 26], ['pino_alto', 35, 30], ['pino', 35, 36],
   ]) b.stamp(s, x, y);
@@ -78,10 +78,10 @@ function paintTrees(b) {
 function paintDetails(b) {
   for (const [s, x, y] of [
     ['roca_grande', 30, 34], ['roca_gris', 26, 29], ['roca_peque', 15, 33],
-    ['roca_grande', 30, 11], ['roca_peque', 22, 21], ['guijarros', 22, 16], ['roca_gris', 17, 5],
-    ['flores_blancas', 21, 29], ['flores_rosas', 28, 30], ['brotes', 16, 28], ['setas', 31, 20],
-    ['flores_blancas', 18, 11], ['brotes', 24, 10], ['macizo_flores', 29, 1], ['guijarros', 9, 33],
-    ['roca_peque', 9, 19], ['brotes', 8, 22], ['roca_gris', 27, 24], ['guijarros', 18, 28],
+    ['roca_peque', 22, 21], ['guijarros', 22, 16], ['roca_gris', 17, 5],
+    ['flores_blancas', 19, 29], ['flores_rosas', 28, 30], ['brotes', 16, 28], ['setas', 26, 17],
+    ['flores_blancas', 19, 12], ['brotes', 24, 10], ['macizo_flores', 29, 1], ['guijarros', 9, 33],
+    ['roca_grande', 8, 18], ['brotes', 8, 22], ['roca_gris', 27, 24], ['guijarros', 18, 28],
   ]) b.stamp(s, x, y);
   b.stamp('cartel_ruta', 20, 37);
   b.stamp('cueva_ladera', GRUTA.stamp[0], GRUTA.stamp[1]);

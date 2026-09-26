@@ -3,7 +3,7 @@
 // tienda al norte; al sur, el muelle de piedra con su muro, el pantalán de los pescadores, el embarcadero de los ferris
 // con el ferri amarrado y el espigón del faro; al este, el brazo del Albo desembocando junto al astillero; al
 // suroeste, la playa que sigue hacia la Ruta 15. Módulo puro.
-import { W, H, terrainGrid, BUILDINGS, PLAZA, PORT } from './nexo_layout.js';
+import { W, H, terrainGrid, BUILDINGS, PLAZA, PORT, EXITS } from './nexo_layout.js';
 import { paintQuayWall, paintWithMask, sandUnderInnerBeach, sealCoveredBeachCorners } from './nexo_pieces.js';
 
 const T = (x, y) => 384 + y * 8 + x;
@@ -74,18 +74,18 @@ function paintPlaza(b) {
 
 function paintStreets(b) {
   // Farolas de hierro, bancos y papeleras por las calles; buzón y máquinas junto a Correos y el Centro.
-  for (const [x, y] of [[17, 9], [30, 9], [35, 9], [44, 9], [12, 19], [44, 18], [2, 25], [22, 27], [33, 27], [44, 27], [11, 31]]) b.stamp('farola_hierro', x, y);
+  for (const [x, y] of [[17, 9], [30, 9], [35, 9], [45, 9], [12, 19], [44, 18], [2, 25], [22, 27], [33, 27], [44, 27], [11, 31]]) b.stamp('farola_hierro', x, y);
   b.stamp('buzon_rojo', 25, 9);
-  b.stamp('maquinas_expendedoras', 43, 12);
+  b.stamp('maquinas_expendedoras', 43, 11);
   b.stamp('papelera', 34, 11);
   b.stamp('banco', 5, 21);
   b.stamp('papelera', 9, 21);
   b.stamp('jardinera_flores', 53, 20);
-  b.stamp('parterre_octogonal', 46, 16);
+  b.stamp('parterre_octogonal', 46, 17);
   // Astillero: contenedores y el camión del puerto; bancos y farolas del paseo del muelle.
   b.stamp('contenedores', 51, 32);
   b.stamp('camion', 17, 32);
-  b.stamp('barriles', 22, 33);
+  b.stamp('barriles', 24, 33);
   b.stamp('barriles', 40, 33);
   for (const x of [31, 38]) b.stamp('banco', x, 36);
   for (const x of [23, 29, 43]) b.stamp('farola_hierro', x, 32);
@@ -106,7 +106,7 @@ function paintGardens(b) {
   ]) b.stamp(s, x, y);
   for (const [s, x, y] of [
     ['flores_rosas', 17, 9], ['macizo_flores', 26, 9], ['flores_blancas', 55, 11], ['macizo_flores', 4, 17],
-    ['flores_rosas', 13, 17], ['flores_blancas', 47, 20], ['lupinos', 52, 9], ['brotes', 44, 8],
+    ['flores_rosas', 13, 17], ['flores_blancas', 47, 20], ['lupinos', 51, 9], ['brotes', 44, 8],
   ]) b.stamp(s, x, y);
 }
 
@@ -133,7 +133,23 @@ export function buildNexo(b) {
   paintPlaza(b);
   paintStreets(b);
   paintPort(b);
+  seamSand(b);
   sealCoveredBeachCorners(b, holed, SAND);
+}
+
+/**
+ * Costuras con los caminos de arena de la Ruta 14 (norte) y la Ruta 15 (oeste): la arena entra dos casillas sobre el
+ * ladrillo con su borde de hierba (sin cambio de material justo en la línea de la conexión).
+ */
+function seamSand(b) {
+  const n = EXITS.north;
+  const inN = (x, y) => x >= n.x0 && x <= n.x1 && y <= 1;
+  b.paint('camino_arena', [[n.x0, 0], [n.x0 + 1, 0], [n.x0 + 2, 0], [n.x0 + 3, 0], [n.x0, 1], [n.x0 + 1, 1], [n.x0 + 2, 1], [n.x0 + 3, 1]], { mask: inN });
+  const w = EXITS.west;
+  const inW = (x, y) => y >= w.y0 && y <= w.y1 && x <= 1;
+  const west = [];
+  for (let y = w.y0; y <= w.y1; y++) west.push([0, y], [1, y]);
+  b.paint('camino_arena', west, { mask: inW });
 }
 
 export { W, H };

@@ -31,7 +31,8 @@ function forests(b) {
     ['bosque_sabana', 0, 2, 3, 15], ['bosque_sabana', 0, 20, 3, 25], ['bosque_sabana', 0, 48, 3, 12],
     ['bosque_sabana', 57, 2, 3, 58],
     // Sur (hueco del camino de Nexo en x 28–31)
-    ['bosque', 2, 54, 26, 6], ['bosque', 32, 54, 26, 6],
+    // (entre la arboleda de la sabana, de árboles 3×7, y el bosque de 2×6 queda una columna de matas: sin medios árboles)
+    ['bosque', 4, 54, 24, 6], ['bosque', 32, 54, 24, 6],
     // Arboledas interiores de la ruta
     ['bosque', 18, 10, 8, 6], ['bosque', 3, 36, 6, 6], ['bosque', 20, 26, 6, 6],
   ];
@@ -82,7 +83,7 @@ function reserve(b) {
   b.paint('cesped_claro', cells([r.meadow, r.orchard, [37, 22, 7, 10]]));
   b.paint('camino_tierra', cells([[37, 33, 9, 4], [37, 23, 4, 11], [41, 29, 13, 2], [45, 33, 3, 16], [42, 50, 8, 2]]));
   // Huerto: frutales en hileras (el manzano viejo del árbol de miel en SPOTS.honeyTree)
-  for (const [x, y] of [[40, 35], [54, 35], [40, 41], [54, 41], [50, 36]]) b.stamp('arbol', x, y);
+  for (const [x, y] of [[40, 37], [54, 35], [40, 41], [54, 41], [50, 36]]) b.stamp('arbol', x, y);
   b.stamp('arbol', 43, 37);
   // Seto entre el huerto y la Reserva interior (con el paso del enjambre)
   const hedge = [];
@@ -109,6 +110,7 @@ function details(b) {
     ['helechos', 50, 53], ['roca_peque', 39, 53], ['palmera_maceta', 29, 30],
   ]) b.stamp(s, x, y);
   b.stamp('islote_arena', 50, 14);
+  for (let y = 54; y < H; y++) for (const x of [3, 56]) b.stamp('mata', x, y);
 }
 
 export function buildRuta14(b) {

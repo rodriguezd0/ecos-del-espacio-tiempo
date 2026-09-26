@@ -62,7 +62,7 @@ function paintNature(b, grid) {
     ['lupinos', 10, 7], ['lupinos', 69, 7], ['macizo_flores', 25, 9], ['flores_blancas', 35, 8], ['flores_rosas', 47, 8],
     ['macizo_flores', 58, 7], ['flores_blancas', 78, 9], ['flores_rosas', 12, 19], ['flores_blancas', 64, 20],
     ['roca_gris', 20, 8], ['roca_grande', 74, 7], ['roca_peque', 33, 16], ['brotes', 50, 7], ['brotes', 82, 12],
-    ['guijarros', 40, 9], ['guijarros', 70, 13], ['setas', 27, 5], ['tocon', 45, 4],
+    ['guijarros', 40, 9], ['guijarros', 70, 13], ['setas', 28, 5], ['tocon', 45, 4],
     ['arbustos', 55, 19], ['arbustos', 32, 18], ['arbustos', 85, 19],
     // Bosquecillos, troncos y matas que rompen los prados de la meseta (sin tocar sendero, carteles ni vistas).
     ['pino', 12, 3], ['pino', 33, 5], ['pino', 66, 4], ['pino', 20, 17], ['tronco_caido_h', 22, 8],
@@ -78,7 +78,7 @@ function paintNature(b, grid) {
 }
 
 /** Palmeras sueltas de las calas (esquina superior izquierda de cada palmera 2×4). */
-const PALMS = [[2, 25], [17, 25], [50, 25], [67, 25], [79, 25], [88, 31]];
+const PALMS = [[2, 27], [17, 25], [50, 25], [67, 25], [79, 25], [88, 31]];
 
 function paintLookout(b) {
   b.stamp('banco', LOOKOUT.bench.x, LOOKOUT.bench.y);

@@ -84,7 +84,7 @@ function paintDecor(b) {
   b.stamp('pilar_placa_unown', SPOTS.stela[0], SPOTS.stela[1]);
   b.stamp('salida_luz_sur_gris', 19, 38);
   for (const [x, y] of [[18, 35], [22, 35]]) b.stamp('pilar_columna', x, y);
-  b.stamp('pilar_monolito', 33, 34);
+  b.stamp('pilar_monolito', 33, 33); // sobre los cristales, sin pisarlos
   b.stamp('pilar_columna_quebrada', 4, 36);
   // Cristales y rocas en los rincones de roca natural.
   b.stamp('cristales', 30, 36);

@@ -230,10 +230,23 @@ async function benchTalk(ctx) {
 }
 
 // ── Eventos ────────────────────────────────────────────────────────────────────────────────
+/**
+ * Casillas que tapan los árboles de la Arboleda (Fundador 2×6 y árboles de nombre 2×4): la espiral pasa por
+ * debajo, pero ahí la hierba seca no se ve (freeCell ya la ocultaba en el juego), así que no se crea el evento.
+ */
+function underArboledaTrees() {
+  const out = new Set();
+  const add = (x, y, w, h) => { for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) out.add(`${x + i},${y + j}`); };
+  if (ARB.founder) add(ARB.founder.x, ARB.founder.y, 2, 6);
+  for (const [x, y] of ARB.trees || []) add(x, y, 2, 4);
+  return out;
+}
+
 function spiralEvents() {
   const benchSet = new Set([-1, 0, 1].map((d) => `${T01_SITE.bench.x + d},${T01_SITE.bench.y}`));
+  const hidden = underArboledaTrees();
   return spiralCells()
-    .filter((c) => !benchSet.has(`${c.x},${c.y}`))
+    .filter((c) => !benchSet.has(`${c.x},${c.y}`) && !hidden.has(`${c.x},${c.y}`))
     .map((c, i) => ({
       ...objectEvent(`t01_hierba_${i}`, c.x, c.y, OBJ.dryGrass(i)),
       pages: [

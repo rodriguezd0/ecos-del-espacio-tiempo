@@ -62,7 +62,8 @@ function paintForests(b) {
   ]) b.stamp(s, x, y);
   // lindes: pinos sueltos, tocones y rocas para que el bosque no acabe en línea recta
   for (const [s, x, y] of [
-    ['pino', 6, 16], ['arbol', 12, 5], ['pino', 22, 15], ['tocon', 13, 8], ['roca_grande', 4, 22],
+    // (nada encima de los bosques ni de la orilla del río)
+    ['pino', 6, 16], ['arbol', 12, 5], ['tocon', 13, 9], ['roca_grande', 4, 22],
     ['pino', 0, 26], ['arbol', 36, 24], ['tocon', 33, 18], ['pino', 30, 18],
   ]) b.stamp(s, x, y);
 }
@@ -107,7 +108,7 @@ function paintRest(b) {
   const r = REST;
   b.paint('cesped_claro', rect(r.x0, r.y0, r.x1 - 1, r.y1));
   for (const [s, x, y] of [
-    ['banco', 7, 10], ['cartel_madera', 9, 10], ['troncos', 11, 9], ['lupinos', 6, 14], ['flores_blancas', 12, 15],
+    ['banco', 7, 10], ['cartel_madera', 10, 10], ['troncos', 11, 9], ['lupinos', 6, 14], ['flores_blancas', 12, 15],
     ['setas', 7, 12], ['tocon', 12, 12], ['flores_rosas', 8, 15],
   ]) b.stamp(s, x, y);
 }
@@ -115,10 +116,10 @@ function paintRest(b) {
 function paintMeadows(b) {
   // prado rocoso junto al borde (oeste) y el del este, al otro lado del río
   for (const [s, x, y] of [
-    ['roca_grande', 5, 24], ['roca_peque', 9, 23], ['lupinos', 1, 23], ['flores_blancas', 7, 29], ['brotes', 9, 29],
-    ['roca_gris', 0, 29], ['macizo_flores', 6, 26],
-    ['roca_grande', 30, 21], ['lupinos', 33, 20], ['flores_blancas', 36, 27], ['roca_peque', 38, 28], ['brotes', 31, 28],
-    ['flores_rosas', 29, 24], ['roca_gris', 37, 29], ['tocon', 38, 22],
+    ['roca_grande', 5, 24], ['roca_peque', 9, 23], ['flores_blancas', 7, 29], ['brotes', 9, 29],
+    ['macizo_flores', 6, 26],
+    ['roca_grande', 30, 22], ['lupinos', 33, 20], ['flores_blancas', 34, 27], ['roca_peque', 38, 28], ['brotes', 31, 28],
+    ['flores_rosas', 29, 24], ['roca_gris', 37, 29],
     ['flores_blancas', 23, 22], ['brotes', 24, 29], ['roca_peque', 23, 30],
   ]) b.stamp(s, x, y);
   b.stamp('cartel_madera', 13, 3);

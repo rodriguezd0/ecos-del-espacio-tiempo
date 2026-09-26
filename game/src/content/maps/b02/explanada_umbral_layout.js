@@ -7,14 +7,17 @@
 export const W = 30;
 export const H = 30;
 
-/** Macizo de roca que contiene la ruina (brush `acantilado`; cara de 3 filas abajo). */
-export const ROCK = Object.freeze({ x: 8, y: 3, w: 15, h: 7 });
+/** Macizo de roca que contiene la ruina (brush `acantilado`; cara de 3 filas abajo). Llega al borde norte. */
+export const ROCK = Object.freeze({ x: 8, y: 0, w: 15, h: 10 });
 
-/** Boca de la ruina (stamp `boquete` 4×3) y su dintel exento (stamp `pilar_dintel` 5×4, hueco x 14–16). */
+/**
+ * Boca de la ruina tallada en la cara del macizo (`mouth`: hueco oscuro de 3×2 entre dos jambas de piedra),
+ * detrás de su dintel exento (stamp `pilar_dintel` 5×4, hueco x 14–16). Los warps están en la fila de abajo del hueco.
+ */
 export const EXPLANADA_DOOR = Object.freeze({
-  boquete: { x: 14, y: 7 },
+  mouth: { x: 14, y: 8, w: 3 },
   dintel: { x: 13, y: 10 },
-  warps: [{ x: 15, y: 8 }, { x: 16, y: 8 }],
+  warps: [{ x: 14, y: 9 }, { x: 15, y: 9 }, { x: 16, y: 9 }],
   out: { x: 15, y: 13, dir: 2 }, // llegada al salir de las ruinas (al pie del dintel, con el Core a la vista)
 });
 

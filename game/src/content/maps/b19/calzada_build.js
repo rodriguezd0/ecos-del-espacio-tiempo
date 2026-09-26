@@ -115,8 +115,8 @@ function paintCamp(b) {
 
 function paintSouthDetails(b) {
   for (const [s, x, y] of [
-    ['roca_grande', 9, 50], ['roca_gris', 14, 47], ['roca_peque', 6, 44], ['pino', 40, 41], ['tocon', 36, 48], ['brotes', 29, 50],
-    ['flores_blancas', 20, 56], ['guijarros', 32, 49], ['arbustos', 16, 50], ['roca_gris', 41, 44], ['brotes', 7, 49],
+    ['roca_grande', 9, 50], ['roca_gris', 14, 47], ['roca_peque', 6, 44], ['pino', 40, 41], ['tocon', 38, 48], ['brotes', 29, 50],
+    ['flores_blancas', 20, 56], ['guijarros', 32, 49], ['arbustos', 16, 50], ['roca_gris', 42, 44], ['brotes', 7, 49],
     ['flores_rosas', 12, 49], ['guijarros', 20, 49], ['lupinos', 25, 41], ['flores_blancas', 3, 42], ['brotes', 1, 44],
     ['roca_peque', 30, 42], ['flores_rosas', 43, 49], ['brotes', 34, 55], ['macizo_flores', 5, 41],
   ]) b.stamp(s, x, y);

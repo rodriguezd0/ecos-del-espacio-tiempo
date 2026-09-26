@@ -93,6 +93,15 @@ function paintForests(b) {
   b.paint('bosque_pinos', cells(42, 0, 4, 2));
 }
 
+/**
+ * Borde este bajo la carretera: el pinar que sigue en la linde oeste de Brontia. Las caras de T1 y T2 se meten detrás
+ * de los pinos en vez de cortarse en la costura; bajo los pinos, césped como en Brontia (sin la terraza).
+ */
+function paintEastPinar(b) {
+  b.erase(1, 78, 8, 2, 22);
+  b.paint('bosque_pinos', cells(78, 8, 2, 22));
+}
+
 /** Meseta más seca: calvas de hierba clara y una barandilla de mirador sobre la vega. */
 function paintPlateau(b) {
   // Calvas (nine: cada una por separado para que tengan sus bordes) fuera de la hierba alta.
@@ -114,7 +123,7 @@ function paintVega(b) {
   b.rect(null, 37, 25, 5, 3, 'estanque');
   b.rect(null, 19, 24, 3, 2, 'estanque');
   b.rect(null, 26, 26, 4, 2, 'flores_amarillas');
-  b.rect(null, 17, 7, 3, 2, 'flores_amarillas');
+  b.rect(null, 22, 6, 2, 2, 'flores_amarillas');
   // Hierba alta (encuentros)
   for (const [x, y, w, h] of [[27, 12, 5, 4], [34, 6, 7, 5], [44, 24, 11, 4], [59, 25, 9, 4], [30, 24, 6, 3], [47, 3, 9, 6], [68, 12, 8, 3]]) b.rect(null, x, y, w, h, 'hierba_alta');
   // Casa de labranza con su huerto vallado
@@ -123,13 +132,13 @@ function paintVega(b) {
   b.stamp('jardinera_flores', 27, 15);
   b.stamp('jardinera_flores', 30, 15);
   b.stamp('troncos', 38, 16);
-  b.stamp('buzon_rojo', 32, 16);
+  b.stamp('buzon_rojo', 26, 16);
   // Sauces y detalles junto al río
   for (const [s, x, y] of [['arbol', 17, 1 + 5], ['arbol', 20, 8], ['arbol', 24, 7], ['pino', 40, 10], ['arbol', 20, 26], ['arbol', 22, 25]]) b.stamp(s, x, y);
   for (const [s, x, y] of [
     ['tronco_caido_h', 24, 11], ['setas', 26, 11], ['lupinos', 36, 17], ['brotes', 19, 18], ['brotes', 29, 12],
-    ['macizo_flores', 18, 11], ['flores_blancas', 21, 10], ['flores_rosas', 25, 18], ['flores_blancas', 41, 22],
-    ['macizo_flores', 33, 19], ['guijarros', 20, 22], ['tocon', 41, 13], ['arbustos', 38, 12],
+    ['macizo_flores', 18, 11], ['flores_blancas', 22, 10], ['flores_rosas', 25, 18], ['flores_blancas', 41, 22],
+    ['macizo_flores', 33, 19], ['guijarros', 20, 22], ['tocon', 39, 14], ['arbustos', 38, 12],
   ]) b.stamp(s, x, y);
 }
 
@@ -146,21 +155,21 @@ function paintSouthStrip(b) {
   b.stamp('roca_peque', 70, 29);
   b.stamp(HOLLOW_TREE.stamp, HOLLOW_TREE.x, HOLLOW_TREE.y);
   b.rect(null, 72, 26, 3, 2, 'flores_amarillas');
-  b.stamp('lupinos', 76, 28);
-  b.stamp('setas', 78, 22);
+  b.stamp('lupinos', 74, 28);
+  b.stamp('setas', 77, 22);
   b.stamp('arbustos', 72, 21);
 }
 
 function paintHighlands(b) {
   // T1: prado seco, rocas y pinos; T2: la meseta de Brontia
   for (const [s, x, y] of [
-    ['pino', 57, 1], ['roca_grande', 45, 9], ['roca_gris', 53, 10], ['pino', 44, 3], ['roca_peque', 56, 9],
-    ['pino', 66, 0], ['pino', 70, 0], ['pino_alto', 74, 0], ['roca_grande', 77, 1],
+    ['pino', 56, 0], ['roca_grande', 45, 9], ['roca_gris', 53, 10], ['pino', 44, 3], ['roca_peque', 56, 9],
+    ['pino', 66, 0], ['pino', 69, 0], ['pino', 74, 0], ['roca_grande', 77, 1],
     ['roca_peque', 72, 2], ['roca_grande', 60, 15], ['tocon', 62, 15], ['arbustos', 76, 13], ['roca_gris', 55, 16 - 1],
   ]) b.stamp(s, x, y);
   for (const [s, x, y] of [
-    ['flores_blancas', 61, 2], ['brotes', 63, 1], ['flores_rosas', 67, 3], ['brotes', 78, 9 - 1], ['flores_blancas', 50, 11],
-    ['guijarros', 59, 16], ['brotes', 71, 16], ['flores_rosas', 78, 16], ['guijarros', 74, 8],
+    ['flores_blancas', 61, 2], ['brotes', 63, 1], ['flores_rosas', 68, 3], ['flores_blancas', 50, 11],
+    ['guijarros', 59, 16], ['brotes', 71, 16], ['flores_rosas', 77, 16], ['guijarros', 74, 8],
     // Borde oeste de T1 y pie de la T2: matas y flores para que el prado no quede liso
     ['arbustos', 44, 12], ['flores_blancas', 46, 15], ['tocon', 44, 16], ['flores_rosas', 56, 4], ['brotes', 57, 7],
   ]) b.stamp(s, x, y);
@@ -177,6 +186,7 @@ export function buildRuta4(b) {
   b.fill(null, 'cesped');
   paintForests(b);
   paintTerraces(b);
+  paintEastPinar(b);
   paintRiver(b);
   openFord(b);
   paintVega(b);

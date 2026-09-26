@@ -2,7 +2,7 @@
 // inscripción con la traducción grabada por la madre de Casilda, losa atascada del atajo, entrenadores,
 // objetos y el puzzle de las tres piedras giratorias (lógica pura en b02_puzzle.js).
 import { F, SPEAKER, SPRITE, GREEN, when, say, strip, examine, fx } from './b02_common.js';
-import { ROOM, placeCasilda, setRoom, casildaRoom } from './b02_ruinas_casilda.js';
+import { ROOM, placeCasilda, walkToRoom, casildaRoom } from './b02_ruinas_casilda.js';
 import { STONES, ROTATION, DIR_NAME, stoneDir, isSolved, solvedCount, allSolved, coreNear, turnStone, applyTurn, stoneFlag } from './b02_puzzle.js';
 import { ANTESALA, GALERIA, PASSAGES } from '../maps/b02/ruinas_dintel_layout.js';
 
@@ -75,18 +75,9 @@ function antesalaEvents() {
 // ─── Galería de los Dinteles ─────────────────────────────────────────────────────────────────────
 
 async function galeriaScene(ctx) {
-  const p = ctx.player;
-  const start = p.x === 12 ? 13 : 12;
-  setRoom(ctx, ROOM.galeria);
-  const ev = ctx.world?.events?.find((e) => e.id === 'casilda');
-  if (ev) {
-    ev.moveTo(start, 24);
-    const route = ['up', 'up'];
-    for (let x = start; x < GALERIA.casilda.x; x++) route.push('right');
-    route.push('up');
-    await ctx.move('casilda', route, { through: true, speed: 4 });
-    ctx.face('casilda', 'up');
-  }
+  // Casilda viene andando desde la antesala por el paso del dintel (antes aparecía de golpe bajo el dintel).
+  await walkToRoom(ctx, ROOM.galeria, { speed: 4 });
+  ctx.face('casilda', 'up');
   await say(ctx, C, 'La galería. Una piedra en cada alcoba. Giran, sí: las engraso cada primavera. No abren nada.');
   ctx.setFlag(F.galeria);
 }

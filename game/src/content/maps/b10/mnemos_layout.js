@@ -87,6 +87,7 @@ export const BAMBOO = Object.freeze({
   loose: Object.freeze([
     [21, 13], [21, 15], [25, 13], [25, 15], [26, 16], [34, 17], [35, 17], [36, 17],
     [28, 35], [29, 36], [34, 32], [35, 33], [12, 21], [13, 21],
+    [25, 1], [25, 5], // linde este del camino del norte (columna sin pareja en el bosque: bambú en vez de medio árbol)
   ]),
 });
 
@@ -114,7 +115,7 @@ export const PLAZA = Object.freeze({
 
 /** Carteles (stamp cartel_madera + evento de lectura en la misma casilla). */
 export const SIGNS = Object.freeze({
-  aldea: Object.freeze({ x: 34, y: 40 }),
+  aldea: Object.freeze({ x: 34, y: 37 }),
   plaza: Object.freeze({ x: 29, y: 24 }),
   herbolario: Object.freeze({ x: 22, y: 32 }),
   te: Object.freeze({ x: 11, y: 32 }),
@@ -126,7 +127,7 @@ export const SIGNS = Object.freeze({
 export const NPC = Object.freeze({
   olvido: Object.freeze({ x: 19, y: 19, dir: 2 }), // en la plaza, frente a su casa
   olvidoPuerta: Object.freeze({ x: 10, y: 13, dir: 4 }), // junto a la puerta del Archivo tras las notas
-  fausta: Object.freeze({ x: 29, y: 39, dir: 6 }), // a la entrada sur
+  fausta: Object.freeze({ x: 29, y: 37, dir: 6 }), // a la entrada sur
   bruno: Object.freeze({ x: 21, y: 27, dir: 4 }), // junto al estanque, con su Pancham
   pancham: Object.freeze({ x: 20, y: 28, dir: 8 }),
   nerea: Object.freeze({ x: 36, y: 21, dir: 4 }),

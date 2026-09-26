@@ -50,19 +50,21 @@ function paintNature(b) {
   // Grandes árboles de la sabana y matorrales que rompen las llanuras (lejos del borde de arboleda y de las charcas:
   // su capa 2 lleva fondo y taparía los árboles del borde).
   for (const [s, x, y] of [
-    ['arbol_grande', 17, 55], ['arbol_grande_2', 25, 51], ['arbol_grande', 31, 55], ['arbol_grande_2', 11, 59],
-    ['arbol_grande', 19, 39], ['arbol_grande_2', 9, 40], ['arbol', 44, 23], ['arbol_grande_2', 17, 6],
+    ['arbol_grande', 17, 55], ['arbol_grande_2', 24, 51], ['arbol_grande', 31, 55], ['arbol_grande_2', 13, 59],
+    ['arbol_grande', 17, 41], ['arbol', 44, 23], ['arbol_grande_2', 17, 6],
     ['arbol', 44, 16], ['arbol', 39, 18], ['arbol', 9, 14], ['arbol', 4, 58], ['arbol_grande_2', 21, 57],
   ]) b.stamp(s, x, y);
   // Matorrales y rocas fuera de la huella de los árboles (su capa 2 taparía el tronco) y del barro.
   for (const [s, x, y] of [
     ['matorral', 13, 42], ['matorral', 29, 47], ['matorral', 13, 10], ['matorral', 24, 60], ['matorral', 8, 54],
     ['mata', 25, 45], ['mata', 34, 63], ['mata', 21, 13], ['mata', 10, 20], ['mata', 26, 10],
-    ['mata', 38, 58], ['mata', 12, 66], ['mata', 33, 65], ['mata', 18, 64], ['mata', 44, 57], ['mata', 42, 20],
+    ['mata', 38, 58], ['mata', 33, 65], ['mata', 18, 64], ['mata', 44, 57], ['mata', 42, 20],
     ['mata', 15, 21], ['mata', 24, 47],
-    ['tocon_grande', 14, 60], ['roca_grande', 35, 59], ['roca_peque', 21, 51], ['roca_peque', 44, 43],
+    ['tocon_grande', 4, 62], ['roca_grande', 35, 59], ['roca_peque', 21, 51], ['roca_peque', 44, 43],
     ['roca_peque', 11, 11], ['roca_peque', 39, 50], ['roca_peque', 37, 41], ['roca_peque', 44, 38],
     ['troncos', 5, 38], ['tocon_grande', 32, 18], ['roca_peque', 23, 9],
+    // Matorral bajo el pasillo de Lúmina (sigue el borde del bosque de Lúmina; aquí no caben árboles enteros)
+    ['matorral', 46, 67], ['mata', 49, 67], ['mata', 49, 68], ['mata', 46, 69], ['mata', 47, 69], ['mata', 48, 69], ['mata', 49, 69],
   ]) b.stamp(s, x, y);
 }
 

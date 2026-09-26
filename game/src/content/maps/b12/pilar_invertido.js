@@ -46,7 +46,7 @@ export default {
     b.stamp('pilar_placa_unown', V.placa.x, V.placa.y);
     for (const [x, y] of [[16, 6], [23, 8], [12, 21], [28, 13], [37, 20]]) b.stamp('pilar_glifo', x, y);
     b.stamp('pilar_arista_grande', 30, 21);
-    b.stamp('pilar_arista', 8, 13);
+    b.stamp('pilar_arista', 6, 14); // junto al monolito, sin pisarlo
     floatingDebris(b, [[3, 4, 2], [30, 3, 3], [2, 28, 2], [26, 29, 3], [12, 29, 2], [36, 8, 2]]);
   },
 

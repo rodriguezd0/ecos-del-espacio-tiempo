@@ -37,7 +37,9 @@ function build(b) {
   b.paint('hierba_nevada', GRASS);
   b.stamp('cartel_ruta', R.sign.x - 1, R.sign.y - 1);
   const faceRows = (y) => y >= R.face.bottom - 3 && y <= R.face.bottom + 1;
-  const open = openMask([CLEARINGS, R13_PATHS, GRASS, DEEP], 0);
+  // (y los eventos visibles con su entorno: ningún pino encima de un entrenador)
+  const eventCells = ruta13Events().filter((e) => Number.isInteger(e.x) && e.sprite && e.type !== 'item').map((e) => [e.x, e.y]);
+  const open = openMask([CLEARINGS, R13_PATHS, GRASS, DEEP, grow(eventCells, 1, 1)], 0);
   // Los lados del valle (sin salida) son pinar cerrado de arriba abajo; la nieve honda baja llega hasta él.
   const edgeCol = (x, y) => (x <= 1 || x >= R.width - 2) && !DEEP.some(([dx, dy]) => dx === x && dy === y);
   snowForest(b, { width: R.width, height: R.height, seed: 13, open: (x, y) => faceRows(y) || (open(x, y) && !edgeCol(x, y)) });

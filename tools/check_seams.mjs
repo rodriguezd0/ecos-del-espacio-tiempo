@@ -1,7 +1,9 @@
 // Costuras entre mapas conectados: renderiza las dos caras de cada conexión y detecta
 //   · árboles partidos: una unidad de árbol de un lado que no sigue en el otro (medio árbol, copa sin tronco…)
-//   · objetos cortados: stamps que salen del mapa por el lado de la conexión
-//   · cambios bruscos de suelo: el suelo (capas 0–1, sin árboles ni piezas altas) cambia de golpe en la costura
+//   · objetos cortados: stamps que salen del mapa por el lado de la conexión (salvo si el vecino dibuja su resto:
+//     el mismo stamp en la misma posición del mundo)
+//   · cambios bruscos de suelo: el suelo que se pisa (capas 0–1, sin árboles ni piezas altas; las paredes, caras de
+//     acantilado y árboles que no se pisan por ningún lado no cuentan) cambia de golpe en la costura
 // Uso: node tools/check_seams.mjs [mapa ...] [--depth=6] [--scale=1] [--no-png] [--json]
 //   PNG por conexión en tools/cache/seams/<A>__<dir>__<B>.png (rojo = árbol partido, naranja = suelo, magenta = objeto)
 // API: checkSeams({ only, depth, png }) → [{ a, b, dir, overlap, trees, objects, ground, file }]
@@ -87,6 +89,39 @@ function groundColor(m, x, y) {
 }
 const dist = (p, q) => Math.hypot(p[0] - q[0], p[1] - q[1], p[2] - q[2]);
 
+/** Parte de la casilla (0..1) que tapan los árboles y piezas altas (lo que groundColor deja fuera). */
+const coverCache = new Map();
+function coverOf(m, x, y) {
+  const ts = m.tileset;
+  const ids = idsAt(m, x, y).filter((id) => id && (m.index.has(id) || ts.priorities[id] > 0));
+  if (!ids.length) return 0;
+  const key = `${ts.id}:${ids.join(',')}`;
+  if (coverCache.has(key)) return coverCache.get(key);
+  const png = new PNG({ width: T, height: T });
+  for (const id of ids) drawTile(png, ts, id, 0, 0);
+  let n = 0;
+  for (let i = 3; i < png.data.length; i += 4) if (png.data[i]) n++;
+  const c = n / (T * T);
+  coverCache.set(key, c);
+  return c;
+}
+/** Parte tapada a partir de la cual el suelo de la casilla no se ve (copa entera de un árbol, tejado…). */
+const HIDDEN = 0.9;
+
+/**
+ * ¿El suelo de la casilla no cuenta? (a) Paredes que no son árboles (no se pisan por ningún lado y no son agua):
+ * caras de acantilado, muros, vallas; la base de una cara que llega a la hierba del vecino es el pie natural del
+ * acantilado. (b) Casillas cuyo suelo no se ve (copa entera de árbol encima). Los troncos y las copas con huecos sí
+ * cuentan: por los lados se ve el suelo (hierba verde entre pinos nevados, p. ej.).
+ */
+function groundHidden(m, x, y) {
+  if (coverOf(m, x, y) >= HIDDEN) return true;
+  const map = m.entry?.map;
+  if (!map || map.terrainTagAt(x, y).canSurf) return false;
+  if (treesIn(m.index, idsAt(m, x, y)).length) return false;
+  return [2, 4, 6, 8].every((d) => !map.playerPassable(x, y, d));
+}
+
 // ---------------------------------------------------------------- objetos
 /** Stamps de `m` que salen del mapa por el lado `side` (y caen dentro del tramo de costura `range` local). */
 function cutObjects(m, side, range) {
@@ -118,15 +153,18 @@ async function checkConnection(A, conn, depth) {
   for (const [xa, ya, xb, yb] of pairs) {
     if (cutSides(entriesAt, xa, ya).includes(side.a)) trees.push([xa, ya]);
     if (cutSides(entriesAt, xb, yb).includes(side.b)) trees.push([xb, yb]);
+    if (groundHidden(A, xa, ya) || groundHidden(B, xb - off.x, yb - off.y)) continue;
     const ca = groundColor(A, xa, ya); const cb = groundColor(B, xb - off.x, yb - off.y);
     if (ca && cb && dist(ca, cb) > GROUND_JUMP) ground.push([xa, ya], [xb, yb]);
   }
   const axisV = side.axis === 'v';
   const rangeA = pairs.length ? (axisV ? [pairs[0][0], pairs.at(-1)[0] + 1] : [pairs[0][1], pairs.at(-1)[1] + 1]) : [0, 0];
   const rangeB = axisV ? rangeA.map((v) => v - off.x) : rangeA.map((v) => v - off.y);
+  // Un objeto que sigue dibujado en el vecino (el mismo stamp en la misma posición del mundo) no está cortado.
+  const continues = (m, name, x, y) => (m.built.stamps || []).some((s) => s.name === name && s.x === x && s.y === y);
   const objects = [
-    ...cutObjects(A, side.a, rangeA).map((o) => ({ ...o, map: A.def.id })),
-    ...cutObjects(B, side.b, rangeB).map((o) => ({ ...o, map: B.def.id })),
+    ...cutObjects(A, side.a, rangeA).filter((o) => !continues(B, o.name, o.x - off.x, o.y - off.y)).map((o) => ({ ...o, map: A.def.id })),
+    ...cutObjects(B, side.b, rangeB).filter((o) => !continues(A, o.name, o.x + off.x, o.y + off.y)).map((o) => ({ ...o, map: B.def.id })),
   ];
   return { a: A.def.id, b: B.def.id, dir: conn.dir, off, pairs, trees, ground, objects, B };
 }

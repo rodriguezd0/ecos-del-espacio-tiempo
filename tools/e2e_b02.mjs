@@ -89,7 +89,7 @@ async function explanada(d) {
   ] });
   await d.expectSaid(/Esto brillaba en el patio/, 'C009 de Casilda');
   await d.milestone('casilda_acompana', (s) => need(flag(s, 'b02_casilda_acompana') && s.cells.includes('cell_zaguan_2') && s.cells.length === 7, `células ${s.cells.length}`));
-  await d.walkTo(15, 8, { stopWhen: (s) => s.map === 'ruinas_dintel' });
+  await d.walkTo(15, 9, { stopWhen: (s) => s.map === 'ruinas_dintel' });
   await d.until((s) => s.map === 'ruinas_dintel' && s.ready, { what: 'entrar en las ruinas' });
 }
 

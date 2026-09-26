@@ -4,6 +4,7 @@
 // roca al este con la boca de las galerías y el corte de los estratos, la herrería de los Solano al noroeste y el
 // patio con el camión del Consorcio. Coordenadas en ./layout.js (RUTA6, CANTERIA).
 import { RUTA6, CANTERIA } from './layout.js';
+import { ESTRATO } from '../b08/layout.js';
 
 const R = RUTA6;
 const C = CANTERIA;
@@ -29,8 +30,9 @@ export const WALLS = Object.freeze([
   [-4, -4, 2, 20], [-4, 21, 1, 37], [-4, 38, 2, 55], [-4, 56, 1, 73],
   // este
   [27, -4, 33, 21], [28, 22, 33, 44], [27, 45, 33, 73],
-  // bocas del cañón: roca a ambos lados del camino en los bordes norte y sur (solo pasa el camino)
-  [3, -4, 12, 1], [18, -4, 26, 1], [3, 67, 12, 74], [18, 67, 26, 74],
+  // boca sur del cañón: roca a ambos lados del camino (solo pasa el camino). La boca norte la cierra la cara de la
+  // meseta de Brontia (su pie llega al suelo del rellano alto, sin una segunda cara cortada en la costura).
+  [3, 67, 12, 74], [18, 67, 26, 74],
 ]);
 
 /** Lecho de tierra del cañón por rellanos (el resto es hierba con matas, árboles y hierba alta). */
@@ -107,11 +109,11 @@ function grass(b) {
 function details(b) {
   for (const [n, x, y] of [
     // rellano alto
-    ['pino', 8, 0], ['pino', 10, 6], ['roca_gris', 13, 9], ['arbustos', 8, 9], ['pino', 24, -1],
-    ['roca_gris', 3, 1], ['tocon', 15, 12], ['pino', 25, 13],
+    ['pino', 10, 6], ['roca_gris', 13, 9], ['arbustos', 8, 9],
+    ['roca_gris', 3, 1], ['tocon', 15, 12],
     // rellano medio
-    ['pino', 25, 18], ['roca_gris', 9, 18], ['arbustos', 16, 18], ['pino', 3, 38], ['arbustos', 3, 24],
-    ['meseta_tierra', 3, 49], ['pino', 23, 55], ['roca_gris', 10, 47], ['arbustos', 15, 55], ['tocon', 5, 55],
+    ['pino', 25, 18], ['roca_gris', 9, 18], ['arbustos', 16, 18], ['arbustos', 3, 24],
+    ['meseta_tierra', 3, 49], ['roca_gris', 10, 47], ['arbustos', 15, 55], ['tocon', 5, 55],
     // campo de tierra bajo el derrumbe: piedras de mineral que rodaron cañón abajo y una roca suelta
     ['roca_gris', 15, 53], ['guijarros_mina', 10, 52],
     // rellano bajo
@@ -127,6 +129,10 @@ function details(b) {
   ]) b.stamp(n, x, y);
   b.stamp('cartel_ruta', 9, 2);
   b.stamp('cartel_ruta', 14, 60);
+  // La escuela de Estrato (mansión) asoma por encima del borde sur: su tejado sigue dibujado aquí, contra la roca de
+  // la boca del cañón (Ciudad Estrato, offset 13: x de Estrato = x de la Ruta 6 + 13).
+  const school = ESTRATO.buildings.escuela;
+  b.stamp(school.stamp, school.x - (ESTRATO.north.x0 - R.south.x0), R.height + school.y);
 }
 
 export function buildRuta6(b) {

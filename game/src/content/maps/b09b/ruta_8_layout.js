@@ -11,8 +11,9 @@ export const H = 70;
 /** Rectángulos de terreno [carácter, x, y, w, h] en orden de pintado. */
 export const TERRAIN = Object.freeze([
   // Bordes de arboleda (x pares y anchos pares: el pincel de bosque trabaja por parejas de columnas).
-  ['T', 0, 0, 30, 4], ['T', 34, 0, 16, 4], ['T', 0, 4, 4, 64], ['T', 46, 4, 4, 58], ['T', 0, 68, 46, 2],
-  ['T', 46, 68, 4, 2], ['T', 4, 4, 2, 4],
+  ['T', 0, 0, 30, 4], ['T', 34, 0, 16, 4], ['T', 0, 4, 4, 64], ['T', 46, 4, 4, 59], ['T', 4, 4, 2, 4],
+  // Sur: arboleda de 4 filas (árboles enteros) hasta el pasillo de Lúmina; bajo el pasillo, un matorral (build).
+  ['T', 0, 66, 46, 4],
   // Norte: senda de Mnemos con su paso de barro entre dos charcas, prados y juncales.
   [':', 30, 0, 4, 22],
   ['w', 26, 4, 4, 5], ['w', 34, 4, 4, 5],
@@ -37,17 +38,17 @@ export const TERRAIN = Object.freeze([
   ['b', 8, 31, 4, 1], ['b', 22, 31, 3, 1], ['b', 38, 34, 2, 1],
   ['.', 40, 28, 6, 14], // orilla este
   // Sur: senda hacia Lúmina, llanura de la bomba A, poza Q4, charca y juncales.
-  [':', 40, 33, 4, 29], [':', 38, 62, 4, 6],
+  [':', 40, 33, 4, 29], [':', 38, 62, 4, 4],
   ['m', 33, 44, 6, 6],
   ['m', 5, 46, 8, 7],
   ['"', 14, 49, 10, 5], ['"', 26, 42, 6, 4], ['"', 5, 42, 6, 3], ['"', 16, 59, 8, 5], ['"', 28, 58, 6, 4],
-  ['"', 8, 63, 6, 4],
+  ['"', 8, 63, 6, 3],
   ['"', 16, 48, 5, 1], ['.', 23, 53, 1, 1], ['"', 27, 41, 3, 1], ['.', 31, 45, 1, 1], ['"', 14, 64, 3, 1],
-  ['.', 8, 66, 2, 1], ['"', 24, 62, 3, 2],
+  ['"', 24, 62, 3, 2],
   ['w', 27, 50, 5, 4], ['w', 6, 56, 7, 4],
   // Paso de barro de Lúmina (puerta de Terreno complicado): el pasillo de la salida este solo da al barro.
-  ['m', 42, 62, 4, 6],
-  [':', 46, 62, 4, 6],
+  ['m', 42, 62, 4, 4],
+  [':', 46, 63, 4, 4], // pasillo de Lúmina: justo las filas de la salida (63–66)
 ]);
 
 /** Rejilla de caracteres [y][x] (pura). */
@@ -69,7 +70,7 @@ export const LINKS = Object.freeze({ mnemos: 0, lumina: 54 });
 
 /** Pasos de barro que abren Terreno complicado (G5): el de Lúmina y el de la senda de Mnemos. */
 export const MUD_GATES = Object.freeze([
-  { id: 'paso_lumina', x: 42, y: 62, w: 4, h: 6 },
+  { id: 'paso_lumina', x: 42, y: 62, w: 4, h: 4 },
   { id: 'paso_mnemos', x: 30, y: 5, w: 4, h: 3 },
 ]);
 
@@ -138,7 +139,7 @@ export const CELLS = Object.freeze({
 
 /** Escenas y personajes. */
 export const SPOTS = Object.freeze({
-  arrival: { x: 47, y0: 62, y1: 67 }, // franja de llegada desde Lúmina (pasillo este)
+  arrival: { x: 47, y0: 63, y1: 66 }, // franja de llegada desde Lúmina (pasillo este)
   panPump: { x: 35, y: 45 },
   alerceFrom: { x: 24, y: 31 }, // llega por el puente del islote grande
   alerceStation: { x: 33, y: 37, dir: 2 }, // su puesto de muestreo junto al agua
@@ -159,14 +160,14 @@ export const ITEMS = Object.freeze([
   { id: 'objeto_marisma_1', x: 20, y: 46, item: 'FULLHEAL' },
   { id: 'objeto_marisma_2', x: 45, y: 8, item: 'SUPERREPEL' },
   { id: 'objeto_marisma_3', x: 17, y: 18, item: 'BLACKSLUDGE' },
-  { id: 'objeto_marisma_4', x: 5, y: 66, item: 'TINYMUSHROOM', hidden: true },
+  { id: 'objeto_marisma_4', x: 5, y: 65, item: 'TINYMUSHROOM', hidden: true },
   { id: 'objeto_marisma_5', x: 36, y: 21, item: 'REVIVE', hidden: true },
   { id: 'objeto_marisma_6', x: 45, y: 40, item: 'ULTRABALL' },
 ]);
 
 /** Carteles. */
 export const SIGNS = Object.freeze({
-  lumina: { x: 46, y: 67 },
+  lumina: { x: 39, y: 61 },
   mnemos: { x: 29, y: 9 },
   palafitos: { x: 45, y: 33 },
   consorcio: { x: 36, y: 9 },

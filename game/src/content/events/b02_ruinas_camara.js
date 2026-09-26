@@ -2,7 +2,8 @@
 // desde los temblores (se saca manteniendo pulsado A), rompe la roca que corta el túnel y ofrece acompañarte
 // (regalo opcional nv 8; si se rechaza, espera en la cámara). Casilda te detiene ante el Núcleo: combate.
 import { F, SPEAKER, SPRITE, when, say, strip, fx } from './b02_common.js';
-import { ROOM, placeCasilda, setRoom, casildaRoom } from './b02_ruinas_casilda.js';
+import { ROOM, placeCasilda, walkToRoom, casildaRoom } from './b02_ruinas_casilda.js';
+import { walkEventTo } from './b01_town_path.js';
 import { CAMARA, TUNNEL, ANTESALA } from '../maps/b02/ruinas_dintel_layout.js';
 import { GEODUDE_GIFT } from '../encounters/b02.js';
 
@@ -16,7 +17,8 @@ export const GEODUDE_WAIT = Object.freeze({ x: 8, y: 8, dir: 4 });
 // ─── Geodude ─────────────────────────────────────────────────────────────────────────────────────
 
 async function camaraScene(ctx) {
-  setRoom(ctx, ROOM.camara);
+  // Casilda cruza la losa detrás del jugador y se acerca andando a su sitio de la cámara (antes aparecía allí).
+  await walkToRoom(ctx, ROOM.camara);
   await ctx.wait(10);
   ctx.face('casilda', 'left');
   await say(ctx, C, 'Toda una vida limpiando la galería, y no sabía que detrás había una sala.');
@@ -71,11 +73,12 @@ async function breakRock(ctx) {
   await ctx.emote('geodude', '!');
   ctx.face('geodude', 'right');
   await ctx.say('El Geodude mira hacia el túnel del este, tapado por una roca.');
-  await ctx.fade('out', 12);
-  geo?.moveTo(TUNNEL.rock.x - 1, TUNNEL.rock.y);
-  if (geo) geo.direction = 6;
-  await ctx.camera.pan(TUNNEL.rock.x, TUNNEL.rock.y + 2, 1);
-  await ctx.fade('in', 12);
+  // Va rodando hasta la roca por la cámara (antes se recolocaba con un fundido) y la cámara lo acompaña.
+  await Promise.all([
+    walkEventTo(ctx, 'geodude', TUNNEL.rock.x - 1, TUNNEL.rock.y, { speed: 4, face: 'right' }),
+    ctx.camera.pan(TUNNEL.rock.x - 4, TUNNEL.rock.y + 2, 60),
+  ]);
+  ctx.face('geodude', 'right');
   await ctx.wait(20);
   await ctx.move('geodude', ['backward', { wait: 6 }, 'forward'], { through: false, speed: 4.5 });
   ctx.se('Rock Smash');
@@ -90,17 +93,17 @@ async function breakRock(ctx) {
   dust?.remove?.(20);
   ctx.setFlag(F.rockBroken);
   await ctx.wait(20);
-  await ctx.fade('out', 12);
-  geo?.moveTo(GEODUDE_WAIT.x, GEODUDE_WAIT.y);
+  // Vuelve junto al jugador, a esperar al lado de la grieta.
+  await Promise.all([
+    walkEventTo(ctx, 'geodude', GEODUDE_WAIT.x, GEODUDE_WAIT.y, { speed: 4, face: GEODUDE_WAIT.dir }),
+    ctx.camera.reset(60),
+  ]);
   if (geo) geo.direction = GEODUDE_WAIT.dir;
-  await ctx.camera.reset(1);
-  await ctx.fade('in', 12);
   if (casildaRoom(ctx.state) === ROOM.camara) {
     await say(ctx, C, 'La sala de guardia. La conozco del otro lado: esa roca cayó con los temblores.');
     await say(ctx, C, 'Te espero allí.');
-    await ctx.fade('out', 10);
-    setRoom(ctx, ROOM.guardiana);
-    await ctx.fade('in', 10);
+    // Se va andando por el túnel recién abierto hasta el paso al Núcleo.
+    await walkToRoom(ctx, ROOM.guardiana, { speed: 4 });
   }
   await offerGeodude(ctx);
 }
@@ -158,10 +161,8 @@ export async function guardianBattle(ctx) {
   await ctx.giveItem('POTION', 3);
   await ctx.giveItem('ESCAPEROPE');
   await say(ctx, C, 'Pasa. Yo voy detrás.');
-  await ctx.move('casilda', ['right', 'right'], { through: false });
-  await ctx.fade('out', 10);
-  setRoom(ctx, ROOM.nucleo);
-  await ctx.fade('in', 10);
+  // Cruza el dintel del Núcleo andando y se queda junto a la cámara hexagonal (antes, fundido y recolocada).
+  await walkToRoom(ctx, ROOM.nucleo, { speed: 3.5 });
 }
 
 function geodudeEvents() {

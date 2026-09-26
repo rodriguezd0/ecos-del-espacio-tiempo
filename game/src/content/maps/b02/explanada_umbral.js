@@ -13,9 +13,12 @@ function cells(x, y, w, h) {
   return out;
 }
 
+const tid = (col, row) => 384 + row * 8 + col;
+/** Hueco oscuro de la boca (interior del `boquete` de Añil, filas 198–199): borde de roca arriba, negro abajo. */
+const MOUTH = { top: [tid(1, 198), tid(2, 198), tid(2, 198)], bottom: [tid(1, 199), tid(2, 199), tid(2, 199)] };
+
 function paintForest(b) {
-  b.paint('bosque_pinos', cells(ROCK.x, 0, ROCK.w + (ROCK.w % 2), ROCK.y + 1));      // pinar sobre el macizo
-  b.paint('bosque_mixto', [...cells(0, 0, ROCK.x, 14), ...cells(ROCK.x + ROCK.w, 0, W - ROCK.x - ROCK.w, 12)]);
+  b.paint('bosque_mixto', [...cells(0, 0, ROCK.x, 14), ...cells(ROCK.x + ROCK.w + 1, 0, W - ROCK.x - ROCK.w - 1, 10)]);
   b.paint('bosque', [...cells(0, 14, 2, H - 14), ...cells(2, 26, 26, 4), ...cells(28, 16, 2, H - 16)]);
 }
 
@@ -27,7 +30,14 @@ function paintRuin(b) {
   b.stamp('pilar_monolito', 19, 3);
   b.stamp('arbustos', 12, 4);
   b.stamp('lupinos', 16, 3);
-  b.stamp('boquete', d.boquete.x, d.boquete.y);
+  // Boca de la ruina tallada en la cara del macizo, justo detrás del hueco del dintel: hueco oscuro de 3 casillas
+  // con jambas de piedra (columnas) que siguen la línea de los pilares del dintel.
+  for (let i = 0; i < d.mouth.w; i++) {
+    b.set(2, d.mouth.x + i, d.mouth.y, MOUTH.top[i]);
+    b.set(2, d.mouth.x + i, d.mouth.y + 1, MOUTH.bottom[i]);
+  }
+  b.stamp('pilar_columna', d.mouth.x - 1, d.mouth.y - 1);
+  b.stamp('pilar_columna', d.mouth.x + d.mouth.w, d.mouth.y - 1);
   b.stamp('pilar_dintel', d.dintel.x, d.dintel.y);
   // monolitos que flanquean la boca y columnas caídas al pie del macizo
   b.stamp('pilar_monolito', 10, 10);
@@ -51,7 +61,7 @@ function paintPlaza(b) {
   // camino de arena desde Villa Zaguán (el mismo pincel que la calle del pueblo: sin costura en la conexión) y
   // tierra pisada bajo el dintel
   b.paint('camino_arena', cells(EAST_PATH.x0, EAST_PATH.y0, EAST_PATH.x1 - EAST_PATH.x0 + 1, EAST_PATH.y1 - EAST_PATH.y0 + 1));
-  b.paint('camino_tierra', cells(14, 11, 3, 3));
+  b.paint('camino_tierra', cells(14, 10, 3, 4));
 }
 
 /** Filas [y, x0, x1] → casillas (manchas de contorno irregular). */
@@ -67,7 +77,7 @@ function paintMeadow(b) {
   b.paint('hierba_alta', [...GRASS_WEST, ...GRASS_EAST]);
   b.paint('flores_azules', cells(4, 15, 3, 1));
   for (const [s, x, y] of [
-    ['arbol', 2, 13], ['pino', 25, 7], ['roca_turquesa', 24, 9], ['tocon', 9, 24], ['setas', 20, 24],
+    ['arbol', 2, 13], ['roca_turquesa', 26, 10], ['tocon', 9, 24], ['setas', 20, 24],
     ['lupinos', 12, 22], ['flores_blancas', 17, 23], ['flores_rosas', 23, 16], ['macizo_flores', 5, 25],
     ['roca_turquesa_peque', 26, 17], ['brotes', 11, 20], ['brotes', 19, 21],
     // restos de la obra antigua que asoman en la pradera y el linde del bosque

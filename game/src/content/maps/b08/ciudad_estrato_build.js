@@ -5,6 +5,7 @@
 // Coordenadas: layout.js (ESTRATO).
 import { ESTRATO as E } from './layout.js';
 import { cells } from './cave_kit.js';
+import { edgeMask } from '../pathBlend.js';
 
 const W = E.width;
 const H = E.height;
@@ -31,14 +32,16 @@ function canyon(b) {
   const eastWall = [...RAW(c.x0, -3, c.x1 - c.x0 + 3, c.y1 + 4), ...RAW(E.east.x - 3, c.y1 + 1, 6, E.east.y0 - c.y1 - 1)];
   b.paint('acantilado', eastWall);
   // Oeste: roca entre la vía y la salida de la Ruta 7, y bajo ella; el rellano bajo, cerrado.
-  b.paint('acantilado', RAW(-2, 15, 5, E.west.y0 - 15));
-  b.paint('acantilado', RAW(-2, E.west.y1 + 1, 5, 5));
-  b.paint('acantilado', RAW(-2, 33, 5, H - 33 + 2));
+  // (con su borde oeste dentro del mapa: en la costura con la Ruta 7 la roca acaba redondeada, no cortada; la de
+  // arriba tapa también el final de la cara del rellano alto)
+  b.paint('acantilado', RAW(0, 12, 4, E.west.y0 - 12));
+  b.paint('acantilado', RAW(0, E.west.y1 + 1, 4, 5));
+  b.paint('acantilado', RAW(0, 33, 4, H - 33 + 2));
   // Este del rellano bajo: roca al sur de la salida a las Dunas.
   b.paint('acantilado', RAW(E.east.x - 3, E.east.y1 + 1, 6, H - E.east.y1 + 1));
   // Borde sur: pinar.
   b.paint('bosque_pinos', R(4, 44, 20, 6));
-  b.paint('bosque_mixto', R(36, 44, 16, 6));
+  b.paint('bosque_mixto', R(38, 44, 12, 6)); // entre el foso y el pozo de la mina, sin pisarlos
 }
 
 function streets(b) {
@@ -55,7 +58,7 @@ function streets(b) {
     ...R(4, 38, 52, 4), // calle baja → Dunas
     ...R(9, 36, 1, 2), ...R(19, 36, 1, 2), // accesos del rellano bajo
   ];
-  b.paint('camino_tierra', paths);
+  b.paint('camino_tierra', paths, { mask: edgeMask(b, paths) }); // las salidas siguen en el mapa vecino
   // Plaza empedrada (también en la capa 0: bajo las esquinas redondeadas del rosetón se ve losa, no césped).
   const p = E.plaza;
   const plaza = R(p.x0, p.y0, p.x1 - p.x0 + 1, p.y1 - p.y0 + 1);
@@ -67,8 +70,10 @@ function streets(b) {
 
 function railway(b) {
   // Balasto de la vía (la vía y el tope son eventos) y valla que la separa de la calle alta.
-  b.paint('camino_tierra', R(E.rail.x0, E.rail.y - 1, E.rail.x1 - E.rail.x0 + 1, 2));
-  b.paint('valla_blanca', R(E.rail.x0, E.rail.y - 2, E.rail.x1 - E.rail.x0 + 1, 1));
+  // (una fila de balasto y la valla justo encima: siguen en línea con las de la Ruta 7, filas 5 y 4 de allí)
+  const ballast = R(E.rail.x0, E.rail.y, E.rail.x1 - E.rail.x0 + 1, 1);
+  b.paint('camino_tierra', ballast, { mask: edgeMask(b, ballast) });
+  b.paint('valla_blanca', R(E.rail.x0, E.rail.y - 1, E.rail.x1 - E.rail.x0 + 1, 1));
   b.paint('bosque_pinos', R(0, 0, 4, 8));
 }
 
@@ -96,7 +101,7 @@ function plazaDetails(b) {
   b.stamp('buzon_rojo', 18, 25);
   b.stamp('jardinera_flores', 20, 26);
   b.stamp('jardinera_flores', 29, 26);
-  b.stamp('maquinas_expendedoras', 15, 22 - 2);
+  b.stamp('maquinas_expendedoras', 16, 22); // junto al bloque amarillo, sin pisarlo
 }
 
 function mineYard(b) {
@@ -116,14 +121,14 @@ function lowerDetails(b) {
   b.stamp('meseta_tierra', 14, 32 + 1);
   b.stamp('pozo_mina', 50, 42);
   for (const [s, x, y] of [
-    ['guijarros_mina', 28, 36], ['barrera_obras', 29, 42], ['farola_hierro', 13, 36], ['farola_hierro', 38, 34], ['buzon_azul', 20, 36],
+    ['guijarros_mina', 28, 36], ['barrera_obras', 29, 42], ['farola_hierro', 13, 36], ['buzon_azul', 20, 36],
     ['troncos', 5, 35], ['arbustos', 25, 42], ['roca_gris', 41, 42], ['brotes', 7, 42], ['guijarros', 12, 42], ['tocon', 27, 43],
   ]) b.stamp(s, x, y);
 }
 
 function upperDetails(b) {
   for (const [s, x, y] of [
-    ['arbol', 13, 3], ['pino', 23, 3], ['jardinera_flores', 22, 7], ['macizo_flores', 14, 8], ['buzon_rojo', 21, 7],
+    ['arbol', 13, 3], ['jardinera_flores', 22, 7], ['macizo_flores', 14, 8], ['buzon_rojo', 21, 7],
     ['farola_hierro', 25, 5], ['farola_hierro', 31, 5], ['tablon_anuncios', 32, 7], ['arbustos', 42, 3], ['flores_blancas', 15, 7],
     ['cartel_ruta', 22, 2], ['lupinos', 42, 1],
   ]) b.stamp(s, x, y);
@@ -136,8 +141,8 @@ function upperDetails(b) {
 
 function middleDetails(b) {
   for (const [s, x, y] of [
-    ['arbol', 2, 17 - 2], ['guijarros_mina', 5, 26], ['cartel_madera', 3, 21], ['macizo_flores', 13, 26], ['flores_rosas', 16, 18],
-    ['arbustos', 42, 17], ['pino', 43, 15], ['brotes', 33, 20], ['roca_gris', 12, 28], ['flores_blancas', 35, 27],
+    ['guijarros_mina', 5, 26], ['cartel_madera', 4, 21], ['macizo_flores', 13, 26], ['flores_rosas', 16, 18],
+    ['arbustos', 41, 17], ['pino', 43, 15], ['brotes', 33, 20], ['roca_gris', 12, 28], ['flores_blancas', 35, 27],
   ]) b.stamp(s, x, y);
 }
 

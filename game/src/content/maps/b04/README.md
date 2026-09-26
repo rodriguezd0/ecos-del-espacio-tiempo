@@ -8,7 +8,7 @@ Corriente»). Coordenadas en casillas (x → derecha, y → abajo). Fuentes úni
 
 | id | Archivos | Tamaño | TS | Notas |
 |---|---|---|---|---|
-| `ruta_3` | `ruta_3.js` + `ruta_3_layout.js` | 40×50 | 1 | Ribera en tres niveles con el Albo y sus cascadas, muelle, 3 cuestas de grava (`gravelSlope`: solo montado en el 10 %), mirador |
+| `ruta_3` | `ruta_3.js` + `ruta_3_layout.js` | 40×50 | 1 | Ribera en tres niveles con el Albo y sus cascadas, muelle, 3 cuestas de grava (`gravelSlope`: solo montado en el 10 %), mirador. Rehecha el 26-09 (`FORESTS` en el layout: bosques enteros por nivel, nunca sobre caras de terraza; cuestas despejadas; ramal al muelle; las terrazas siguen tras el borde oeste) |
 | `garganta_albo` | `garganta_albo.js` + `garganta_albo_layout.js` | 40×40 | 1 | Desfiladero entre paredes de roca (`acantilado`, con cara visible en y 22–24 donde la roca retrocede) y repisas de hierba con pinos, Poza del Albo e islote, gran cascada y cornisa (Trepar), cascada pequeña y repisa, molino abandonado, esclusa de cabecera, 3 balizas del Consorcio, puerta del Pilar. El fondo de ambas orillas en x ≤ 15, y ≥ 34 es bosque: la Ruta 3 solo cubre el sur de x ≥ 8 y así la cámara nunca enseña su esquina vacía |
 | `gruta_albo` | `gruta_albo.js` | 33×19 | 2 | Gruta lateral (sala irregular), montañero, 3 objetos. Encuentros de cueva 13–18 |
 | `pozo_albo` | `pozo_albo.js` | 26×20 | 15 | Fondo submarino de la Poza (Buceo, etapa G): C085, respiradero, encuentros de Buceo 45–50 |

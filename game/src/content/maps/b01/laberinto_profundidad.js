@@ -44,7 +44,6 @@ function rect(x, y, w, h) {
 
 const t = (col, row) => 384 + row * 8 + col;
 const TILES = Object.freeze({
-  boulder: [[t(5, 15), t(6, 15)], [t(5, 16), t(6, 16)]], // canto gris 2×2
   pebbles: t(6, 14),
   stones: t(3, 6),
   tealRock: t(6, 48),
@@ -60,8 +59,9 @@ function paintForest(b) {
   ]);
 }
 
+/** Canto con liquen en tierra (roca_turquesa 2×2; antes, la roca de agua de Añil sobre la hierba). */
 function boulder(b, x, y) {
-  TILES.boulder.forEach((row, j) => row.forEach((id, i) => b.set(2, x + i, y + j, id)));
+  b.stamp('roca_turquesa', x, y);
 }
 
 /** Losas antiguas con liquen (vestigios) en el suelo de un tramo horizontal. */
@@ -126,8 +126,10 @@ export default {
     paintForest(b);
     paintChamber(b);
     paintGardens(b);
-    b.paint('camino_tierra', rect(LAB_ENTRY.x0, 22, 2, H - 22));
+    b.paint('camino_arena', rect(LAB_ENTRY.x0, 22, 2, H - 22)); // el mismo camino de arena que llega de Villa Alba
     paintHedges(b, HEDGES);
+    // La sombra de los setos del cierre del patio caería bajo las puntas del bosque (fila 28): se quita.
+    for (let x = 4; x < 36; x++) if (x < LAB_ENTRY.x0 || x > LAB_ENTRY.x1) b.set(1, x, 28, 0);
     b.stamp('cartel_madera', 17, 27);
   },
 

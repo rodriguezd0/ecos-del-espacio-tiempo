@@ -129,7 +129,7 @@ function itemEvents() {
     { id: 'eter_oculto', type: 'item', x: 24, y: 26, item: 'ETHER', hidden: true },
     { id: 'miel_oculta', type: 'item', x: 60, y: 22, item: 'HONEY', hidden: true },
     { id: 'miel_vega', type: 'item', x: 36, y: 12, item: 'HONEY' },
-    { id: 'antidoto_rincon', type: 'item', x: 78, y: 24, item: 'FULLHEAL' },
+    { id: 'antidoto_rincon', type: 'item', x: 77, y: 24, item: 'FULLHEAL' },
   ];
 }
 

@@ -44,7 +44,7 @@ export const COMPOUND = Object.freeze({
    * Otras franjas de la escena (del P8 al P9), para que nadie llegue a la valla, la torre o la bajada sin verla: el
    * paso estrecho de la avenida desde Lúmina (fila 31) y el final de la bajada que sube de la Sima (fila del borde).
    */
-  approaches: Object.freeze([Object.freeze({ x0: 14, x1: 16, y: 31 }), Object.freeze({ x0: 3, x1: 4, y: RIM_Y })]),
+  approaches: Object.freeze([Object.freeze({ x0: 13, x1: 16, y: 31 }), Object.freeze({ x0: 3, x1: 4, y: RIM_Y })]),
   caravan: Object.freeze({ x: 7, y: 16 }),
   containers: Object.freeze({ x: 21, y: 17 }),
   pipes: Object.freeze({ x: 8, y: 20 }),
@@ -82,10 +82,10 @@ export const FORESTS = Object.freeze([
 ]);
 
 export const SPOTS = Object.freeze({
-  sign: Object.freeze({ x: 17, y: 30 }), // cartel del Mirador en la avenida
-  legend: Object.freeze({ x: 8, y: 24 }), // placa del Puente
+  sign: Object.freeze({ x: 18, y: 29 }), // cartel del Mirador junto a la avenida
+  legend: Object.freeze({ x: 9, y: 24 }), // placa del Puente
   consortiumSign: Object.freeze({ x: 20, y: 23 }), // cartel del Consorcio (ocupación)
-  tourist: P(22, 25, 8), // visitante antes del P8
+  tourist: P(21, 26, 8), // visitante antes del P8 (junto a la jardinera, no dentro)
   neighbor: P(11, 25, 2), // vecina de Lúmina tras el P8
   trainerA: P(9, 26, 6),
   trainerB: P(30, 24, 4),

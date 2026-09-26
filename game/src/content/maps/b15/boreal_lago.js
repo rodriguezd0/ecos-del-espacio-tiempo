@@ -27,7 +27,7 @@ function build(b) {
   b.stamp('cobertizo_azul', L.hut.x, L.hut.y);
   b.stamp('troncos', L.hut.x + 4, L.hut.y + 5);
   b.stamp('cartel_madera', L.sign.x, L.sign.y);
-  b.stamp('roca_gris', 3, 16); b.stamp('monton_nieve', 20, 16); b.stamp('monton_nieve', 1, 9);
+  b.stamp('roca_gris', 3, 16); b.stamp('monton_nieve', 20, 16); b.stamp('monton_nieve', 2, 12);
   // Pinares a los lados del lago y al sur de la orilla.
   const open = openMask([
     rect(west, O.y, east, south + 1), rect(0, L.entry.y - 1, L.width - 1, L.entry.y + 3),

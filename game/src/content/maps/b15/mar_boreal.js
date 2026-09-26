@@ -33,7 +33,7 @@ function build(b) {
     b.paint('nieve_parche', cells, { mask: (x, y) => set.has(`${x},${y}`) });
   }
   b.stamp('cobertizo_azul', 2, 0);
-  b.stamp('contenedores', 5, 2);
+  b.stamp('contenedores', 6, 2);
   b.paint('baranda_hierro', rect(1, 7, 5, 7));
   b.paint('baranda_hierro', rect(7, 7, 8, 7));
   for (const [x, y] of [[18, 8], [31, 12], [44, 18], [6, 20], [20, 33], [33, 35], [45, 3], [16, 24], [41, 26], [28, 29]]) b.stamp('roca_agua', x, y);

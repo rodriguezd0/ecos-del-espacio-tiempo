@@ -86,28 +86,31 @@ export function buildAntea3(b) {
 export function buildPrimigenia3(b) {
   b.fill(0, 'cesped');
   const res = reserved3();
-  // Selva espesa alrededor y el risco (terraza) que separa el valle de la meseta alta.
-  b.paint('bosque', [...rect(0, 0, 13, 2), ...rect(19, 0, 31, 2), ...rect(0, 3, 1, 25), ...rect(30, 3, 31, 25), ...rect(2, 24, 29, 25)]);
-  b.paint('bosque_pinos', [...rect(14, 0, 15, 1), ...rect(17, 0, 18, 1)]);
+  // Selva espesa alrededor y el risco (terraza) que separa el valle de la meseta alta. La franja del sur va en su
+  // propio trazo (2 filas): sus árboles se completan hacia arriba, enteros (filas 22–23 libres de eventos).
+  b.paint('bosque', rect(2, 24, 29, 25));
+  b.paint('bosque', [...rect(0, 0, 13, 2), ...rect(18, 0, 31, 2), ...rect(0, 3, 1, 25), ...rect(30, 3, 31, 25)]);
   b.paint('terraza', rect(2, 3, 29, 12));
-  // Senda de la meseta hacia el norte (hueco en la selva sobre la salida).
-  b.paint('camino_tierra', rect(15, 0, 17, 2));
+  // Senda de la meseta hacia el norte (hueco de dos pares de columnas en la selva sobre la salida).
+  b.paint('camino_tierra', rect(14, 0, 17, 2));
+  const trees = [[6, 4], [17, 4]]; // árboles morados pequeños de la meseta (sin helechos ni matas dentro)
+  const underTree = cellSet(trees.flatMap(([x, y]) => rect(x, y, x + 1, y + 3)));
   // Valle: manchas de hierba alta irregulares, claros de hierba clara y un remanso.
   const tall = [
     ...rect(3, 19, 7, 23), ...rect(5, 18, 9, 21), ...rect(19, 21, 24, 23), ...rect(21, 20, 26, 22), ...rect(10, 22, 13, 23),
     ...rect(4, 5, 8, 8), ...rect(6, 4, 10, 6), ...rect(24, 5, 28, 7), ...rect(18, 13, 21, 14),
-  ].filter(([x, y]) => !res.has(key(x, y)));
+  ].filter(([x, y]) => !res.has(key(x, y)) && y <= 21 && !underTree.has(key(x, y)));
   b.paint('hierba_alta', tall);
   b.paint('cesped_claro', [...rect(11, 15, 22, 18)]);
   b.paint('agua', rect(3, 14, 6, 16));
   b.paint('orilla', rect(3, 14, 6, 16));
-  for (const [x, y] of [[11, 21], [28, 14]]) b.stamp('roca_turquesa', x, y);
+  for (const [x, y] of [[11, 20], [28, 14]]) b.stamp('roca_turquesa', x, y);
   b.stamp('tocon_gigante', 12, 5);
   b.stamp('cristal_grande', 21, 6);
-  b.stamp('tronco_caido_h', 11, 20);
-  b.stamp('tronco_caido_v', 5, 20);
+  b.stamp('tronco_caido_h', 10, 19);
+  b.stamp('tronco_caido_v', 5, 19);
   b.stamp('portal_raices', 26, 3);
-  for (const [x, y] of [[4, 3], [18, 4]]) b.stamp('arbol_morado_peque', x, y);
+  for (const [x, y] of trees) b.stamp('arbol_morado_peque', x, y);
   const free = (x, y) => x >= 2 && x <= 29 && y >= 4 && y <= 23 && !b.get(2, x, y);
   placeFree(b, [
     ['arbustos', 25, 13, 2, 2], ['arbustos', 8, 16, 2, 2], ['brotes', 10, 14, 1, 1], ['brotes', 21, 13, 1, 1], ['setas', 7, 18, 1, 1],

@@ -27,7 +27,7 @@ export default {
     b.stamp('mesa_comedor', 2, 5);
     b.stamp('ventana_cortinas', 3, 2);
     b.stamp('ventana_cortinas', 8, 2);
-    b.stamp('planta', 10, 8);
+    b.stamp('planta', 9, 8);
     b.stamp('sofa', 10, 4);
     b.rect(null, 3, 8, 4, 1, 'alfombra_beige');
     // detalles: la taza de té frío (la «nota» de la mesa), el reloj, un cuadro y la estantería de la pared

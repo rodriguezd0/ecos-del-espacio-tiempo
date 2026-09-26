@@ -28,7 +28,7 @@ export default {
     b.stamp('fregadero', 1, 2);
     b.stamp('vitrina', 9, 2);
     b.stamp('cama_individual', 9, 6);
-    b.stamp('planta', 11, 5);
+    b.stamp('planta', 1, 7);
     b.stamp('reloj_pared', 6, 1);
     b.stamp('ventana_cortinas', 3, 1);
   },
