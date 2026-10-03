@@ -6,7 +6,7 @@ import { buildMeseta } from './meseta_impulso_build.js';
 import { mesetaEvents } from '../../events/b06_meseta.js';
 import { F } from '../../events/b06_common.js';
 import { MESETA_IMPULSO } from '../../encounters/b06.js';
-import { MESETA, ANILLO } from './layout.js';
+import { MESETA, P3_VERTICAL } from './layout.js';
 
 const M = MESETA;
 
@@ -27,7 +27,7 @@ export default {
   connections: [{ dir: 'west', to: 'ruta_5', offset: 9 }],
 
   warps: [
-    { x: M.ringGate.x, y: M.ringGate.y, to: 'anillo_vientos', tx: ANILLO.entry.x, ty: ANILLO.entry.y, dir: 8 },
+    { x: M.ringGate.x, y: M.ringGate.y, to: 'anillo_vientos_base', tx: P3_VERTICAL.entry.x, ty: P3_VERTICAL.entry.y, dir: 8 },
   ],
 
   onEnter: async (ctx) => {

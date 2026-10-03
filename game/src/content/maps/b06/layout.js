@@ -114,3 +114,17 @@ export const GALERIAS = Object.freeze({
   entry: Object.freeze({ x: 10, y: 28, dir: 8 }),
   exitDoor: Object.freeze({ x: 10, y: 29 }),
 });
+
+/** Nuevos pisos primero y tercero; las galerías y las campanas comparten el segundo. */
+export const P3_VERTICAL = Object.freeze({
+  width: 27, height: 25,
+  floor: Object.freeze({ x: 3, y: 4, w: 21, h: 19 }),
+  entry: Object.freeze({ x: 13, y: 20, dir: 8 }),
+  down: Object.freeze({ x: 13, y: 22 }),
+  up: Object.freeze({ x: 13, y: 5 }),
+  baseReturn: Object.freeze({ x: 13, y: 6, dir: 2 }),
+  pedestal: Object.freeze({ x: 13, y: 6 }),
+  guardian: Object.freeze({ x: 13, y: 11, dir: 2 }),
+  retry: Object.freeze({ x: 13, y: 14, dir: 8 }),
+  challenge: Object.freeze(Array.from({ length: 21 }, (_, i) => Object.freeze([3 + i, 12]))),
+});

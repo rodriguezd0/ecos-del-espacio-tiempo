@@ -153,6 +153,8 @@ test('Villa Alba: las casillas del epílogo están unidas a pie (verja → puert
 test('montaje: cada Guardián aparece en suelo pisable de su Pilar y el jugador invisible también', async () => {
   for (const shot of MONTAGE_SHOTS) {
     if (!MAPS[shot.map]) continue;
+    const { def } = await buildMapNode(shot.map);
+    assert.equal(def.pillar?.floor, 3, `${shot.key}: el montaje muestra la planta del núcleo`);
     const { map } = await worldFor(shot.map);
     for (const [x, y, what] of [[shot.x, shot.y, 'Guardián'], [shot.player[0], shot.player[1], 'jugador']]) {
       assert.ok(map.valid(x, y), `${shot.map}: ${what} fuera del mapa`);

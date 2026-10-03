@@ -1,7 +1,7 @@
-// Archivo Hondo — Pilar de la Memoria (P5) (docs/CAMPANA.md B10, «Mazmorra: Archivo Hondo»; §1.5: «Espiral de 6
-// estancias (sin plantas)», Guardiana Olvido Arrieta). Tileset 11 (InteriorTorre) con el kit común de Pilar y el tinte
-// sepia del P5. Una sola planta en espiral: Suelo Olvidado → Dos Manos → Lectura → Rollos → Sala del Mural → Cámara
-// del núcleo. En cada estancia de recuerdo, una losa (pilar_losa_eco) despierta un eco-custodio translúcido que hace la
+// Archivo Hondo — segundo piso del Pilar de la Memoria (X36). Guardiana Olvido Arrieta en el tercer piso.
+// Tileset 11 (InteriorTorre) con el kit común de Pilar y el tinte
+// sepia del P5. Segundo piso: Suelo Olvidado → Dos Manos → Lectura → Rollos → Sala del Mural → escalera al núcleo.
+// En cada estancia de recuerdo, una losa (pilar_losa_eco) despierta un eco-custodio translúcido que hace la
 // acción que hay que reproducir; se puede repetir sin límite. Coordenadas en hondo_layout.js; eventos en
 // content/events/b10_hondo*.js. Se entra por la escalera del Archivo de papel (mnemos_archivo).
 import { W, H, ENTRY } from './hondo_layout.js';
@@ -13,7 +13,8 @@ import { pilarTone } from '../../stamps/pilar.js';
 
 export default {
   id: 'archivo_hondo',
-  name: 'Pilar de la Memoria',
+  name: 'Pilar de la Memoria · Piso 2',
+  pillar: { id: 'P5', floor: 2 },
   tileset: 11,
   width: W,
   height: H,
@@ -28,7 +29,7 @@ export default {
   build: buildHondo,
 
   warps: ENTRY.exitTiles.map(([x, y]) => ({
-    x, y, dirTrigger: 8, to: 'mnemos_archivo', tx: ARCHIVO_ROOM.stairsArrival.x, ty: ARCHIVO_ROOM.stairsArrival.y, dir: 2,
+    x, y, dirTrigger: 8, to: 'mnemos_archivo', tx: ARCHIVO_ROOM.stairsArrival.x, ty: ARCHIVO_ROOM.stairsArrival.y, dir: ARCHIVO_ROOM.stairsArrival.dir,
   })),
 
   onEnter: hondoOnEnter,

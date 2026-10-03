@@ -3,19 +3,21 @@
 // F01–F02), Correr y Embestida, las 24 células A+B, el Core N1, equipo de nivel alto y sin encuentros aleatorios:
 //   Ruta 5 (troncos con Embestida, C028) → Meseta (llegada, combate doble con Gael de aliado) → Parque Eólico
 //   (dos técnicos, Casia: derrota simulada y reintento en la puerta del Colector; el Colector se rompe: C029–C032,
-//   N2, Terreno complicado; Gael y las pantallas) → Anillo (Abril: derrota simulada y reintento; su reto) →
+//   N2, Terreno complicado; Gael y las pantallas) → Pilar, piso 1 (Julia y Sonia) → piso 2:
 //   Galerías: Flechas (cadena, montar y remontar, C033) y Remolino (dos veletas) → Sala de las Campanas (C034,
-//   Norte larga, Este corta, Oeste corta; el vendaval se calma; Abril sube) → núcleo (Fragmento 3, verso III,
+//   Norte larga, Este corta, Oeste corta; el vendaval se calma) → piso 3 (Abril: derrota y reintento), núcleo (Fragmento 3, verso III,
 //   p3_restored, pista T04, despedida de Abril) → salida y aerogeneradores girando en la Meseta.
 // Cada escena se comprueba por sus flags y por su texto en la transcripción. Capturas en
 // tools/cache/screens/e2e_b06_<nn>_<hito>.png y transcripción en e2e_b06_dialogos.txt.
 // Uso: node tools/e2e_b06.mjs [--base=http://localhost:8080] [--headed] [--no-retry]
+//      [--from=ruta5|anillo|galerias|sala|nucleo]
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 import { installHelpers } from './e2e_b01_page.mjs';
 import { installB06Helpers } from './e2e_b06_page.mjs';
+import { P3_VERTICAL as P } from '../game/src/content/maps/b06/layout.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = path.join(ROOT, 'tools', 'cache', 'screens');
@@ -41,8 +43,9 @@ const entry = (over) => new URLSearchParams({
 const STARTS = {
   ruta5: entry({ map: 'ruta_5', x: '2', y: '19', dir: '6', zygarde: 'run,ram', zcells: '24', zcores: '1', flags: BASE_FLAGS }),
   anillo: entry({ map: 'meseta_impulso', x: '39', y: '13', dir: '8', zygarde: 'run,ram,terrain', zcells: '32', zcores: '2', flags: `${BASE_FLAGS},${PARQUE_FLAGS}` }),
-  galerias: entry({ map: 'galerias_soplo', x: '10', y: '28', dir: '8', zygarde: 'run,ram,terrain', zcells: '32', zcores: '2', flags: `${BASE_FLAGS},${PARQUE_FLAGS},b06_abril_conocida,b06_abril_vencida` }),
-  sala: entry({ map: 'anillo_vientos', x: '24', y: '17', dir: '2', zygarde: 'run,ram,terrain', zcells: '33', zcores: '2', flags: `${BASE_FLAGS},${PARQUE_FLAGS},b06_abril_conocida,b06_abril_vencida,b06_galerias_vistas`, vars: 'starter:TURTWIG,gael_starter:LITTEN,b06_veleta_remolino_a:3,b06_veleta_remolino_b:1' }),
+  galerias: entry({ map: 'galerias_soplo', x: '10', y: '28', dir: '8', zygarde: 'run,ram,terrain', zcells: '32', zcores: '2', flags: `${BASE_FLAGS},${PARQUE_FLAGS}` }),
+  sala: entry({ map: 'anillo_vientos', x: '24', y: '17', dir: '2', zygarde: 'run,ram,terrain', zcells: '33', zcores: '2', flags: `${BASE_FLAGS},${PARQUE_FLAGS},b06_galerias_vistas`, vars: 'starter:TURTWIG,gael_starter:LITTEN,b06_veleta_remolino_a:3,b06_veleta_remolino_b:1' }),
+  nucleo: entry({ map: 'anillo_vientos', x: '21', y: '11', dir: '8', zygarde: 'run,ram,terrain', zcells: '34', zcores: '2', flags: `${BASE_FLAGS},${PARQUE_FLAGS},b06_galerias_vistas,b06_campanas`, vars: 'starter:TURTWIG,gael_starter:LITTEN,b06_veleta_remolino_a:3,b06_veleta_remolino_b:1' }),
 };
 const FROM = (argv.find((a) => a.startsWith('--from=')) || '--from=ruta5').slice(7);
 if (!STARTS[FROM]) throw new Error(`--from desconocido: ${FROM} (${Object.keys(STARTS).join(', ')})`);
@@ -313,31 +316,19 @@ async function parque(d) {
 }
 
 async function anillo(d) {
-  await d.walkTo(39, 10);
-  await d.step(8);
-  await d.until((s) => s.map === 'anillo_vientos' && s.ready, { timeout: 15000, what: 'subir al Anillo' });
+  await d.walkTo(39, 10, { stopWhen: (s) => s.map === 'anillo_vientos_base' });
+  if ((await d.snapState()).map !== 'anillo_vientos_base') await d.step(8);
+  await d.until((s) => s.map === 'anillo_vientos_base' && s.ready, { timeout: 15000, what: 'entrar en la base' });
   await d.settle();
-  await d.milestone('anillo_llegada');
-  const watch = [
-    { re: /Termina rápido/, name: 'abril_reto', delay: 300 },
-    { scene: 'BattleScene', name: 'combate_abril', delay: 4500 },
-  ];
-  // La boca se abre por arriba: desde (31,23) se empuja hacia abajo.
-  const intoMouth = async () => {
-    await d.walkTo(31, 23, { watch });
-    await d.step(2);
-    await d.settle({ watch });
-  };
-  await intoMouth();
-  await d.expectSaid(/Cinco años vigilando una piedra que no hace nada/, 'Abril y su tedio');
-  await d.expectSaid(/Termina rápido, que se me enfría la comida/, 'el reto de Abril');
-  if (RETRY) {
-    await d.milestone('abril_derrota', (s) => (!s.flags.b06_abril_vencida && s.map === 'anillo_vientos' && s.x === 34 && s.y === 24 ? null : `tras perder: ${s.map} (${s.x},${s.y})`));
-    await intoMouth();
+  await d.milestone('anillo_base');
+  for (const [x, y, face] of [[7, 16, 'right'], [19, 14, 'left']]) {
+    await d.walkTo(x, y, { face });
+    await d.interact();
   }
-  await d.milestone('abril_vencida', (s) => (s.flags.b06_abril_vencida ? null : 'sin b06_abril_vencida'));
-  await intoMouth();
-  await d.until((s) => s.map === 'galerias_soplo' && s.ready, { timeout: 15000, what: 'bajar a las galerías' });
+  await d.milestone('entrenadores_piso1');
+  await d.walkTo(P.up.x, P.up.y + 1);
+  await d.step(8);
+  await d.until((s) => s.map === 'galerias_soplo' && s.ready, { timeout: 15000, what: 'subir a las galerías del piso2' });
   await d.settle();
 }
 
@@ -423,11 +414,29 @@ async function sala(d) {
   await d.walkTo(13, 14, { face: 'left' });
   await d.interact({ watch: [{ re: /suenan a la vez/, name: 'campanas', delay: 200 }] });
   await d.settle();
-  await d.expectSaid(/Cinco años aquí arriba y nunca las había oído sonar/, 'Abril sube a la Sala');
-  await d.milestone('campanas_resueltas', (st) => (st.flags.b06_campanas && st.flags.b06_abril_sala ? null : 'sin b06_campanas'));
-  // Núcleo.
+  await d.milestone('campanas_resueltas', (st) => (st.flags.b06_campanas && !st.flags.b06_abril_vencida ? null : 'sin campanas o Guardiana vencida antes del puzzle'));
+}
+
+async function nucleo(d) {
   await d.toggleMount(false);
   await d.walkTo(21, 11, { face: 'up', watch: [] });
+  await d.interact();
+  await d.until((s) => s.map === 'anillo_vientos_nucleo' && s.ready, { timeout: 15000, what: 'subir al tercer piso' });
+  await d.settle();
+  await d.expectSaid(/Cinco años aquí arriba y nunca las había oído sonar/, 'Abril oye las campanas');
+  const watch = [{ re: /Termina rápido/, name: 'abril_reto', delay: 300 }, { scene: 'BattleScene', name: 'combate_abril', delay: 4500 }];
+  for (let i = 0; i < (RETRY ? 2 : 1); i++) {
+    await d.walkTo(P.guardian.x, P.guardian.y + 2);
+    await d.step(8);
+    await d.settle({ watch });
+    if (i === 0 && RETRY) {
+      await d.milestone('abril_derrota', (s) => (!s.flags.b06_abril_vencida && s.map === 'anillo_vientos_nucleo' && s.x === P.retry.x && s.y === P.retry.y ? null : `tras perder: ${s.map} (${s.x},${s.y})`));
+    }
+  }
+  await d.expectSaid(/Cinco años vigilando una piedra que no hace nada/, 'Abril y su tedio');
+  await d.expectSaid(/Termina rápido, que se me enfría la comida/, 'el reto de Abril');
+  await d.milestone('abril_vencida', (s) => (s.flags.b06_abril_vencida ? null : 'sin b06_abril_vencida'));
+  await d.walkTo(P.pedestal.x, P.pedestal.y + 1, { face: 'up' });
   await d.interact({ watch: [{ scene: 'VerseScene', name: 'verso_iii', delay: 1200 }] });
   await d.expectSaid(/Fragmento Azur 3/, 'el Fragmento Azur 3');
   await d.expectSaid(/Aquí arriba el viento nunca ha tenido camino/, 'Abril lee el verso');
@@ -444,12 +453,20 @@ async function sala(d) {
 }
 
 async function salida(d) {
-  // Sin viento: el hueco del sur ya deja pasar en ambos sentidos.
-  await d.walkTo(21, 21);
-  await d.walkTo(21, 19);
-  await d.walkTo(21, 36);
-  await d.walkTo(21, 39);
-  await d.press('ArrowDown', 500);
+  await d.walkTo(P.down.x, P.down.y - 1);
+  await d.step(2);
+  await d.until((s) => s.map === 'anillo_vientos' && s.ready, { timeout: 15000, what: 'volver a las campanas' });
+  await d.settle();
+  await d.walkTo(26, 17);
+  await d.interact();
+  await d.until((s) => s.map === 'galerias_soplo' && s.ready, { timeout: 15000, what: 'volver al Remolino' });
+  await d.settle();
+  await d.walkTo(10, 28);
+  await d.step(2);
+  await d.until((s) => s.map === 'anillo_vientos_base' && s.ready, { timeout: 15000, what: 'bajar a la base' });
+  await d.settle();
+  await d.walkTo(P.down.x, P.down.y - 1);
+  await d.step(2);
   await d.until((s) => s.map === 'meseta_impulso' && s.ready, { timeout: 15000, what: 'bajar a la Meseta' });
   await d.settle();
   await d.walkTo(29, 20);
@@ -479,7 +496,7 @@ async function main() {
     await installHelpers(page);
     await installB06Helpers(page, { loseOnce: RETRY ? ['b06_casia', 'b06_abril'] : [] });
     await d.until((s) => s.top === 'MapScene' && s.ready, { timeout: 30000, what: 'el mapa de arranque' });
-    const stages = [['ruta5', ruta5], ['meseta', meseta], ['parque', parque], ['anillo', anillo], ['galerias', galerias], ['sala', sala], ['salida', salida]];
+    const stages = [['ruta5', ruta5], ['meseta', meseta], ['parque', parque], ['anillo', anillo], ['galerias', galerias], ['sala', sala], ['nucleo', nucleo], ['salida', salida]];
     const first = stages.findIndex(([n]) => n === FROM);
     for (const [, run] of stages.slice(first)) await run(d);
     const fatal = errors.filter((e) => /pageerror|http 5/.test(e));

@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 import { PNG } from 'pngjs';
 import { ATLAS_COLUMNS, FIRST_REGULAR_TILE } from '../game/src/shared/autotile.js';
 import { origId, readTile, writeTile, ensureHeight, copyTileProps } from './lib/atlas_tiles.mjs';
+import { EXTRA_LAYOUTS } from '../game/src/content/stamps/extraTiles.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DB_FILE = path.join(ROOT, 'game', 'data', 'tilesets.json');
@@ -83,7 +84,11 @@ for (const [image, sets] of byImage) {
   const file = path.join(ATLAS_DIR, `${image}.png`);
   let png = PNG.sync.read(fs.readFileSync(file));
   const first = sets[0];
-  const base = first.forestDense?.base ?? first.tileCount;
+  const layout = EXTRA_LAYOUTS[image];
+  const overlayEnd = layout ? (layout.row + layout.rows) * 8 : 0;
+  const base = first.forestDense?.base >= overlayEnd
+    ? first.forestDense.base
+    : Math.max(overlayEnd, ...sets.map((s) => s.tileCount));
   const map = {};
   let slot = 0;
   for (const col of UNIT_COLS) {

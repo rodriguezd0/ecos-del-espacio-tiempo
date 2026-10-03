@@ -6,12 +6,13 @@
 // content/events/b08_balance_logic.js · mecanismo: b08_camara.js · Fermín y núcleo: b08_camara_scenes.js.
 import { CAMARA_W, CAMARA_H, SPOTS, SOLID_EVENTS } from '../../events/b08_balance_logic.js';
 import { mechanismEvents } from '../../events/b08_camara.js';
-import { ferminEvents, pedestalEvent, camaraOnEnter } from '../../events/b08_camara_scenes.js';
+import { camaraOnEnter } from '../../events/b08_camara_scenes.js';
+import { F } from '../../events/b08_common.js';
 import { b08CellEvents } from '../../events/b08_cells.js';
 import { CAMARA_CONTRAPESOS } from '../../encounters/b08.js';
 import { pilarTone } from '../../stamps/pilar.js';
 import { buildCamara } from './camara_build.js';
-import { CERRO } from './layout.js';
+import { P4_VERTICAL } from './layout.js';
 
 const [itemSpot] = SOLID_EVENTS;
 
@@ -22,6 +23,7 @@ export default {
   width: CAMARA_W,
   height: CAMARA_H,
   cave: true,
+  pillar: { id: 'P4', floor: 2 },
   bgm: 'Cueva',
   battleback: 'Cueva',
   tone: pilarTone('P4'),
@@ -31,14 +33,20 @@ export default {
   build: buildCamara,
 
   // Salida: la claridad de la pared sur (se empuja hacia abajo) → antesala del Cerro Plomo.
-  warps: [{ x: SPOTS.exitWarp.x, y: SPOTS.exitWarp.y, to: 'cerro_plomo', tx: CERRO.arrive.x, ty: CERRO.arrive.y, dir: CERRO.arrive.dir }],
+  warps: [{ x: SPOTS.exitWarp.x, y: SPOTS.exitWarp.y, to: 'camara_contrapesos_base', tx: P4_VERTICAL.baseReturn.x, ty: P4_VERTICAL.baseReturn.y, dir: 2 }],
 
   onEnter: camaraOnEnter,
 
   events: [
     ...mechanismEvents(),
-    ...ferminEvents(),
-    pedestalEvent(),
+    {
+      id: 'subida_nucleo', x: SPOTS.pedestal.x, y: SPOTS.pedestal.y, solid: true, trigger: 'action',
+      script: async (ctx) => {
+        if (!ctx.flag(F.balance) && !ctx.flag(F.restored)) { await ctx.say('Una losa pesada tapa la escalera.'); return; }
+        ctx.se('Door enter');
+        await ctx.warp('camara_contrapesos_nucleo', P4_VERTICAL.entry.x, P4_VERTICAL.entry.y, 8);
+      },
+    },
     ...b08CellEvents('camara_contrapesos'),
     { id: itemSpot.id, type: 'item', x: itemSpot.x, y: itemSpot.y, item: 'FLOATSTONE' },
   ],

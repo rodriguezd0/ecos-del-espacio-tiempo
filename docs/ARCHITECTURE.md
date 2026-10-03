@@ -189,6 +189,15 @@ Validación: `world/mapLoader.js#validateMapDef`. En Node: `buildMapNode(id)` (`
 preview `node tools/preview_map.mjs <id> [--pass] [--grid]`. `tests/integration_maps.test.mjs` construye TODOS
 los mapas registrados que existan, crea sus eventos con un GameState real y comprueba warps/conexiones.
 
+**Pilares verticales (X36):** los mapas de P1–P5 llevan `pillar: { id: 'P1', floor: 1 }` (pisos 1–3).
+`stamps/pilarVertical.js` construye las salas de piedra y coloca la columna exterior `pilar_torre` (7×10,
+puerta central); el overlay está disponible en los exteriores 1, 6, 7 y 9. `tools/stamps_extra.mjs` amplía el
+atlas y sus tablas cuando las piezas necesitan filas nuevas. Las variantes de bosque, playa y puntas selladas
+se reservan después del overlay; sus generadores recolocan las reservas si una ampliación las alcanza.
+Los mapas del puzzle mantienen sus IDs y flags;
+los entrenadores trasladados conservan sus self-switches mediante `onEnter`. Las escaleras al núcleo se abren
+con el puzzle resuelto. En P3, las galerías y las campanas son dos mapas del mismo segundo piso.
+
 ### MapBuilder (`world/mapBuilder.js`) — `build(b)`
 Capa `null` = la que diga el brush/stamp. Brushes/stamps por nombre de la biblioteca del tileset
 (`content/stamps/<Imagen>.js`, catálogo en `docs/stamps.md`, visor `/src/content/stamps/viewer.html`).
@@ -1189,8 +1198,9 @@ en `validate_content`), `tools/check_seams.mjs` (costuras: árboles partidos, ob
     `pbSwitchInBetween`, `pbRunMenu` (rendirse) y `pbEndOfBattle`.
   - El runner recibe `request.link` y `state = null`, así que no toca la partida.
   - Las invitaciones llegan a `MapNetSync` y se atienden cuando el jugador está libre.
-- **Pruebas:** `tests/net_link_battle.test.mjs` (dos motores reales con elecciones al azar: 24 combates 1 contra 1 y
-  10 en equipo, siempre a la par) y `node tools/net_battle_smoke.mjs --mode=pvp|coop` (dos Chrome).
+- **Pruebas:** `tests/net_link_battle.test.mjs` (dos motores reales: 24 combates 1 contra 1 y 8 contra entrenadores
+  de la historia, siempre a la par; equipos, rivales y decisiones usan semillas reproducibles).
+  Navegador: `node tools/net_battle_smoke.mjs --mode=pvp` y `node tools/net_coop_smoke.mjs` (dos Chrome).
 - **Desde el título** (`net/onlineMenu.js#runTitleOnlineMenu`): se entra en una sala antes de empezar o cargar la
   partida, con un nombre provisional. El mapa lo actualiza con `{ t: 'me' }` (el servidor lo reparte con `peer`).
 - **Chat y globos** (`net/social.js`, mensajes `chat` y `emo`):

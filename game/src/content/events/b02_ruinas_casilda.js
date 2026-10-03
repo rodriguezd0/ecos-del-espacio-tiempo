@@ -3,7 +3,8 @@
 // (variable b02_casilda_sala); al entrar en el mapa (onEnter, también al cargar) se recoloca. Combate de la
 // Guardiana y reintento sin pérdida: si pierdes, reapareces en la antesala y ella te cura («Otra vez. Con cabeza.»).
 import { F, SPEAKER, SPRITE, when, say } from './b02_common.js';
-import { ANTESALA, GALERIA, CAMARA, NUCLEO } from '../maps/b02/ruinas_dintel_layout.js';
+import { ANTESALA, GALERIA, CAMARA } from '../maps/b02/ruinas_dintel_layout.js';
+import { NUCLEO, GUARDIAN } from '../maps/b02/ruinas_dintel_floors.js';
 import { solvedCount } from './b02_puzzle.js';
 import { walkEventTo } from './b01_town_path.js';
 
@@ -18,7 +19,7 @@ export const CASILDA_SPOTS = Object.freeze({
   [ROOM.antesala]: { ...ANTESALA.casilda },
   [ROOM.galeria]: { ...GALERIA.casilda },
   [ROOM.camara]: { ...CAMARA.casilda },
-  [ROOM.guardiana]: { ...CAMARA.guardian },
+  [ROOM.guardiana]: { ...GUARDIAN },
   [ROOM.nucleo]: { ...NUCLEO.casilda },
 });
 /** Tras perder contra ella: te espera junto a la entrada para curarte. */
@@ -44,6 +45,10 @@ export function placeCasilda(ctx) {
   const ev = ctx.world?.events?.find((e) => e.id === 'casilda');
   const spot = casildaSpot(ctx.state);
   if (!ev || !spot) return;
+  const mapId = ctx.world?.current?.id;
+  const r = casildaRoom(ctx.state);
+  if (mapId === 'ruinas_dintel' && r >= ROOM.guardiana && !ctx.flag(F.casildaLost)) return;
+  if (mapId === 'ruinas_dintel_nucleo' && r < ROOM.guardiana) return;
   ev.moveTo(spot.x, spot.y);
   ev.direction = spot.dir || 2;
 }
@@ -114,13 +119,16 @@ async function healScene(ctx) {
 }
 
 /** Eventos: Casilda (una sola, recolocada) y la escena de cura tras la derrota. */
-export function casildaEvents() {
-  const inside = (s) => casildaInside(s);
+export function casildaEvents({ floor = 2 } = {}) {
+  const inside = (s) => casildaInside(s) && (floor === 3
+    ? casildaRoom(s) >= ROOM.guardiana && !s.flag(F.casildaLost)
+    : casildaRoom(s) < ROOM.guardiana || s.flag(F.casildaLost));
+  const spot = floor === 3 ? GUARDIAN : ANTESALA.casilda;
   return [
     {
-      id: 'casilda', x: ANTESALA.casilda.x, y: ANTESALA.casilda.y, name: C,
-      pages: [{ when: inside, sprite: SPRITE.casilda, dir: ANTESALA.casilda.dir, move: 'still', trigger: 'action', script: talk }],
+      id: 'casilda', x: spot.x, y: spot.y, name: C,
+      pages: [{ when: inside, sprite: SPRITE.casilda, dir: spot.dir, move: 'still', trigger: 'action', script: talk }],
     },
-    { id: 'escena_cura_casilda', x: 0, y: 0, trigger: 'auto', when: when({ all: [F.casildaLost] }), script: healScene },
+    ...(floor === 2 ? [{ id: 'escena_cura_casilda', x: 0, y: 0, trigger: 'auto', when: when({ all: [F.casildaLost] }), script: healScene }] : []),
   ];
 }

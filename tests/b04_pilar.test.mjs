@@ -184,5 +184,6 @@ test('la llegada del Pilar y el reto de Leandro están en el rellano de entrada'
   const { def } = await builtPilar();
   assert.deepEqual([def.start.x, def.start.y], [SPOTS.arrival.x, SPOTS.arrival.y]);
   assert.ok(def.events.some((e) => e.id === 'reto_leandro'));
-  assert.equal(def.warps[0].to, 'garganta_albo');
+  assert.equal(def.warps[0].to, 'pilar_corriente_base');
+  assert.ok(def.warps.some((w) => w.to === 'pilar_corriente_nucleo'));
 });

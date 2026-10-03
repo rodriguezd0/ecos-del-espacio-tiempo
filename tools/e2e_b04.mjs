@@ -47,8 +47,8 @@ const STAGE_FLAGS = {
 const STAGE_START = {
   ruta3: 'map=ciudad_caudal&x=1&y=4&dir=4',
   garganta: 'map=garganta_albo&x=17&y=38&dir=8',
-  pilar: 'map=pilar_corriente&x=20&y=37&dir=8',
-  nucleo: 'map=pilar_corriente&x=20&y=12&dir=8&vars=starter:TURTWIG,gael_starter:LITTEN,b04_compuertas:15,b04_noria:1,b04_agua:6',
+  pilar: 'map=pilar_corriente_base&x=13&y=24&dir=8',
+  nucleo: 'map=pilar_corriente_nucleo&x=13&y=23&dir=8&vars=starter:TURTWIG,gael_starter:LITTEN,b04_compuertas:15,b04_noria:1,b04_agua:6',
   caudal: 'map=ruta_3&x=37&y=33&dir=6&fragments=2',
 };
 function stageUrl(stage) {
@@ -256,16 +256,16 @@ async function garganta(d) {
   await d.expectSaid(/Esta esclusa la puso mi tatarabuelo/, 'Leandro en la esclusa');
   // Baliza 3 junto a la puerta del Pilar: al retirarla, choque de Gael y Leandro.
   const clash = [...watch, { re: /Nadie te ha pedido nada/, name: 'choque_gael_leandro', delay: 300 }];
-  await d.interact(23, 5, 'up', { watch: clash });
-  if (!(await d.snapState()).flags.b04_baliza_3) await d.interact(23, 5, 'up', { watch: clash });
+  await d.interact(21, 5, 'up', { watch: clash });
+  if (!(await d.snapState()).flags.b04_baliza_3) await d.interact(21, 5, 'up', { watch: clash });
   await d.settle({ watch: clash });
   await d.expectSaid(/Nadie te ha pedido nada, chaval\./, 'la línea de Leandro');
   await d.expectSaid(/Por eso lo hago yo\./, 'la línea de Gael');
   await d.milestone('choque_y_puerta', needFlags('b04_baliza_3', 'b04_balizas_retiradas', 'b04_choque'));
   const st = await d.eval(() => window.__e2e.b04.story());
   if (st.beacons !== 3) throw new Error(`balizas en la mochila: ${st.beacons}`);
-  await d.walkTo(26, 2, { stopWhen: (s) => s.map === 'pilar_corriente' });
-  await d.until((s) => s.map === 'pilar_corriente' && s.ready, { what: 'entrar en el Pilar' });
+  await d.walkTo(26, 9, { stopWhen: (s) => s.map === 'pilar_corriente_base' });
+  await d.until((s) => s.map === 'pilar_corriente_base' && s.ready, { what: 'entrar en el piso 1' });
 }
 
 async function control(d, [x, y, face], phaseCheck, name, watch) {
@@ -274,6 +274,16 @@ async function control(d, [x, y, face], phaseCheck, name, watch) {
 }
 
 async function pilar(d) {
+  await d.settle();
+  await d.milestone('piso_1_entrenadores');
+  // Comprobamos la salida y el regreso antes de resolver la Escalera.
+  await d.walkTo(13, 25, { stopWhen: (s) => s.map === 'garganta_albo' });
+  await d.until((s) => s.map === 'garganta_albo' && s.ready, { what: 'salir del piso 1' });
+  await d.walkTo(26, 9, { stopWhen: (s) => s.map === 'pilar_corriente_base' });
+  await d.until((s) => s.map === 'pilar_corriente_base' && s.ready, { what: 'volver al piso 1' });
+  const baseWatch = [{ scene: 'BattleScene', name: 'combate_piso_1', delay: 3500 }];
+  await d.walkTo(13, 6, { watch: baseWatch, stopWhen: (s) => s.map === 'pilar_corriente' });
+  await d.until((s) => s.map === 'pilar_corriente' && s.ready, { what: 'subir al piso del puzzle' });
   await d.settle({ watch: [{ re: /ya veremos si sabes dónde pisas/, name: 'reto_leandro', delay: 200 }] });
   await d.expectSaid(/ya veremos si sabes dónde pisas/, 'el reto de Leandro');
   await d.milestone('pilar_reto', needFlags('b04_reto'));
@@ -304,10 +314,13 @@ async function pilar(d) {
 async function nucleo(d) {
   await d.settle();
   const watch = [{ scene: 'BattleScene', name: 'combate_leandro', delay: 4500 }, { re: /Trescientos años girando llaves/, name: 'verso_ii', delay: 300 }];
-  await d.walkTo(19, 15, { watch, stopWhen: (s) => s.flags.b04_leandro_vencido });
+  if ((await d.snapState()).map === 'pilar_corriente') {
+    await d.walkTo(20, 18, { stopWhen: (s) => s.map === 'pilar_corriente_nucleo' });
+    await d.until((s) => s.map === 'pilar_corriente_nucleo' && s.ready, { what: 'subir al piso del Guardián' });
+  }
   await d.settle({ watch });
   await d.milestone('leandro_vencido', needFlags('b04_leandro_vencido'));
-  await d.interact(19, 17, 'down', { watch });
+  await d.interact(13, 12, 'up', { watch });
   await d.settle({ watch });
   await d.expectSaid(/Trescientos años girando llaves… y el río solo necesitaba que alguien lo escuchara\./, 'la línea de Leandro');
   await d.expectSaid(/La segunda tabla gira donde el agua trabaja/, 'la inscripción (T02)');
@@ -316,8 +329,12 @@ async function nucleo(d) {
   if (!st.t02 || st.t02.step !== 2) throw new Error(`T02 sin segunda pista: ${JSON.stringify(st.t02)}`);
   if (!st.t03) throw new Error('T03 sin abrir');
   await d.milestone('pilar_restaurado', needFlags('p2_restored', 'verse_2', 'b04_inscripcion', 'b04_leandro_despedida'));
-  await d.walkTo(20, 38, { stopWhen: (s) => s.map === 'garganta_albo' });
-  if ((await d.snapState()).map !== 'garganta_albo') { await d.press('ArrowDown', 600); }
+  await d.walkTo(13, 25, { stopWhen: (s) => s.map === 'pilar_corriente' });
+  await d.until((s) => s.map === 'pilar_corriente' && s.ready, { what: 'bajar al piso del puzzle' });
+  await d.walkTo(20, 38, { stopWhen: (s) => s.map === 'pilar_corriente_base' });
+  if ((await d.snapState()).map !== 'pilar_corriente_base') { await d.press('ArrowDown', 600); }
+  await d.until((s) => s.map === 'pilar_corriente_base' && s.ready, { what: 'bajar al piso 1' });
+  await d.walkTo(13, 25, { stopWhen: (s) => s.map === 'garganta_albo' });
   await d.until((s) => s.map === 'garganta_albo' && s.ready, { what: 'salir a la Garganta' });
   await d.settle();
   await d.milestone('garganta_en_calma');

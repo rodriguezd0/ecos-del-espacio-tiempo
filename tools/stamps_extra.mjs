@@ -131,7 +131,24 @@ function processImage(image, db, { check }) {
   validateLayout(image);
   checkFreeRows(image, layout);
   const atlasFile = path.join(ATLAS_DIR, `${image}.png`);
-  const atlas = PNG.sync.read(fs.readFileSync(atlasFile));
+  let atlas = PNG.sync.read(fs.readFileSync(atlasFile));
+  const neededTiles = (layout.row + layout.rows) * 8;
+  const last = regularTileAtlasPos(FIRST_REGULAR_TILE + neededTiles - 1);
+  if (!check && last.y + T > atlas.height) {
+    const grown = new PNG({ width: atlas.width, height: last.y + T });
+    grown.data.fill(0);
+    atlas.data.copy(grown.data);
+    atlas = grown;
+  }
+  if (!check) {
+    for (const ts of Object.values(db.tilesets).filter((t) => t.image === image)) {
+      ts.tileCount = Math.max(ts.tileCount, neededTiles);
+      ts.atlasHeight = atlas.height;
+      for (const field of ['passages', 'priorities', 'terrainTags']) {
+        while (ts[field].length < FIRST_REGULAR_TILE + ts.tileCount) ts[field].push(0);
+      }
+    }
+  }
   const tiles = extraTiles(image);
   const problems = [];
   if (!check) for (const id of regionIds(layout)) clearTile(atlas, id);

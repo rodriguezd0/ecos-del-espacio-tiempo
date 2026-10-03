@@ -73,8 +73,8 @@ function paintWater(b) {
 }
 
 function paintCore(b) {
-  b.stamp('pilar_camara_nucleo', CORE.chamber[0], CORE.chamber[1]);
-  b.stamp('pilar_placa_unown', CORE.inscription[0], CORE.inscription[1]);
+  // El centro del puzzle es un rellano de subida; Guardián y pedestal están en el piso superior.
+  b.stamp('pilar_escalinata', 19, 17);
   for (const [x, y] of [[16, 15], [23, 15], [16, 20], [23, 20]]) b.stamp('pilar_columna', x, y);
 }
 

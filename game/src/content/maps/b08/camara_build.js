@@ -81,8 +81,7 @@ function paintLower(b) {
 function paintDecor(b) {
   for (const d of DECOR) b.stamp(d.stamp, d.x, d.y);
   // Cámara del núcleo: gran hexágono grabado y pedestal; antorchas en la pared.
-  b.stamp('pilar_camara_nucleo', SPOTS.pedestal.x - 2, 4);
-  b.stamp('pilar_pedestal', SPOTS.pedestal.x, SPOTS.pedestal.y - 1);
+  b.stamp('pilar_escalinata', SPOTS.pedestal.x - 1, SPOTS.pedestal.y - 1);
   for (const x of [6, 10]) b.stamp('antorcha', x, 2);
   // Escalinata del ala este a la galería inferior.
   b.stamp('pilar_escalinata', 31, 28);

@@ -8,7 +8,7 @@ import assert from 'node:assert/strict';
 import { GameState } from '../game/src/core/state.js';
 import { World } from '../game/src/world/world.js';
 import { buildMapNode } from '../tools/lib/map_node.mjs';
-import { RUTA5, MESETA, ANILLO } from '../game/src/content/maps/b06/layout.js';
+import { RUTA5, MESETA, P3_VERTICAL } from '../game/src/content/maps/b06/layout.js';
 
 const DV = { 2: [0, 1], 4: [-1, 0], 6: [1, 0], 8: [0, -1] };
 
@@ -75,7 +75,7 @@ test('objetos del bloque: todos tienen una casilla alcanzable', async () => {
   const cases = [
     ['ruta_5', R5west(), { erase: ['troncos_paso', 'tronco_rincon'] }],
     ['meseta_impulso', [MESETA.west.x + 2, MESETA.west.y0 + 1], { flags: ['b06_meseta_intro', 'b06_doble_ganado'] }],
-    ['anillo_vientos', [ANILLO.entry.x, ANILLO.entry.y], { flags: ['p3_restored'] }],
+    ['anillo_vientos_base', [P3_VERTICAL.entry.x, P3_VERTICAL.entry.y], { flags: ['p3_restored'] }],
   ];
   for (const [id, start, opts] of cases) {
     const r = await reach(id, start, opts);
@@ -83,4 +83,16 @@ test('objetos del bloque: todos tienen una casilla alcanzable', async () => {
     assert.ok(items.length > 0, `${id}: sin objetos`);
     for (const ev of items) assert.ok(canPick(r, ev.x, ev.y), `${id}: objeto ${ev.id} en (${ev.x},${ev.y}) inalcanzable`);
   }
+});
+
+test('P3: las nuevas plantas permiten volver abajo y la franja de Abril cubre todo paso al núcleo', async () => {
+  const start = [P3_VERTICAL.entry.x, P3_VERTICAL.entry.y];
+  const base = await reach('anillo_vientos_base', start);
+  assert.ok(base.has(P3_VERTICAL.up.x, P3_VERTICAL.up.y), 'se llega a las galerías');
+  assert.ok(base.has(P3_VERTICAL.down.x, P3_VERTICAL.down.y), 'salida a la Meseta');
+  const guarded = await reach('anillo_vientos_nucleo', start, { flags: ['b06_campanas'], block: P3_VERTICAL.challenge });
+  assert.ok(!canPick(guarded, P3_VERTICAL.pedestal.x, P3_VERTICAL.pedestal.y), 'se puede saltar el reto de Abril');
+  assert.ok(guarded.has(P3_VERTICAL.down.x, P3_VERTICAL.down.y), 'se puede salir antes de combatir');
+  const open = await reach('anillo_vientos_nucleo', start, { flags: ['b06_campanas', 'b06_abril_vencida'] });
+  assert.ok(canPick(open, P3_VERTICAL.pedestal.x, P3_VERTICAL.pedestal.y), 'núcleo tras la Guardiana');
 });

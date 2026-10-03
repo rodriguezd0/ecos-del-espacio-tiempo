@@ -1,8 +1,8 @@
 // Coordenadas del Archivo Hondo (B10, Pilar de la Memoria; docs/CAMPANA.md «Mazmorra: Archivo Hondo»): una espiral
-// descendente de SEIS estancias, sin plantas, en un solo mapa (tileset 11 + kit de Pilar, tinte sepia). Plataformas de
+// de cinco estancias de recuerdos en el segundo piso (tileset 11 + kit de Pilar, tinte sepia). Plataformas de
 // enlosado sobre el vacío; toda puerta entre estancias es un dintel con losa (o la puerta glífica) en un paso N–S.
 //   1 Suelo Olvidado (arriba izquierda) → 2 Dos Manos (arriba derecha) ↓ 3 Lectura (derecha) ↓ 4 Rollos (abajo)
-//   ↑ 5 Sala del Mural (izquierda) → 6 Cámara del núcleo (centro).
+//   ↑ 5 Sala del Mural (izquierda) → escalera al tercer piso, donde espera Olvido.
 // FUENTE ÚNICA para el mapa, los eventos, la lógica de los puzles y las pruebas. Módulo puro.
 
 export const W = 46;
@@ -98,6 +98,14 @@ export const ENTRY = Object.freeze({
   arrival: Object.freeze({ x: 4, y: 4, dir: 2 }),
   stairs: Object.freeze({ x: 3, y: 1 }), // pilar_escalinata 3×3
   exitTiles: Object.freeze([[3, 1], [4, 1], [5, 1]]),
+});
+
+/** Escaleras entre los recuerdos (piso 2) y la Guardiana (piso 3). */
+export const MEMORIA_STAIRS = Object.freeze({
+  up: Object.freeze({ x: 25, y: 11 }),
+  puzzleArrival: Object.freeze({ x: 25, y: 10, dir: 8 }),
+  down: Object.freeze({ x: 25, y: 7 }),
+  coreArrival: Object.freeze({ x: 25, y: 10, dir: 2 }),
 });
 
 /** Objetos del Archivo Hondo. */

@@ -193,3 +193,14 @@ de Ciudad Caudal: seguimos en el inicio, como máximo nivel 30.»
 lo que `species.json` pierde o desalinea las evoluciones con parámetro vacío (`Happiness`, `Trade`: Golbat, Buneary,
 Chansey, Cleffa, Pichu, Munchlax, Riolu, Azurill, Togepi, Pawmo, Kadabra, Graveler, Machoke, Haunter, Gurdurr, Eevee).
 Hay que conservar los vacíos al trocear en tripletas antes de implementar evoluciones.
+
+**X36 — Pilares verticales** (DECIDIDO por el creador, 26-09-2026; P1–P5 implementados el 03-10-2026).
+
+- Los Pilares se ven desde el exterior como columnas de piedra de tres pisos.
+- En P1–P5, primera planta con entrenadores, segunda con los puzzles originales y tercera con el Guardián y
+  el núcleo. Los entrenadores opcionales siguen siendo opcionales; equipos, niveles, células y recompensas se conservan.
+- P5 conserva el Archivo de papel en la primera planta; Olvido y la restauración pasan al piso superior.
+- Las partidas existentes conservan flags, derrotas y objetos recogidos; los guardados dentro de las antiguas
+  cámaras siguen teniendo un camino válido al núcleo.
+- P6 queda reservado a puzzles con habilidades de Zygarde, sin Pokémon ni Guardián. El reparto de P7–P10
+  sigue pendiente de la confirmación del creador recogida en `PENDIENTES.md`.

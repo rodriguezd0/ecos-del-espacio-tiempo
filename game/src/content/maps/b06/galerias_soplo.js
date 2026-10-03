@@ -9,7 +9,7 @@ import { galeriasEvents } from '../../events/b06_galerias.js';
 import { F } from '../../events/b06_common.js';
 import { GALERIAS_SOPLO } from '../../encounters/b06.js';
 import { pilarTone } from '../../stamps/pilar.js';
-import { GALERIAS, ANILLO } from './layout.js';
+import { GALERIAS, P3_VERTICAL } from './layout.js';
 
 const G = GALERIAS;
 const rect = (x0, y0, x1, y1) => {
@@ -87,6 +87,7 @@ export default {
   width: G.width,
   height: G.height,
   cave: true,
+  pillar: { id: 'P3', floor: 2 },
   bgm: 'Cueva',
   battleback: 'Acantilado',
   tone: pilarTone('P3'),
@@ -113,7 +114,7 @@ export default {
   },
 
   warps: [
-    { x: G.exitDoor.x, y: G.exitDoor.y, to: 'anillo_vientos', tx: ANILLO.mouthArrival.x, ty: ANILLO.mouthArrival.y, dir: ANILLO.mouthArrival.dir },
+    { x: G.exitDoor.x, y: G.exitDoor.y, to: 'anillo_vientos_base', tx: P3_VERTICAL.baseReturn.x, ty: P3_VERTICAL.baseReturn.y, dir: 2 },
   ],
 
   onEnter: async (ctx) => {

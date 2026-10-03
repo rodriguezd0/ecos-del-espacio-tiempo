@@ -7,14 +7,19 @@ import { MAPS } from '../maps/index.js';
 import { F, SPRITE, SPEAKER, MUSIC, GOLD, circleRaised, setActorsVisible, setClock, pause, lines } from './b21_common.js';
 import { EPILOGUE_TEXT, MONTAGE_CAPTIONS } from './b21_texts.js';
 import { CARGO } from '../maps/b21/layout.js';
+import { NUCLEO as UMBRAL } from '../maps/b02/ruinas_dintel_floors.js';
+import { CORE as CORRIENTE } from '../maps/b04/pilar_corriente_floors.js';
+import { P3_VERTICAL as IMPULSO } from '../maps/b06/layout.js';
+import { P4_VERTICAL as MASA } from '../maps/b08/layout.js';
+import { NUCLEO as MEMORIA } from '../maps/b10/hondo_layout.js';
 
 /** Tomas del montaje: Guardián de pie ante el núcleo de su Pilar, mirando arriba (casillas comprobadas en el mapa). */
 export const MONTAGE_SHOTS = Object.freeze([
-  Object.freeze({ key: 'casilda', map: 'explanada_umbral', x: 15, y: 11, core: [15, 8], player: [15, 14], sprite: SPRITE.casilda, emote: '…' }),
-  Object.freeze({ key: 'leandro', map: 'pilar_corriente', x: 19, y: 20, core: [19, 18], player: [19, 22], sprite: SPRITE.leandro, emote: '!' }),
-  Object.freeze({ key: 'abril', map: 'anillo_vientos', x: 21, y: 12, core: [21, 9], player: [21, 14], sprite: SPRITE.abril, emote: '♪' }),
-  Object.freeze({ key: 'fermin', map: 'camara_contrapesos', x: 8, y: 8, core: [8, 5], player: [8, 10], sprite: SPRITE.fermin, emote: '…' }),
-  Object.freeze({ key: 'olvido', map: 'archivo_hondo', x: 25, y: 21, core: [25, 19], player: [25, 23], sprite: SPRITE.olvido, emote: '♥' }),
+  Object.freeze({ key: 'casilda', map: 'ruinas_dintel_nucleo', x: UMBRAL.column.x, y: UMBRAL.column.y + 3, core: [UMBRAL.column.x, UMBRAL.column.y], player: [UMBRAL.column.x, UMBRAL.column.y + 5], sprite: SPRITE.casilda, emote: '…' }),
+  Object.freeze({ key: 'leandro', map: 'pilar_corriente_nucleo', x: CORRIENTE.x, y: CORRIENTE.y + 3, core: [CORRIENTE.x, CORRIENTE.y], player: [CORRIENTE.x, CORRIENTE.y + 5], sprite: SPRITE.leandro, emote: '!' }),
+  Object.freeze({ key: 'abril', map: 'anillo_vientos_nucleo', x: IMPULSO.pedestal.x, y: IMPULSO.pedestal.y + 3, core: [IMPULSO.pedestal.x, IMPULSO.pedestal.y], player: [IMPULSO.pedestal.x, IMPULSO.pedestal.y + 5], sprite: SPRITE.abril, emote: '♪' }),
+  Object.freeze({ key: 'fermin', map: 'camara_contrapesos_nucleo', x: MASA.pedestal.x, y: MASA.pedestal.y + 3, core: [MASA.pedestal.x, MASA.pedestal.y], player: [MASA.pedestal.x, MASA.pedestal.y + 5], sprite: SPRITE.fermin, emote: '…' }),
+  Object.freeze({ key: 'olvido', map: 'archivo_hondo_nucleo', x: MEMORIA.pedestal.x, y: MEMORIA.pedestal.y + 2, core: [MEMORIA.pedestal.x, MEMORIA.pedestal.y], player: [MEMORIA.pedestal.x, MEMORIA.pedestal.y + 4], sprite: SPRITE.olvido, emote: '♥' }),
 ]);
 
 /** Toma de los Clefairy en el jardín central de Villa Alba (de noche), si se levantó el Círculo (B17). */

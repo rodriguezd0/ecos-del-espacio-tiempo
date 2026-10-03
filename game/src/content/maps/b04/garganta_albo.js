@@ -6,6 +6,8 @@ import { zoneDefaults } from '../../services/zones.js';
 import { GARGANTA_ALBO } from '../../encounters/b04.js';
 import { gargantaEvents } from '../../events/b04_garganta.js';
 import { GRUTA_EXIT } from './gruta_albo.js';
+import { BASE } from './pilar_corriente_floors.js';
+import { paintPillarExterior } from '../../stamps/pilarVertical.js';
 import {
   W, H, rect, TERRACES, WALLS, POOL, RIVER, FALLS, ISLET, SLOPES, STAIRS, BRIDGE, PATH, SOUTH_EXIT, PILAR_DOOR,
   GRUTA, MILL, TALL_GRASS, LOWER_WOODS,
@@ -43,17 +45,15 @@ function paintWater(b) {
 function paintPaths(b) {
   b.paint('camino_tierra', PATH);
   for (const s of Object.values(SLOPES)) b.paint('grava', rect(...s));
-  b.stamp('escalera_terraza', STAIRS.pilar.x, STAIRS.pilar.y);
+  for (const stair of Object.values(STAIRS)) b.stamp('escalera_terraza', stair.x, stair.y);
   for (const g of TALL_GRASS) b.rect(null, ...g, 'hierba_alta');
 }
 
 /** Puerta del Pilar: dintel antiguo sobre la boca oscura de la roca, glifos y columnas. */
 function paintPilarDoor(b) {
-  b.stamp('boquete', PILAR_DOOR.mouth[0] + 0, PILAR_DOOR.mouth[1]);
-  b.stamp('pilar_dintel', PILAR_DOOR.dintel[0], PILAR_DOOR.dintel[1]);
-  for (const [x, y] of [[21, 2], [30, 2]]) b.stamp('pilar_columna', x, y);
-  b.stamp('pilar_glifo', 25, 4);
-  b.stamp('pilar_glifo_2', 27, 4);
+  paintPillarExterior(b, { centerX: PILAR_DOOR.warp.x, doorY: PILAR_DOOR.warp.y });
+  b.stamp('pilar_glifo', 25, 11);
+  b.stamp('pilar_glifo_2', 27, 12);
   b.stamp('pilar_monolito', 31, 1);
 }
 
@@ -80,7 +80,7 @@ function paintDetails(b) {
     ['roca_grande', 30, 34], ['roca_gris', 26, 29], ['roca_peque', 15, 33],
     ['roca_peque', 22, 21], ['guijarros', 22, 16], ['roca_gris', 17, 5],
     ['flores_blancas', 19, 29], ['flores_rosas', 28, 30], ['brotes', 16, 28], ['setas', 26, 17],
-    ['flores_blancas', 19, 12], ['brotes', 24, 10], ['macizo_flores', 29, 1], ['guijarros', 9, 33],
+    ['flores_blancas', 19, 12], ['brotes', 24, 10], ['macizo_flores', 19, 1], ['guijarros', 9, 33],
     ['roca_grande', 8, 18], ['brotes', 8, 22], ['roca_gris', 27, 24], ['guijarros', 18, 28],
   ]) b.stamp(s, x, y);
   b.stamp('cartel_ruta', 20, 37);
@@ -106,7 +106,7 @@ export default {
     paintDetails(b);
   },
   warps: [
-    { x: PILAR_DOOR.warp.x, y: PILAR_DOOR.warp.y, to: 'pilar_corriente', tx: 20, ty: 37, dir: 8 },
+    { x: PILAR_DOOR.warp.x, y: PILAR_DOOR.warp.y, to: 'pilar_corriente_base', tx: BASE.arrival.x, ty: BASE.arrival.y, dir: 8 },
     { x: GRUTA.warp.x, y: GRUTA.warp.y, to: 'gruta_albo', tx: GRUTA_EXIT.arrive.x, ty: GRUTA_EXIT.arrive.y, dir: GRUTA_EXIT.arrive.dir, dirTrigger: GRUTA.warp.dirTrigger },
   ],
   connections: [{ dir: 'south', to: 'ruta_3', offset: 8 }],

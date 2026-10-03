@@ -94,7 +94,7 @@ async function leandroSluice(ctx) {
 }
 
 function onTerrace(p) {
-  return p.y <= 5 && p.x >= 21 && p.x <= 30;
+  return p.y <= 5 && p.x >= 19 && p.x <= 32;
 }
 
 /** Choque de Gael y Leandro a la puerta del Pilar (CAMPANA B04 §3; Gael: «Ayuda»). Leandro abre la puerta. */
@@ -158,7 +158,7 @@ function doorEvents() {
   return [{
     id: 'puerta_pilar', x: PILAR_DOOR.warp.x, y: PILAR_DOOR.warp.y,
     pages: [{
-      when: (s) => !s.flag(F.clash), solid: true, trigger: 'action',
+      when: (s) => !s.flag(F.clash), solid: true, trigger: 'touch',
       script: async (ctx) => {
         await ctx.say('Una puerta de piedra bajo el dintel, con una cerradura en forma de rueda de esclusa. Está cerrada.');
       },

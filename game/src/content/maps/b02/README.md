@@ -2,7 +2,13 @@
 
 Guion: `docs/CAMPANA.md` B02 (+ §1.3–1.5, §2.3, §3.0, §3.1, §5.4, §6.2) · `docs/TABLILLAS.md` T01 (se abre aquí) ·
 `docs/POKEDEX_DISTRIBUCION.md` §7.3–7.4 · D07, D08, X06, X15. Coordenadas en casillas (x → derecha, y → abajo).
-**Fuentes únicas de coordenadas:** `villa_zaguan_layout.js`, `explanada_umbral_layout.js`, `ruinas_dintel_layout.js`.
+**Fuentes únicas de coordenadas:** `villa_zaguan_layout.js`, `explanada_umbral_layout.js`, `ruinas_dintel_layout.js`,
+`ruinas_dintel_floors.js` (pisos nuevos).
+
+Desde la decisión vertical del creador (26-09), el P1 tiene exactamente tres pisos. El primero reúne a los tres
+entrenadores opcionales; el segundo conserva las piedras, el Geodude y las células en sus coordenadas originales;
+el tercero contiene a Casilda y el núcleo. El ascenso al tercero exige la losa resuelta y la roca rota.
+La columna exterior tiene una puerta central y comparte arte y escalinatas con los demás Pilares.
 
 ## Mapas
 
@@ -14,7 +20,9 @@ Guion: `docs/CAMPANA.md` B02 (+ §1.3–1.5, §2.3, §3.0, §3.1, §5.4, §6.2) 
 | `zaguan_casa_vecina` | `zaguan_casa_vecina.js` | 13×11 | 4 | La vecina de las puertas (su marido dentro) |
 | `zaguan_casa_huerto` | `zaguan_casa_huerto.js` | 15×12 | 4 | Hortelana y su hijo |
 | `explanada_umbral` | `explanada_umbral.js` + `_layout.js` | 30×30 | 7 | Macizo de roca con la boca de la ruina, dintel exento, plaza enlosada, kit exterior de Pilar; camino de `camino_arena` (el mismo pincel que la calle de Zaguán: sin costura en la conexión) |
-| `ruinas_dintel` | `ruinas_dintel.js` + `_build.js` + `_layout.js` | 44×40 | 2 | Cinco salas en un nivel, kit de Pilar, `tone: pilarTone('P1')`, `dark` (luz del Core, 2 antorchas, tragaluz) |
+| `ruinas_dintel_base` | `ruinas_dintel_base.js` + `_floors.js` | 27×30 | 2 | Piso 1: Remo, Paco e Inés; entrada y escalera al puzzle |
+| `ruinas_dintel` | `ruinas_dintel.js` + `_build.js` + `_layout.js` | 44×40 | 2 | Piso 2: piedras y Geodude, `tone: pilarTone('P1')`, `dark` (Core, antorchas, tragaluz); salas orientales convertidas en rellanos |
+| `ruinas_dintel_nucleo` | `ruinas_dintel_nucleo.js` + `_floors.js` | 27×30 | 2 | Piso 3: Guardiana, columna hueca, Arca y restauración |
 
 Arte propio del bloque (PROVISIONAL, D30): `node tools/b02_assets.mjs [--preview]` → `assets/objects/` `piedra_dintel(_viva)`,
 `losa_dintel`, `tragaluz`, `arca_zygarde`, `banco_piedra`, `grieta_roca`.
@@ -28,8 +36,12 @@ Arte propio del bloque (PROVISIONAL, D30): `node tools/b02_assets.mjs [--preview
 | `villa_zaguan` casa de la vecina | 13,25 | `zaguan_casa_vecina` | 6,9 ↑ |
 | `villa_zaguan` casa de los hortelanos | 26,25 | `zaguan_casa_huerto` | 7,10 ↑ |
 | Interiores (felpudo, pulsar ↓) | — | `villa_zaguan` | casilla bajo su puerta, mirando ↓ |
-| `explanada_umbral` boca de la ruina | 14–16,9 (hueco oscuro tallado en la cara del macizo, detrás del dintel) | `ruinas_dintel` | 21,34 ↑ |
-| `ruinas_dintel` claridad de la entrada | 21,35 (empujar ↓) | `explanada_umbral` | 15,13 ↓ |
+| `explanada_umbral` puerta de la columna | 15,9 | `ruinas_dintel_base` | 13,24 ↑ |
+| `ruinas_dintel_base` escalera norte | 13,6 | `ruinas_dintel` | 21,34 ↑ |
+| `ruinas_dintel_base` salida sur | 13,25 | `explanada_umbral` | 15,13 ↓ |
+| `ruinas_dintel` claridad de la entrada | 21,35 (empujar ↓) | `ruinas_dintel_base` | 13,8 ↓ |
+| `ruinas_dintel` rellano oriental | 35,20 | `ruinas_dintel_nucleo` | 13,23 ↑ |
+| `ruinas_dintel_nucleo` escalera sur | 13,25 | `ruinas_dintel` | 35,22 ↓ |
 
 Las puertas de Exterior1 (y la claridad de la cueva) están sobre tiles **no pasables**: el warp salta al empujar contra
 ellos (cambio aditivo en `world/world.js#checkPlayerTouch`, como las puertas-evento de RMXP).
@@ -55,14 +67,17 @@ ellos (cambio aditivo en `world/world.js#checkPlayerTouch`, como las puertas-eve
 | Cámara de Geodude (comentario) | franja x 17–19, y 11 | `b02_dinteles` | `b02_camara_geodude`, sala 3 |
 | Sacar al Geodude (A mantenido) → roca | Geodude (3,7) desde (4,7) | — | `b02_geodude_libre`, `b02_roca_rota`, sala 4 |
 | Regalo del Geodude (nv 8) | tras la roca o hablarle en (8,8) | — | `b02_geodude_regalo` (si se acepta) |
-| Combate de la Guardiana | salida del túnel (28,5) o hablarle | `b02_roca_rota` | `b02_casilda_vencida` (+3 Pociones, Cuerda Huida), sala 5 |
+| Combate de la Guardiana | piso 3, automático al entrar o hablarle | `b02_roca_rota` | `b02_casilda_vencida` (+3 Pociones, Cuerda Huida), sala 5 |
 | Derrota → cura en la antesala | `ruinas_dintel` auto | `b02_casilda_derrota` | lo quita (Casilda cura: «Otra vez. Con cabeza.») |
-| Núcleo: Fragmento 1, Arca, verso I | columna hueca (35,20) desde (35,21) | `b02_casilda_vencida` | `p1_restored`, F01, `verse_1`, `ZYGARDECUBE`, `b02_arca_abierta`, `b02_nucleo` |
+| Núcleo: Fragmento 1, Arca, verso I | piso 3, columna hueca (13,11) desde (13,12) | `b02_casilda_vencida` | `p1_restored`, F01, `verse_1`, `ZYGARDECUBE`, `b02_arca_abierta`, `b02_nucleo` |
 | Casilda abre el atajo | tras el núcleo (o al volver) | `b02_nucleo` | `b02_atajo`, sala 6 |
 | Salida al atardecer | explanada auto | `b02_nucleo` y `!b02_salida` | reloj a las 18:30, `reachMilestone('run')` (10 %, `zyg_10`), `b02_gael_se_va`, `CLUENOTEBOOK`, `b02_libreta`, pista T01, `b02_salida`. Si el jugador llega por el este (p. ej. Cuerda Huida desde el Núcleo), un fundido lo lleva al pie del dintel (15,13) |
 | Casilda en casa | `casa_dintel` (9,7) | `b02_salida` | pista verbal de la célula más escondida de la comarca (CAMPANA §2.2): C024, mirador de la Ruta 1 tras la grava |
 
-Casilda es UN evento en las ruinas; su casilla depende de la sala (`b02_ruinas_casilda.js`, se recoloca en `onEnter`).
+Casilda tiene un evento por piso de guion, visible solo en el que le corresponde según `b02_casilda_sala`.
+Las partidas antiguas mantienen el mapa del puzzle y todos sus flags; las victorias de entrenadores se copian al
+piso 1 al entrar. Los antiguos espacios de Guardiana/núcleo siguen transitables para no encerrar partidas guardadas.
+El objeto oculto trasladado al tercer piso también conserva su self-switch anterior.
 
 ## Células (`events/b02_cells.js`)
 

@@ -29,7 +29,7 @@ import * as notes from '../game/src/content/events/b10_notes.js';
 import { mnemosEvents } from '../game/src/content/events/b10_mnemos.js';
 
 const B10_MAPS = ['aldea_mnemos', 'mnemos_centro', 'mnemos_herbolario', 'mnemos_casa_te', 'mnemos_casa_olvido',
-  'mnemos_casa_jacinta', 'mnemos_santuario', 'mnemos_archivo', 'archivo_hondo'];
+  'mnemos_casa_jacinta', 'mnemos_santuario', 'mnemos_archivo', 'archivo_hondo', 'archivo_hondo_nucleo'];
 const load = (f) => JSON.parse(fs.readFileSync(new URL(`../game/data/${f}`, import.meta.url), 'utf8'));
 const species = load('species.json');
 
@@ -231,10 +231,11 @@ test('Olvido: perder cura y devuelve a la antesala sin cambiar el punto de cura;
   s.setHealPoint('mnemos_centro', 9, 7, 8);
   const olvido = byId(nucleoEvents(), 'olvido_hondo');
   const calls = [];
-  let ctx = mockCtx(s, { battle: async () => 'lose', warp: async (...a) => { calls.push(a); } });
+  let ctx = mockCtx(s, { map: { id: 'archivo_hondo_nucleo' }, battle: async () => 'lose', warp: async (...a) => { calls.push(a); } });
   await olvido.pages[0].script(ctx);
   assert.ok(ctx.said.some((t) => /¡Existes! Eres una nota a pie de página que camina\./.test(t)));
   assert.equal(calls.length, 1);
+  assert.equal(calls[0][0], 'archivo_hondo_nucleo', 'el reintento permanece en el tercer piso');
   assert.ok(!s.flag(F.olvido));
   ctx = mockCtx(s, { battle: async (req) => { assert.equal(req.trainer, 'b10_olvido'); assert.ok(req.rules.noMoneyLoss); return 'win'; } });
   await olvido.pages[0].script(ctx);

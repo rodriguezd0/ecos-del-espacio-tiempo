@@ -11,7 +11,7 @@
 - **Costuras**: `tools/check_seams.mjs` (PNG en `tools/cache/seams/<A>__<dir>__<B>.png`: rojo = árbol partido,
   naranja = suelo que cambia de golpe, magenta = objeto cortado por el borde).
 
-Total: 209 mapas, 13 con avisos — 0 casillas de árbol cortado, 0
+Total: 218 mapas, 13 con avisos — 0 casillas de árbol cortado, 0
 stamps sobre árboles, 13 stamps sólidos pisando otro, 0 eventos dentro de árboles,
 322 casillas de copa sobre capa 1, 0 rocas de agua en tierra; 0/47 costuras con problemas.
 De los mapas con avisos, 13 solo tienen falsos positivos ya revisados (`tools/qa_maps_notes.mjs`; «(rev.)» en la tabla).

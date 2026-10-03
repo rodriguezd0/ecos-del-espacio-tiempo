@@ -1,13 +1,13 @@
 // Construcción del Archivo Hondo (InteriorTorre, tileset 11, con el kit común de Pilar; el tinte sepia lo pone el
 // mapa). Plataformas de enlosado antiguo sobre el vacío unidas en espiral; estanterías y vitrinas de archivo en los
 // bordes, columnas, glifos y aristas; losas de recuerdo (pilar_losa_eco) donde aparecen los ecos-custodios; dinteles
-// en cada paso entre estancias; la cámara de núcleo en el centro. El Suelo Olvidado no tiene tiles: es el vacío
+// en cada paso entre estancias; la cámara del núcleo se construye en el tercer piso. El Suelo Olvidado no tiene tiles: es el vacío
 // que se pisa (casillas sin pintar = transitables y negras). Módulo puro.
-import { FLOORS, SUELO, MANOS, LECTURA, ROLLOS, MURAL, NUCLEO, ENTRY, rectCells } from './hondo_layout.js';
+import { FLOORS, SUELO, MANOS, LECTURA, ROLLOS, MURAL, NUCLEO, ENTRY, MEMORIA_STAIRS, rectCells } from './hondo_layout.js';
 
 function paintFloors(b) {
   const cells = [];
-  for (const r of Object.values(FLOORS)) cells.push(...rectCells(r));
+  for (const [name, r] of Object.entries(FLOORS)) if (name !== 'nucleo') cells.push(...rectCells(r));
   const seen = new Set();
   const uniq = cells.filter(([x, y]) => (seen.has(`${x},${y}`) ? false : (seen.add(`${x},${y}`), true)));
   b.paint('pilar_enlosado', uniq);
@@ -115,5 +115,18 @@ export function buildHondo(b) {
   paintLectura(b);
   paintRollos(b);
   paintMural(b);
+  const s = MEMORIA_STAIRS.up;
+  b.stamp('pilar_escalinata', s.x - 1, s.y - 1);
+}
+
+/** Tercer piso: conserva las posiciones del combate y del núcleo de las partidas anteriores. */
+export function buildMemoriaNucleo(b) {
+  b.fill(0, 'vacio');
+  b.paint('pilar_enlosado', [
+    ...rectCells({ x: 24, y: 6, w: 3, h: 5 }),
+    ...rectCells(FLOORS.antesala), ...rectCells(FLOORS.nucleo),
+  ]);
   paintNucleo(b);
+  const s = MEMORIA_STAIRS.down;
+  b.stamp('pilar_escalinata', s.x - 1, s.y - 1);
 }

@@ -182,13 +182,17 @@ No se usan «Aldea Glífica» (su función la cumple el Santuario de los Glifos 
 
 ### 1.5 Pilares y lugares de trama
 
+Decisión posterior del creador (26-09; X36, implementada el 03-10): P1–P5 son columnas verticales de tres pisos.
+La primera planta reúne a los entrenadores, la segunda conserva los puzzles y la tercera contiene al Guardián
+y al núcleo. Este reparto sustituye las descripciones antiguas de una sola planta en los bloques de abajo.
+
 | Pilar | Lugar | TS | Estructura | Acceso | Custodia / presencia |
 |---|---|---|---|---|---|
-| P1 Umbral | Ruinas del Dintel, junto a Villa Zaguán | 2 + 7 (+ kit de Pilar) | Explanada 30×30 y 5 salas en un solo nivel | Ninguno | Guardiana **Casilda Roquer** |
-| P2 Corriente | Garganta del Albo | 15 | «Escalera de Estanques» 40×40 y núcleo | Correr | Guardián **Leandro Alcántara** |
-| P3 Impulso | Anillo de los Vientos, Meseta | 1 + 2 | Anillo exterior y 3 galerías | Embestida (y vado de P2) | Guardiana **Abril Céspedes** |
-| P4 Masa | Cerro Plomo, Dunas de Ceniza | 2 | Cámara de los Contrapesos (40×35) y núcleo | Terreno (y P3) | Guardián **Fermín Galena** |
-| P5 Memoria | Archivo Hondo, Aldea Mnemos | 11 + 9 | Espiral de 6 estancias (sin plantas) | Terreno (Marisma) y P4 | Guardiana **Olvido Arrieta** |
+| P1 Umbral | Ruinas del Dintel, junto a Villa Zaguán | 2 + 7 (+ kit de Pilar) | 3 pisos: entrenadores → dinteles y Geodude → Casilda y núcleo | Ninguno | Guardiana **Casilda Roquer** |
+| P2 Corriente | Garganta del Albo | 15 | 3 pisos: entrenadores → Escalera de Estanques → Leandro y núcleo | Correr | Guardián **Leandro Alcántara** |
+| P3 Impulso | Anillo de los Vientos, Meseta | 1 + 2 | 3 pisos: entrenadores → galerías y campanas → Abril y núcleo | Embestida (y vado de P2) | Guardiana **Abril Céspedes** |
+| P4 Masa | Cerro Plomo, Dunas de Ceniza | 2 | 3 pisos: entrenadores → Cámara de los Contrapesos → Fermín y núcleo | Terreno (y P3) | Guardián **Fermín Galena** |
+| P5 Memoria | Archivo Hondo, Aldea Mnemos | 4 + 11 + 9 | 3 pisos: Archivo de papel y entrenadores → cinco estancias de recuerdos → Olvido y núcleo | Terreno (Marisma) y P4 | Guardiana **Olvido Arrieta** |
 | P6 Invertido | Monte del Portal → Mundo Distorsión | 14 + fondo MundoDistorsion + fog `portal` | 3 secciones y núcleo | Trepar | Nadie; la sombra de Giratina cruza una vez |
 | P7 Ecos | Ruinas de Antea, Arrecife del Eco | 15 + capas | 4 salas × 3 capas temporales | Buceo | Bramaluna Alfa (dominante, no guardiana) |
 | P8 Alma | Santuario del Alma, Lagos del Alma | 11 + 1 | Centro y 3 alas | Nadar (y P7) | Uxie, Mesprit y Azelf |
@@ -1499,4 +1503,3 @@ La base es la propuesta «narrativa». Se aplicaron todas las correcciones de lo
   Senda del Origen en 9 tramos-eco; Trío motivado por el Pacto y por el Anillo de Captación, con el aval de Zygarde;
   Círculo del Jardín de Villa Alba; hito de la Forma Completa con el puente de hielo; medidor de la burbuja de Buceo;
   combates de Gael que no bloquean; Mamá teje el Atrapasueños.
-

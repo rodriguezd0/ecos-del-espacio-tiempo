@@ -17,7 +17,7 @@ export const ROCK = Object.freeze({ x: 8, y: 0, w: 15, h: 10 });
 export const EXPLANADA_DOOR = Object.freeze({
   mouth: { x: 14, y: 8, w: 3 },
   dintel: { x: 13, y: 10 },
-  warps: [{ x: 14, y: 9 }, { x: 15, y: 9 }, { x: 16, y: 9 }],
+  warps: [{ x: 15, y: 9 }],
   out: { x: 15, y: 13, dir: 2 }, // llegada al salir de las ruinas (al pie del dintel, con el Core a la vista)
 });
 

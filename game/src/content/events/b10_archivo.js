@@ -1,13 +1,14 @@
 // Eventos del Archivo de papel (mnemos_archivo; docs/CAMPANA.md B10 y §5.4 «P5: Extracción de información: copian el
 // Archivo; se llevan copias (ambigüedad moral)»; §5.5 escalón 5: el informe con el nombre tachado):
 //   · Antes del P5: dos técnicos del Consorcio escanean las páginas (entrenadores) y, la primera vez que se entra con
-//     Olvido, Casia hace su cameo sin combate: «Nosotros también salvamos lo que se pierde.» Olvido baja «por su camino».
+//     Olvido, Casia hace su cameo sin combate: «Nosotros también salvamos lo que se pierde.» Olvido sube «por su camino».
 //   · Tras el P5: Genesis se ha ido con sus copias; la tinta ha vuelto a todas las páginas menos a un nombre. Olvido
 //     enseña el Informe del incidente de la Laguna Clara: «Los tachones también son memoria.» Nadie dice un nombre.
 //     Entrega la Piedra Espíritu (ODDKEYSTONE) para la Losa del Olvido.
 import { F, SPEAKER, SPRITE, lines, eventById, when, byGender } from './b10_common.js';
 import { trainerUntil } from './b06_common.js';
-import { ARCHIVO_ROOM as A } from '../maps/b10/archivo_layout.js';
+import { ARCHIVO_ROOM as A, ARCHIVO_TRAINERS } from '../maps/b10/archivo_layout.js';
+import { hondoTrainerEvents } from './b10_hondo.js';
 
 export const ARCHIVO_TEXT = Object.freeze({
   shelfFaded: 'Legajos y cuadernos. Las páginas están casi en blanco: la tinta se ha ido quedando en sombras.',
@@ -54,8 +55,8 @@ async function casiaScene(ctx) {
   if (olvido) ctx.face(olvido, ctx.directionTo(olvido, ctx.player));
   await lines(ctx, SPEAKER.olvido, [
     '…Fascinante. Hasta cuando mienten, apuntan bien las fechas.',
-    'La escalera del fondo baja al Archivo Hondo. Yo bajo por mi camino, que no se enseña.',
-    'Te espero abajo, donde duerme la piedra. Si llegas.',
+    'La escalera del fondo sube a los recuerdos del Archivo Hondo. Yo subo por mi camino, que no se enseña.',
+    'Te espero en lo alto, donde duerme la piedra. Si llegas.',
   ]);
   if (olvido) {
     await ctx.move(olvido, ['up', 'up', 'up', 'left', 'left', 'left', 'left'], { through: true, speed: 3.5 });
@@ -154,6 +155,14 @@ export function archivoEvents() {
     },
     { id: 'escena_informe', x: 0, y: 1, trigger: 'auto', when: when({ all: [F.restored], none: [F.informe] }), script: informeScene },
     ...genesisTrainers(),
+    ...hondoTrainerEvents(ARCHIVO_TRAINERS),
     ...furnitureEvents(),
   ];
+}
+
+export function archivoOnEnter(ctx) {
+  for (const ev of hondoTrainerEvents(ARCHIVO_TRAINERS)) {
+    if (ctx.state.selfSwitch('archivo_hondo', ev.id)) ctx.state.setSelfSwitch('mnemos_archivo', ev.id);
+  }
+  ctx.requestRefresh?.();
 }

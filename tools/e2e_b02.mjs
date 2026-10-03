@@ -37,8 +37,8 @@ const STARTS = {
     url: `${BASE}/?scene=map&map=ruinas_dintel&x=21&y=34&dir=8&party=TURTWIG:15&flags=${[...B01_FLAGS, 'b02_centro_tutorial', 'b02_gael_espera', 'b02_casilda_acompana'].join(',')}${COMMON.replace('&vars=', '&vars=b02_casilda_sala:1,')}&zcells=9`,
   },
   nucleo: {
-    map: 'ruinas_dintel',
-    url: `${BASE}/?scene=map&map=ruinas_dintel&x=35&y=21&dir=8&party=TURTWIG:16&flags=${[...B01_FLAGS, 'b02_centro_tutorial', 'b02_gael_espera', 'b02_casilda_acompana',
+    map: 'ruinas_dintel_nucleo',
+    url: `${BASE}/?scene=map&map=ruinas_dintel_nucleo&x=13&y=12&dir=8&party=TURTWIG:16&flags=${[...B01_FLAGS, 'b02_centro_tutorial', 'b02_gael_espera', 'b02_casilda_acompana',
       'b02_antesala', 'b02_galeria', 'b02_dinteles', 'b02_camara_geodude', 'b02_geodude_libre', 'b02_roca_rota', 'b02_casilda_vencida',
       'b02_piedra_alba_viva', 'b02_piedra_agua_viva', 'b02_piedra_entrada_viva'].join(',')}${COMMON.replace('&vars=', '&vars=b02_casilda_sala:5,')}&zcells=12`,
   },
@@ -89,8 +89,15 @@ async function explanada(d) {
   ] });
   await d.expectSaid(/Esto brillaba en el patio/, 'C009 de Casilda');
   await d.milestone('casilda_acompana', (s) => need(flag(s, 'b02_casilda_acompana') && s.cells.includes('cell_zaguan_2') && s.cells.length === 7, `células ${s.cells.length}`));
-  await d.walkTo(15, 9, { stopWhen: (s) => s.map === 'ruinas_dintel' });
-  await d.until((s) => s.map === 'ruinas_dintel' && s.ready, { what: 'entrar en las ruinas' });
+  await d.walkTo(15, 9, { stopWhen: (s) => s.map === 'ruinas_dintel_base' });
+  await d.until((s) => s.map === 'ruinas_dintel_base' && s.ready, { what: 'entrar en el piso de entrenadores' });
+  await d.settle();
+  await d.milestone('piso_1_entrenadores');
+  // Cada escalera se puede desandar sin rebote; después subimos para conservar el recorrido completo.
+  await d.exitTo('explanada_umbral');
+  await d.walkTo(15, 9, { stopWhen: (s) => s.map === 'ruinas_dintel_base' });
+  await d.until((s) => s.map === 'ruinas_dintel_base' && s.ready, { what: 'volver al piso 1' });
+  await d.exitTo('ruinas_dintel');
 }
 
 // ───────────────────────────── Ruinas: antesala y galería ─────────────────────────────
@@ -114,8 +121,15 @@ async function antesalaYGaleria(d) {
     const face = { 4: 'left', 6: 'right' }[st.from.dir];
     await d.walkTo(st.from.x, st.from.y, { face });
     for (let i = 0; i < presses; i++) {
-      await d.press('KeyZ', 300);
-      await d.settle({ watch: [{ re: /Eso no lo había hecho nunca/, name: 'primera_ranura', delay: 100 }] });
+      const before = await d.eval((id) => window.__e2e.engine.state.var(`b02_${id}`, 8), name);
+      // Girar para mirar la piedra todavía ocupa unos fotogramas. Solo repetimos A si no cambió su orientación.
+      for (let retry = 0; retry < 3; retry++) {
+        await d.until((s) => !s.playerBusy && !s.busy, { what: 'quieto ante la piedra' });
+        await d.press('KeyZ', 300);
+        await d.settle({ watch: [{ re: /Eso no lo había hecho nunca/, name: 'primera_ranura', delay: 100 }] });
+        const after = await d.eval((id) => window.__e2e.engine.state.var(`b02_${id}`, 8), name);
+        if (after !== before || flag(await d.snap(), `b02_${name}_viva`)) break;
+      }
       await d.turn(face);
     }
     const s = await d.snap();
@@ -156,9 +170,12 @@ async function geodude(d) {
 
 async function guardiana(d) {
   // Derrota a propósito: reaparece en la antesala y Casilda cura («Otra vez. Con cabeza.»), sin perder nada.
-  await d.walkTo(27, 5);
+  await d.walkTo(34, 21);
+  await d.step(6);
   await d.eval(() => window.__e2e.setParty('MAGIKARP:2'));
-  await d.step(6); // la salida del túnel: Casilda te detiene
+  // Un paso concreto activa la escalera. El destino se atiende antes de intentar caminar otra vez: si se pierde,
+  // se vuelve a otro mapa y el conductor no debe seguir buscando la escalera de la partida anterior.
+  await d.step(8);
   await d.settle({ watch: [{ scene: 'BattleScene', name: 'combate_casilda', delay: 4000 }, { re: /Otra vez\. Con cabeza\./, name: 'casilda_cura', delay: 200 }] });
   await d.expectSaid(/que sea por alguien capaz de defenderlo/, 'el reto de la Guardiana');
   await d.expectSaid(/Otra vez\. Con cabeza\./, 'la cura tras perder');
@@ -168,10 +185,11 @@ async function guardiana(d) {
   let potions = 0;
   for (let attempt = 1; attempt <= 3; attempt++) {
     await d.eval(() => window.__e2e.setParty('TURTWIG:16,GEODUDE:10'));
-    await d.walkTo(27, 5); // por el camino pueden saltar los entrenadores que quedaban
+    await d.walkTo(34, 21);
+    await d.step(6);
     await d.eval(() => window.__e2e.setParty('TURTWIG:16,GEODUDE:10')); // a PS completos ante la Guardiana
     potions = (await d.snap()).b02.potions;
-    await d.step(6);
+    await d.step(8);
     await d.settle({ watch: [{ scene: 'BattleScene', name: `combate_casilda_${attempt + 1}`, delay: 5000 }] });
     if (flag(await d.snap(), 'b02_casilda_vencida')) break;
     console.log(`  (derrota ${attempt} del piloto automático: Casilda cura y se reintenta)`);
@@ -184,7 +202,7 @@ async function guardiana(d) {
 
 async function nucleo(d) {
   await d.settle();
-  await d.walkTo(35, 21, { face: 'up' });
+  await d.walkTo(13, 12, { face: 'up' });
   await d.wait(800);
   await d.press('KeyZ', 400);
   await d.until((s) => s.busy || s.top !== 'MapScene', { what: 'la columna hueca responde' });
@@ -199,10 +217,12 @@ async function nucleo(d) {
 }
 
 async function salida(d) {
+  await d.exitTo('ruinas_dintel');
   await d.walkTo(34, 29);
   await d.walkTo(21, 34);
   await d.hold('ArrowDown', 400); // la claridad de la salida: empujar contra ella
-  await d.until((s) => s.map === 'explanada_umbral' && s.ready, { what: 'salir a la explanada' });
+  await d.until((s) => s.map === 'ruinas_dintel_base' && s.ready, { what: 'bajar al piso 1' });
+  await d.exitTo('explanada_umbral');
   await d.settle({ timeout: 300000, watch: [
     { re: /Forma 10/, name: 'forma_10', delay: 300 },
     { re: /responde a un niño/, name: 'consorcio', delay: 200 },

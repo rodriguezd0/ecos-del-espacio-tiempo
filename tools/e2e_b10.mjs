@@ -11,7 +11,7 @@
 //   Espíritu → Mnemos sin niebla: el camino del norte abierto y el risco trepado.
 // Capturas en tools/cache/screens/e2e_b10_<nn>_<hito>.png y transcripción en e2e_b10_dialogos.txt.
 // Uso: node tools/e2e_b10.mjs [--base=http://localhost:8080] [--headed] [--no-retry] [--from=mnemos|archivo|hondo|mural]
-//      [--gender=F]
+//      [--through=archivo|hondo|manos|lectura|rollos|mural|olvido|nucleo|salida] [--gender=F]
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -20,7 +20,7 @@ import { installHelpers } from './e2e_b01_page.mjs';
 import { installB10Helpers } from './e2e_b10_page.mjs';
 import { NPC, BUILDINGS, BAMBOO, RISCO, EXITS, FOG_WALL_Y, INTERIOR_ENTRIES } from '../game/src/content/maps/b10/mnemos_layout.js';
 import { ARCHIVO_ROOM } from '../game/src/content/maps/b10/archivo_layout.js';
-import { SUELO, MANOS, LECTURA, ROLLOS, MURAL, NUCLEO } from '../game/src/content/maps/b10/hondo_layout.js';
+import { SUELO, MANOS, LECTURA, ROLLOS, MURAL, NUCLEO, MEMORIA_STAIRS, ENTRY } from '../game/src/content/maps/b10/hondo_layout.js';
 import {
   GLYPH_SEQUENCE, DOOR_GLYPHS, SCROLL_SEQUENCE, SCROLL_COLORS, LEVER_TARGET, LEVER_START,
 } from '../game/src/content/events/b10_hondo_logic.js';
@@ -55,6 +55,7 @@ const STARTS = {
   mural: entry({ map: 'archivo_hondo', x: '7', y: '21', dir: '8', flags: `${BASE_FLAGS},${HONDO_FLAGS},b10_suelo,b10_manos,b10_lectura,b10_rollos`, zcells: '46' }),
 };
 const FROM = (argv.find((a) => a.startsWith('--from=')) || '--from=mnemos').slice(7);
+const THROUGH = (argv.find((a) => a.startsWith('--through=')) || '--through=salida').slice(10);
 if (!STARTS[FROM]) throw new Error(`--from desconocido: ${FROM} (${Object.keys(STARTS).join(', ')})`);
 
 // ───────────────────────────── Conductor ─────────────────────────────
@@ -324,12 +325,23 @@ async function archivo(d) {
   await d.enterDoor(BUILDINGS.archivo.door, 'mnemos_archivo');
   await d.settle({ watch });
   await d.expectSaid(/Nosotros también salvamos lo que se pierde\./, 'el cameo de Casia');
-  await d.expectSaid(/Te espero abajo, donde duerme la piedra/, 'Olvido baja por su camino');
+  await d.expectSaid(/Te espero en lo alto, donde duerme la piedra/, 'Olvido sube por su camino');
   await d.milestone('casia', (s) => (s.flags.b10_casia && s.flags.b10_olvido_baja ? null : 'sin cameo'));
-  // La escalera se baja entrando por la izquierda (escalera_bajar_der).
+  // Escalera de la primera planta a los recuerdos del segundo piso.
   await d.walkTo(ARCHIVO_ROOM.stairsWarp.x - 1, ARCHIVO_ROOM.stairsWarp.y, { face: 'right', watch });
   await d.step(6);
-  await d.until((s) => s.map === 'archivo_hondo' && s.ready, { timeout: 15000, what: 'bajar al Archivo Hondo' });
+  await d.until((s) => s.map === 'archivo_hondo' && s.ready, { timeout: 15000, what: 'subir a los recuerdos del Archivo Hondo' });
+  await d.settle();
+  // Volver antes de resolver los recuerdos comprueba la llegada nueva junto a la escalera del piso 1.
+  const [x, y] = ENTRY.exitTiles[1];
+  await d.walkTo(x, y);
+  await d.step(8);
+  await d.until((s) => s.map === 'mnemos_archivo' && s.ready, { timeout: 15000, what: 'bajar al Archivo de papel' });
+  await d.settle();
+  await d.milestone('regreso_piso_1', (s) => (s.x === ARCHIVO_ROOM.stairsArrival.x && s.y === ARCHIVO_ROOM.stairsArrival.y ? null : `llegada (${s.x},${s.y})`));
+  await d.walkTo(ARCHIVO_ROOM.stairsWarp.x - 1, ARCHIVO_ROOM.stairsWarp.y, { face: 'right', watch });
+  await d.step(6);
+  await d.until((s) => s.map === 'archivo_hondo' && s.ready, { timeout: 15000, what: 'volver al segundo piso' });
   await d.settle();
 }
 
@@ -433,6 +445,9 @@ async function mural(d) {
 }
 
 async function olvido(d) {
+  await d.walkTo(MEMORIA_STAIRS.up.x, MEMORIA_STAIRS.up.y, { stopWhen: (s) => s.map === 'archivo_hondo_nucleo' });
+  await d.until((s) => s.map === 'archivo_hondo_nucleo' && s.ready, { timeout: 15000, what: 'subir al tercer piso' });
+  await d.settle();
   const watch = [
     { re: /nota a pie de página/, name: 'olvido_existes', delay: 200 },
     { scene: 'BattleScene', name: 'combate_olvido', delay: 4500 },
@@ -523,7 +538,9 @@ async function main() {
     const stages = [['mnemos', mnemos], ['notas', notes], ['archivo', archivo], ['hondo', suelo], ['manos', manos],
       ['lectura', lectura], ['rollos', rollos], ['mural', mural], ['olvido', olvido], ['nucleo', nucleo], ['salida', salida]];
     const first = { mnemos: 0, archivo: 2, hondo: 3, mural: 7 }[FROM];
-    for (const [, run] of stages.slice(first)) await run(d);
+    const last = stages.findIndex(([name]) => name === THROUGH);
+    if (last < first) throw new Error(`--through debe ser una etapa desde ${FROM} (${stages.slice(first).map(([name]) => name).join(', ')})`);
+    for (const [, run] of stages.slice(first, last + 1)) await run(d);
     const fatal = errors.filter((e) => /pageerror|http 5/.test(e));
     if (fatal.length) throw new Error(`errores de página:\n${fatal.join('\n')}`);
   } catch (err) {
@@ -540,7 +557,7 @@ async function main() {
     console.log(`✖ ${failed.message}`);
     process.exitCode = 1;
   } else {
-    console.log('✔ Bloque 10 completo de principio a fin.');
+    console.log(`✔ Recorrido del Bloque 10 completado (${FROM} → ${THROUGH}).`);
   }
 }
 

@@ -13,7 +13,7 @@ import assert from 'node:assert/strict';
 import { GameState } from '../game/src/core/state.js';
 import { World } from '../game/src/world/world.js';
 import { buildMapNode } from '../tools/lib/map_node.mjs';
-import { ESTRATO, MINA, HONDA, DUNAS, DUNAS_CUEVA, CERRO } from '../game/src/content/maps/b08/layout.js';
+import { ESTRATO, MINA, HONDA, DUNAS, DUNAS_CUEVA, CERRO, P4_VERTICAL } from '../game/src/content/maps/b08/layout.js';
 import { CELL, CAMARA_W, CAMARA_H, SPOTS, SOLID_EVENTS, cellAt } from '../game/src/content/events/b08_balance_logic.js';
 import { B08_CELLS } from '../game/src/content/events/b08_cells.js';
 import { F, V } from '../game/src/content/events/b08_common.js';
@@ -229,7 +229,7 @@ test('Cámara: el mapa coincide casilla a casilla con el trazado del puzle (tamb
   }
 });
 
-test('Cámara: a pie no se llega al ala este ni abajo; montado, sí; el núcleo solo tras la Balanza y Fermín', async () => {
+test('Cámara: a pie no se llega al ala este ni abajo; montado, sí; la subida solo tras la Balanza', async () => {
   const start = [SPOTS.entry.x, SPOTS.entry.y];
   const c039 = B08_CELLS.find((c) => c.code === 'C039');
   const c040 = B08_CELLS.find((c) => c.code === 'C040');
@@ -249,6 +249,24 @@ test('Cámara: a pie no se llega al ala este ni abajo; montado, sí; el núcleo 
   const solved = { [V.puzzle]: { pieces: {}, holes: [], plate: true, solved: true } };
   const done = reachFrom(await worldOf('camara_contrapesos', { flags: [F.balance, F.fermin], vars: solved }), start);
   assert.ok(done.has(SPOTS.pedestalFront.x, SPOTS.pedestalFront.y), 'tras la Balanza y Fermín no se llega al núcleo');
+});
+
+test('P4: base transitable y el Guardián cubre todos los pasos al núcleo del tercer piso', async () => {
+  const start = [P4_VERTICAL.entry.x, P4_VERTICAL.entry.y];
+  const base = await worldOf('camara_contrapesos_base');
+  const r = reachFrom(base, start);
+  assert.ok(r.has(P4_VERTICAL.up.x, P4_VERTICAL.up.y));
+  assert.ok(r.has(P4_VERTICAL.down.x, P4_VERTICAL.down.y));
+  assertEverythingReachable(base, r, 'Base', { minItems: 0 });
+  assert.deepEqual(traps(r), []);
+  const guarded = await worldOf('camara_contrapesos_nucleo', { flags: [F.balance] });
+  // Las franjas activas disparan el combate; al bloquearlas no existe ningún camino alternativo.
+  for (const [x, y] of P4_VERTICAL.challenge) guarded.world.events.push({ x, y, erased: false, through: false, solid: true, at: (cx, cy) => x === cx && y === cy });
+  const closed = reachFrom(guarded, start);
+  assert.ok(!touchable(closed, P4_VERTICAL.pedestal.x, P4_VERTICAL.pedestal.y));
+  assert.ok(closed.has(P4_VERTICAL.down.x, P4_VERTICAL.down.y));
+  const open = reachFrom(await worldOf('camara_contrapesos_nucleo', { flags: [F.balance, F.fermin] }), start);
+  assert.ok(touchable(open, P4_VERTICAL.pedestal.x, P4_VERTICAL.pedestal.y));
 });
 
 test('Cámara: sin trampas combinando a pie y montado (se monta y desmonta fuera de la arena)', async () => {

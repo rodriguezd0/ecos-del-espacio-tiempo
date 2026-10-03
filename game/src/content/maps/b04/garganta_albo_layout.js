@@ -50,7 +50,7 @@ export const WHIRLPOOL = Object.freeze({ x: 13, y: 9 });
 
 /** Cuestas de grava (Correr) y escaleras de terraza. */
 export const SLOPES = Object.freeze({ g1: [23, 23, 3, 3], repisa: [7, 23, 2, 3] });
-export const STAIRS = Object.freeze({ pilar: { x: 27, y: 6 } });
+export const STAIRS = Object.freeze({ pilar: { x: 30, y: 6 }, baliza: { x: 20, y: 6 } });
 /**
  * Puente de tablones de la garganta baja hacia la orilla oeste. La Ruta 3 solo cubre el sur de x ≥ 8: para que la
  * cámara nunca enseñe el vacío de su esquina suroeste, la orilla oeste y el puente quedan por encima de y 34 y el
@@ -66,14 +66,15 @@ export const PATH = Object.freeze([
   ...rect(23, 26, 3, 4), // pie de la cuesta G1
   ...rect(23, 15, 3, 8), // cima de G1
   ...rect(15, 13, 14, 2), // hacia la esclusa
-  ...rect(27, 9, 3, 4), // pie de la escalera del Pilar
-  ...rect(22, 1, 8, 4), // explanada de la puerta
+  ...rect(27, 9, 5, 4), // escalera lateral y acceso al pie de la columna
+  ...rect(20, 9, 3, 4), // acceso a la baliza, al otro lado de la columna
+  ...rect(19, 1, 4, 5), ...rect(30, 1, 3, 5), ...rect(24, 10, 7, 2),
   ...rect(14, 31, 2, 2), ...rect(7, 29, 3, 5), // puente y orilla oeste
 ]);
 
 /** Salida sur (a la Ruta 3) y entrada del Pilar (warp en la boca, bajo el dintel). */
 export const SOUTH_EXIT = Object.freeze({ y: H - 1, x0: 16, x1: 19 });
-export const PILAR_DOOR = Object.freeze({ dintel: [24, 0], mouth: [24, 0], warp: { x: 26, y: 2 }, arrive: { x: 26, y: 3, dir: 2 } });
+export const PILAR_DOOR = Object.freeze({ warp: { x: 26, y: 9 }, arrive: { x: 26, y: 10, dir: 2 } });
 /** Boca de la Gruta del Albo (pared oeste, garganta baja). */
 export const GRUTA = Object.freeze({ stamp: [5, 30], warp: { x: 7, y: 32, dirTrigger: 4 }, arrive: { x: 7, y: 32, dir: 6 } });
 
@@ -89,10 +90,10 @@ export const FLOOD = Object.freeze([...rect(14, 26, 2, 4)]);
 export const BEACONS = Object.freeze([
   { id: 'baliza_1', x: 22, y: 36, tech: { x: 21, y: 33, dir: 2 } },
   { id: 'baliza_2', x: 30, y: 22, tech: { x: 28, y: 20, dir: 4 } },
-  { id: 'baliza_3', x: 23, y: 4, tech: { x: 22, y: 3, dir: 2 } }, // (24, 3) es la base del dintel
+  { id: 'baliza_3', x: 21, y: 4, tech: { x: 20, y: 3, dir: 2 } },
 ]);
-export const LEANDRO = Object.freeze({ sluice: { x: 15, y: 12, dir: 4 }, door: { x: 26, y: 3, dir: 2 } });
-export const CLASH = Object.freeze({ trigger: rect(27, 5, 3, 1), player: { x: 27, y: 4, dir: 8 }, gael: { x: 28, y: 5, dir: 8 } });
+export const LEANDRO = Object.freeze({ sluice: { x: 15, y: 12, dir: 4 }, door: { x: 26, y: 10, dir: 2 } });
+export const CLASH = Object.freeze({ trigger: rect(24, 11, 7, 1), player: { x: 26, y: 12, dir: 8 }, gael: { x: 27, y: 11, dir: 8 } });
 
 export const CELL_SPOTS = Object.freeze({
   cell_garganta_1: { x: 9, y: 21 }, // repisa de la cascada pequeña (Correr)

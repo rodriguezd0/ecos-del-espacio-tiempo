@@ -194,3 +194,17 @@ export const CERRO = Object.freeze({
   door: Object.freeze({ x: 14, y: 5 }),
   arrive: Object.freeze({ x: 14, y: 6, dir: 2 }),
 });
+
+/** Pisos de entrenadores y Guardián de la columna de piedra del P4. */
+export const P4_VERTICAL = Object.freeze({
+  width: 27, height: 25,
+  floor: Object.freeze({ x: 3, y: 4, w: 21, h: 19 }),
+  entry: Object.freeze({ x: 13, y: 20, dir: 8 }),
+  down: Object.freeze({ x: 13, y: 22 }),
+  up: Object.freeze({ x: 13, y: 5 }),
+  baseReturn: Object.freeze({ x: 13, y: 6, dir: 2 }),
+  pedestal: Object.freeze({ x: 13, y: 6 }),
+  guardian: Object.freeze({ x: 13, y: 11, dir: 2 }),
+  retry: Object.freeze({ x: 13, y: 14, dir: 8 }),
+  challenge: Object.freeze(Array.from({ length: 21 }, (_, i) => Object.freeze([3 + i, 12]))),
+});

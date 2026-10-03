@@ -19,7 +19,12 @@ Medichamita). **Fuente única de coordenadas:** `layout.js`; el trazado de la C�
 | `dunas_ceniza` | `dunas_ceniza.js` | 60×50 | 6 | Desierto de ceniza con una cresta N–S y tres **vados de ceniza honda** (Terreno complicado, `roughTerrain` arena); campos de ceniza honda con C037 y C038; ruinas de zócalos; boca del Cerro Plomo; boquete a la cueva. En el borde oeste, las **paredes del cañón** (x ≤ 3, filas ≤ 19 y ≥ 24) continúan la roca de Estrato: la única boca es la de las filas 20–23 |
 | `dunas_cueva` | `dunas_cueva.js` | 32×20 | 2 | Cueva de las Dunas (arcilla): montañero, Garchompita |
 | `cerro_plomo` | `cerro_plomo.js` | 30×30 | 2 | Galería de los Galena (gris): verja con candado (3 casillas) y antesala con la puerta del Pilar |
-| `camara_contrapesos` | `camara_contrapesos.js` + `camara_build.js` | 40×35 | 2 | **Pilar de la Masa.** Kit `pilar_*`, tono `pilarTone('P4')`, encuentros con `stepChance` reducido |
+| `camara_contrapesos_base` | `camara_contrapesos_base.js` | 27×25 | 2 | Piso 1: Blanca y Octavio, trasladados del Cerro conservando derrotas de partidas anteriores |
+| `camara_contrapesos` | `camara_contrapesos.js` + `camara_build.js` | 40×35 | 2 | Piso 2: puzzle completo de contrapesos, kit `pilar_*`, tono `pilarTone('P4')`, encuentros con `stepChance` reducido |
+| `camara_contrapesos_nucleo` | `camara_contrapesos_nucleo.js` | 27×25 | 2 | Piso 3: Fermín, su combate y el núcleo |
+
+La columna exterior de piedra (7×10) sobresale del Cerro Plomo y se ve desde las Dunas. La galería y la verja de
+los Galena siguen siendo el acceso. Las nuevas plantas llevan `pillar: { id: 'P4', floor: 1/2/3 }`.
 
 Arte propio (PROVISIONAL, D30): `node tools/b08_assets.mjs` → `assets/objects/b08_*.png` (bloque, piedra, placa,
 suelo quebradizo, arena honda, platillos, balanza, eje, contrapesos, losas, palancas, perforadora, vagoneta, piedra
@@ -37,7 +42,9 @@ flotante, grietas, Losa del Pulso 3×1, verja, vía, fósiles, entibos).
 | montacargas | (21,5) desde (21,6) | `mina_galena_honda` | solo con `p4_restored` (antes, cascotes); escalera (14,4) → (21,6) |
 | boquete de las Dunas | (7,7) | `dunas_cueva` | (6,6) ↓; escalera (6,4) → (7,9) |
 | boca del Cerro | (46,23) desde (46,24) | `cerro_plomo` | (14,26) ↑; salida (14,27) → (46,25) |
-| puerta del Pilar | (14,5), pisar | `camara_contrapesos` | (14,33) ↑; salida (14,34) → (14,6) del Cerro |
+| puerta del Pilar en Cerro | (14,5) | `camara_contrapesos_base` | (13,20) ↑; escalera sur (13,22) → Cerro (14,6) |
+| escalera norte de la base | (13,5) | `camara_contrapesos` | (14,33) ↑; salida (14,34) → base (13,6) |
+| escalera de la Cámara | A en (8,6), después de la Balanza | `camara_contrapesos_nucleo` | (13,20) ↑; escalera sur (13,22) → Cámara (8,7) |
 | tren | taquilla de la estación | red `TRAIN` | llegada a Estrato (8,10) (`world/transport.js`) |
 
 ## Secuencia y flags
@@ -50,9 +57,9 @@ flotante, grietas, Losa del Pulso 3×1, verja, vía, fósiles, entibos).
 | **Garrido** junto a la perforadora parada: «la cámara rechaza las perforadoras porque el peso crece» → combate Gurdurr 31, Rhyhorn 31, Houndoom 32 | franja (35–37,10) | `!b08_garrido` | `b08_garrido_visto`, `b08_garrido` |
 | Fermín echa a Garrido y cuenta la entrada por el Cerro (y la lucecita de C038) | pozo | tras Garrido | `b08_fermin_cerro` |
 | Fermín abre la verja de la familia | Cerro (13–15,18) | `b08_fermin_cerro` | `b08_cerro_abierto` |
-| **Cámara**: Balanza (ver abajo) → Fermín llega corriendo | palanca (25,11) | solución | `b08_balanza`, var `b08_camara` |
-| **Combate con Fermín** (Graveler 32, Naclstack 32, Mudsdale 33, Onix 33, Rhydon 34) | franja (5–9,12) o hablarle | `b08_balanza && !b08_fermin` | `b08_fermin_reto`, `b08_fermin` |
-| **Núcleo**: `restorePillar(4)` (Fragmento F04, verso IV, lo lee Fermín), efecto local, inscripción de T05 y descubrimiento de T05, despedida | pedestal (8,6) desde (8,7) | `b08_fermin` | **`p4_restored` (salida)**, `verse_4`, `b08_fermin_despedida` |
+| **Cámara**: Balanza (ver abajo), abre la escalera del piso 3 | palanca (25,11) | solución | `b08_balanza`, var `b08_camara` |
+| **Combate con Fermín** (Graveler 32, Naclstack 32, Mudsdale 33, Onix 33, Rhydon 34) | piso 3, (13,11), franja y12 o hablarle | `b08_balanza && !b08_fermin` | `b08_fermin_nucleo`, `b08_fermin_reto`, `b08_fermin` |
+| **Núcleo**: `restorePillar(4)` (Fragmento F04, verso IV, lo lee Fermín), efecto local, inscripción de T05 y descubrimiento de T05, despedida | piso 3, pedestal (13,6) desde (13,7) | `b08_fermin` | **`p4_restored` (salida)**, `verse_4`, `b08_fermin_despedida` |
 | **Cooperativa**: la opción de compra caduca («el suelo es estable… sin intervención nuestra»), cooperativa minera, fósiles, 2.ª pista de T05, tren y Paso del Derrumbe | Estrato (auto, plaza) | `p4_restored && !b08_cooperativa` | `b08_cooperativa`, `b08_fosiles`, `b08_t05_losa`; `SKULLFOSSIL`, `ARMORFOSSIL` |
 | T05: Herminia en la escuela propone recuperar el Torneo del Pulso | escuela (8,4) | `p4_restored` | `b08_t05_herminia`, `b08_t05_torneo_abierto` (T05 directo si faltaba) |
 | **Torneo del Pulso**: Tito (Machoke/Naclstack 33), Lola (Meditite/Tinkatuff 33), Quique (Gurdurr/Mudsdale 34) y la final contra **Sol** (Pangoro 34, Gurdurr 34, Tinkatuff 35) | Herminia en la plaza (22,21) | torneo abierto | var `b08_t05_ronda`; `b08_t05_torneo` |
@@ -61,7 +68,7 @@ flotante, grietas, Losa del Pulso 3×1, verja, vía, fósiles, entibos).
 | Revancha semanal (mismas rondas; Pepita) | Herminia | tras descansar (`rest_count` > var `b08_t05_revancha`) | var `b08_t05_revancha` |
 
 **Reintentos (CAMPANA §2.6):** todos los combates de guion usan `bossBattle` (sin perder dinero): técnicos → (25,17);
-Garrido → (36,12); Fermín → (7,14); torneo → se reinicia desde la 1.ª ronda hablando con Herminia; noche → los
+Garrido → (36,12); Fermín → (13,14) del piso 3; torneo → se reinicia desde la 1.ª ronda hablando con Herminia; noche → los
 técnicos siguen forcejeando y se reintenta hablando con Sol. La Cámara nunca queda bloqueada (abajo).
 
 ## Cámara de los Contrapesos (mazmorra)
@@ -77,7 +84,7 @@ entrada (13–15, 30–33); **puente quebradizo** (17–19, 18–21) hacia la te
 A (11–12,12), B (17–19,12), C (24–25,12) y palanca (25,11) solo accionable desde (25,12); **arena** (26–29, 23–26)
 hacia el ala este (30–35, 20–27) con la **placa** (34,21) y el foso de la plataforma (31–33, 18–19); escalinata
 (31–33, 28–30) a la **galería inferior** (21–35, 31–33) donde caen el jugador (23,32) y están las tres piedras.
-Losa del núcleo (6–8,10), núcleo (8,6). Bloques en (18,24), (13,26), (22,27); piedras en (25,32), (28,32), (32,32).
+Losa de la subida (6–8,10), escalera al piso 3 (8,6). Bloques en (18,24), (13,26), (22,27); piedras en (25,32), (28,32), (32,32).
 
 Decisiones de implementación (a revisar):
 - **Los tres platillos deben cargar todo el peso de la cámara (4 + 4 + 4).** Con solo «pesos iguales», (1, 1, 1) a

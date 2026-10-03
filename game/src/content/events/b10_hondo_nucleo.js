@@ -16,9 +16,9 @@ export const NUCLEO_TEXT = Object.freeze({
   coldPedestal: 'Un pedestal hexagonal, frío. Alrededor, el suelo está grabado con un gran hexágono.',
   afterPedestal: 'El pedestal guarda un calor leve. Los glifos del suelo brillan con un tono de papel antiguo.',
   t09: 'Bajo el verso hay otra inscripción, más pequeña. Ahora la lees sin ayuda: «La novena tabla sueña en voz ajena.»',
-  fogLifts: 'Un soplo tibio sube por la espiral. Muy arriba, en la aldea, la niebla se retira hacia el bosque y no vuelve.',
+  fogLifts: 'Un soplo tibio recorre la espiral. Abajo, en la aldea, la niebla se retira hacia el bosque y no vuelve.',
   stairsClosed: 'Unos peldaños suben hacia la oscuridad y acaban en una losa cerrada.',
-  stairsOpen: 'La losa de la escalera de los custodios se ha retirado. Sube derecha al Archivo de papel.',
+  stairsOpen: 'La losa de la escalera de los custodios se ha retirado. Baja derecha al Archivo de papel.',
   phone: '¡La Pokédex está sonando!\nEs una llamada del Prof. Alerce.',
   tellAlerce: 'Le cuentas lo del Archivo Hondo y le lees el verso quinto.',
 });
@@ -32,7 +32,7 @@ async function olvidoChallenge(ctx) {
   if (!ctx.flag(F.olvidoChallenged)) {
     await lines(ctx, sp, [
       'Has llegado. Lo tenía apuntado: «Llegará. No sé cuándo.»',
-      'Sesenta años bajando aquí a leer lo que dicen las piedras. Y resulta que hablaban de alguien con nombre y zapatos.',
+      'Sesenta años subiendo aquí a leer lo que dicen las piedras. Y resulta que hablaban de alguien con nombre y zapatos.',
       '¡Existes! Eres una nota a pie de página que camina.',
       'Me llaman la guarda del Archivo. Yo solo apunto. Pero antes de dejarte tocar esa piedra quiero ver, con mis propios ojos, de qué está hecha la nota.',
     ]);
@@ -158,7 +158,7 @@ async function coreScene(ctx) {
   await reachMilestone(ctx, 'climb');
   await alerceCall(ctx);
   await lines(ctx, SPEAKER.olvido, [
-    'Sube conmigo por la escalera de los custodios, que es más corta. Quiero ver qué nos ha devuelto la tinta allá arriba.',
+    'Baja conmigo por la escalera de los custodios, que es más corta. Quiero ver qué nos ha devuelto la tinta en el Archivo.',
   ]);
   const up = ARCHIVO_ROOM.playerTable;
   await ctx.warp('mnemos_archivo', up.x, up.y, up.dir);

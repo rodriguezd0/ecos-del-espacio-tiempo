@@ -6,6 +6,9 @@ Guion: `docs/CAMPANA.md` «B10», §1 (atlas: Mnemos entre la Ruta 8 y la Ruta 9
 **Fuente única de coordenadas:** `mnemos_layout.js` (aldea), `hondo_layout.js` (mazmorra) y `archivo_layout.js`
 (Archivo de papel).
 
+Desde X36 (03-10-2026), el Pilar es vertical: Archivo y entrenadores en el piso 1, recuerdos en el 2 y Olvido
+y núcleo en el 3. La columna exterior ocupa x 6–12, y 3–12, con la puerta conservada en (9,12).
+
 ## Mapas
 
 | id | Archivo | Tamaño | TS | Notas |
@@ -17,8 +20,9 @@ Guion: `docs/CAMPANA.md` «B10», §1 (atlas: Mnemos entre la Ruta 8 y la Ruta 9
 | `mnemos_casa_olvido` | `mnemos_casa_olvido.js` | 13×11 | 4 | Casa de Olvido Arrieta: libro de visitas (firma de Gael) y calcos sobre la mesa, libretas en las estanterías, mapa de Axis en el cuadro de la pared (8,2) |
 | `mnemos_casa_jacinta` | `mnemos_casa_jacinta.js` | 13×11 | 4 | Casa de Jacinta (nota de Nerea) |
 | `mnemos_santuario` | `mnemos_santuario.js` | 13×19 | 11 | Santuario de los Glifos (`sala_octogonal` sin su emblema de Poké Ball: cinco losas con glifos en el parqué): dos estelas (traducción parcial; completa con la Clave Glífica), el nicho del cofre, Amaro (**Gardevoirita** tras el P5) |
-| `mnemos_archivo` | `mnemos_archivo.js` | 23×17 | 4 | El Archivo de papel: estanterías, escáneres del Consorcio, mesa de lectura. Escalera abajo en (19,4) (se entra desde (18,5) hacia la derecha) |
-| `archivo_hondo` | `archivo_hondo.js` + `hondo_build.js` | 46×38 | 11 | La mazmorra: espiral de seis estancias sin suelo más abajo (vacío negro), tono `pilarTone('P5')`. BGM `Emociones`, fondo `Templo` |
+| `mnemos_archivo` | `mnemos_archivo.js` | 23×17 | 4 | Piso 1: Archivo de papel, técnicos y los tres entrenadores de la antigua espiral. Escalera de subida en (19,5) |
+| `archivo_hondo` | `archivo_hondo.js` + `hondo_build.js` | 46×38 | 11 | Piso 2: cinco estancias de recuerdos sobre el vacío negro. Escalera al tercer piso en (25,11), tras el Mural. Tono `pilarTone('P5')`, BGM `Emociones`, fondo `Templo` |
+| `archivo_hondo_nucleo` | `archivo_hondo_nucleo.js` + `hondo_build.js` | 34×28 | 11 | Piso 3: antesala de Olvido, pedestal y escalera de los custodios. Conserva las posiciones antiguas del combate y del núcleo |
 
 Arte propio (PROVISIONAL, D30): `node tools/b10_assets.mjs [--preview]` → `assets/objects/b10_bambu.png`,
 `b10_palanca.png` (fila = posición 0–3), `b10_umbral.png` (umbrales bajos: 0–6 umbral glífico con k glifos
@@ -33,8 +37,9 @@ usan umbrales de una casilla de alto (un sprite alto taparía al jugador); los d
 | Mnemos borde norte | x 22–24, y 0 | `ruta_9_neblino` (B11) | `north`, offset 0 ↔ `NEBLINO.south` de `maps/b11/layout.js`. **Activo**, pero el muro de niebla (y 4) devuelve a y 15 hasta `p5_restored` |
 | Mnemos puertas | Archivo (9,12), Olvido (16,13), Santuario (33,12), té (7,32), herbolario (25,32), Centro (39,35), Jacinta (40,23) | interiores | Archivo cerrado por un evento hasta `b10_archivo_abierto`. Punto de vuelo (39,36) |
 | Mnemos casa de Íker | (5,19) | `mnemos_casa_iker` (B11) | evento `ikerDoorEvent` importado de `events/b11_t09.js` |
-| `mnemos_archivo` escalera | (19,5) | `archivo_hondo` (4,4) ↓ | vuelta por la escalinata (3–5, 1) pulsando arriba → (18,6) |
-| Hondo núcleo | escalera (29,22), pisar (29,20) | `mnemos_archivo` (18,6) | solo tras el P5; la escena del núcleo ya devuelve a la mesa (11,14) |
+| `mnemos_archivo` escalera | (19,5) | `archivo_hondo` (4,4) ↑ | vuelta por la escalinata (3–5, 1) pulsando arriba → (20,5) → |
+| Hondo, piso 2 | (25,11), tras el Mural | `archivo_hondo_nucleo` (25,10) | vuelta desde (25,7), pulsando arriba → Hondo (25,10) |
+| Núcleo, piso 3 | escalera (29,22), pisar (29,20) | `mnemos_archivo` (20,5) → | solo tras el P5; la escena del núcleo ya devuelve a la mesa (11,14) |
 
 ## Secuencia, flags y reintentos
 
@@ -45,11 +50,11 @@ usan umbrales de una casilla de alto (un sprite alto taparía al jugador); los d
 | **Olvido Arrieta** en la plaza: encarga **cinco notas de nombres** (nota en la Libreta) | (19,19) | `b10_llegada` | `b10_olvido_conocida`, `b10_nota_libreta` |
 | Notas a Sabina (té; regala **Sinistea** 35), Tomé (herbolario), Jacinta, Amaro (Santuario) y Bruno (estanque), en cualquier orden | varios | nota en mano | `b10_nota_<clave>`, `b10_sinistea` |
 | Olvido abre el Archivo | (10,13) | las cinco | `b10_notas_repartidas`, `b10_archivo_abierto` |
-| **Cameo de Casia** (Génesis): cuenta células y núcleos; «Nosotros también salvamos lo que se pierde.» Olvido baja por su camino | `mnemos_archivo` (auto) | archivo abierto | `b10_casia`, `b10_olvido_baja` |
-| Técnicos Baltasar y Noemí (combates normales, desaparecen tras el P5) | `mnemos_archivo` | — | derrota del entrenador |
+| **Cameo de Casia** (Génesis): cuenta células y núcleos; «Nosotros también salvamos lo que se pierde.» Olvido sube por su camino | `mnemos_archivo` (auto) | archivo abierto | `b10_casia`, `b10_olvido_baja` |
+| Técnicos Baltasar y Noemí (desaparecen tras el P5), Leonor, Ismael y Remigio | `mnemos_archivo`, piso 1 | — | derrota del entrenador |
 | Estancias 1–5 del Hondo (ver abajo) | `archivo_hondo` | en cadena | `b10_suelo`, `b10_manos`, `b10_lectura`, `b10_rollos`, `b10_mural` |
-| **Olvido**: «¡Existes! Eres una nota a pie de página que camina.» Combate de guion (Chimecho 38, Beheeyem 38, Bronzong 39, Spiritomb 40) | antesala (24–26, 11–12) | `b10_mural` | `b10_olvido_retada`, `b10_olvido_vencida`. Perder: se cura, vuelve a (25,11), sin perder dinero |
-| **Núcleo**: Fragmento 5, verso V completo, Clave Glífica, «…Eres tú.», Gael, inscripción T09, **Trepar**, llamada de Alerce (silencios largos) | pedestal (25,19) | `b10_olvido_vencida` | `p5_restored`, `verse_5`, `GLYPHKEY`, pista T09, hito `climb`, `b10_alerce` |
+| **Olvido**: «¡Existes! Eres una nota a pie de página que camina.» Combate de guion (Chimecho 38, Beheeyem 38, Bronzong 39, Spiritomb 40) | `archivo_hondo_nucleo`, antesala (24–26, 11–12) | `b10_mural` | `b10_olvido_retada`, `b10_olvido_vencida`. Perder: se cura, vuelve a (25,11) del tercer piso, sin perder dinero |
+| **Núcleo**: Fragmento 5, verso V completo, Clave Glífica, «…Eres tú.», Gael, inscripción T09, **Trepar**, llamada de Alerce (silencios largos) | `archivo_hondo_nucleo`, pedestal (25,19) | `b10_olvido_vencida` | `p5_restored`, `verse_5`, `GLYPHKEY`, pista T09, hito `climb`, `b10_alerce` |
 | **Informe tachado** de la Laguna Clara: «Los tachones también son memoria.» **Piedra Espíritu** | `mnemos_archivo` (auto) | `p5_restored` | `b10_informe`, `b10_piedra_espiritu` |
 | La niebla se ha levantado; Ruta 9 abierta | Mnemos al entrar | `p5_restored` | `b10_niebla_levantada` (B11 lo consulta) |
 
@@ -77,7 +82,7 @@ reproduce un eco-custodio translúcido las veces que haga falta.
 Objetos: Mnemos — Ultra Ball ×2, Hiperpoción (oculta), Revivir, Ocaso Ball ×2 (oculta), Más PP (risco, Trepar).
 Hondo — Hechizo, Cura Total (oculta), Ultra Ball ×3, Cuchara Torcida, Máximo Repelente (oculto).
 `content/trainers/b10.js`: Médium Tadeo, Exorcista Brígida, Estudiante Delfina (aldea); Investigadora Leonor,
-Cerebrito Ismael, Médium Remigio (Hondo); técnicos Baltasar y Noemí (Archivo); Olvido (guardiana).
+Cerebrito Ismael, Médium Remigio y técnicos Baltasar y Noemí (Archivo, piso 1); Olvido (guardiana, piso 3).
 Regalos: Sinistea (Sabina), Gardevoirita (Amaro, tras el P5), Spiritomb 40 (Losa del Olvido, de noche con la Piedra
 Espíritu; si huye, vuelve tras descansar). Árbol de miel (34,27): untado con Miel, tabla `MNEMOS_HONEY`.
 Encuentros (`content/encounters/b10.js`): Mnemos día/noche; el Archivo Hondo con Unown en sus 28 formas.
@@ -94,6 +99,10 @@ Estado base (`B`): `flags=b01_dex_received,b01_left_town,p1_restored,p2_restored
 - `node --test tests/b10_reach.test.mjs tests/b10_content.test.mjs` · `node tools/preview_map.mjs aldea_mnemos --pass` ·
   **recorrido completo**: `node tools/e2e_b10.mjs` (≈10 min; `--from=archivo|hondo|mural`, `--gender=F`,
   `--no-retry`). Capturas `tools/cache/screens/e2e_b10_*` y transcripción `e2e_b10_dialogos.txt`.
+
+Compatibilidad: al entrar al Archivo se copian las derrotas de los tres entrenadores trasladados. Si una partida
+antigua estaba guardada dentro del núcleo de `archivo_hondo`, continúa en el mismo punto del piso 3; también se
+conserva el Máximo Repelente recogido allí. Los flags de los recuerdos no cambian.
 
 ## Coordinación con otros bloques
 

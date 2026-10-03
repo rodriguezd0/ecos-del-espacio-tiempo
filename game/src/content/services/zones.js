@@ -79,12 +79,12 @@ export const MAP_GROUPS = Object.freeze([
   G('instalacion_cierzo', 'Instalación Cierzo', null, null, ['instalacion_cierzo'], ['cierzo_']),
 
   // ── Pilares (§1.5) ──────────────────────────────────────────────────────────────────────────
-  G('ruinas_dintel', 'Pilar del Umbral', null, 'Templo', ['explanada_umbral', 'ruinas_dintel']),
-  G('garganta_albo', 'Pilar de la Corriente', null, 'CuevaAzul', ['pilar_corriente']),
-  G('meseta_impulso', 'Pilar del Impulso', null, 'Acantilado', ['anillo_vientos', 'galerias_soplo']),
-  G('cerro_plomo', 'Pilar de la Masa', null, 'Cueva', ['cerro_plomo', 'camara_contrapesos']),
+  G('ruinas_dintel', 'Pilar del Umbral', null, 'Templo', ['explanada_umbral', 'ruinas_dintel'], ['ruinas_dintel_']),
+  G('garganta_albo', 'Pilar de la Corriente', null, 'CuevaAzul', ['pilar_corriente'], ['pilar_corriente_']),
+  G('meseta_impulso', 'Pilar del Impulso', null, 'Acantilado', ['anillo_vientos', 'galerias_soplo'], ['anillo_vientos_', 'galerias_soplo_']),
+  G('cerro_plomo', 'Pilar de la Masa', null, 'Cueva', ['cerro_plomo', 'camara_contrapesos'], ['camara_contrapesos_']),
   G('ciudad_estrato', 'Mina Galena', null, 'CuevaOscura', ['mina_galena'], ['mina_galena_']),
-  G('archivo_hondo', 'Pilar de la Memoria', null, 'Templo', ['archivo_hondo']),
+  G('archivo_hondo', 'Pilar de la Memoria', null, 'Templo', ['archivo_hondo'], ['archivo_hondo_']),
   G('aljibe_portal', 'Pilar Invertido', 'distortion', 'MundoDistorsion', ['aljibe_portal'], ['pilar_invertido']),
   G('arrecife_eco', 'Pilar de los Ecos', null, 'Templo', ['fosa_eco'], ['antea_']),
   G('lagos_alma', 'Pilar del Alma', null, 'Templo', ['santuario_alma'], ['santuario_alma_']),

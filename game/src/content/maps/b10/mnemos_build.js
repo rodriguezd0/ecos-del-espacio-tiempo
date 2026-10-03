@@ -8,6 +8,7 @@ import {
   W, H, EXITS, FOREST, STREETS, TERRACE, BUILDINGS, POND, HONEY_TREE, GRASS, PLAZA, SIGNS, RISCO, TORII, rectCells,
 } from './mnemos_layout.js';
 import { FOREST_BLOCKER_TILE } from '../../stamps/brushes.js';
+import { paintPillarExterior } from '../../stamps/pilarVertical.js';
 
 const key = (x, y) => `${x},${y}`;
 const rc = (r) => rectCells(r.x, r.y, r.w, r.h);
@@ -33,6 +34,7 @@ function paintForest(b) {
   const n = EXITS.north; const s = EXITS.south;
   // El bosque deja hueco a los cerezos: pintados encima, sus troncos semitransparentes dejaban ver los del bosque.
   const clearings = [
+    rectCells(6, 0, 8, f.north), // árboles enteros apartados detrás de la columna del Pilar
     ...NORTH_CHERRIES.map(([x]) => rectCells(x + 1, 0, CLEARING_W, f.north)),
     ...SOUTH_CHERRIES.map(([x, y]) => rectCells(x + 1, y, CLEARING_W, H - y)),
   ];
@@ -138,7 +140,10 @@ export function buildMnemos(b) {
   paintTerrace(b);
   paintStreets(b);
   paintPond(b);
-  for (const bd of Object.values(BUILDINGS)) b.stamp(bd.stamp, bd.x, bd.y);
+  for (const [id, bd] of Object.entries(BUILDINGS)) {
+    if (id === 'archivo') paintPillarExterior(b, { centerX: bd.door.x, doorY: bd.door.y });
+    else b.stamp(bd.stamp, bd.x, bd.y);
+  }
   paintPlaza(b);
   paintSantuario(b);
   paintNorthWest(b);

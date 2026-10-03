@@ -4,8 +4,9 @@
 // núcleo (b04_pilar_core.js).
 import { readPuzzle, isFull, isOpen, CYCLE_FLAG } from './b04_hydraulics.js';
 import { puzzleEvents, flowing } from './b04_pilar_puzzle.js';
-import { coreEvents } from './b04_pilar_core.js';
-import { SPOTS, CELL_SPOTS, TRAINER_SPOTS, ITEM_SPOTS } from '../maps/b04/pilar_corriente_layout.js';
+import './b04_pilar_core.js'; // Registra la escena al cerrar el ciclo; el núcleo está en el piso 3.
+import { SPOTS, CELL_SPOTS, ITEM_SPOTS } from '../maps/b04/pilar_corriente_layout.js';
+import { TRAINER_SPOTS, PUZZLE_UP } from '../maps/b04/pilar_corriente_floors.js';
 import { F, SPEAKER, SPRITE } from './b04_common.js';
 
 const L = { speaker: SPEAKER.leandro };
@@ -13,7 +14,7 @@ const GREEN = [185, 255, 102];
 
 /** Reto de Leandro (CAMPANA B04 §4: «Leandro reta al jugador dentro del Pilar para ver si sabe dónde pisa»). */
 export const DARE_LINES = Object.freeze([
-  '¿Me has seguido hasta aquí abajo?',
+  '¿Me has seguido hasta el piso de los estanques?',
   'Esto es la Escalera de Estanques. Seis estanques, cuatro compuertas y una noria que no gira desde que tengo memoria.',
   'Mi abuelo decía que cuando el agua da la vuelta entera, el Pilar respira. Yo llevo semanas girando llaves y solo he conseguido que el Albo se vuelva loco.',
 ]);
@@ -128,13 +129,24 @@ function springEvent() {
 export function pilarEvents() {
   return [
     ...puzzleEvents(),
-    ...coreEvents(),
     ...leandroEvents(),
-    ...trainerEvents(),
     ...itemEvents(),
     ...cellEvents(),
     springEvent(),
+    {
+      id: 'escalera_nucleo_cerrada', x: PUZZLE_UP.x, y: PUZZLE_UP.y, solid: true, trigger: 'touch',
+      when: (s) => !s.flag(CYCLE_FLAG) && !s.flag(F.restored),
+      script: async (ctx) => { await ctx.say('La escalera al núcleo permanece cerrada. Los canales aún no completan la vuelta.'); },
+    },
   ];
+}
+
+export function pilarBaseEvents() { return trainerEvents(); }
+
+export async function pilarBaseOnEnter({ state }) {
+  for (const t of TRAINERS) {
+    if (state.selfSwitch('pilar_corriente', t.id, 'A')) state.setSelfSwitch('pilar_corriente_base', t.id, 'A');
+  }
 }
 
 /** Al entrar: la música cambia con la corriente en marcha (nada más; los eventos llevan el estado). */

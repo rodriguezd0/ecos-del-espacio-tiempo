@@ -148,8 +148,8 @@ function paintCamaras(b) {
 function paintNucleo(b) {
   const r = ROOMS.nucleo;
   pave(b, r.x0, r.y0, r.x1 - r.x0 + 1, r.y1 - r.y0 + 1);
-  b.stamp('pilar_camara_nucleo', NUCLEO.camara.x, NUCLEO.camara.y);
-  b.stamp('pilar_pedestal', NUCLEO.column.x, NUCLEO.column.y - 1); // la columna hueca del centro
+  // Antiguo núcleo horizontal: ahora es el rellano de ascenso al piso de la Guardiana.
+  b.stamp('pilar_escalinata', NUCLEO.column.x - 1, NUCLEO.column.y - 1);
   b.paint('pilar_canal_v', cells(31, 18, 1, 5));
   b.paint('pilar_canal_v', cells(40, 20, 1, 3));
   for (const [n, x, y] of [

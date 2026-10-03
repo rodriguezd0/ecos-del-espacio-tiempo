@@ -3,8 +3,7 @@
 // enciende el verso I. Después Casilda abre desde dentro la losa del atajo hacia la antesala (camino de salida).
 import { F, SPEAKER, SPRITE, GREEN, say, core, fx, walk } from './b02_common.js';
 import { ROOM, placeCasilda, setRoom, casildaRoom } from './b02_ruinas_casilda.js';
-import { slideSlab } from './b02_ruinas_salas.js';
-import { NUCLEO, PASSAGES, ENTRANCE } from '../maps/b02/ruinas_dintel_layout.js';
+import { NUCLEO, SUMMIT } from '../maps/b02/ruinas_dintel_floors.js';
 import { walkEventTo } from './b01_town_path.js';
 
 const C = SPEAKER.casilda;
@@ -51,7 +50,7 @@ async function onRestored(ctx) {
 async function openShortcut(ctx) {
   if (ctx.flag(F.shortcut)) return;
   if (casildaRoom(ctx.state) === ROOM.nucleo) {
-    await say(ctx, C, 'Por aquí se sale antes. Desde dentro, la losa se abre; mi madre me lo enseñó.');
+    await say(ctx, C, 'La losa del piso de abajo se abre desde aquí; mi madre me lo enseñó. Así se sale antes.');
     const ev = ctx.world?.events?.find((e) => e.id === 'casilda');
     if (ev) {
       const route = [];
@@ -62,14 +61,15 @@ async function openShortcut(ctx) {
       ctx.face('casilda', 'down');
     }
   }
-  await ctx.camera.pan(PASSAGES.atajo.slab.x, PASSAGES.atajo.slab.y - 2, 30);
-  await slideSlab(ctx, 'losa_atajo');
+  await ctx.camera.pan(SUMMIT.down.x, SUMMIT.down.y - 2, 30);
+  ctx.se('Door slide');
+  await ctx.shake(3, 6, 30);
   ctx.setFlag(F.shortcut);
   await ctx.camera.reset(24);
   if (casildaRoom(ctx.state) === ROOM.nucleo) {
     await say(ctx, C, 'Ya está. Fuera tiene que ser tarde. Vamos.');
     // Sale andando por el atajo hacia la entrada (antes, fundido y desaparecía); fuera la espera la explanada.
-    await walkEventTo(ctx, 'casilda', ENTRANCE.arrive.x, ENTRANCE.arrive.y, { speed: 4.5, fallback: false });
+    await walkEventTo(ctx, 'casilda', SUMMIT.down.x, SUMMIT.down.y, { speed: 4.5, fallback: false });
     setRoom(ctx, ROOM.fuera);
   }
 }
@@ -78,6 +78,11 @@ async function openShortcut(ctx) {
 async function columnScript(ctx) {
   if (ctx.flag(F.nucleo)) {
     await ctx.say('La columna hueca está en silencio. En el fondo brilla un resto de luz ocre.');
+    return;
+  }
+  if (!ctx.flag(F.casildaBeaten)) {
+    const { guardianBattle } = await import('./b02_ruinas_camara.js');
+    await guardianBattle(ctx);
     return;
   }
   await ctx.say('Una columna hueca en el centro del hexágono tallado.');

@@ -7,6 +7,7 @@ import { dunasEvents, ashCells, organic } from '../../events/b08_dunas.js';
 import { DUNAS_CENIZA, DUNAS_RUINAS } from '../../encounters/b08.js';
 import { DUNAS, ESTRATO, CERRO } from './layout.js';
 import { cells } from './cave_kit.js';
+import { paintPillarExterior } from '../../stamps/pilarVertical.js';
 
 const D = DUNAS;
 /** Estrato (este, filas 38–41) ↔ Dunas (oeste, filas 20–23). */
@@ -46,7 +47,6 @@ function terrain(b) {
 
 function details(b) {
   // Boca del Cerro Plomo y boquete de la cueva.
-  b.stamp('entrada_mina', D.cerro.door.x - 1, D.cerro.door.y - 2);
   // El pie del macizo tapaba la casilla de delante de la boca: se abre para poder llegar a la puerta.
   b.set(1, D.cerro.door.x, D.cerro.door.y + 1, 0);
   b.stamp('boquete', D.cave.x, D.cave.y);
@@ -68,9 +68,9 @@ function details(b) {
   ]) b.stamp(s, x, y);
   // Lomo del Cerro Plomo y de la cresta: peñascos y alguna mata sobre la roca (la meseta no queda lisa).
   for (const [s, x, y] of [
-    ['roca_grande', 39, 6], ['roca_grande', 44, 10], ['roca_grande', 52, 13], ['roca_grande', 40, 16], ['roca_grande', 49, 17],
-    ['roca_peque', 42, 5], ['roca_peque', 47, 13], ['roca_peque', 55, 9], ['roca_peque', 37, 12], ['roca_peque', 54, 19],
-    ['roca_grande', 41, 11], ['roca_peque', 43, 12], ['roca_grande', 50, 8], ['mata', 46, 6], ['mata', 53, 16], ['mata', 38, 19], ['roca_peque', 43, 18],
+    ['roca_grande', 39, 6], ['roca_grande', 44, 10], ['roca_grande', 52, 13], ['roca_grande', 40, 16],
+    ['roca_peque', 42, 5], ['roca_peque', 55, 9], ['roca_peque', 37, 12], ['roca_peque', 54, 19],
+    ['roca_grande', 41, 11], ['roca_peque', 43, 12], ['roca_grande', 50, 8], ['mata', 46, 6], ['mata', 53, 16], ['mata', 38, 19],
     ['roca_peque', 20, 3], ['roca_grande', 20, 19], ['roca_peque', 21, 34], ['mata', 19, 22], ['roca_peque', 22, 47],
   ]) b.stamp(s, x, y);
   b.stamp('cartel_madera', 4, 18);
@@ -92,6 +92,8 @@ export default {
   build(b) {
     terrain(b);
     details(b);
+    // La columna asoma sobre el Cerro; la puerta conservada conduce a la verja de los Galena.
+    paintPillarExterior(b, { centerX: D.cerro.door.x, doorY: D.cerro.door.y });
   },
   warps: [
     { x: D.cerro.door.x, y: D.cerro.door.y, to: 'cerro_plomo', tx: CERRO.exit.arrive.x, ty: CERRO.exit.arrive.y, dir: 8, door: true },

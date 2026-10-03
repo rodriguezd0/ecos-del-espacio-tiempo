@@ -9,7 +9,7 @@ import { db as baseDb } from './battle_helpers.mjs';
 import { Battle, HeadlessBattleUI } from '../game/src/battle/core/index.js';
 import { createPokemon } from '../game/src/battle/core/pokemon.js';
 import { createRng } from '../game/src/battle/core/rng.js';
-import { buildBattleConfig } from '../game/src/battle/scene/setup.js';
+import { buildBattleConfig, pokemonFromSpec } from '../game/src/battle/scene/setup.js';
 import { installLink, battleChecksum, linkParty } from '../game/src/battle/link/linkBattle.js';
 import { linkBattleRequest } from '../game/src/net/linkSession.js';
 import { coopStoryRequest, resolveCoopTrainer, applyCoopResult, playerContribution, coopEligible } from '../game/src/net/coopBattle.js';
@@ -143,7 +143,14 @@ function humanFromTeam(name, gender, id, list) {
 
 async function playCoop(trainerId, seed) {
   const [toGuest, toHost] = channelPair();
-  const trainer = resolveCoopTrainer({ trainer: trainerId }, { db, state: null, getTrainer });
+  const trainerRng = createRng(seed + 1000);
+  const trainer = resolveCoopTrainer({ trainer: trainerId }, {
+    db, state: null,
+    getTrainer(id, state) {
+      const def = getTrainer(id, state);
+      return { ...def, party: def.party.map((spec) => pokemonFromSpec(db, spec, { rng: trainerRng })) };
+    },
+  });
   const top = Math.max(...trainer.party.map((p) => p.level));
   const lv = Math.max(5, top - 2); // algo por debajo: suben de nivel y aprenden movimientos durante el combate
   const host = humanFromTeam('Ana', 'F', 1, team(seed, 2, lv));
@@ -216,4 +223,3 @@ test('en equipo: solo combates normales contra un entrenador (no dobles, jefes c
   assert.equal(coopEligible({ type: 'wild', wild: { species: 'PIKACHU' } }), false);
   assert.equal(coopEligible({ trainer: 'x', noCoop: true }), false);
 });
-

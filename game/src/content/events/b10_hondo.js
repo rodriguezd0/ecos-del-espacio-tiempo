@@ -6,13 +6,12 @@ import { F, V, SPEAKER, SPRITE, OBJ, frame, lines, placePlayer, eventById, when 
 import { ecoEvent, ecoAppear, ecoVanish, ecoMove, stepsAlong, stepsTo, footprint, runEco, gateEvents } from './b10_hondo_eco.js';
 import { LEVER_TARGET, LEVER_START, LEVER_NAMES, nextLever, leversSolved, leverPresses } from './b10_hondo_logic.js';
 import { lecturaEvents, rollosEvents, muralEvents } from './b10_hondo_rooms.js';
-import { nucleoEvents } from './b10_hondo_nucleo.js';
 import { b10CellEvents } from './b10_cells.js';
-import { SUELO, MANOS, HONDO_ITEMS, HONDO_TRAINERS, sueloTraps } from '../maps/b10/hondo_layout.js';
+import { SUELO, MANOS, HONDO_ITEMS, HONDO_TRAINERS, MEMORIA_STAIRS, FLOORS, sueloTraps } from '../maps/b10/hondo_layout.js';
 import { extraTiles } from '../stamps/extraTiles.js';
 
 export const HONDO_TEXT = Object.freeze({
-  enter: 'Una espiral de piedra baja hacia la oscuridad. No hay techo ni suelo más abajo: solo el Archivo, flotando.',
+  enter: 'La escalera desemboca en una espiral de piedra suspendida sobre la oscuridad. Los recuerdos siguen en las losas.',
   losa: 'Una losa con anillos grabados. Al pisarla, el aire huele a papel viejo…',
   fall: 'El suelo no estaba ahí. Algo te sujeta en la caída y te devuelve, sin daño, al borde de la estancia.',
   crossed: 'Has cruzado el Suelo Olvidado. A tu espalda, el camino del custodio queda marcado con glifos tenues.',
@@ -21,7 +20,7 @@ export const HONDO_TEXT = Object.freeze({
   manosOpen: 'Con un roce de piedra contra piedra, la losa del dintel se hunde en el suelo.',
   manosGate: 'Una losa cierra el paso bajo el dintel. Tiene dos surcos, como la huella de dos manos.',
   ecosGone: 'Los ecos se deshacen en el aire. Las palancas vuelven a donde tú las dejaste.',
-  exitUp: 'La escalera sube al Archivo de papel.',
+  exitUp: 'La escalera baja al Archivo de papel.',
 });
 
 const GLYPH_TILE = extraTiles('InteriorTorre').find((t) => t.name === 'pilar_glifo')?.id || 0;
@@ -161,20 +160,27 @@ function manosEvents() {
 
 // ------------------------------------------------------------ entrenadores, objetos y entrada
 
-function trainerEvents() {
+export function hondoTrainerEvents(positions = HONDO_TRAINERS) {
   const DATA = {
-    b10_investigadora_leonor: { name: 'Leonor', sprite: 'anil:cientifica', after: 'Bajé a estudiar las estanterías y me encontré con palancas. Nadie estudia palancas.' },
+    b10_investigadora_leonor: { name: 'Leonor', sprite: 'anil:cientifica', after: 'Subí a estudiar las estanterías y me encontré con palancas. Nadie estudia palancas.' },
     b10_cerebrito_ismael: { name: 'Ismael', sprite: 'anil:cerebrito', after: 'He leído la estela diez veces. Lo que no recuerdo es para qué.' },
     b10_medium_remigio: { name: 'Remigio', sprite: 'anil:medium', after: 'Esos custodios no son fantasmas. Los fantasmas, al menos, te miran.' },
   };
-  return HONDO_TRAINERS.map((t) => ({ id: t.id.replace(/^b10_/, 'entrenador_'), type: 'trainer', trainer: t.id, x: t.x, y: t.y, dir: t.dir, sight: t.sight, ...DATA[t.id] }));
+  return positions.map((t) => ({ id: t.id.replace(/^b10_/, 'entrenador_'), type: 'trainer', trainer: t.id, x: t.x, y: t.y, dir: t.dir, sight: t.sight, ...DATA[t.id] }));
 }
 
 function itemEvents() {
-  return HONDO_ITEMS.map((it) => ({ ...it, type: 'item' }));
+  return HONDO_ITEMS.filter((it) => it.id !== 'objeto_hondo_5').map((it) => ({ ...it, type: 'item' }));
 }
 
 export async function hondoOnEnter(ctx) {
+  // Una partida guardada en la antigua cámara del núcleo continúa en el tercer piso.
+  const old = FLOORS.nucleo;
+  const p = ctx.player;
+  if (p && p.x >= old.x && p.x < old.x + old.w && p.y >= old.y && p.y < old.y + old.h) {
+    await ctx.warp('archivo_hondo_nucleo', p.x, p.y, p.direction);
+    return;
+  }
   if (ctx.flag(F.hondoSeen)) return;
   ctx.setFlag(F.hondoSeen);
   await ctx.wait?.(10);
@@ -189,8 +195,15 @@ export function hondoEvents() {
     ...lecturaEvents(),
     ...rollosEvents(),
     ...muralEvents(),
-    ...nucleoEvents(),
-    ...trainerEvents(),
+    {
+      id: 'escalera_memoria_nucleo', x: MEMORIA_STAIRS.up.x, y: MEMORIA_STAIRS.up.y,
+      trigger: 'touch', through: true,
+      script: async (ctx) => {
+        if (!ctx.flag(F.mural) && !ctx.flag(F.restored)) return;
+        const a = MEMORIA_STAIRS.coreArrival;
+        await ctx.warp('archivo_hondo_nucleo', a.x, a.y, a.dir);
+      },
+    },
     ...itemEvents(),
     ...b10CellEvents('archivo_hondo'),
   ];

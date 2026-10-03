@@ -17,9 +17,9 @@ import { buildMapNode } from '../tools/lib/map_node.mjs';
 import {
   EXITS, FOG_WALL_Y, BUILDINGS, BAMBOO, POND, RISCO, ARRIVAL, INTERIOR_ENTRIES, HONEY_TREE,
 } from '../game/src/content/maps/b10/mnemos_layout.js';
-import { ARCHIVO_ROOM } from '../game/src/content/maps/b10/archivo_layout.js';
+import { ARCHIVO_ROOM, ARCHIVO_TRAINERS } from '../game/src/content/maps/b10/archivo_layout.js';
 import {
-  SUELO, MANOS, LECTURA, ROLLOS, MURAL, NUCLEO, ENTRY, FLOORS, HONDO_ITEMS, HONDO_TRAINERS, sueloTraps, rectCells,
+  SUELO, MANOS, LECTURA, ROLLOS, MURAL, NUCLEO, ENTRY, MEMORIA_STAIRS, FLOORS, HONDO_ITEMS, sueloTraps, rectCells,
 } from '../game/src/content/maps/b10/hondo_layout.js';
 import { F } from '../game/src/content/events/b10_common.js';
 
@@ -169,6 +169,9 @@ test('Archivo de papel: de la entrada a la escalera del Hondo, rodeando a los t�
   const a = await world('mnemos_archivo', { flags: [F.archivoOpen, F.casia, F.olvidoDown] });
   const r = bfs(a, [ARCHIVO_ROOM.entry.x, ARCHIVO_ROOM.entry.y]);
   assert.ok(canUse(r, ARCHIVO_ROOM.stairsWarp.x, ARCHIVO_ROOM.stairsWarp.y), 'la escalera del Hondo se alcanza');
+  const back = ARCHIVO_ROOM.stairsArrival;
+  assert.ok(a.map.playerPassable(back.x, back.y, 0, {}), 'el regreso del piso 2 deja al jugador sobre suelo transitable');
+  assert.ok(r.has(back.x, back.y), 'desde la llegada del piso 2 se puede volver a la salida');
   for (const id of ['tecnico_archivo', 'tecnica_archivo']) {
     const ev = a.w.events.find((e) => e.id === id);
     assert.ok(canUse(r, ev.x, ev.y), `${id} se alcanza`);
@@ -214,10 +217,13 @@ test('Hondo: cada estancia solo se abre con la anterior (Dos Manos → Lectura �
     const open = bfs(await hondo(upTo(c.stage + 1)), HOME, { block: TRAPS });
     assert.ok(inside(open, c.room), `resuelto ${c.gate}, ${c.what} sigue cerrada`);
   }
-  // Olvido tapa la antesala: sin vencerla no se llega al pedestal; vencida, sí.
+  const stairs = MEMORIA_STAIRS.up;
+  assert.ok(bfs(await hondo(upTo(5)), HOME, { block: TRAPS }).has(stairs.x, stairs.y), 'el Mural abre la escalera al tercer piso');
+  // En el tercer piso, Olvido tapa la antesala: sin vencerla no se llega al pedestal; vencida, sí.
   const P = NUCLEO.front;
-  assert.ok(!bfs(await hondo(upTo(5)), HOME, { block: TRAPS }).has(P.x, P.y), 'se llega al núcleo sin combatir con Olvido');
-  assert.ok(bfs(await hondo(upTo(6)), HOME, { block: TRAPS }).has(P.x, P.y), 'vencida Olvido, el núcleo sigue cerrado');
+  const coreHome = [MEMORIA_STAIRS.coreArrival.x, MEMORIA_STAIRS.coreArrival.y];
+  assert.ok(!bfs(await world('archivo_hondo_nucleo', { flags: upTo(5) }), coreHome).has(P.x, P.y), 'se llega al núcleo sin combatir con Olvido');
+  assert.ok(bfs(await world('archivo_hondo_nucleo', { flags: upTo(6) }), coreHome).has(P.x, P.y), 'vencida Olvido, el núcleo sigue cerrado');
 });
 
 test('Hondo: C046 está en el paso obligatorio de los Rollos al Mural', async () => {
@@ -242,10 +248,17 @@ test('Hondo: palancas, estela, puerta, huecos, paneles, manantial, objetos y ent
   for (const pnl of MURAL.panels) assert.ok(canUse(r4, pnl.x, pnl.y), `panel (${pnl.x},${pnl.y})`);
   assert.ok(MURAL.springUse.some(([x, y]) => r4.has(x, y)), 'manantial');
   const all = await at(6);
-  for (const it of HONDO_ITEMS) assert.ok(canUse(all, it.x, it.y), `objeto ${it.id} (${it.x},${it.y})`);
-  for (const t of HONDO_TRAINERS) assert.ok(canUse(all, t.x, t.y), `entrenador ${t.id}`);
+  for (const it of HONDO_ITEMS.filter((it) => it.id !== 'objeto_hondo_5')) assert.ok(canUse(all, it.x, it.y), `objeto ${it.id} (${it.x},${it.y})`);
+  const base = bfs(await world('mnemos_archivo', { flags: upTo(6) }), [ARCHIVO_ROOM.entry.x, ARCHIVO_ROOM.entry.y]);
+  for (const t of ARCHIVO_TRAINERS) assert.ok(canUse(base, t.x, t.y), `entrenador ${t.id} en la primera planta`);
   assert.deepEqual(dead(all, HOME), [], 'casillas sin vuelta a la escalera');
-  assert.ok(canUse(all, NUCLEO.stairsUp.x, NUCLEO.stairsUp.y - 2), 'escalera de los custodios');
+  const coreHome = [MEMORIA_STAIRS.coreArrival.x, MEMORIA_STAIRS.coreArrival.y];
+  const core = bfs(await world('archivo_hondo_nucleo', { flags: upTo(6) }), coreHome);
+  const it = HONDO_ITEMS.find((it) => it.id === 'objeto_hondo_5');
+  assert.ok(canUse(core, it.x, it.y), 'objeto del tercer piso');
+  assert.ok(canUse(core, NUCLEO.stairsUp.x, NUCLEO.stairsUp.y - 2), 'escalera de los custodios');
+  assert.ok(core.has(MEMORIA_STAIRS.down.x, MEMORIA_STAIRS.down.y), 'regreso al piso del puzzle');
+  assert.deepEqual(dead(core, coreHome), [], 'el tercer piso tiene regreso desde todas sus casillas');
 });
 
 test('Hondo: los interiores de Mnemos tienen salida desde su llegada', async () => {

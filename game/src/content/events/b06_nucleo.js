@@ -1,11 +1,12 @@
 // Sala de las Campanas y núcleo del Pilar del Impulso (docs/CAMPANA.md B06, sección c de la mazmorra, «Respuesta»,
-// «Cambio en el mundo» y «Recompensas»): las tres campanas (ritmo largo–corto–corto: Norte, Este, Oeste), Abril sube
-// a la Sala al oírlas, el núcleo restaura el Pilar (Fragmento 3, verso III, p3_restored), la inscripción abre la
+// «Cambio en el mundo» y «Recompensas»): las tres campanas del piso 2 (ritmo largo–corto–corto: Norte, Este, Oeste)
+// abren el tercero, donde esperan Abril y el núcleo (Fragmento 3, verso III, p3_restored). La inscripción abre la
 // pista T04 y Abril se despide («Vale. Esto no es aburrido.»). La fase 1 de la crisis sale sola de los flags.
 import { CAMPANAS, strikeBell, BELL_SEQUENCE } from './b06_wind_rooms.js';
-import { F, V, SPEAKER, SPRITE, OBJ, TELEPATHY, lines, zygardeSays } from './b06_common.js';
-import { ANILLO } from '../maps/b06/layout.js';
+import { F, V, SPEAKER, SPRITE, OBJ, TELEPATHY, lines, zygardeSays, scriptedBattle } from './b06_common.js';
+import { ANILLO, P3_VERTICAL as P } from '../maps/b06/layout.js';
 import { pilarTone } from '../stamps/pilar.js';
+import { walkEventTo } from './b01_town_path.js';
 
 const S = ANILLO.sala;
 const at = ([x, y]) => ({ x: S.ox + x, y: S.oy + y });
@@ -16,10 +17,10 @@ const BELL_NAMES = Object.freeze({ N: 'del norte', E: 'del este', W: 'del oeste'
 const BELL_SE = 'PRSFX- Heal Bell';
 
 /** Dónde espera Abril en la Sala tras las campanas (junto a la escalera del estrado). */
-export const ABRIL_SALA = Object.freeze({ x: S.ox + 11, y: S.oy + 9 });
+export const ABRIL_SALA = P.guardian;
 
 export const NUCLEO_TEXT = Object.freeze({
-  coldPedestal: 'Un pedestal hexagonal, frío. Arriba del anillo, las campanas siguen mudas.',
+  coldPedestal: 'Un pedestal hexagonal, frío. El viento pasa por las rendijas de la columna.',
   afterPedestal: 'El pedestal guarda un calor leve. El viento sopla limpio alrededor del anillo.',
   bellsLong: (n) => `La campana ${n} da un tañido largo que se queda vibrando en el aire.`,
   bellsShort: (n) => `La campana ${n} da un golpe corto y seco.`,
@@ -125,24 +126,57 @@ async function bellsSolved(ctx) {
   await ctx.say(NUCLEO_TEXT.bellsDone);
   ctx.se('PRSFX- Tailwind', { volume: 80 });
   await ctx.say(NUCLEO_TEXT.bellsCalm);
-  await abrilClimbs(ctx);
 }
 
-/** Abril, que oyó las campanas desde su campamento, sube por la escalera ya sin viento. */
-async function abrilClimbs(ctx) {
-  if (!ctx.flag(F.abril)) return;
+/** Abril escucha el puzzle resuelto desde la sala del Guardián, en el tercer piso. */
+export async function nucleoOnEnter(ctx) {
+  if (ctx.flag(F.restored) || ctx.flag(F.abrilSala)) return;
+  if (!ctx.flag(F.bells)) {
+    await ctx.warp('anillo_vientos_base', P.entry.x, P.entry.y, 8);
+    return;
+  }
   ctx.setFlag(F.abrilSala);
-  ctx.requestRefresh();
-  await ctx.wait(2);
-  const abril = ctx.world.events.find((e) => e.id === 'abril_sala');
-  if (!abril || !abril.page) return;
-  abril.moveTo(S.ox + 9, S.oy + 14);
-  await ctx.move(abril, ['up', 'up', 'up', 'up', 'up', 'right', 'right'], { through: true, speed: 4.5 });
-  abril.turnToward(ctx.player);
   await lines(ctx, SPEAKER.abril, [
     '¿Has sido tú? Cinco años aquí arriba y nunca las había oído sonar.',
-    'Venga. Lo que sea que haya en el centro, quiero verlo.',
+    'Te espero junto al núcleo. A ver si al menos me entretienes.',
   ]);
+}
+
+async function abrilT03(ctx) {
+  const clue = (ctx.state.clues || []).find((c) => c.id === 'T03');
+  if (!clue || clue.solved || clue.status === 'solved' || (clue.step || 1) >= 2 || ctx.flag(F.t03Abril)) return;
+  ctx.setFlag(F.t03Abril);
+  await ctx.say('¿Lo del rayo de Brontia? Allí ya ni se asustan. Cae siempre en la campana grande.', { speaker: SPEAKER.abril });
+  await ctx.story.advanceClue('T03', 2);
+}
+
+export async function abrilChallenge(ctx) {
+  if (ctx.flag(F.abril) || ctx.flag(F.restored)) return;
+  const abril = ctx.world.events.find((e) => e.id === 'abril_sala');
+  if (abril) abril.turnToward(ctx.player);
+  if (!ctx.flag(F.abrilMet)) {
+    ctx.setFlag(F.abrilMet);
+    await ctx.say('Soy Abril. La guarda del Anillo, dicen. Cinco años vigilando una piedra que no hace nada.', { speaker: SPEAKER.abril });
+  }
+  if (!ctx.flag(F.abrilChallenged)) {
+    await lines(ctx, SPEAKER.abril, [
+      '¿Has sido tú, lo del Parque? Pues mira qué bien. Ya que estás, a ver si al menos me entretienes.',
+      'Termina rápido, que se me enfría la comida.',
+    ]);
+    ctx.setFlag(F.abrilChallenged);
+  } else {
+    await ctx.say('¿Otra vez tú? Bueno, la comida ya se ha enfriado. Venga.', { speaker: SPEAKER.abril });
+  }
+  await abrilT03(ctx);
+  const outcome = await scriptedBattle(ctx, { trainer: 'b06_abril' }, P.retry);
+  if (outcome !== 'win') return;
+  ctx.setFlag(F.abril);
+  await lines(ctx, SPEAKER.abril, [
+    'Vaya. Pues sí que sabes. Venga. Lo que sea que haya en el centro, quiero verlo.',
+    'Ah, y en la Ruta 5, detrás de unos troncos rajados, a veces brilla algo verde. Yo no pienso ir a mirar.',
+  ]);
+  if (abril) await ctx.move(abril, ['right', 'right'], { through: false, speed: 4.5 });
+  ctx.requestRefresh();
 }
 
 /**
@@ -153,7 +187,10 @@ export function abrilSalaEvent() {
   return {
     id: 'abril_sala', x: ABRIL_SALA.x, y: ABRIL_SALA.y, name: SPEAKER.abril,
     pages: [{
-      when: (s) => Boolean(s) && s.flag(F.abrilSala) && !s.flag(F.abrilAfter),
+      when: (s) => Boolean(s) && !s.flag(F.abril) && !s.flag(F.restored),
+      sprite: SPRITE.abril, dir: 2, move: 'still', trigger: 'action', script: abrilChallenge,
+    }, {
+      when: (s) => Boolean(s) && s.flag(F.abrilSala) && (s.flag(F.abril) || s.flag(F.restored)) && !s.flag(F.abrilAfter),
       sprite: SPRITE.abril, dir: 8, move: 'still', trigger: 'action',
       script: async (ctx) => { await ctx.say('El centro. El pedestal. Tú primero, que a mí no me hace caso.', { speaker: SPEAKER.abril }); },
     }],
@@ -193,7 +230,7 @@ async function abrilFarewell(ctx) {
     'Yo me quedo en Brontia una temporada. Por fin pasa algo.',
   ]);
   if (abril) {
-    await ctx.move(abril, ['left', 'left', 'down', 'down', 'down', 'down', 'down', 'down'], { through: true, speed: 4.5 });
+    await walkEventTo(ctx, 'abril_sala', P.down.x, P.down.y, { speed: 4.5, fallback: false });
     ctx.erase(abril);
   }
   // Después de irse andando: el flag oculta su página de la Sala (cambiar de página cortaría la ruta).
@@ -202,7 +239,7 @@ async function abrilFarewell(ctx) {
 
 /** Escena del núcleo: Fragmento 3, verso III, efecto local, pista T04 y despedida de Abril. */
 async function coreScene(ctx) {
-  const pos = at(CAMPANAS.pedestal.at);
+  const pos = P.pedestal;
   const ok = await ctx.story.restorePillar(3, {
     core: pos,
     onRestored: async (c) => {
@@ -218,13 +255,13 @@ async function coreScene(ctx) {
 
 /** Pedestal del núcleo (base del stamp `pilar_pedestal`). */
 export function pedestalEvent() {
-  const pos = at(CAMPANAS.pedestal.at);
+  const pos = P.pedestal;
   return {
     id: 'nucleo_impulso', x: pos.x, y: pos.y, name: 'Núcleo',
     pages: [
       { solid: true, trigger: 'action', script: async (ctx) => { await ctx.say(NUCLEO_TEXT.coldPedestal); } },
       {
-        when: (s) => Boolean(s) && s.flag(F.bells) && !s.flag(F.restored), solid: true, trigger: 'action',
+        when: (s) => Boolean(s) && s.flag(F.bells) && s.flag(F.abril) && !s.flag(F.restored), solid: true, trigger: 'action',
         glow: { name: 'softLight', radius: 110, intensity: 0.6, pulse: 0.5, color: [236, 244, 255] },
         script: coreScene,
       },

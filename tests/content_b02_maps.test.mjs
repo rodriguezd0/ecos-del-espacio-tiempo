@@ -24,7 +24,7 @@ import { TRAINERS } from '../game/src/content/trainers/index.js';
 import { mapDisplayName } from '../game/src/content/services/zones.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const B02_MAPS = ['villa_zaguan', 'zaguan_centro', 'casa_dintel', 'zaguan_casa_vecina', 'zaguan_casa_huerto', 'explanada_umbral', 'ruinas_dintel'];
+const B02_MAPS = ['villa_zaguan', 'zaguan_centro', 'casa_dintel', 'zaguan_casa_vecina', 'zaguan_casa_huerto', 'explanada_umbral', 'ruinas_dintel_base', 'ruinas_dintel', 'ruinas_dintel_nucleo'];
 const built = new Map();
 const build = (id) => { if (!built.has(id)) built.set(id, buildMapNode(id)); return built.get(id); };
 const norm = (raw, i = 0) => normalizeEventDef(expandEventDef(raw), i);
@@ -79,7 +79,7 @@ const stateWith = (...flags) => {
 
 // ─────────────────────────────────────────────────────────────── registro y enlaces
 
-test('B02: los siete mapas están registrados, construyen y tienen nombre del catálogo', async () => {
+test('B02: los nueve mapas están registrados, construyen y tienen nombre del catálogo', async () => {
   for (const id of B02_MAPS) {
     assert.ok(MAPS[id], `${id} registrado`);
     const { def, warnings } = await build(id);

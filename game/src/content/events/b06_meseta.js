@@ -133,18 +133,18 @@ function cyclizarEvent() {
   };
 }
 
-function trainerEvents() {
+export function pilarTrainerEvents() {
   const restored = (s) => s.flag(F.restored);
   return [
     trainerLater({
       id: 'veterana_julia', trainer: 'b06_veterana_julia', name: 'Veterana Julia', sprite: 'anil:veterana',
-      x: 20, y: 33, dir: 4, sight: 4,
+      x: 8, y: 16, dir: 6, sight: 4,
       intro: 'El viento de la meseta pone a prueba a cualquiera. Veamos cuánto aguantas.',
       after: 'Llevo treinta años subiendo aquí. Nunca había visto el Parque tan callado.',
     }, restored, 'Escucha las aspas. Treinta años subiendo aquí, y así es como tiene que sonar la meseta.'),
     trainerLater({
       id: 'mecanica_sonia', trainer: 'b06_mecanica_sonia', name: 'Mecánica Sonia', sprite: 'anil:mecanica',
-      x: 34, y: 21, dir: 2, sight: 3,
+      x: 18, y: 14, dir: 4, sight: 3,
       intro: '¿Vienes a ver el Parque? Yo trabajaba ahí. Hasta que llegaron esos.',
       after: 'El Consorcio firmó con el ayuntamiento el mantenimiento del Parque. Desde entonces no produce ni una bombilla.',
     }, restored, '¡El Parque vuelve a dar luz! Ya sabía yo que aquello no era mantenimiento.'),
@@ -182,7 +182,6 @@ export function mesetaEvents() {
     ...gateEvents(),
     ...turbineEvents(),
     cyclizarEvent(),
-    ...trainerEvents(),
     ...detailEvents(),
     woolooStray(2, { x: 6, y: 33 }),
   ];

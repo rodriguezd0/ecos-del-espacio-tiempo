@@ -3,7 +3,8 @@
 // Coordenadas en explanada_umbral_layout.js; guiones en content/events/b02_explanada.js.
 import { zoneDefaults } from '../../services/zones.js';
 import { W, H, ROCK, EXPLANADA_DOOR, PLAZA, EAST_PATH, ZAGUAN_OFFSET } from './explanada_umbral_layout.js';
-import { ENTRANCE } from './ruinas_dintel_layout.js';
+import { BASE } from './ruinas_dintel_floors.js';
+import { paintPillarExterior } from '../../stamps/pilarVertical.js';
 import { EXPLANADA_ENCOUNTERS } from '../../encounters/b02.js';
 import { explanadaEvents } from '../../events/b02_explanada.js';
 
@@ -13,10 +14,6 @@ function cells(x, y, w, h) {
   return out;
 }
 
-const tid = (col, row) => 384 + row * 8 + col;
-/** Hueco oscuro de la boca (interior del `boquete` de Añil, filas 198–199): borde de roca arriba, negro abajo. */
-const MOUTH = { top: [tid(1, 198), tid(2, 198), tid(2, 198)], bottom: [tid(1, 199), tid(2, 199), tid(2, 199)] };
-
 function paintForest(b) {
   b.paint('bosque_mixto', [...cells(0, 0, ROCK.x, 14), ...cells(ROCK.x + ROCK.w + 1, 0, W - ROCK.x - ROCK.w - 1, 10)]);
   b.paint('bosque', [...cells(0, 14, 2, H - 14), ...cells(2, 26, 26, 4), ...cells(28, 16, 2, H - 16)]);
@@ -25,19 +22,10 @@ function paintForest(b) {
 function paintRuin(b) {
   const d = EXPLANADA_DOOR;
   b.blob(null, cells(ROCK.x, ROCK.y, ROCK.w, ROCK.h), 'acantilado');
-  // la ruina asoma sobre el macizo: columnas quebradas y un monolito entre la maleza
+  // La columna se ve entera desde la explanada; el dintel antiguo conserva su escena de entrada.
   b.stamp('pilar_columna_quebrada', 10, 4);
   b.stamp('pilar_monolito', 19, 3);
-  b.stamp('arbustos', 12, 4);
-  b.stamp('lupinos', 16, 3);
-  // Boca de la ruina tallada en la cara del macizo, justo detrás del hueco del dintel: hueco oscuro de 3 casillas
-  // con jambas de piedra (columnas) que siguen la línea de los pilares del dintel.
-  for (let i = 0; i < d.mouth.w; i++) {
-    b.set(2, d.mouth.x + i, d.mouth.y, MOUTH.top[i]);
-    b.set(2, d.mouth.x + i, d.mouth.y + 1, MOUTH.bottom[i]);
-  }
-  b.stamp('pilar_columna', d.mouth.x - 1, d.mouth.y - 1);
-  b.stamp('pilar_columna', d.mouth.x + d.mouth.w, d.mouth.y - 1);
+  paintPillarExterior(b, { centerX: 15, doorY: 9 });
   b.stamp('pilar_dintel', d.dintel.x, d.dintel.y);
   // monolitos que flanquean la boca y columnas caídas al pie del macizo
   b.stamp('pilar_monolito', 10, 10);
@@ -108,7 +96,7 @@ export default {
   },
 
   warps: EXPLANADA_DOOR.warps.map((w) => ({
-    ...w, to: 'ruinas_dintel', tx: ENTRANCE.arrive.x, ty: ENTRANCE.arrive.y, dir: ENTRANCE.arrive.dir,
+    ...w, to: 'ruinas_dintel_base', tx: BASE.arrival.x, ty: BASE.arrival.y, dir: BASE.arrival.dir,
   })),
 
   connections: [{ dir: 'east', to: 'villa_zaguan', offset: -ZAGUAN_OFFSET }],

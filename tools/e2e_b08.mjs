@@ -4,14 +4,14 @@
 // femenino; --gender=M para el masculino).
 //   Estrato (temblor de llegada, discusión ante la mina) → Mina Galena (técnicos: derrota simulada y reintento;
 //   Garrido y Fermín; C036) → Dunas de Ceniza (ceniza honda con Terreno; C037) → Cerro Plomo (Fermín abre la verja)
-//   → Cámara de los Contrapesos (bloques a pie por el puente, C040, caída montado por el suelo quebradizo, C039, placa
+//   → Pilar, piso 1 (Blanca y Octavio) → piso 2: Cámara de los Contrapesos (bloques a pie por el puente, C040, caída montado por el suelo quebradizo, C039, placa
 //   y plataforma, piedras, Balanza con el jugador montado en el platillo C) → Fermín (derrota simulada y reintento)
-//   → núcleo: restorePillar(4), verso IV, T05 → vuelta a Estrato: cooperativa, fósiles, segunda pista de T05 →
+//   → piso 3, núcleo: restorePillar(4), verso IV, T05 → vuelta a Estrato: cooperativa, fósiles, segunda pista de T05 →
 //   T05: Herminia, torneo (derrota en la 2.ª ronda y torneo reiniciado), noche con Sol (derrota y reintento), Losa →
 //   Tabla Fuerte y Medichamita; revancha tras descansar; el tren ya funciona.
 // Capturas en tools/cache/screens/e2e_b08_<nn>_<hito>.png y transcripción en e2e_b08_dialogos.txt.
 // Uso: node tools/e2e_b08.mjs [--base=http://localhost:8080] [--headed] [--no-retry] [--gender=F|M]
-//      [--from=estrato|mina|dunas|cerro|camara|cooperativa|t05]
+//      [--from=estrato|mina|dunas|cerro|camara|nucleo|cooperativa|t05]
 import path from 'node:path';
 import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -19,7 +19,7 @@ import { chromium } from 'playwright-core';
 import { installHelpers } from './e2e_b01_page.mjs';
 import { installB08Helpers } from './e2e_b08_page.mjs';
 import { Driver } from './e2e_b08_driver.mjs';
-import { ESTRATO, ESTRATO_INTERIORS, MINA, DUNAS, CERRO } from '../game/src/content/maps/b08/layout.js';
+import { ESTRATO, ESTRATO_INTERIORS, MINA, DUNAS, CERRO, P4_VERTICAL as P } from '../game/src/content/maps/b08/layout.js';
 import { SPOTS, SOLUTION_TARGETS, normalizePuzzle, planPiece, walkRoute, applyActions } from '../game/src/content/events/b08_balance_logic.js';
 import { F, V } from '../game/src/content/events/b08_common.js';
 
@@ -53,6 +53,7 @@ const CHAIN = {
     F.chamberSeen, F.balance, F.fermin, F.restored, F.verse, F.ferminLeft],
 };
 CHAIN.t05 = [...CHAIN.cooperativa, F.coop, F.fossils, F.t05Hint];
+CHAIN.nucleo = [...CHAIN.camara, F.chamberSeen, F.balance];
 const entry = (map, x, y, dir, chain = []) => new URLSearchParams({
   scene: 'map', map, x: String(x), y: String(y), dir: String(dir), flags: [...BASE_FLAGS, ...chain].join(','),
   party: 'LUCARIO:46,TORTERRA:46,STARAPTOR:45', fragments: chain.includes(F.restored) ? '4' : '3', noenc: '1', time: '11',
@@ -64,6 +65,7 @@ const STARTS = {
   dunas: entry('ciudad_estrato', 52, 39, 6, CHAIN.dunas),
   cerro: entry('cerro_plomo', CERRO.exit.arrive.x, CERRO.exit.arrive.y, 8, CHAIN.cerro),
   camara: entry('camara_contrapesos', SPOTS.entry.x, SPOTS.entry.y, 8, CHAIN.camara),
+  nucleo: entry('camara_contrapesos', SPOTS.pedestalFront.x, SPOTS.pedestalFront.y, 8, CHAIN.nucleo),
   cooperativa: entry('dunas_ceniza', 2, 21, 4, CHAIN.cooperativa),
   t05: entry('ciudad_estrato', 25, 25, 8, CHAIN.t05),
 };
@@ -146,7 +148,17 @@ async function cerro(d) {
   await d.milestone('verja_abierta', (s) => (s.flags[F.gateOpen] ? null : 'la verja sigue cerrada'));
   await d.walkTo(CERRO.door.x, CERRO.door.y + 1);
   await d.step(8);
-  await d.until((s) => s.map === 'camara_contrapesos' && s.ready, { timeout: 15000, what: 'entrar en la Cámara' });
+  await d.until((s) => s.map === 'camara_contrapesos_base' && s.ready, { timeout: 15000, what: 'entrar en la base del Pilar' });
+  await d.settle();
+  await d.milestone('pilar_masa_base');
+  for (const [x, y, face] of [[7, 16, 'right'], [19, 10, 'left']]) {
+    await d.walkTo(x, y, { face });
+    await d.interact();
+  }
+  await d.milestone('entrenadores_piso1');
+  await d.walkTo(P.up.x, P.up.y + 1);
+  await d.step(8);
+  await d.until((s) => s.map === 'camara_contrapesos' && s.ready, { timeout: 15000, what: 'subir a los contrapesos' });
 }
 
 // ───────────────────────────── Cámara de los Contrapesos ─────────────────────────────
@@ -250,10 +262,15 @@ async function camara(d) {
   await d.expectSaid(/La palanca vuelve sola a su sitio/, 'la Balanza inclinada a pie');
   await d.setMount(true);
   await d.face('up');
-  const watch = [{ re: /algo enorme cede/, name: 'balanza_cede', delay: 300 }, { re: /¡La Balanza! Cuarenta años/, name: 'fermin_llega', delay: 200 }];
+  const watch = [{ re: /algo enorme cede/, name: 'balanza_cede', delay: 300 }];
   await d.interact({ watch });
-  await d.expectSaid(GENDER === 'F' ? /pesáis la chavala y ese bicho verde/ : /pesáis el chaval y ese bicho verde/, 'Fermín (texto con género)');
   await d.milestone('gran_balanza', (s) => (s.flags[F.balance] ? null : 'sin b08_balanza'));
+  await d.setMount(false);
+  await d.walkTo(SPOTS.pedestalFront.x, SPOTS.pedestalFront.y, { face: 'up' });
+  await d.interact();
+  await d.until((s) => s.map === 'camara_contrapesos_nucleo' && s.ready, { timeout: 15000, what: 'subir al Guardián' });
+  await d.settle({ watch: [{ re: /¡La Balanza! Cuarenta años/, name: 'fermin_llega', delay: 200 }] });
+  await d.expectSaid(GENDER === 'F' ? /pesáis la chavala y ese bicho verde/ : /pesáis el chaval y ese bicho verde/, 'Fermín (texto con género)');
   await fermin(d);
   await nucleo(d);
 }
@@ -264,15 +281,26 @@ async function fermin(d) {
   for (let i = 0; i < 3; i++) {
     const s = await d.snapState();
     if (s.flags[F.fermin]) break;
-    await d.walkTo(SPOTS.fermin.x, SPOTS.fermin.y + 1, { watch, stopWhen: (st) => st.flags[F.fermin] });
+    await d.walkTo(P.guardian.x, P.guardian.y + 1, { watch, stopWhen: (st) => st.flags[F.fermin] });
     await d.settle({ watch });
   }
   if (RETRY) await d.expectSaid(/Descansa\. Cuando quieras, aquí estaré/, 'el reintento con Fermín');
   await d.milestone('fermin_vencido', (s) => (s.flags[F.fermin] ? null : 'Fermín sin vencer'));
 }
 
+async function pisoTres(d) {
+  await d.setMount(false);
+  await d.walkTo(SPOTS.pedestalFront.x, SPOTS.pedestalFront.y, { face: 'up' });
+  await d.interact();
+  await d.until((s) => s.map === 'camara_contrapesos_nucleo' && s.ready, { timeout: 15000, what: 'subir al Guardián' });
+  await d.settle();
+  await d.expectSaid(GENDER === 'F' ? /pesáis la chavala y ese bicho verde/ : /pesáis el chaval y ese bicho verde/, 'Fermín (texto con género)');
+  await fermin(d);
+  await nucleo(d);
+}
+
 async function nucleo(d) {
-  const f = SPOTS.pedestalFront;
+  const f = { x: P.pedestal.x, y: P.pedestal.y + 1 };
   await d.walkTo(f.x, f.y, { face: 'up' });
   const watch = [{ scene: 'VerseScene', name: 'verso_iv', delay: 1200 }];
   await d.interact({ watch, timeout: 300000 });
@@ -285,8 +313,16 @@ async function nucleo(d) {
     if (!frags.includes('F04')) return `fragmentos ${frags}`;
     return clues.some((c) => c.id === 'T05') ? null : `pistas ${JSON.stringify(clues)}`;
   });
-  // Salida: Cámara → Cerro Plomo → Dunas.
+  // Se baja por los tres pisos conservando la solución de la Cámara.
+  await d.walkTo(P.down.x, P.down.y - 1);
+  await d.step(2);
+  await d.until((s) => s.map === 'camara_contrapesos' && s.ready, { timeout: 15000, what: 'volver al puzzle' });
+  await d.settle();
   await d.walkTo(SPOTS.entry.x, SPOTS.entry.y);
+  await d.step(2);
+  await d.until((s) => s.map === 'camara_contrapesos_base' && s.ready, { timeout: 15000, what: 'volver a la base' });
+  await d.settle();
+  await d.walkTo(P.down.x, P.down.y - 1);
   await d.step(2);
   await d.until((s) => s.map === 'cerro_plomo' && s.ready, { timeout: 15000, what: 'volver al Cerro' });
   await d.settle();
@@ -399,12 +435,18 @@ async function main() {
     await installHelpers(page);
     await installB08Helpers(page, { loseOnce: LOSE, gender: GENDER });
     await d.until((s) => s.top === 'MapScene' && s.ready, { timeout: 30000, what: 'el mapa de arranque' });
+    // El arranque de desarrollo sustituye el estado tras cargar datos; se fija el género cuando ya está listo.
+    await d.eval(async (gender) => {
+      const { engine } = await import('/src/core/engine.js');
+      engine.state.data.player.gender = gender;
+    }, GENDER);
     const stages = [
       ['estrato', estrato], ['mina', mina], ['dunas', dunas], ['cerro', cerro], ['camara', camara],
       ['cooperativa', cooperativa], ['t05', t05],
     ];
     const first = stages.findIndex(([n]) => n === FROM);
-    for (const [name, run] of stages.slice(first)) {
+    const selected = FROM === 'nucleo' ? [['nucleo', pisoTres], ...stages.slice(stages.findIndex(([n]) => n === 'cooperativa'))] : stages.slice(first);
+    for (const [name, run] of selected) {
       console.log(`— ${name}`);
       await d.eval(() => window.__b08.heal());
       await run(d);

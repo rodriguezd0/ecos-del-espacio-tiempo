@@ -28,6 +28,12 @@ const floor = (w, h, props) => ({ w, h, kind: 'stamp', layer: 2, pass: Array(h).
 const nine = (props) => ({ w: 5, h: 3, kind: 'nine', layer: 1, pass: ['.....', '.....', '...  '], ...props });
 
 export const EXTRA_PIECES = {
+  pilar_torre: P(7, 10, {
+    pass: [...Array(8).fill('.......'), 'xxx.xxx', 'xxx.xxx'],
+    prio: ['9999999', '8888888', '7777777', '6666666', '5555555', '4444444', '3333333', '2222222', '0000000', '0000000'],
+    door: [3, 9], tags: ['pilar', 'edificio', 'puerta'],
+    desc: 'Columna de piedra de tres pisos, con glifos y puerta central (7×10)',
+  }),
   // ─── Kit común de Pilar (X23): piedra neutra; el tinte lo pone el mapa (content/stamps/pilar.js) ───
   pilar_monolito: P(2, 3, { pass: ['..', '..', 'xx'], prio: ['22', '11', '00'], tags: ['pilar', 'vestigio'], desc: 'Monolito de piedra con tres hexágonos tallados (2×3; la base bloquea)' }),
   pilar_columna: P(1, 3, { pass: ['.', '.', 'x'], prio: ['2', '1', '0'], tags: ['pilar', 'vestigio'], desc: 'Columna entera con capitel (1×3)' }),
@@ -93,8 +99,9 @@ export const EXTRA_LAYOUTS = {
   Cueva1: { row: 624, rows: 27, pieces: KIT },
   InteriorTorre: { row: 593, rows: 32, pieces: KIT },
   InteriorLiga: { row: 593, rows: 32, pieces: KIT },
-  ExteriorBosqueCeleste: { row: 699, rows: 15, pieces: EXTERIOR_KIT },
-  Exterior1: { row: 718, rows: 12, pieces: { ...EXTERIOR_KIT, nieve_honda: [0, 9], tronco_caido_h: [2, 7], tronco_caido_v: [5, 8] } },
+  ExteriorBosqueCeleste: { row: 699, rows: 25, pieces: { ...EXTERIOR_KIT, pilar_torre: [0, 15] } },
+  Exterior1: { row: 718, rows: 22, pieces: { ...EXTERIOR_KIT, nieve_honda: [0, 9], tronco_caido_h: [2, 7], tronco_caido_v: [5, 8], pilar_torre: [0, 12] } },
+  ExteriorPrisma: { row: 699, rows: 10, pieces: { pilar_torre: [0, 0] } },
   Exterior2: {
     row: 641, rows: 6,
     pieces: { grava: [0, 0], pilar_zocalo: [5, 0], pilar_zocalo_gastado: [6, 0], pilar_zocalo_vivo: [7, 0], barro: [0, 3] },
@@ -104,8 +111,8 @@ export const EXTRA_LAYOUTS = {
     pieces: { grava: [0, 0], pilar_zocalo: [5, 0], pilar_zocalo_gastado: [6, 0], pilar_zocalo_vivo: [7, 0], barro: [0, 3], arena_honda: [0, 6], ceniza: [5, 1] },
   },
   ExteriorSafari: {
-    row: 672, rows: 29,
-    pieces: { ceniza: [0, 0], barro: [0, 2], arena_honda: [0, 5], ceniza_honda: [0, 8], grava: [0, 11], pilar_zocalo: [5, 0], pilar_zocalo_gastado: [6, 0] },
+    row: 672, rows: 39,
+    pieces: { ceniza: [0, 0], barro: [0, 2], arena_honda: [0, 5], ceniza_honda: [0, 8], grava: [0, 11], pilar_zocalo: [5, 0], pilar_zocalo_gastado: [6, 0], pilar_torre: [0, 29] },
   },
 };
 
@@ -219,7 +226,7 @@ export function extraDefs(image) {
       const layers = [null, null, null];
       layers[p.layer] = grid;
       const solid = p.pass.some((s) => s.includes('x'));
-      stamps[name] = { tiles: { w: p.w, h: p.h, layers }, solid, tags: [...(p.tags || [])], ...meta };
+      stamps[name] = { tiles: { w: p.w, h: p.h, layers }, solid, tags: [...(p.tags || [])], ...(p.door ? { door: [...p.door] } : {}), ...meta };
     }
   }
   return { stamps, brushes };

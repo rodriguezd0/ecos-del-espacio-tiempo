@@ -3,6 +3,7 @@
 // Vientos al noreste con su puerta tallada, praderas de hierba alta al sur, un estanque, una explanada de roca
 // (Cyclizar) y los postes de la línea eléctrica muerta hacia Brontia. Coordenadas en ./layout.js (MESETA).
 import { MESETA } from './layout.js';
+import { paintPillarExterior } from '../../stamps/pilarVertical.js';
 
 const M = MESETA;
 export const rect = (x0, y0, x1, y1) => {
@@ -58,11 +59,8 @@ function mesa(b) {
   b.blob(null, rect(m.x0, m.y0, m.x1, m.y1), 'terraza');
   const g = M.ringGate;
   b.stamp('escalera_terraza', g.x - 1, m.y1 - 2);
-  b.stamp('pilar_dintel', g.x - 2, g.y - 3);
-  for (const [n, x, y] of [
-    ['pilar_columna', 35, 2], ['pilar_monolito', 42, 2], ['pilar_columna_quebrada', 44, 6], ['pilar_columna', 35, 6],
-    ['pino', 44, 2], ['roca_gris', 38, 3], ['brotes', 34, 9], ['flores_blancas', 43, 9], ['pilar_zocalo_gastado', 40, 4],
-  ]) b.stamp(n, x, y);
+  paintPillarExterior(b, { centerX: g.x, doorY: g.y });
+  for (const [n, x, y] of [['pino', 44, 2], ['brotes', 34, 9], ['flores_blancas', 43, 9]]) b.stamp(n, x, y);
   b.stamp('pilar_columna_quebrada', g.x - 4, m.y1 + 1);
   b.stamp('pilar_columna', g.x + 4, m.y1 + 1);
   b.stamp('pilar_zocalo_gastado', g.x - 3, m.y1 + 3);

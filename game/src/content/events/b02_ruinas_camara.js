@@ -2,10 +2,11 @@
 // desde los temblores (se saca manteniendo pulsado A), rompe la roca que corta el túnel y ofrece acompañarte
 // (regalo opcional nv 8; si se rechaza, espera en la cámara). Casilda te detiene ante el Núcleo: combate.
 import { F, SPEAKER, SPRITE, when, say, strip, fx } from './b02_common.js';
-import { ROOM, placeCasilda, walkToRoom, casildaRoom } from './b02_ruinas_casilda.js';
+import { ROOM, placeCasilda, setRoom, walkToRoom, casildaRoom } from './b02_ruinas_casilda.js';
 import { walkEventTo } from './b01_town_path.js';
 import { CAMARA, TUNNEL, ANTESALA } from '../maps/b02/ruinas_dintel_layout.js';
 import { GEODUDE_GIFT } from '../encounters/b02.js';
+import { GUARDIAN } from '../maps/b02/ruinas_dintel_floors.js';
 
 const C = SPEAKER.casilda;
 /** Fotogramas que hay que mantener pulsado A para sacar al Geodude (≈1,5 s) y espera máxima (≈12 s). */
@@ -103,7 +104,8 @@ async function breakRock(ctx) {
     await say(ctx, C, 'La sala de guardia. La conozco del otro lado: esa roca cayó con los temblores.');
     await say(ctx, C, 'Te espero allí.');
     // Se va andando por el túnel recién abierto hasta el paso al Núcleo.
-    await walkToRoom(ctx, ROOM.guardiana, { speed: 4 });
+    await walkEventTo(ctx, 'casilda', CAMARA.guardian.x, CAMARA.guardian.y, { speed: 4, fallback: false });
+    setRoom(ctx, ROOM.guardiana);
   }
   await offerGeodude(ctx);
 }
@@ -157,7 +159,7 @@ export async function guardianBattle(ctx) {
   }
   ctx.setFlag(F.casildaBeaten);
   await say(ctx, C, 'Bien. Con cabeza.');
-  await say(ctx, C, 'Toma. Es lo que yo llevaría encima para bajar aquí.');
+  await say(ctx, C, 'Toma. Es lo que yo llevaría encima para andar por aquí.');
   await ctx.giveItem('POTION', 3);
   await ctx.giveItem('ESCAPEROPE');
   await say(ctx, C, 'Pasa. Yo voy detrás.');
@@ -189,15 +191,15 @@ function geodudeEvents() {
   ];
 }
 
-function guardianEvents() {
+export function guardianEvents() {
   const active = (s) => s.flag(F.rockBroken) && !s.flag(F.casildaBeaten) && !s.flag(F.casildaLost);
   return [
-    ...strip('reto_guardiana', CAMARA.challenge, { when: active, script: guardianBattle }),
-    { id: 'superpocion', type: 'item', x: 40, y: 7, item: 'SUPERPOTION', hidden: true },
+    { id: 'reto_guardiana', x: GUARDIAN.x, y: GUARDIAN.y + 4, trigger: 'auto', when: active, script: guardianBattle },
+    { id: 'superpocion', type: 'item', x: 21, y: 7, item: 'SUPERPOTION', hidden: true },
   ];
 }
 
 /** Eventos de las dos cámaras. */
 export function camaraEvents() {
-  return [...geodudeEvents(), ...guardianEvents()];
+  return geodudeEvents();
 }

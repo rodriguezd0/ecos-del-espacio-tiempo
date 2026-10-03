@@ -2,7 +2,7 @@
 // candado y la puerta del Pilar de la Masa. Fermín espera en la verja tras el pozo lateral de la Mina Galena (flag
 // b08_fermin_cerro) y la abre; sin él, la verja sigue cerrada.
 import { F, SPEAKER, SPRITE, OBJ, lines, examine, findEvent } from './b08_common.js';
-import { CERRO } from '../maps/b08/layout.js';
+import { CERRO, P4_VERTICAL } from '../maps/b08/layout.js';
 
 export const CERRO_TEXT = Object.freeze({
   gateLocked: 'Una verja de hierro con un candado enorme. Una placa oxidada: «Propiedad de la familia Galena. Prohibido el paso».',
@@ -73,7 +73,7 @@ function doorEvent() {
     id: 'puerta_pilar', x, y, through: true, trigger: 'touch',
     script: async (ctx) => {
       ctx.se('Door enter');
-      await ctx.warp('camara_contrapesos', 14, 33, 8);
+      await ctx.warp('camara_contrapesos_base', P4_VERTICAL.entry.x, P4_VERTICAL.entry.y, 8);
     },
   };
 }
@@ -83,25 +83,29 @@ export async function cerroOnEnter(ctx) {
   ctx.setFlag(F.cerroSeen); // Zygarde habla muy poco (autor, 25-09-2026): sin comentario del Core al llegar.
 }
 
-export function cerroEvents() {
+export function pilarTrainerEvents() {
   return [
-    ...gateEvents(),
-    doorEvent(),
-    examine('cartel_galena', 10, 20, CERRO_TEXT.sign, { solid: true }),
-    examine('estela_puerta_0', 11, 7, CERRO_TEXT.plaque, { solid: true }),
-    examine('estela_puerta_1', 12, 7, CERRO_TEXT.plaque, { solid: true }),
     {
       id: 'minera_blanca', type: 'trainer', trainer: 'b08_minera_cerro', name: 'Minera Blanca', sprite: 'anil:minera',
-      x: 20, y: 22, dir: 4, sight: 4,
+      x: 8, y: 16, dir: 6, sight: 4,
       intro: 'Esta galería era de los Galena. Ahora la vigilo yo, que no se cuele nadie del Consorcio.',
       after: 'El padre de Fermín bajaba aquí cada domingo. Decía que el cerro «respiraba». Nadie le creía.',
     },
     {
       id: 'montanero_octavio', type: 'trainer', trainer: 'b08_montanero_cerro', name: 'Montañero Octavio', sprite: 'anil:montanero',
-      x: 20, y: 9, dir: 4, sight: 3,
+      x: 18, y: 10, dir: 4, sight: 3,
       intro: '¿Pasas de la verja? Entonces tendrás que pasar de mí.',
       after: 'Esa puerta del fondo… Me acerqué una vez y me dolieron las rodillas. Como si llevara un saco a la espalda.',
     },
+  ];
+}
+
+export function cerroEvents() {
+  return [
+    ...gateEvents(), doorEvent(),
+    examine('cartel_galena', 10, 20, CERRO_TEXT.sign, { solid: true }),
+    examine('estela_puerta_0', 11, 7, CERRO_TEXT.plaque, { solid: true }),
+    examine('estela_puerta_1', 12, 7, CERRO_TEXT.plaque, { solid: true }),
     { id: 'objeto_cerro_1', type: 'item', x: 7, y: 25, item: 'REVIVE', hidden: true },
     { id: 'objeto_cerro_2', type: 'item', x: 22, y: 7, item: 'HYPERPOTION' },
     { id: 'objeto_cerro_3', type: 'item', x: 7, y: 11, item: 'STARDUST' },

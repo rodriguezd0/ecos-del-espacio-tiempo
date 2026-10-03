@@ -1,8 +1,8 @@
 # Pendientes (lista viva)
 
-> **Pausa 26-09 (uso semanal al 95 %).**
+> **Reanudado el 03-10-2026 desde master (274c47d).**
 >
-> Hecho y guardado hasta el commit 030e80d:
+> Hecho antes de la pausa (hasta el commit 030e80d; notas de pausa en 274c47d):
 > - el multijugador completo, incluido el juego en equipo contra los entrenadores de la historia;
 > - el título renovado;
 > - las partidas guardadas en disco (`saves/`);
@@ -15,9 +15,16 @@
 >   - reglas de mapas;
 >   - mapas B01–B21 limpios.
 >
-> Al reanudar:
-> 1. Pilares verticales P1–P4 (no llegaron a cambiar nada) y luego P5.
-> 2. Confirmar con el creador el reparto de pisos de P6–P10.
+> **Tanda 5 terminada (03-10): Pilares verticales P1–P5.**
+> - Suite: 1631/1632; solo falla el `prota_kit` previo.
+> - Recorridos en navegador: puzzles, derrotas/reintentos, restauraciones y regresos de los cinco Pilares.
+> - Validador sin errores; 47/47 costuras limpias, sin avisos nuevos de mapas.
+> - Despedidas de Abril y Fermín adaptadas a sus escaleras; montaje del final actualizado.
+> - Prueba cooperativa reproducible: rival generado con semilla, igual que equipos y decisiones.
+>
+> Después:
+> 1. P6: solo puzzles, sin Pokémon ni Guardianes.
+> 2. Confirmar con el creador el reparto de pisos de P7–P10.
 > 3. Arte.
 > 4. Postgame B22 (a medias en la rama `wip-pausa-25-09`).
 > 5. DLC B23 y B24.
@@ -28,28 +35,30 @@
 > - El creador tiene que confirmar la regla de tamaño de los Pokémon en el mapa (afecta a unas 140 especies).
 > - Rocas de cueva: implican rehacer 3 puzles.
 
-Actualizado: 25-09-2026. Prioridad actual: **multijugador** (pedido del usuario, va antes que todo lo demás).
+Actualizado: 03-10-2026. Siguiente: **P6 y confirmación de pisos de P7–P10**, después arte y contenido restante.
 
-## 0. En curso — Multijugador online (salas)
+## 0. Terminado — Multijugador online (salas)
 - Fase 1 HECHA (d94e15d): salas con código, ver a los demás jugadores moverse en el mapa (baja latencia), entrada Online.
-- Fase 2 HECHA: combate 1 contra 1 (niveles reales) y doble en equipo contra entrenadores de IA máxima (X33).
+- Fase 2 HECHA: combate 1 contra 1 (niveles reales) y juego en equipo contra los entrenadores reales de la historia.
 - Fase 3 HECHA: intercambios, chat de texto y emotes. También: Online desde la pantalla de título, pantalla de
   título renovada y partidas guardadas en el disco del servidor (carpeta `saves/`).
-- Revisar: en dobles contra dos entrenadores, el sprite de un entrenador rival sigue en pantalla durante el combate.
+- Revisar: en combates dobles, los Pokémon del propio bando se ven solapados.
 
-## 1. Trabajo apartado (git stash)
-`git stash@{0}` («pausa 25-09 …») guarda trabajo a medias. Hay que hacer `git stash pop` antes de reanudarlo.
-HEAD es jugable. Solo falla `tests/prota_kit.test.mjs`, porque su módulo está en el stash.
+## 1. Trabajo apartado (rama)
+El trabajo a medias de arte y postgame está en `wip-pausa-25-09`; no hay ningún stash.
+Se debe retomar y revisar en esa rama antes de integrarlo. Master conserva la versión jugable.
+El fallo previo de `tests/prota_kit.test.mjs` se debe al módulo de arte ausente en master.
 
-## 2. Correcciones del creador (jugó B01–B03)
-Workflow `correcciones-creador-1` (run wf_fd38598a-a68). Ningún agente llegó a terminar.
+## 2. Correcciones del creador (jugó B01–B03): tandas 1–4 terminadas
+Las correcciones enumeradas abajo se completaron y guardaron hasta 030e80d, salvo el pase de arte humano y la
+regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como referencia.
 
 **Modo desarrollador (F9), permanente:**
 - dar cualquier Pokémon al nivel que se quiera, y cualquier objeto;
 - teletransportarse a cualquier mapa;
 - saltarse puzzles.
 
-**Cámara:** debe seguir siempre al jugador; ahora se para en los bordes.
+**Cámara (hecho):** sigue siempre al jugador, incluidos bordes y esquinas.
 
 **Costuras entre mapas** (árboles cortados, carteles y plantas atravesando árboles, caminos que acaban de golpe):
 - Villa Alba↔Ruta 1
@@ -86,14 +95,17 @@ Workflow `correcciones-creador-1` (run wf_fd38598a-a68). Ningún agente llegó a
 **Overworld:** Onix y Yanma se ven enormes.
 
 ## 3. Pilares (decisión del creador: TODOS verticales, de 3 pisos)
-- **P1–P5:** piso 1 con entrenadores, piso 2 con puzzle, piso 3 con el Guardián. Workflow `pilares-verticales` (run wf_f8a908cb-c5a).
+- **P1–P5 implementados (X36):** piso 1 con entrenadores, piso 2 con los puzzles originales, piso 3 con el Guardián
+  y núcleo. Columnas exteriores de piedra en los cuatro biomas. Conservan niveles, recompensas, células y progreso
+  de partidas anteriores. P3 tiene dos mapas de puzzle en el mismo piso; el Archivo de Mnemos es el piso 1 de P5.
+  Revisados y probados en navegador. Workflow `pilares-verticales` (run wf_f8a908cb-c5a).
 - **P6 (Mundo Distorsión):** solo puzzles con habilidades de Zygarde; sin Pokémon ni guardianes.
 - **P7–P10:** con Pokémon. Propuesta de pisos pendiente de que el creador la confirme:
   - P7: ruinas de Antea → capas del tiempo → Bramaluna Alfa
   - P8: Uxie → Mesprit → Azelf + Telar
   - P9: puente (Casia, Garrido, Vértice) → Cámara del Cruce → Dialga/Palkia
   - P10: Senda → Cielo Interior (Trío) → Gael + núcleo
-- Registrar en DECISIONES.
+- Decisión registrada en `docs/DECISIONES.md` (X36); reparto de P1–P5 en `docs/CAMPANA.md` §1.5.
 
 ## 4. Arte
 - **Protagonistas M/F** en estilo BW chibi: dibujados; falta la revisión. Workflow `arte-protas-zygarde` (run wf_fb80f3df-d58). Zygarde no se toca.

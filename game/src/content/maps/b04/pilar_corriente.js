@@ -5,14 +5,16 @@
 import { zoneDefaults } from '../../services/zones.js';
 import { pilarTone } from '../../stamps/pilar.js';
 import { W, H, SPOTS } from './pilar_corriente_layout.js';
-import { PILAR_DOOR } from './garganta_albo_layout.js';
+import { BASE, SUMMIT, PUZZLE_UP } from './pilar_corriente_floors.js';
 import { BRUSHES, buildPilarCorriente } from './pilar_corriente_build.js';
 import { pilarEvents, pilarOnEnter } from '../../events/b04_pilar.js';
 import { PILAR_CORRIENTE } from '../../encounters/b04.js';
 
 export default {
   id: 'pilar_corriente',
+  pillar: { id: 'P2', floor: 2 },
   ...zoneDefaults('pilar_corriente'),
+  name: 'Pilar de la Corriente · piso 2',
   bgm: 'CuevaCeleste',
   tileset: 15,
   width: W,
@@ -24,7 +26,10 @@ export default {
   encounters: PILAR_CORRIENTE,
   brushes: BRUSHES,
   build: buildPilarCorriente,
-  warps: [{ x: SPOTS.exitWarp.x, y: SPOTS.exitWarp.y, to: 'garganta_albo', tx: PILAR_DOOR.arrive.x, ty: PILAR_DOOR.arrive.y, dir: 2, dirTrigger: 2 }],
+  warps: [
+    { x: SPOTS.exitWarp.x, y: SPOTS.exitWarp.y, to: 'pilar_corriente_base', tx: BASE.fromPuzzle.x, ty: BASE.fromPuzzle.y, dir: 2, dirTrigger: 2 },
+    { x: PUZZLE_UP.x, y: PUZZLE_UP.y, to: 'pilar_corriente_nucleo', tx: SUMMIT.arrival.x, ty: SUMMIT.arrival.y, dir: 8 },
+  ],
   events: pilarEvents(),
   onEnter: pilarOnEnter,
 };

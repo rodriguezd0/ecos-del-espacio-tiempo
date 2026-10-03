@@ -4,6 +4,7 @@
 // Tras editar: node tools/stamps_bake.mjs ExteriorPrisma · hoja: node tools/preview_stamps.mjs ExteriorPrisma
 import base from './ExteriorBosqueCeleste.js';
 import { deriveLibrary } from './derive.js';
+import { extraDefs } from './extraTiles.js';
 
 const T = (x, y) => 384 + y * 8 + x;
 
@@ -78,6 +79,6 @@ export default deriveLibrary(base, {
   tileset: 9,
   image: 'ExteriorPrisma',
   preview: { ground: 'cesped', under: { orilla: 'agua', playa: 'agua' } },
-  stamps: { include: SHARED_STAMPS, add: own },
+  stamps: { include: SHARED_STAMPS, add: { ...own, ...extraDefs('ExteriorPrisma').stamps } },
   brushes: { include: SHARED_BRUSHES, add: brushes },
 });

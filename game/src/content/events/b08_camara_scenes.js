@@ -2,11 +2,12 @@
 // su combate (Graveler 32, Naclstack 32, Mudsdale 33, Onix 33, Rhydon 34; reintento sin pérdida, §2.6), y el núcleo:
 // restorePillar(4) (Fragmento 4, verso IV leído por el Core y Fermín), el efecto local (se detiene el hundimiento), la
 // inscripción de T05 y la despedida de Fermín.
-import { SPOTS } from './b08_balance_logic.js';
 import { F, SPEAKER, SPRITE, lines, zygardeSays, byGender, findEvent } from './b08_common.js';
-import { setBalanceSolvedHandler, syncPieces } from './b08_camara.js';
+import { syncPieces } from './b08_camara.js';
+import { P4_VERTICAL as P } from '../maps/b08/layout.js';
 import { bossBattle } from '../common/bossBattle.js';
 import { pilarTone } from '../stamps/pilar.js';
+import { walkEventTo } from './b01_town_path.js';
 
 export const NUCLEO_TEXT = Object.freeze({
   cold: 'Un pedestal hexagonal, frío. Del hueco sale un aire pesado, como en el fondo de una mina.',
@@ -26,16 +27,19 @@ export async function camaraOnEnter(ctx) {
 
 // ───────────────────────────── Fermín ─────────────────────────────
 
-/** Fermín llega corriendo cuando la Balanza cede (lo engancha b08_camara.js). */
-async function ferminArrives(ctx) {
-  ctx.requestRefresh();
-  await ctx.wait(2);
+/** Fermín escucha la Balanza desde la sala del núcleo, en el tercer piso. */
+export async function nucleoOnEnter(ctx) {
+  if (!ctx.flag(F.balance) && !ctx.flag(F.restored)) {
+    await ctx.warp('camara_contrapesos_base', P.entry.x, P.entry.y, 8);
+    return;
+  }
   const fermin = findEvent(ctx, 'fermin_camara');
-  if (!fermin || !fermin.page) return;
-  fermin.moveTo(18, 17);
-  fermin.direction = 8;
-  const route = [...Array(3).fill('up'), ...Array(18 - SPOTS.fermin.x).fill('left'), ...Array(14 - SPOTS.fermin.y).fill('up'), 'turn_down'];
-  await ctx.move(fermin, route, { through: true, speed: 4.5 });
+  if (fermin && ctx.flag(F.fermin)) {
+    fermin.moveTo(P.guardian.x + 2, P.guardian.y);
+    fermin.direction = 6;
+  }
+  if (ctx.flag('b08_fermin_nucleo') || ctx.flag(F.restored)) return;
+  ctx.setFlag('b08_fermin_nucleo');
   await lines(ctx, SPEAKER.fermin, [
     '¡La Balanza! Cuarenta años…',
     'Mi padre bajaba a mirarla los domingos. Decía que no se movería nunca. Que no había peso en el mundo que la moviera.',
@@ -58,7 +62,7 @@ async function ferminChallenge(ctx) {
   } else {
     await lines(ctx, SPEAKER.fermin, ['Otra vez. Sin prisa: la piedra no se va a ir a ninguna parte.']);
   }
-  const outcome = await bossBattle(ctx, { trainer: 'b08_fermin' }, SPOTS.ferminRetry, {
+  const outcome = await bossBattle(ctx, { trainer: 'b08_fermin' }, P.retry, {
     speaker: SPEAKER.fermin, loseText: 'Descansa. Cuando quieras, aquí estaré.',
   });
   if (outcome !== 'win') return;
@@ -67,7 +71,8 @@ async function ferminChallenge(ctx) {
     '…Aguantas. Más de lo que aguantaba yo a tu edad.',
     'Pasa. Yo voy detrás. Hace cuarenta años que quiero ver qué hay ahí dentro.',
   ]);
-  if (fermin) { fermin.direction = 6; ctx.requestRefresh(); }
+  if (fermin) await ctx.move(fermin, ['right', 'right'], { through: false, speed: 4.5 });
+  ctx.requestRefresh();
 }
 
 async function ferminWaiting(ctx) {
@@ -75,19 +80,19 @@ async function ferminWaiting(ctx) {
 }
 
 export function ferminEvents() {
-  const f = SPOTS.fermin;
-  const waiting = (s) => Boolean(s) && s.flag(F.balance) && !s.flag(F.fermin);
+  const f = P.guardian;
+  const waiting = (s) => Boolean(s) && s.flag(F.balance) && !s.flag(F.fermin) && !s.flag(F.restored);
   return [
     {
       id: 'fermin_camara', x: f.x, y: f.y, name: SPEAKER.fermin,
       pages: [
         { when: waiting, sprite: SPRITE.fermin, dir: f.dir, trigger: 'action', script: ferminChallenge },
-        { when: (s) => Boolean(s) && s.flag(F.fermin) && !s.flag(F.restored), sprite: SPRITE.fermin, dir: 6, trigger: 'action', script: ferminWaiting },
+        { when: (s) => Boolean(s) && (s.flag(F.fermin) || s.flag(F.restored)) && !s.flag(F.ferminLeft), sprite: SPRITE.fermin, dir: 6, trigger: 'action', script: ferminWaiting },
       ],
     },
     // Franja de la boca del paso: no se llega al núcleo sin el combate.
-    ...[5, 6, 7, 8, 9].map((x) => ({
-      id: `reto_fermin_${x}`, x, y: 12,
+    ...P.challenge.map(([x, y]) => ({
+      id: `reto_fermin_${x}`, x, y,
       pages: [{ when: waiting, through: true, trigger: 'touch', script: ferminChallenge }],
     })),
   ];
@@ -120,22 +125,22 @@ async function ferminFarewell(ctx) {
     'Tengo que volver a Estrato. Sol tiene que saber esto antes que nadie. Y los del Consorcio también.',
     'Te espero allí. No tardes: esto hay que celebrarlo con toda la mina.',
   ]);
-  ctx.setFlag(F.ferminLeft);
   const fermin = findEvent(ctx, 'fermin_camara');
   if (fermin) {
-    await ctx.move(fermin, ['down', 'down', 'down', 'down', 'down'], { through: true, speed: 4.5 });
-    ctx.erase(fermin);
+    await walkEventTo(ctx, 'fermin_camara', P.down.x, P.down.y, { speed: 4.5, fallback: false });
   }
+  ctx.setFlag(F.ferminLeft);
+  if (fermin) ctx.erase(fermin);
 }
 
 async function coreScene(ctx) {
   const fermin = findEvent(ctx, 'fermin_camara');
   if (fermin) {
-    fermin.moveTo(6, 8);
+    await ctx.move(fermin, ['up', 'up', 'up', 'left', 'left'], { through: false, speed: 4.5 });
     fermin.direction = 6;
   }
   const ok = await ctx.story.restorePillar(4, {
-    core: { x: SPOTS.pedestal.x, y: SPOTS.pedestal.y },
+    core: P.pedestal,
     onRestored: async (c) => {
       await readVerseTogether(c);
       await localEffect(c);
@@ -148,7 +153,7 @@ async function coreScene(ctx) {
 }
 
 export function pedestalEvent() {
-  const { x, y } = SPOTS.pedestal;
+  const { x, y } = P.pedestal;
   return {
     id: 'nucleo_masa', x, y, name: 'Núcleo',
     pages: [
@@ -166,5 +171,3 @@ export function pedestalEvent() {
     ],
   };
 }
-
-setBalanceSolvedHandler(ferminArrives);

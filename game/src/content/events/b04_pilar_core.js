@@ -2,12 +2,14 @@
 // (reintento: se le vuelve a hablar), la restauración (ctx.story.restorePillar(2): Fragmento 2, verso II, flag
 // p2_restored), la lectura del verso con Leandro, la inscripción junto al verso (T02 segunda pista, T03) y la
 // despedida («Mañana, en la plaza»). Líneas literales de CAMPANA marcadas con «».
-import { CORE, SPOTS } from '../maps/b04/pilar_corriente_layout.js';
+import { CORE as LANDING, SPOTS } from '../maps/b04/pilar_corriente_layout.js';
+import { CORE, SUMMIT } from '../maps/b04/pilar_corriente_floors.js';
 import { pilarTone } from '../stamps/pilar.js';
 import { setCycleHandler } from './b04_pilar_puzzle.js';
 import { CYCLE_FLAG } from './b04_hydraulics.js';
 import { F, SPEAKER, SPRITE, SAY_CORE, kid } from './b04_common.js';
 import { bossBattle } from '../common/bossBattle.js';
+import { walkEventTo } from './b01_town_path.js';
 
 const L = { speaker: SPEAKER.leandro };
 const BLUE = [72, 136, 232];
@@ -17,11 +19,11 @@ const coreTile = { x: CORE.x, y: CORE.y };
 export const CORE_TEXT = Object.freeze({
   cycle: 'El agua da la vuelta entera: baja de E1 a E6 y la noria la devuelve arriba. Por los canales corre una luz azul hasta el centro de la sala.',
   cycleLeandro: '…Ha dado la vuelta. La Escalera entera. Mi abuelo decía que eso no lo había visto nadie.',
-  bridge: 'Del foso del núcleo suben unas losas de piedra y forman un paso.',
+  bridge: 'Del foso central suben unas losas de piedra y forman un paso hasta la escalera del piso superior.',
   challenge: (s) => [
     'La Escalera te ha hecho caso. A mí, en semanas, no me ha hecho ni una vez.',
-    `Mi familia lleva trescientos años aquí abajo. No me aparto de este núcleo sin ver de qué pasta estás ${s?.player?.gender === 'F' ? 'hecha' : 'hecho'}.`,
-    'En la entrada te dije que vería si sabes dónde pisas. Esto es lo que falta. ¡Adelante!',
+    `Mi familia lleva trescientos años cuidando este Pilar. No me aparto de este núcleo sin ver de qué pasta estás ${s?.player?.gender === 'F' ? 'hecha' : 'hecho'}.`,
+    'En el rellano te dije que vería si sabes dónde pisas. Esto es lo que falta. ¡Adelante!',
   ],
   win: 'Adelante. El núcleo es tuyo… o del río, qué sé yo.',
   lose: 'Otra vez. Y esta vez mira dónde pisas.',
@@ -49,20 +51,15 @@ async function cycleScene(ctx) {
   ctx.se('PRSFX- Surf', { volume: 90 });
   await ctx.shake(4, 6, 40);
   await ctx.flash(BLUE, 24, 160);
-  const glow = ctx.effect('softLight', { x: CORE.x, y: CORE.y, radius: 110, color: BLUE, intensity: 0.7, pulse: 0.4, fadeIn: 40 });
+  const glow = ctx.effect('softLight', { x: LANDING.x, y: LANDING.y, radius: 110, color: BLUE, intensity: 0.7, pulse: 0.4, fadeIn: 40 });
   await ctx.say(CORE_TEXT.cycle);
-  await ctx.camera.pan(CORE.x, CORE.y - 2, 50);
+  await ctx.camera.pan(LANDING.x, LANDING.y - 2, 50);
   ctx.se('Anim/Saint7');
   await ctx.wait(20);
   await ctx.say(CORE_TEXT.bridge);
-  // Leandro, desde el rellano, cruza antes que nadie hasta la isla.
-  const leandro = ctx.world.events.find((e) => e.id === 'leandro_isla');
+  // Leandro sube primero; el jugador lo encontrará junto al núcleo en el tercer piso.
   await ctx.say(CORE_TEXT.cycleLeandro, L);
-  await ctx.fade('out', 16);
   ctx.requestRefresh();
-  await ctx.wait(4);
-  if (leandro) { leandro.moveTo(CORE.leandro.x, CORE.leandro.y); leandro.direction = CORE.leandro.dir; }
-  await ctx.fade('in', 16);
   await ctx.wait(20);
   await ctx.camera.reset(40);
   glow?.remove?.(60);
@@ -131,10 +128,8 @@ export async function restoreScene(ctx) {
   if (ev) ctx.face(ev, ctx.player);
   await ctx.say(CORE_TEXT.farewell, L);
   if (ev) {
-    await ctx.move(ev, ['up', 'left', 'left', 'up', 'up'], { through: true });
-    await ctx.fade('out', 12);
+    await walkEventTo(ctx, 'leandro_isla', SUMMIT.down.x, SUMMIT.down.y, { speed: 4, fallback: false });
     ctx.setFlag(F.leandroGone);
-    await ctx.fade('in', 12);
   } else {
     ctx.setFlag(F.leandroGone);
   }
@@ -165,7 +160,7 @@ async function inscriptionScript(ctx) {
 
 /** Eventos del núcleo: Leandro en la isla, el núcleo y la estela del verso. */
 export function coreEvents() {
-  const onIsland = (s) => s.flag(CYCLE_FLAG) && !s.flag(F.leandroGone);
+  const onIsland = (s) => (s.flag(CYCLE_FLAG) || s.flag(F.restored)) && !s.flag(F.leandroGone);
   const beaten = (s) => s.flag(F.leandroBeaten);
   return [
     {
@@ -177,7 +172,7 @@ export function coreEvents() {
     },
     // Al pisar la isla por el puente, Leandro reta al jugador.
     ...CORE.arrive.map(([x, y]) => ({
-      id: `isla_llegada_${x}`, x, y, trigger: 'touch',
+      id: `isla_llegada_${x}`, x, y, trigger: 'auto',
       when: (s) => onIsland(s) && !beaten(s) && !s.var('b04_leandro_intentos', 0),
       script: leandroBattle,
     })),

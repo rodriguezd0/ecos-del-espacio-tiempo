@@ -480,7 +480,29 @@ function enlosado() {
   return img;
 }
 
+/** Columna de tres pisos: piedra facetada, cornisas, glifos y una puerta al pie. */
+function torre() {
+  const img = new Img(7 * N, 10 * N);
+  const r = rng(3030);
+  shaft(img, 10, 92, 15, 148, r);
+  plinth(img, 4, 104, 6, 9);
+  plinth(img, 7, 98, 46, 5);
+  plinth(img, 7, 98, 91, 5);
+  plinth(img, 1, 110, 149, 10);
+  for (const [i, y] of [27, 70, 112].entries()) {
+    hexGroove(img, 56, y, 7, { groove: S(5), fill: S(3) });
+    glyph(img, i, 54, y - 2, hex(VIOLET[2]));
+  }
+  // Única casilla de entrada: el hueco y sus peldaños coinciden con door [3,9].
+  fillRect(img, 46, 127, 20, 28, S(5));
+  fillRect(img, 49, 130, 14, 25, hex(OUT));
+  for (const y of [145, 150, 155]) fillRect(img, 48, y, 16, 2, S(1));
+  moss(img, r, 55, 10, 130, 92, 22);
+  return outline(img, OUT);
+}
+
 const PIECES = {
+  pilar_torre: torre,
   pilar_monolito: monolito,
   pilar_columna: columna,
   pilar_columna_quebrada: columnaQuebrada,

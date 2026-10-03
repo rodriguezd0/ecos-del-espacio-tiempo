@@ -18,8 +18,10 @@ import { buildBattleConfig } from '../game/src/battle/scene/setup.js';
 import { Battle, HeadlessBattleUI } from '../game/src/battle/core/index.js';
 import { createPokemon } from '../game/src/battle/core/pokemon.js';
 import { getTrainer } from '../game/src/content/trainers/index.js';
+import { baseOnEnter } from '../game/src/content/events/b06_vertical.js';
+import { P3_VERTICAL } from '../game/src/content/maps/b06/layout.js';
 
-const B06_MAPS = ['ruta_5', 'meseta_impulso', 'parque_eolico', 'anillo_vientos', 'galerias_soplo'];
+const B06_MAPS = ['ruta_5', 'meseta_impulso', 'parque_eolico', 'anillo_vientos', 'galerias_soplo', 'anillo_vientos_base', 'anillo_vientos_nucleo'];
 const load = (f) => JSON.parse(fs.readFileSync(new URL(`../game/data/${f}`, import.meta.url), 'utf8'));
 const db = {
   species: load('species.json'), moves: load('moves.json'), abilities: load('abilities.json'), types: load('types.json'),
@@ -61,6 +63,89 @@ test('mapas del bloque: registrados, construyen y crean sus eventos', async () =
     world.setCurrent({ ...entry, events: null });
     assert.ok(world.events.length > 0, `${id}: eventos`);
   }
+});
+
+test('P3 vertical: entrenadores abajo, puzzle en el segundo piso y Abril junto al núcleo del tercero', async () => {
+  const loadFloor = async (id, floor) => {
+    assert.ok(MAPS[id], `${id} registrado`);
+    const def = (await MAPS[id]()).default;
+    assert.deepEqual(def.pillar, { id: 'P3', floor });
+    assert.ok(!def.outdoor, `${id}: interior del Pilar`);
+    return def;
+  };
+  const base = await loadFloor('anillo_vientos_base', 1);
+  const galleries = await loadFloor('galerias_soplo', 2);
+  const bells = await loadFloor('anillo_vientos', 2);
+  const core = await loadFloor('anillo_vientos_nucleo', 3);
+  assert.deepEqual(base.events.filter((e) => e.trainer).map((e) => e.trainer).sort(), ['b06_mecanica_sonia', 'b06_veterana_julia']);
+  assert.ok(!bells.events.some((e) => e.id === 'nucleo_impulso'), 'el puzzle no restaura el Pilar');
+  assert.ok(core.events.some((e) => e.id === 'abril_sala'));
+  assert.ok(core.events.some((e) => e.id === 'nucleo_impulso'));
+  assert.equal(galleries.warps[0].to, base.id, 'las galerías bajan a entrenadores');
+  const pedestal = core.events.find((e) => e.id === 'nucleo_impulso');
+  const state = GameState.create({ name: 'P' });
+  state.setFlag(F.bells);
+  assert.ok(!pedestal.pages[1].when(state), 'las campanas no sustituyen el combate con Abril');
+  state.setFlag(F.abril);
+  assert.ok(pedestal.pages[1].when(state));
+});
+
+test('P3: las partidas anteriores conservan entrenadores/objetos y el campamento se migra a suelo seguro', async () => {
+  const state = GameState.create({ name: 'P' });
+  state.setSelfSwitch('meseta_impulso', 'veterana_julia');
+  state.setSelfSwitch('anillo_vientos', 'objeto_anillo_2');
+  await baseOnEnter(mockCtx(state));
+  assert.ok(state.selfSwitch('anillo_vientos_base', 'veterana_julia'));
+  assert.ok(state.selfSwitch('anillo_vientos_base', 'objeto_anillo_2'));
+  const bells = (await MAPS.anillo_vientos()).default;
+  const calls = [];
+  await bells.onEnter(mockCtx(state, { player: { x: 37, y: 28 }, warp: async (...args) => calls.push(args) }));
+  assert.deepEqual(calls, [['anillo_vientos_base', P3_VERTICAL.entry.x, P3_VERTICAL.entry.y, 8]]);
+});
+
+test('P3: Abril se despide andando hasta la escalera del nuevo núcleo', async () => {
+  const state = GameState.create({ name: 'P' });
+  for (const f of [F.bells, F.abril, F.abrilSala]) state.setFlag(f);
+  const { entry } = await buildMapNode('anillo_vientos_nucleo');
+  const world = new World({ state });
+  world.setCurrent({ ...entry, events: null });
+  const P = P3_VERTICAL;
+  world.player.moveTo(P.pedestal.x, P.pedestal.y + 1);
+  const abril = world.events.find((e) => e.id === 'abril_sala');
+  abril.moveTo(P.guardian.x + 2, P.guardian.y);
+  let erased = false;
+  const ctx = mockCtx(state, {
+    world, player: world.player,
+    setFlag: (f) => {
+      if (f === F.abrilAfter) assert.deepEqual([abril.x, abril.y], [P.down.x, P.down.y], 'llega antes de su despedida');
+      state.setFlag(f);
+    },
+    move: async (actor, route) => {
+      const ev = typeof actor === 'string' ? world.events.find((e) => e.id === actor) : actor;
+      for (const step of route) {
+        const [dir, dx, dy] = { up: [8, 0, -1], down: [2, 0, 1], left: [4, -1, 0], right: [6, 1, 0] }[step];
+        assert.ok(!state.flag(F.abrilAfter), 'sigue visible mientras camina');
+        assert.ok(world.map.passable(ev.x, ev.y, dir, ev) && world.map.passable(ev.x + dx, ev.y + dy, 10 - dir, ev), 'camina por el suelo');
+        ev.moveTo(ev.x + dx, ev.y + dy);
+      }
+    },
+    erase: (ev) => {
+      assert.deepEqual([ev.x, ev.y], [P.down.x, P.down.y], 'se oculta en la escalera');
+      erased = true;
+    },
+    story: {
+      restorePillar: async (id, opts) => {
+        assert.equal(id, 3);
+        state.setFlag(F.restored);
+        world.refreshEvents();
+        await opts.onRestored(ctx);
+        return true;
+      },
+      openClue: async () => {},
+    },
+  });
+  await pedestalEvent().pages[1].script(ctx);
+  assert.ok(state.flag(F.abrilAfter) && erased);
 });
 
 test('conexiones: Ruta 5 ↔ Meseta simétricas; Ruta 5 ↔ Brontia con el offset acordado con B05', async () => {
@@ -158,9 +243,11 @@ test('campanas: Norte larga, Este corta, Oeste corta → vendaval calmado; un go
   said = await strike('W', 1);
   assert.ok(s.flag(F.bells), 'b06_campanas');
   assert.ok(said.some((t) => /suenan a la vez/.test(t)));
-  // El pedestal solo responde tras las campanas.
+  // El pedestal responde tras las campanas y la Guardiana del tercer piso.
   const ped = pedestalEvent();
   assert.equal(ped.pages[0].when, undefined);
+  assert.ok(!ped.pages[1].when(s));
+  s.setFlag(F.abril);
   assert.ok(ped.pages[1].when(s));
 });
 

@@ -16,9 +16,9 @@ export const F = Object.freeze({
   gaelLeft: 'b06_gael_se_fue', // …y se va (al salir el jugador del Parque)
   abrilMet: 'b06_abril_conocida',
   abrilChallenged: 'b06_abril_retada', // ya dijo «Termina rápido…» (el reintento no repite la escena)
-  abril: 'b06_abril_vencida', // abre las galerías
+  abril: 'b06_abril_vencida', // abre el núcleo del tercer piso
   bells: 'b06_campanas', // secuencia correcta: el vendaval del sur se calma
-  abrilSala: 'b06_abril_sala', // Abril sube a la Sala al oír las campanas
+  abrilSala: 'b06_abril_sala', // Abril oye las campanas en la sala del núcleo
   restored: 'p3_restored', // global (content/story/fragments.js)
   abrilAfter: 'b06_abril_despedida', // «Vale. Esto no es aburrido.»
   // auxiliares

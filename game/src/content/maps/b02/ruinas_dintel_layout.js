@@ -1,10 +1,11 @@
 // Coordenadas de las Ruinas del Dintel (Pilar del Umbral, P1): fuente única para el build, los eventos, las
 // pruebas y el recorrido E2E. Documentado en content/maps/b02/README.md. Módulo puro.
 //
-// Un solo nivel de 44×40 con cinco salas (docs/CAMPANA.md B02) talladas en la roca (brush `sala` de Cueva1) y
-// unidas por dinteles del kit de Pilar:
+// Segundo piso: conserva las cinco salas de 44×40 talladas en la roca (brush `sala` de Cueva1) y sus coordenadas
+// para las partidas anteriores. Los nombres históricos `guardiana` y `nucleo` son ahora rellanos del puzzle;
+// el Guardián y el núcleo reales están en ruinas_dintel_nucleo.js. Recorrido de este piso:
 //   Antesala (abajo) ──dintel── Galería de los Dinteles (centro-oeste) ──losa deslizante── Cámara de Geodude
-//   (arriba-oeste) ──derrumbe con una roca── Cámara de la Guardiana (arriba-este) ──dintel── Núcleo (centro-este)
+//   (arriba-oeste) ──derrumbe con una roca── Rellano (arriba-este) ──dintel── Escalera al piso 3 (centro-este)
 //   ──losa del atajo (se abre desde dentro tras restaurar)── Antesala.
 // Las salas se dan como rectángulos de SUELO (x0..x1, y0..y1); el brush pone 3 casillas de pared a los lados, 4
 // filas arriba y 1 abajo.
@@ -78,15 +79,15 @@ export const CAMARA = Object.freeze({
   pull: { x: 4, y: 7, dir: 4 },            // casilla desde la que se tira (mirando a la izquierda)
   cell: { x: 12, y: 9 },                   // C012
   casilda: { x: 14, y: 9, dir: 4 },
-  guardian: { x: 34, y: 10, dir: 4 },      // Casilda ante el paso al Núcleo (x 33–35, fila 12)
-  challenge: [{ x: 28, y: 5 }],            // salida del túnel: única entrada a la sala; Casilda te detiene
+  guardian: { x: 34, y: 10, dir: 4 },      // rellano donde Casilda se despide antes de subir al piso 3
+  challenge: [{ x: 28, y: 5 }],            // coordenadas históricas de la salida del túnel
   tunnelOut: { x: 28, y: 5 },
 });
 
-// ─── Núcleo ──────────────────────────────────────────────────────────────────────────────────────
+// ─── Antiguo núcleo: rellano de la escalera al tercer piso ─────────────────────────────────────────
 export const NUCLEO = Object.freeze({
   camara: { x: 33, y: 18 },                // pilar_camara_nucleo 5×5 (centro 35,20)
-  column: { x: 35, y: 20 },                // columna hueca en el centro del hexágono
+  column: { x: 35, y: 20 },                // centro de la escalera al tercer piso
   front: { x: 35, y: 22, dir: 8 },         // casilla del jugador al acercar el Core
   arca: { x: 39, y: 18 },                  // caja hexagonal que Casilda «siempre vio cerrada»
   entry: [{ x: 33, y: 17 }, { x: 34, y: 17 }, { x: 35, y: 17 }],

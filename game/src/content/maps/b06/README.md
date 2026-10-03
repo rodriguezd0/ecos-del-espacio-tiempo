@@ -12,8 +12,14 @@ segunda pista de Abril si sigue abierta). Encuentros: `docs/POKEDEX_DISTRIBUCION
 | `ruta_5` | `ruta_5.js` + `ruta_5_build.js` | 60×40 | 1 | Meseta ventosa: redil y granero del pastor, línea eléctrica muerta, dos oteros (de bosque a bosque) con el paso cerrado por troncos (Embestida: único camino a la Meseta), hondonada de C028, molino de viento del altiplano (Drifloon tras el P3), otero con escalera |
 | `meseta_impulso` | `meseta_impulso.js` + `_build.js` | 50×50 | 1 | Parque Eólico vallado (nave del Colector, 6 aerogeneradores + 3 fuera), peña del Anillo con escalinata y dintel, praderas, estanque, explanada de Cyclizar |
 | `parque_eolico` | `parque_eolico.js` | 46×21 | 4 | Almacén (`central_almacen`) + sala del Colector (`central_generador`), puerta de servicio (warp interno) |
-| `anillo_vientos` | `anillo_vientos.js` | 44×40 | 1 | Lo alto de la mesa: círculo de piedras, 3 monolitos del ritmo, terraza de la Sala de las Campanas con estrado y núcleo, boca de las galerías, campamento de Abril. Tinte P3 al 45 % |
-| `galerias_soplo` | `galerias_soplo.js` | 26×30 | 2 | Pasarelas de `pilar_enlosado` sobre pozos; Flechas (abajo) y Remolino (arriba). Tinte P3 |
+| `anillo_vientos_base` | `anillo_vientos_base.js` | 27×25 | 2 | Piso 1: Julia y Sonia, monolitos del ritmo, objetos y refugio de Abril |
+| `galerias_soplo` | `galerias_soplo.js` | 26×30 | 2 | Piso 2: pasarelas de `pilar_enlosado` sobre pozos; Flechas y Remolino. Tinte P3 |
+| `anillo_vientos` | `anillo_vientos.js` | 44×40 | 2 | Continuación del piso 2: Sala de las Campanas, con el trazado del viento y C034 conservados |
+| `anillo_vientos_nucleo` | `anillo_vientos_nucleo.js` | 27×25 | 2 | Piso 3: Abril, su combate y el núcleo |
+
+La columna exterior de piedra (7×10) se ve desde la Meseta. `pillar: { id: 'P3', floor: 1/2/3 }`
+identifica los pisos; las dos salas del puzzle son parte del mismo nivel. Las partidas anteriores conservan los
+entrenadores y objetos ya vencidos/recogidos. Un guardado en el antiguo campamento del Anillo llega a la nueva base.
 
 Arte propio (PROVISIONAL, D30): `node tools/b06_assets.mjs [--preview]` → `assets/objects/rafagas.png`,
 `rafagas_fuertes.png`, `veleta.png`, `colector.png`, `aerogenerador.png`, `campana_viento.png`, `hoguera.png`.
@@ -28,12 +34,14 @@ Arte propio (PROVISIONAL, D30): `node tools/b06_assets.mjs [--preview]` → `ass
 | `parque_eolico` salida sur | (9–12,19), pulsar ↓ | `meseta_impulso` | (17,15) ↓ |
 | `parque_eolico` puerta de servicio | empujar (12,4) desde (12,5) | sala del Colector (mismo mapa) | (35,13) ↑ |
 | `parque_eolico` hueco sur de la sala | pisar (34–36,14) | almacén | (12,5) ↓ |
-| `meseta_impulso` dintel de la peña | pisar (39,9) (arriba de la escalinata) | `anillo_vientos` | (21,36) ↑ |
-| `anillo_vientos` escalinata sur | (20–22,39), pulsar ↓ | `meseta_impulso` | (39,13) ↓ |
-| `anillo_vientos` boca de las galerías | empujar (31–32,24) desde arriba | `galerias_soplo` | (10,28) ↑ |
-| `galerias_soplo` salida de luz | (10,29), pisar | `anillo_vientos` | (31,23) ↑ |
+| `meseta_impulso` puerta de la columna | (39,9) | `anillo_vientos_base` | (13,20) ↑ |
+| `anillo_vientos_base` escalera sur | (13,22) | `meseta_impulso` | (39,13) ↓ |
+| `anillo_vientos_base` escalera norte | (13,5), después del Colector | `galerias_soplo` | (10,28) ↑ |
+| `galerias_soplo` salida de luz | (10,29) | `anillo_vientos_base` | (13,6) ↓ |
 | `galerias_soplo` boca del techo (Remolino) | pisar (7,4) | Sala de las Campanas | (24,17) ↓ |
 | `anillo_vientos` losa de la Sala | A en (26,17) | Remolino (rellano) | (7,5) ↓ |
+| `anillo_vientos` escalera central | A en (21,10), campanas resueltas | `anillo_vientos_nucleo` | (13,20) ↑ |
+| `anillo_vientos_nucleo` escalera sur | (13,22) | `anillo_vientos` | (21,11) ↓ |
 
 Pendiente para **B07** (Ruta 6): los vendavales se retiran con `p3_restored` (Brontia ya lo lee en su salida sur,
 `maps/b05/links.js`). Abril dice en la despedida que «en la Ruta 6 ya se podrá pasar».
@@ -48,16 +56,16 @@ Pendiente para **B07** (Ruta 6): los vendavales se retiran con `p3_restored` (Br
 | **Casia**: «No somos un consorcio. Somos Genesis.», doctrina; combate (Solosis 23, Magnemite 24, Elgyem 25) | Sala del Colector, franja (34–36,11), hablar o tocar la esfera | `!b06_colector_roto` | `b06_casia_presentada`; perder → puerta del Colector (35,13) curado; reintento «¿Otra medición?» |
 | El Colector se rompe: C029–C032, **N2** → Terreno complicado («Ahora recuerdo cómo se pisa la tierra blanda.»); Casia «Solo lo estábamos escuchando.» | idem | victoria | `b06_casia_vencida`, `b06_colector_roto`, `zyg_core_2` |
 | Gael ante las pantallas (curiosidad) | idem | tras Casia | `b06_gael_pantallas`; se va al salir el jugador (`b06_gael_se_fue`, onEnter de la Meseta) |
-| Abril (tedio): «Cinco años vigilando una piedra que no hace nada.»; la boca sopla hacia fuera hasta romper el Colector | Anillo (34,23) y la boca | — | `b06_abril_conocida` (+ 2ª pista de T03 si seguía abierta) |
-| **Abril** reta: «Termina rápido, que se me enfría la comida.» (Emolga 26, Drifloon 26, Staravia 27, Cyclizar 28) | al empujar la boca o hablarle | `b06_colector_roto && !b06_abril_vencida` | `b06_abril_retada`, `b06_abril_vencida`; perder → (34,24) curado y reintento corto («¿Otra vez tú?…»). Pista verbal de C028 |
+| Piso 1: Julia y Sonia; la escalera sigue cerrada por el vendaval hasta romper el Colector | base | — | autointerruptores A; conserva los de la Meseta en partidas anteriores |
 | Galería de las Flechas (C033) | `galerias_soplo` | — | vars ninguna |
 | Galería del Remolino: dos veletas | idem | — | `b06_veleta_remolino_a` (3), `b06_veleta_remolino_b` (1) |
-| Sala de las Campanas: Norte larga (mantener A), Este corta, Oeste corta | `anillo_vientos` | — | var `b06_campana_paso`, flag `b06_campanas` (el vendaval se calma), `b06_abril_sala` |
-| **Núcleo**: `restorePillar(3)` (Fragmento 3, verso III con el Core y Abril), efecto local, pista **T04**, «Vale. Esto no es aburrido.» | pedestal (21,10), desde (21,11) | `b06_campanas` y Fragmento 2 | `p3_restored`, `verse_3`, `b06_parque_luz`, `b06_abril_despedida` |
+| Sala de las Campanas: Norte larga (mantener A), Este corta, Oeste corta | `anillo_vientos` | — | var `b06_campana_paso`, flag `b06_campanas` (el vendaval se calma y abre el tercer piso) |
+| **Abril**: tedio, pista T03, «Termina rápido, que se me enfría la comida.»; Emolga 26, Drifloon 26, Staravia 27, Cyclizar 28 | piso 3, (13,11) o franja y12 | después del puzzle | `b06_abril_sala`, `b06_abril_conocida`, `b06_abril_retada`, `b06_abril_vencida`; derrota → (13,14), curado y reintento corto. Pista verbal de C028 |
+| **Núcleo**: `restorePillar(3)` (Fragmento 3, verso III con el Core y Abril), efecto local, pista **T04**, «Vale. Esto no es aburrido.» | piso 3, pedestal (13,6), desde (13,7) | `b06_campanas`, Abril vencida y Fragmento 2 | `p3_restored`, `verse_3`, `b06_parque_luz`, `b06_abril_despedida` |
 
 Tras `p3_restored`: sin ráfagas en el Anillo ni en las galerías; los aerogeneradores giran; el molino de la Ruta 5 gira
 parejo y los **Drifloon vuelven a él** (CAMPANA «Cambio en el mundo»); en el Parque una operaria de Brontia; Abril ya no
-está (su tienda tiene una nota y la hoguera se apaga); **crisis fase 1** (derivada de los flags). Opcional: el pastor de
+está (su refugio tiene una nota); **crisis fase 1** (derivada de los flags). Opcional: el pastor de
 la Ruta 5 y sus dos Wooloo perdidas (`b06_wooloo_1/2`, premio `LEFTOVERS`), Cyclizar visible fijo (nv 24; si se
 debilita reaparece al descansar: var `b06_cyclizar_descanso`).
 
@@ -79,9 +87,10 @@ que la Sala alcanza las tres campanas (C034 en el camino a la Norte) con un vend
 - Ruta 5 con Embestida: `?scene=map&map=ruta_5&x=2&y=19&dir=6&party=TORTERRA:30&zygarde=run,ram&zcells=24&zcores=1&fragments=2&flags=p1_restored,p2_restored&noenc=1&debug`
 - Puerta del Parque (doble con Gael): `?scene=map&map=meseta_impulso&x=17&y=24&dir=8&party=TORTERRA:30,LUXRAY:28&zygarde=run,ram&zcells=25&zcores=1&fragments=2&flags=p1_restored,p2_restored,b06_meseta_intro&vars=gael_starter:LITTEN&noenc=1&debug`
 - Casia: `?scene=map&map=parque_eolico&x=35&y=13&dir=8&party=TORTERRA:32&zygarde=run,ram&zcells=24&zcores=1&fragments=2&flags=p1_restored,p2_restored,b06_doble_ganado&debug`
-- Anillo con Abril: `?scene=map&map=anillo_vientos&x=31&y=22&dir=2&party=TORTERRA:32&zygarde=run,ram,terrain&zcells=32&zcores=2&fragments=2&flags=p1_restored,p2_restored,b06_colector_roto&debug`
+- Base: `?scene=map&map=anillo_vientos_base&x=13&y=20&dir=8&party=TORTERRA:32&zygarde=run,ram,terrain&zcells=32&zcores=2&fragments=2&flags=p1_restored,p2_restored,b06_colector_roto&debug`
 - Galerías: `?scene=map&map=galerias_soplo&x=10&y=28&dir=8&zygarde=run,ram,terrain&zcells=32&zcores=2&fragments=2&flags=p2_restored,b06_colector_roto,b06_abril_vencida&noenc=1&debug`
-- Sala de las Campanas y núcleo: `?scene=map&map=anillo_vientos&x=24&y=17&dir=2&zygarde=run,ram,terrain&zcells=33&zcores=2&fragments=2&flags=p1_restored,p2_restored,b06_colector_roto,b06_abril_vencida&debug`
+- Sala de las Campanas: `?scene=map&map=anillo_vientos&x=24&y=17&dir=2&zygarde=run,ram,terrain&zcells=33&zcores=2&fragments=2&flags=p1_restored,p2_restored,b06_colector_roto&debug`
+- Abril y núcleo: `?scene=map&map=anillo_vientos_nucleo&x=13&y=20&dir=8&party=TORTERRA:38&zygarde=run,ram,terrain&zcells=34&zcores=2&fragments=2&flags=p1_restored,p2_restored,b06_colector_roto,b06_campanas&debug`
 - `node --test tests/b06_wind.test.mjs tests/b06_content.test.mjs tests/b06_reach.test.mjs` (el último comprueba a pie
   que sin Embestida no se llega a la Meseta, que al Parque solo se entra por la puerta guardada y que todos los objetos
   se pueden coger) · `node tools/preview_map.mjs anillo_vientos --pass` ·
