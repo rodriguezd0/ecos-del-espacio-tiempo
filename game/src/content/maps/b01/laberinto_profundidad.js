@@ -4,6 +4,7 @@
 // del centro con el Core. Tileset 7. Guiones en content/events/b01_north_stealth.js y b01_north_core.js.
 import { stealthEvents, SAFE_SPOT } from '../../events/b01_north_stealth.js';
 import { coreChamberEvents } from '../../events/b01_north_core.js';
+import { labyrinthNodeEvents } from '../../events/b22a_red.js';
 import { layoutHedges, paintHedges } from './laberinto_setos.js';
 
 const W = 40;
@@ -138,5 +139,6 @@ export default {
   events: [
     ...stealthEvents(),
     ...coreChamberEvents(CHAMBER),
+    ...labyrinthNodeEvents(),
   ],
 };

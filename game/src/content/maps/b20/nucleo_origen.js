@@ -6,6 +6,7 @@ import { nucleoEvents, nucleoOnEnter } from '../../events/b20_nucleo.js';
 import { MUSIC } from '../../events/b20_common.js';
 import { pilarTone } from '../../stamps/pilar.js';
 import '../../events/b21_salto.js'; // B21: registra el Salto de Convergencia en el Nodo del Origen (registerOriginNode)
+import { b22aOriginEvents } from '../../events/b22a_red.js';
 
 export function buildNucleo(b) {
   b.fill(0, 'vacio');
@@ -50,5 +51,5 @@ export default {
   build: buildNucleo,
   warps: [{ x: NUCLEO.back.x, y: NUCLEO.back.y, to: back.map, tx: back.x, ty: back.y, dir: back.dir, dirTrigger: 2 }],
   onEnter: nucleoOnEnter,
-  events: nucleoEvents(),
+  events: b22aOriginEvents(nucleoEvents()),
 };

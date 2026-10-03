@@ -1,14 +1,14 @@
 // Pilar Invertido — la explanada interior (docs/CAMPANA.md B12): al otro lado del aljibe, el reflejo de la explanada
 // del prólogo flotando en el Mundo Distorsión, con las cicatrices de las tres noches en que Zygarde empujó a Giratina
 // de vuelta. Rellano de llegada bajo el aljibe, plaza con columnas y estela partida, islote del portal hacia La Cara
-// Vuelta. Único espacio del Pilar con encuentros (POKEDEX: «solo fuera de las salas de puzzle»). Tileset 14, 40×34.
+// Vuelta. Piso 1 del P6, sin encuentros (X36). Tileset 14, 40×34.
 // Tras restaurar, el portal del núcleo trae aquí y Zygarde da su «Respuesta».
 import { zoneDefaults } from '../../services/zones.js';
-import { VESTIBULO as V } from './layout.js';
+import { VESTIBULO as V, P6_VERTICAL as P } from './layout.js';
 import { paintPlatform, floatingDebris, rectSet, rockSet, raggedIsland, union, DISTORTION_ENV, DISTORTION_TONE } from './paint.js';
 import { vestibuloEvents, firstFallHint } from '../../events/b12_distorsion.js';
-import { PILAR_INVERTIDO } from '../../encounters/b12.js';
 import { F } from '../../events/b12_common.js';
+import { paintStair } from './vertical_build.js';
 
 const events = vestibuloEvents();
 const key = (x, y) => `${x},${y}`;
@@ -16,12 +16,12 @@ const key = (x, y) => `${x},${y}`;
 export default {
   id: 'pilar_invertido',
   ...zoneDefaults('pilar_invertido'),
-  name: 'Pilar Invertido',
+  name: 'Pilar Invertido · piso 1',
+  pillar: { id: 'P6', floor: 1 },
   ...DISTORTION_ENV,
   width: V.width,
   height: V.height,
   tone: DISTORTION_TONE, // tinte del P6 (violeta), rebajado
-  encounters: PILAR_INVERTIDO,
   start: { ...V.arrival },
   impossible: { section: 'vestibulo', spawn: { ...V.arrival }, fallFlag: F.primeraCaidaP6, onFirstFall: firstFallHint },
 
@@ -48,6 +48,7 @@ export default {
     b.stamp('pilar_arista_grande', 30, 21);
     b.stamp('pilar_arista', 6, 14); // junto al monolito, sin pisarlo
     floatingDebris(b, [[3, 4, 2], [30, 3, 3], [2, 28, 2], [26, 29, 3], [12, 29, 2], [36, 8, 2]]);
+    paintStair(b, P.baseUp);
   },
 
   events,

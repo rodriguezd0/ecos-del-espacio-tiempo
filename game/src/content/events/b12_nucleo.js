@@ -6,6 +6,7 @@
 import { F, V, EXT, OBJ, ANCHOR_ART, VIOLET, GREEN, when, pause, eventById } from './b12_common.js';
 import { NUCLEO, VESTIBULO } from '../maps/b12/layout.js';
 import { portalEvent } from './b12_distorsion.js';
+import { nucleoDownstairs } from './b12_vertical.js';
 
 export const NUCLEO_TEXT = Object.freeze({
   sealOpen: 'Un anillo de piedra rota alrededor de un remolino oscuro. En el centro late una luz verde, atrapada.',
@@ -161,5 +162,6 @@ export function nucleoEvents() {
     ...sealBlockers(),
     ...N.anchors.map(anchorEvent),
     portalEvent('b12_portal_regreso', N.portalBack.x, N.portalBack.y, back, { when: when({ all: [EXT.restored] }) }),
+    ...nucleoDownstairs(),
   ];
 }

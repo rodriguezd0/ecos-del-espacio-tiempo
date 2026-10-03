@@ -64,15 +64,15 @@ function entryState(cells = 50) {
   return st;
 }
 
-test('encuentros: POKEDEX §7.3 (Monte: cueva 40–45; Pilar Invertido: cueva 42–47), especies de Añil y pesos 100', () => {
-  for (const [table, lo, hi] of [[ENC.MONTE_CUEVA.cave, 40, 45], [ENC.PILAR_INVERTIDO.cave, 42, 47]]) {
+test('encuentros: Monte cueva 40–45, especies de Añil y pesos 100; P6 sin Pokémon (X36)', () => {
+  for (const [table, lo, hi] of [[ENC.MONTE_CUEVA.cave, 40, 45]]) {
     assert.equal(table.reduce((a, r) => a + r[0], 0), 100);
     for (const [, sp, min, max] of table) {
       assert.ok(species[sp], sp);
       assert.ok(min >= lo && max <= hi, `${sp} ${min}-${max}`);
     }
   }
-  assert.deepEqual(ENC.PILAR_INVERTIDO.cave.map((r) => r[1]), ['HAUNTER', 'DUSCLOPS', 'SABLEYE', 'BEHEEYEM', 'DRIFBLIM', 'GOLBAT', 'MISMAGIUS', 'NOIVERN']);
+  assert.ok(!ENC.default.pilar_invertido, 'el interior del P6 solo tiene puzzles');
   assert.ok(ENC.MONTE_HIERBA.grassDay && ENC.MONTE_HIERBA.grassNight, 'hierba del Monte = tabla de la Ruta 10 alta');
 });
 
@@ -90,10 +90,10 @@ test('Mundo Distorsión: tileset 14, fondo propio, niebla `portal`, música y fo
     assert.equal(mapInfo(id).name, 'Pilar Invertido', id);
     assert.equal(def.mount, false, `${id}: sin montura`);
   }
-  // Encuentros solo fuera de las salas de puzzle (POKEDEX: «solo fuera de las salas de puzzle»).
+  // X36 posterior a POKEDEX: tampoco hay encuentros en la explanada interior.
   for (const id of ids) {
     const { def } = await buildMapNode(id);
-    assert.equal(Boolean(def.encounters), id === 'pilar_invertido', `${id}: encuentros`);
+    assert.equal(Boolean(def.encounters), false, `${id}: sin encuentros`);
   }
 });
 

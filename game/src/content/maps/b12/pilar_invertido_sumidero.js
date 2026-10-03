@@ -4,11 +4,12 @@
 // baja: hay que dejarse caer para volver al último poste. C053 junto a ese pulsador; la Gengarita en el rincón del
 // noroeste; la sombra de Giratina cruza el vacío mayor al asomarse al borde este de la isla alta. Tileset 14, 34×48.
 import { zoneDefaults } from '../../services/zones.js';
-import { SUMIDERO as S } from './layout.js';
+import { SUMIDERO as S, P6_VERTICAL as P } from './layout.js';
 import { paintPlatform, floatingDebris, rectSet, raggedIsland, union, DISTORTION_ENV, DISTORTION_TONE } from './paint.js';
 import { sumideroEvents } from '../../events/b12_sumidero.js';
 import { firstFallHint } from '../../events/b12_distorsion.js';
 import { F } from '../../events/b12_common.js';
+import { paintStair, stairFloor } from './vertical_build.js';
 
 const events = sumideroEvents();
 const key = (x, y) => `${x},${y}`;
@@ -22,7 +23,8 @@ const DECOR = [[17, 39], [11, 29], [25, 27], [6, 13], [24, 10], [20, 38], [20, 3
 export default {
   id: 'pilar_invertido_sumidero',
   ...zoneDefaults('pilar_invertido_sumidero'),
-  name: 'Pilar Invertido',
+  name: 'Pilar Invertido · piso 3',
+  pillar: { id: 'P6', floor: 3 },
   ...DISTORTION_ENV,
   width: S.width,
   height: S.height,
@@ -35,8 +37,9 @@ export default {
     // Las casillas invisibles de la sombra (media isla alta) no reservan suelo: la isla conserva su contorno.
     const reserved = new Set(events.filter((e) => !String(e.id).startsWith('b12_sombra_')).map((e) => key(e.x, e.y)));
     const paths = rectSet(...S.paths);
-    const keep = union(reserved, paths, new Set(DECOR.map(([x, y]) => key(x, y))));
-    const floor = union(...S.islands.map((r, i) => raggedIsland(r, { keep, seed: 97 + i * 11 })), paths);
+    const stairs = stairFloor(P.sumideroDown, P.sumideroUp);
+    const keep = union(reserved, paths, stairs, new Set(DECOR.map(([x, y]) => key(x, y))));
+    const floor = union(...S.islands.map((r, i) => raggedIsland(r, { keep, seed: 97 + i * 11 })), paths, stairs);
     // Peñas en las islas grandes (no tocan pulsadores, bocas ni caminos).
     const rocks = new Set(['3,26', '4,26', '10,30', '11,30', '28,24', '29,24', '2,16', '2,17', '12,38', '12,39', '22,7', '23,7', '29,12', '29,13']
       .filter((c) => !reserved.has(c) && floor.has(c)));
@@ -48,6 +51,8 @@ export default {
     b.stamp('pilar_arista_grande', 27, 11);
     b.stamp('pilar_arista', 4, 14);
     floatingDebris(b, [[16, 20, 3], [19, 14, 2], [8, 36, 2], [24, 34, 3], [30, 18, 2], [10, 4, 2], [18, 33, 2], [28, 40, 2]]);
+    paintStair(b, P.sumideroDown);
+    paintStair(b, P.sumideroUp);
   },
 
   events,

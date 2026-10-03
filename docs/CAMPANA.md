@@ -182,9 +182,10 @@ No se usan «Aldea Glífica» (su función la cumple el Santuario de los Glifos 
 
 ### 1.5 Pilares y lugares de trama
 
-Decisión posterior del creador (26-09; X36, implementada el 03-10): P1–P5 son columnas verticales de tres pisos.
+Decisión posterior del creador (26-09; X36): los diez Pilares son columnas verticales de tres pisos.
 La primera planta reúne a los entrenadores, la segunda conserva los puzzles y la tercera contiene al Guardián
-y al núcleo. Este reparto sustituye las descripciones antiguas de una sola planta en los bloques de abajo.
+y al núcleo en P1–P5, implementados el 03-10. P6 conserva solo puzzles. El reparto de P7–P10 se confirmó
+el 03-10. Estos repartos sustituyen las descripciones antiguas de una sola planta en los bloques de abajo.
 
 | Pilar | Lugar | TS | Estructura | Acceso | Custodia / presencia |
 |---|---|---|---|---|---|
@@ -193,11 +194,11 @@ y al núcleo. Este reparto sustituye las descripciones antiguas de una sola plan
 | P3 Impulso | Anillo de los Vientos, Meseta | 1 + 2 | 3 pisos: entrenadores → galerías y campanas → Abril y núcleo | Embestida (y vado de P2) | Guardiana **Abril Céspedes** |
 | P4 Masa | Cerro Plomo, Dunas de Ceniza | 2 | 3 pisos: entrenadores → Cámara de los Contrapesos → Fermín y núcleo | Terreno (y P3) | Guardián **Fermín Galena** |
 | P5 Memoria | Archivo Hondo, Aldea Mnemos | 4 + 11 + 9 | 3 pisos: Archivo de papel y entrenadores → cinco estancias de recuerdos → Olvido y núcleo | Terreno (Marisma) y P4 | Guardiana **Olvido Arrieta** |
-| P6 Invertido | Monte del Portal → Mundo Distorsión | 14 + fondo MundoDistorsion + fog `portal` | 3 secciones y núcleo | Trepar | Nadie; la sombra de Giratina cruza una vez |
-| P7 Ecos | Ruinas de Antea, Arrecife del Eco | 15 + capas | 4 salas × 3 capas temporales | Buceo | Bramaluna Alfa (dominante, no guardiana) |
-| P8 Alma | Santuario del Alma, Lagos del Alma | 11 + 1 | Centro y 3 alas | Nadar (y P7) | Uxie, Mesprit y Azelf |
-| P9 Convergencia | Puente de la Convergencia sobre la Sima | 8 + 1 | Puente y Cámara del Cruce (3 salas) | Reconstrucción | Dialga y Palkia |
-| P10 Origen | Fondo de la Sima | 8 + 2 | Puerta de las Quince, Senda del Origen (9 tramos), Cielo Interior, núcleo | 9 Fragmentos, 15 Tablillas, Completa | Trío de las Nubes y Gael |
+| P6 Invertido | Monte del Portal → Mundo Distorsión | 14 + fondo MundoDistorsion + fog `portal` | 3 pisos: Cara Vuelta → Mirada → Sumidero y sello | Trepar | Nadie; la sombra de Giratina cruza una vez |
+| P7 Ecos | Ruinas de Antea, Arrecife del Eco | 15 + capas | 3 pisos: ruinas → cuatro salas con tres capas temporales → Bramaluna | Buceo | Bramaluna Alfa (dominante, no guardiana) |
+| P8 Alma | Santuario del Alma, Lagos del Alma | 11 + 1 | 3 pisos: Uxie → Mesprit → Azelf y Telar | Nadar (y P7) | Uxie, Mesprit y Azelf |
+| P9 Convergencia | Puente de la Convergencia sobre la Sima | 8 + 1 | 3 pisos: puente → Cámara del Cruce → Dialga/Palkia | Reconstrucción | Dialga y Palkia |
+| P10 Origen | Fondo de la Sima | 8 + 2 | 3 pisos: Senda → Cielo Interior → Gael y núcleo; Puerta de las Quince en el acceso | 9 Fragmentos, 15 Tablillas, Completa | Trío de las Nubes y Gael |
 
 ### 1.6 Zonas de postgame (detalle en §8)
 

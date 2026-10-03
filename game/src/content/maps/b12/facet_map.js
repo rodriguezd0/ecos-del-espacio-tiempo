@@ -8,6 +8,7 @@ import { facetRoom, facetMapId, MARGIN } from './rooms.js';
 import { paintPlatform, floatingDebris, DISTORTION_ENV, DISTORTION_TONE } from './paint.js';
 import { caraEvents, firstFallHint, arrivalDir } from '../../events/b12_cara.js';
 import { F } from '../../events/b12_common.js';
+import { paintStair } from './vertical_build.js';
 
 // Las salas de puzzle no tienen encuentros (POKEDEX_DISTRIBUCION: «solo fuera de las salas de puzzle»).
 const key = (x, y) => `${x},${y}`;
@@ -33,7 +34,8 @@ export function facetMapDef(roomId, orient) {
   return {
     id,
     ...zoneDefaults(id),
-    name: 'Pilar Invertido',
+    name: 'Pilar Invertido · piso 1 · La Cara Vuelta',
+    pillar: { id: 'P6', floor: 1 },
     ...DISTORTION_ENV,
     width: m.width,
     height: m.height,
@@ -50,6 +52,12 @@ export function facetMapDef(roomId, orient) {
     build(b) {
       paintPlatform(b, { floor: m.floor, wall, vuelta: m.vuelta, veins, reserved, seed });
       floatingDebris(b, debrisFor(m.width, seed));
+      const [rx, ry] = m.map(room.start.x, room.start.y);
+      b.stamp('pilar_glifo_2', rx, ry);
+      if (roomId === 'cara_3') {
+        const [x, y] = m.map(room.exit.x, room.exit.y);
+        paintStair(b, { x, y });
+      }
     },
     events,
   };

@@ -8,6 +8,7 @@ import { NORTH_PIECES } from './pieces.js';
 import { internal } from './links.js';
 import { buildSenda } from './ruta_12_senda_lazo_build.js';
 import { sendaEvents } from '../../events/b15_senda.js';
+import { b22aSendaEvents } from '../../events/b22a_senda.js';
 
 const S = SENDA;
 
@@ -26,5 +27,6 @@ export default {
   ...NORTH_PIECES,
   build: buildSenda,
   connections: [...internal('east', 'paso_del_norte', S.east.offset)],
-  events: sendaEvents(),
+  anchorZone: true,
+  events: b22aSendaEvents(sendaEvents()),
 };

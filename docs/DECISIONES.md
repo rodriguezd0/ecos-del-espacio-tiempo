@@ -202,5 +202,9 @@ Hay que conservar los vacíos al trocear en tripletas antes de implementar evolu
 - P5 conserva el Archivo de papel en la primera planta; Olvido y la restauración pasan al piso superior.
 - Las partidas existentes conservan flags, derrotas y objetos recogidos; los guardados dentro de las antiguas
   cámaras siguen teniendo un camino válido al núcleo.
-- P6 queda reservado a puzzles con habilidades de Zygarde, sin Pokémon ni Guardián. El reparto de P7–P10
-  sigue pendiente de la confirmación del creador recogida en `PENDIENTES.md`.
+- P6 queda reservado a puzzles con habilidades de Zygarde, sin Pokémon ni Guardián.
+- Reparto de P7–P10 confirmado por el creador el 03-10-2026:
+  - P7: ruinas de Antea → capas del tiempo → Bramaluna Alfa.
+  - P8: Uxie → Mesprit → Azelf y Telar.
+  - P9: puente (Casia, Garrido, Vértice) → Cámara del Cruce → Dialga/Palkia.
+  - P10: Senda → Cielo Interior (Trío) → Gael y núcleo.

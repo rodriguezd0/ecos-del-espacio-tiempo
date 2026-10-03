@@ -9,6 +9,7 @@ import { IMPOSSIBLE_ART } from '../../world/impossible/eventTypes.js';
 import { isVoidCell } from '../../world/impossible/logic.js';
 import { b12CellEvents } from './b12_cells.js';
 import { DIST_TEXT, portalEvent } from './b12_distorsion.js';
+import { sumideroStairs } from './b12_vertical.js';
 
 export const SUMIDERO_TEXT = Object.freeze({
   closed: 'Una boca de piedra cerrada con una losa grabada. Detrás se oye agua que corre hacia arriba.',
@@ -123,5 +124,6 @@ export function sumideroEvents() {
     { id: 'b12_gengarita_brillo', x: S.gengarita.x + 1, y: S.gengarita.y, through: true, trigger: 'touch', when: when({ none: ['b12_gengarita_vista'] }), script: async (ctx) => { ctx.setFlag('b12_gengarita_vista'); await ctx.say(SUMIDERO_TEXT.gengar); } },
     ...S.items.map((it) => ({ id: it.id, type: 'item', x: it.x, y: it.y, item: it.item, count: it.count || 1 })),
     portalEvent('b12_portal_nucleo', S.exit.x, S.exit.y, nucleo, { flag: F.sumideroHecho }),
+    ...sumideroStairs(),
   ];
 }

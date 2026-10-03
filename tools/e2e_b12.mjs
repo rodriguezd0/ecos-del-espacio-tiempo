@@ -20,7 +20,7 @@ import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 import { Driver, KEY, dirTo } from './e2e_b12_driver.mjs';
-import { MONTE, VESTIBULO, MIRADA, SUMIDERO, NUCLEO } from '../game/src/content/maps/b12/layout.js';
+import { MONTE, VESTIBULO, MIRADA, SUMIDERO, NUCLEO, P6_VERTICAL as P } from '../game/src/content/maps/b12/layout.js';
 import { facetRoom, facetMapId, MARGIN } from '../game/src/content/maps/b12/rooms.js';
 import { facetMasks, decodeAnchor } from '../game/src/world/impossible/logic.js';
 
@@ -218,6 +218,10 @@ async function monte(d) {
   await d.expectSaid(/Lectura desde el perímetro/, 'los sensores de Genesis');
   // El aljibe responde a Zygarde: se baja al Mundo Distorsión.
   await d.walkTo(MONTE.aljibeFront.x, MONTE.aljibeFront.y, { face: 'up' });
+  await d.milestone('columna_exterior', async () => {
+    const column = await d.eval(() => window.__map.world.events.find((e) => e.id === 'b12_columna_exterior')?.page?.patch?.length);
+    return column === 56 ? null : `columna ${column}`;
+  });
   const watch = [
     { re: /sujetando la puerta/, name: 'aljibe_responde', delay: 150 },
     { fn: (s) => Math.abs(s.rot) > 1.2, name: 'aljibe_media_vuelta' },
@@ -234,6 +238,12 @@ async function cara(d) {
   // Ancla de la explanada interior y portal a La Cara Vuelta.
   await d.bump(VESTIBULO.anchor.x, VESTIBULO.anchor.y);
   await d.milestone('ancla_explanada', (s) => (String(s.anchor).startsWith('pilar_invertido|') ? null : `Ancla ${s.anchor}`));
+  // El atajo vertical no permite saltarse La Cara Vuelta al llegar por primera vez.
+  await d.walkTo(36, 19);
+  await d.walkTo(P.baseUp.x, P.baseUp.y);
+  await d.settle();
+  await d.expectSaid(/Las vetas de la escalera aún no encajan/, 'el ascenso cerrado');
+  await d.milestone('piso_1_ascenso_cerrado', (s) => (s.map === 'pilar_invertido' ? null : 'se saltó Cara Vuelta'));
   await d.walkTo(VESTIBULO.portalCara.x, VESTIBULO.portalCara.y, { stopWhen: (s) => s.map !== 'pilar_invertido' });
   await d.arrive(facetMapId('cara_1', 0), 'entrar en La Cara Vuelta');
   // Ancla de la sala y caída al vacío: vuelve al poste, sin daño.
@@ -243,8 +253,15 @@ async function cara(d) {
   await d.bump(ax, ay);
   const [sx, sy] = m0.map(room.start.x, room.start.y);
   await dropIntoVoid(d, [sx, sy]);
-  await d.expectSaid(/No pasa nada: aquí nada se rompe al caer/, 'la primera caída');
+  await d.expectSaid(/sin un rasguño.*último poste/, 'la primera caída');
   await d.milestone('cara_caida', (s) => atAnchor(s) || (has(s, 'b12_caida_vista') ? null : 'sin b12_caida_vista'));
+  // El glifo de llegada permite salir con A si se pierde la orientación; se vuelve sin reiniciar el puzzle.
+  await d.walkTo(sx, sy);
+  await d.interact();
+  await d.arrive('pilar_invertido', 'regresar por el glifo de Cara Vuelta');
+  await d.milestone('cara_regreso_seguro', (s) => (s.map === 'pilar_invertido' && s.rot === 0 ? null : 'no volvió a suelo firme'));
+  await d.step(6);
+  await d.arrive(facetMapId('cara_1', 0), 'reentrar en La Cara Vuelta');
   // Sala 1: una arista (la pantalla gira 90° y se carga el gemelo).
   const turnWatch = [{ fn: (s) => Math.abs(s.rot) > 0.5, name: 'cara_giro' }];
   await facetRun(d, 'exit', (s) => s.map === facetMapId('cara_2', 0), turnWatch);
@@ -264,6 +281,12 @@ async function cara(d) {
   await facetRun(d, 'exit', (s) => s.map === 'pilar_invertido_mirada');
   await d.arrive('pilar_invertido_mirada', 'salir de La Cara Vuelta');
   await d.milestone('cara_vuelta_hecha', (s) => (has(s, 'b12_cara_vuelta') && s.rot === 0 ? null : `flag ${has(s, 'b12_cara_vuelta')} giro ${s.rot}`));
+  // Escalera 2 → 1 y vuelta: no devuelve a una casilla de ascenso automáticamente.
+  await d.step(2);
+  await d.arrive('pilar_invertido', 'bajar del piso 2 al 1');
+  await d.milestone('piso_2_descenso', (s) => (s.x === P.baseReturn.x && s.y === P.baseReturn.y ? null : 'llegada incorrecta'));
+  await d.step(2);
+  await d.arrive('pilar_invertido_mirada', 'subir por el atajo de Cara Vuelta resuelta');
 }
 
 async function mirada(d) {
@@ -292,10 +315,22 @@ async function mirada(d) {
   await gazeRun(d, MIRADA.exit.x, MIRADA.exit.y, { stopWhen: (s) => s.map !== 'pilar_invertido_mirada' });
   await d.arrive('pilar_invertido_sumidero', 'salir de La Mirada');
   await d.milestone('mirada_hecha', (s) => (has(s, 'b12_mirada') ? null : 'sin b12_mirada'));
+  await d.step(2);
+  await d.arrive('pilar_invertido_mirada', 'bajar del piso 3 al 2');
+  await d.milestone('piso_3_descenso', (s) => (s.x === P.miradaReturn.x && s.y === P.miradaReturn.y ? null : 'rebote en la escalera'));
+  await d.step(6);
+  await d.arrive('pilar_invertido_sumidero', 'volver a subir al piso 3');
 }
 
 async function sumidero(d) {
   await d.settle();
+  // La escalera de revisita no permite saltarse las cascadas ni C053.
+  await d.walkTo(P.sumideroUp.x, SUMIDERO.start.y);
+  await d.step(2);
+  await d.settle();
+  await d.milestone('sumidero_sello_cerrado', (s) => (s.map === 'pilar_invertido_sumidero' && !has(s, 'b12_sumidero') ? null : 'acceso prematuro al sello'));
+  await d.step(8); // rodear el descenso de (16,43), sin que el buscador de rutas lo pise
+  await d.walkTo(SUMIDERO.start.x, SUMIDERO.start.y);
   const [a0, a1] = SUMIDERO.anchors;
   const [W1, W2, W3] = SUMIDERO.falls;
   const [p1, p2, p3] = SUMIDERO.buttons;
@@ -324,7 +359,7 @@ async function sumidero(d) {
   await d.milestone('sumidero_sombra', (s) => (has(s, 'b12_sombra') && still !== false ? null : `sombra ${has(s, 'b12_sombra')}, Zygarde quieto ${still}`));
   await d.walkTo(p3.x, p3.y);
   await d.settle();
-  await d.expectSaid(/Salvo caer/, 'la pista de dejarse caer');
+  await d.expectSaid(/Solo queda el vacío/, 'la pista de dejarse caer');
   // Gengarita en el rincón.
   await d.walkTo(SUMIDERO.gengarita.x + 1, SUMIDERO.gengarita.y);
   await d.settle();
@@ -337,6 +372,19 @@ async function sumidero(d) {
   await d.walkTo(SUMIDERO.exit.x, SUMIDERO.exit.y, { stopWhen: (s) => s.map !== 'pilar_invertido_sumidero' });
   await d.arrive('pilar_invertido_nucleo', 'salir del Sumidero');
   await d.milestone('sumidero_hecho', (s) => (has(s, 'b12_sumidero') ? null : 'sin b12_sumidero'));
+  // El sello no encierra al jugador mientras falta la restauración o el Fragmento 5.
+  await d.step(2);
+  await d.arrive('pilar_invertido_sumidero', 'salir del sello sin restaurar');
+  await d.milestone('sello_regreso_seguro', (s) => (s.x === P.sumideroReturn.x && s.y === P.sumideroReturn.y ? null : 'llegada incorrecta'));
+  await d.step(2);
+  await d.arrive('pilar_invertido_mirada', 'bajar hasta el segundo piso desde el sello');
+  await d.milestone('sello_descenso_piso_2', (s) => (s.x === P.miradaReturn.x && s.y === P.miradaReturn.y ? null : 'el sello deja al jugador atrapado'));
+  await d.step(6);
+  await d.arrive('pilar_invertido_sumidero', 'volver al rellano del Sumidero');
+  await d.walkTo(P.sumideroUp.x, SUMIDERO.start.y);
+  await d.step(2);
+  await d.arrive('pilar_invertido_nucleo', 'volver al sello por la escalera del Sumidero resuelto');
+  await d.milestone('sumidero_sello_reentrada', (s) => (s.x === NUCLEO.arrival.x && s.y === NUCLEO.arrival.y ? null : 'llegada incorrecta'));
 }
 
 async function nucleo(d) {
@@ -386,6 +434,13 @@ async function regreso(d) {
   await d.arrive('pilar_invertido', 'volver a bajar por el aljibe');
   await d.expectSaid(/¿Vuelves a bajar al otro lado\?|Ya no se filtra nada/, 'el aljibe en calma');
   await d.milestone('aljibe_reentrada', (s) => (s.map === 'pilar_invertido' ? null : s.map));
+  // Revisita del Pilar restaurado: el ascenso al piso 2 sigue abierto y sus descensos siguen siendo seguros.
+  await d.walkTo(36, 19);
+  await d.walkTo(P.baseUp.x, P.baseUp.y, { stopWhen: (s) => s.map !== 'pilar_invertido' });
+  await d.arrive('pilar_invertido_mirada', 'revisitar el piso 2 tras restaurar');
+  await d.milestone('p6_revisita_piso_2', (s) => (has(s, 'p6_restored') ? null : 'se perdió la restauración'));
+  await d.step(2);
+  await d.arrive('pilar_invertido', 'bajar del piso 2 restaurado');
   await d.approach(VESTIBULO.aljibe.x, VESTIBULO.aljibe.y);
   await d.interact();
   await d.arrive('montana_portal', 'subir al Monte otra vez');

@@ -202,3 +202,17 @@ export const NUCLEO = Object.freeze({
   columns: Object.freeze([[11, 10], [21, 10], [11, 22], [21, 22]]), // base de cada columna (1×3)
   portalBack: Object.freeze({ x: 16, y: 21 }), // portal de regreso (tras restaurar)
 });
+
+// X36: tres pisos, con secciones de espacio imposible dentro de cada uno. Los mapas y coordenadas históricos
+// siguen siendo válidos; los descensos llegan fuera de los eventos de ascenso para no devolver al piso superior.
+export const P6_VERTICAL = Object.freeze({
+  baseUp: Object.freeze({ x: 37, y: 20 }),
+  baseReturn: Object.freeze({ x: 37, y: 19, dir: 4 }),
+  miradaDown: Object.freeze({ x: 5, y: 21 }),
+  miradaReturn: Object.freeze({ x: 25, y: 5, dir: 4 }),
+  sumideroDown: Object.freeze({ x: 16, y: 43 }),
+  sumideroUp: Object.freeze({ x: 19, y: 43 }),
+  sumideroReturn: Object.freeze({ x: 16, y: 42, dir: 8 }),
+  nucleoDown: Object.freeze({ x: 16, y: 26 }),
+  exterior: Object.freeze({ x: 14, y: 0, w: 7, h: 8 }),
+});

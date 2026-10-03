@@ -8,6 +8,8 @@
 import { F, EXT, OBJ, SPEAKER, SPRITE, MUSIC, VIOLET, when, lines, zygardeSays, pause } from './b12_common.js';
 import { MONTE, VESTIBULO, GRUTA } from '../maps/b12/layout.js';
 import { b12CellEvents } from './b12_cells.js';
+import { exteriorColumnEvent } from './b12_vertical.js';
+import { aljibeNodeEvents } from './b22a_red.js';
 
 const real = (s) => Boolean(s?.flag(EXT.leftTown));
 const realWhen = (extra = {}) => when({ ...extra, all: [EXT.leftTown, ...(extra.all || [])] });
@@ -201,6 +203,8 @@ export function monteEvents() {
     ...climbWalls(),
     ...items(),
     ...b12CellEvents('montana_portal', { when: real }),
+    exteriorColumnEvent(),
+    ...aljibeNodeEvents(),
   ];
 }
 

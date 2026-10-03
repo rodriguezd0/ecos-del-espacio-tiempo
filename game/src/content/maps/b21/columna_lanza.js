@@ -6,6 +6,7 @@ import { W, H, COLUMNA } from './layout.js';
 import { buildColumna } from './columna_build.js';
 import { zoneDefaults } from '../../services/zones.js';
 import { columnaEvents, columnaOnEnter, COLUMNA_PANORAMA } from '../../events/b21_columna.js';
+import { b22aColumnaEvents } from '../../events/b22a_columna.js';
 
 export default {
   id: 'columna_lanza',
@@ -23,5 +24,5 @@ export default {
   start: { x: COLUMNA.arrival.x, y: COLUMNA.arrival.y, dir: COLUMNA.arrival.dir },
   build: buildColumna,
   onEnter: columnaOnEnter,
-  events: columnaEvents(),
+  events: b22aColumnaEvents(columnaEvents()),
 };

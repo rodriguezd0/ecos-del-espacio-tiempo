@@ -5,6 +5,8 @@ import { F, EXT, OBJ, ANCHOR_ART, MUSIC, VIOLET, when, zygardeSays, pause } from
 import { VESTIBULO, MIRADA, SUMIDERO, MONTE, segment } from '../maps/b12/layout.js';
 import { roomEntry, firstFallHint } from './b12_cara.js';
 import { isVoidCell } from '../../world/impossible/logic.js';
+import { baseStairs, miradaDownstairs, stairEvent } from './b12_vertical.js';
+import { explanadaB22aEvents } from './b22a_distorsion.js';
 
 export const DIST_TEXT = Object.freeze({
   anchor: 'Un poste de piedra con un anillo tallado. Al tocarlo, el aire a su alrededor se queda quieto. Si caes, volverás aquí.',
@@ -116,6 +118,8 @@ export function vestibuloEvents() {
     },
     { id: 'b12_ancla_explanada', type: 'ancla', x: V.anchor.x, y: V.anchor.y, text: DIST_TEXT.anchor, firstFlag: F.primeraAnclaP6 },
     portalEvent('b12_portal_cara', V.portalCara.x, V.portalCara.y, cara),
+    ...baseStairs(),
+    ...explanadaB22aEvents(),
     ...V.claws.map((p, i) => deco(`b12_zarpazo_interior_${i}`, p, OBJ.monte, 6, DIST_TEXT.claws)),
     { id: 'b12_placa_interior', x: V.placa.x, y: V.placa.y + 1, trigger: 'action', solid: false, through: true, noOver: true, script: async (ctx) => { await ctx.say(DIST_TEXT.placa); } },
     { id: 'b12_placa_interior_2', x: V.placa.x + 1, y: V.placa.y + 1, trigger: 'action', solid: false, through: true, noOver: true, script: async (ctx) => { await ctx.say(DIST_TEXT.placa); } },
@@ -142,7 +146,8 @@ export function miradaEvents() {
     { id: 'b12_llegada_mirada', x: M.start.x, y: M.start.y, through: true, trigger: 'auto', when: when({ none: [F.miradaVista] }), script: miradaArrival },
     ...miradaBridgeCells().map((c, i) => ({ id: `b12_puente_${c.id}_${i}`, type: 'puenteMirada', x: c.x, y: c.y })),
     ...M.anchors.map((a) => ({ id: `b12_${a.id}`, type: 'ancla', x: a.x, y: a.y, sprite: a.symbol ? ANCHOR_ART[a.symbol] : undefined, text: DIST_TEXT.anchor, firstFlag: F.primeraAnclaP6 })),
-    portalEvent('b12_portal_sumidero', M.exit.x, M.exit.y, sumidero, { flag: F.miradaHecha }),
+    stairEvent('b12_portal_sumidero', M.exit, sumidero, { flag: F.miradaHecha }),
+    ...miradaDownstairs(),
     ...M.items.map((it) => ({ id: it.id, type: 'item', x: it.x, y: it.y, item: it.item, count: it.count || 1 })),
   ];
 }

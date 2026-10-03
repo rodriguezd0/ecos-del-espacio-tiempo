@@ -24,7 +24,7 @@
 >
 > Después:
 > 1. P6: solo puzzles, sin Pokémon ni Guardianes.
-> 2. Confirmar con el creador el reparto de pisos de P7–P10.
+> 2. P7–P10 con el reparto confirmado por el creador el 03-10.
 > 3. Arte.
 > 4. Postgame B22 (a medias en la rama `wip-pausa-25-09`).
 > 5. DLC B23 y B24.
@@ -35,7 +35,25 @@
 > - El creador tiene que confirmar la regla de tamaño de los Pokémon en el mapa (afecta a unas 140 especies).
 > - Rocas de cueva: implican rehacer 3 puzles.
 
-Actualizado: 03-10-2026. Siguiente: **P6 y confirmación de pisos de P7–P10**, después arte y contenido restante.
+Actualizado: 03-10-2026. En marcha: **P7–P10, arte y postgame**, después DLC y recorrido completo.
+
+## Objetivo activo: terminar el juego completo
+
+El trabajo continúa hasta cerrar la campaña, el postgame y los dos DLC. Una tanda terminada no cierra este objetivo.
+La rama de pausa se revisa por módulos; sus versiones antiguas de mapas no sustituyen las correcciones guardadas.
+
+| Frente | Estado al reanudar | Verificación necesaria |
+|---|---|---|
+| Campaña B01–B21 | Implementada; P1–P6 verticales terminados | P7–P10, recorrido continuo sin saltos de progresión, final y carga del epílogo |
+| Arte humano | Acciones de protagonistas M/F integradas y probadas | Pase visual de poses y NPC de combate; sin recortes ni solapes |
+| B22, postgame base | B22a terminado; B22b/d/e en implementación; B22c pendiente | Encuentros de CAMPANA §8, condiciones, captura, descanso, acceso y regreso en solitario |
+| B23, Almenara | Pendiente | D1-01…05, Gael, Hoopa, Zygardita y Mega Zygarde; final abierto |
+| B24, Expediciones | Pendiente | Sabela, tres expediciones activas, cuatro oleadas y todos los hallazgos de CAMPANA §8 |
+| Sistemas y balance | Base jugable y multijugador terminado | Guardados y migraciones, crianza/evoluciones, captura, viajes, economía y combates dobles |
+| Cierre | Pendiente | Suite completa sin fallos, validador, costuras/QA, pruebas reales y auditoría de requisitos |
+
+Las decisiones del autor pendientes se mantienen identificadas como provisionales hasta recibir su respuesta.
+Los criterios de cierre se contrastan con CAMPANA, DECISIONES, TABLILLAS, POKEDEX_DISTRIBUCION y COBERTURA.
 
 ## 0. Terminado — Multijugador online (salas)
 - Fase 1 HECHA (d94e15d): salas con código, ver a los demás jugadores moverse en el mapa (baja latencia), entrada Online.
@@ -47,7 +65,7 @@ Actualizado: 03-10-2026. Siguiente: **P6 y confirmación de pisos de P7–P10**,
 ## 1. Trabajo apartado (rama)
 El trabajo a medias de arte y postgame está en `wip-pausa-25-09`; no hay ningún stash.
 Se debe retomar y revisar en esa rama antes de integrarlo. Master conserva la versión jugable.
-El fallo previo de `tests/prota_kit.test.mjs` se debe al módulo de arte ausente en master.
+El módulo que faltaba en `tests/prota_kit.test.mjs` ya está integrado; esa prueba vuelve a pasar.
 
 ## 2. Correcciones del creador (jugó B01–B03): tandas 1–4 terminadas
 Las correcciones enumeradas abajo se completaron y guardaron hasta 030e80d, salvo el pase de arte humano y la
@@ -99,8 +117,9 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
   y núcleo. Columnas exteriores de piedra en los cuatro biomas. Conservan niveles, recompensas, células y progreso
   de partidas anteriores. P3 tiene dos mapas de puzzle en el mismo piso; el Archivo de Mnemos es el piso 1 de P5.
   Revisados y probados en navegador. Workflow `pilares-verticales` (run wf_f8a908cb-c5a).
-- **P6 (Mundo Distorsión):** solo puzzles con habilidades de Zygarde; sin Pokémon ni guardianes.
-- **P7–P10:** con Pokémon. Propuesta de pisos pendiente de que el creador la confirme:
+- **P6 (Mundo Distorsión):** implementado y recorrido en navegador; Cara Vuelta → Mirada → Sumidero y sello.
+  Solo puzzles con habilidades de Zygarde; sin Pokémon ni guardianes. Conserva la sombra de Giratina.
+- **P7–P10:** con Pokémon. Reparto confirmado por el creador el 03-10:
   - P7: ruinas de Antea → capas del tiempo → Bramaluna Alfa
   - P8: Uxie → Mesprit → Azelf + Telar
   - P9: puente (Casia, Garrido, Vértice) → Cámara del Cruce → Dialga/Palkia
@@ -108,7 +127,8 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 - Decisión registrada en `docs/DECISIONES.md` (X36); reparto de P1–P5 en `docs/CAMPANA.md` §1.5.
 
 ## 4. Arte
-- **Protagonistas M/F** en estilo BW chibi: dibujados; falta la revisión. Workflow `arte-protas-zygarde` (run wf_fb80f3df-d58). Zygarde no se toca.
+- **Protagonistas M/F** en estilo BW chibi: acciones y sprites integrados (c362de9), 51 pruebas y 18 capturas de navegador.
+  Falta el pase visual final de poses de combate. Zygarde no se toca.
 - **Diseño de la protagonista:** registrarlo como X32 en DECISIONES (X31 ya lo ocupa B19).
 - **Sprites de combate de NPC/entrenadores** en estilo BW (pase de arte).
 - **Core y célula de Zygarde:** ya son los sprites originales del creador (hecho, f5c89f2).

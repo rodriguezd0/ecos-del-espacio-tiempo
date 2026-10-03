@@ -7,6 +7,7 @@ import { facetRoom, facetMapId, MARGIN, FACET_ROOM_IDS } from '../maps/b12/rooms
 import { facetMasks, rotateDir } from '../../world/impossible/logic.js';
 import { MIRADA } from '../maps/b12/layout.js';
 import { b12CellEvents } from './b12_cells.js';
+import { stairEvent, facetReturn } from './b12_vertical.js';
 
 export const CARA_TEXT = Object.freeze({
   anchor: 'Un poste de piedra con un anillo tallado. Al tocarlo, el aire a su alrededor se queda quieto. Si caes, volverás aquí.',
@@ -46,11 +47,11 @@ function entryEvent(roomId, x, y) {
 
 function exitEvent(roomId, x, y) {
   const next = nextAfter(roomId);
+  if (roomId === FACET_ROOM_IDS.at(-1)) return stairEvent('b12_cara_salida', { x, y }, next, { flag: F.caraVueltaHecha });
   return {
     id: 'b12_cara_salida', x, y, sprite: OBJ.portal, dir: 2, directionFix: true, walkAnime: false, stepAnime: true, through: true, shadow: false,
     trigger: 'touch', glow: { name: 'softLight', radius: 56, intensity: 0.55, pulse: 0.5, color: [190, 120, 255] },
     script: async (ctx) => {
-      if (roomId === FACET_ROOM_IDS[FACET_ROOM_IDS.length - 1]) ctx.setFlag(F.caraVueltaHecha);
       ctx.se('PRSFX- Teleport', { volume: 60 });
       await ctx.warp(next.map, next.x, next.y, next.dir, { fade: true, frames: 20 });
     },
@@ -75,6 +76,8 @@ export function caraEvents(roomId, orient, m) {
   });
   const [ex, ey] = at(room.exit);
   out.push(exitEvent(roomId, ex, ey));
+  const [rx, ry] = at(room.start);
+  out.push(facetReturn(rx, ry));
   for (const it of room.items) {
     if ((it.orient ?? 0) !== orient) continue;
     const [x, y] = at(it);
