@@ -6,17 +6,24 @@ import { hex, splitSheet } from '../tools/pixel.mjs';
 import {
   PROTA, part, recolorPart, shiftPart, checkHead, buildProtaFrame, buildProtaSheet, withProtaBag,
 } from '../tools/pixel_chars/prota_kit.mjs';
-import { PROTA_WALK, PARTS, mirrorPart } from '../tools/pixel_chars/prota_body.mjs';
+import { PROTA_WALK, mirrorPart } from '../tools/pixel_chars/prota_body.mjs';
 import { PROTA_RUN } from '../tools/pixel_chars/prota_run.mjs';
 import { withBag, PROTA_BAG } from '../tools/pixel_chars/prota_bag.mjs';
 import { PROTA_M_HEAD } from '../tools/pixel_chars/prota_heads.mjs';
 import { KIT_HANGING_LEG, kitWalkSheet, kitRiderFrame } from '../tools/pixel_chars/prota_field.mjs';
-import { prota, usesKit, walkSheet, runSheet, riderFrame, kitClimb, hangingLeg } from '../tools/pixel_chars/rider.mjs';
+import { prota, walkSheet, runSheet, riderFrame, climbCycle, hangingLeg } from '../tools/pixel_chars/rider.mjs';
 import { PALETTES } from '../tools/pixel_chars/palettes.mjs';
 
 const PAL = PALETTES.protagonista_m;
 const SPEC = { head: PROTA_M_HEAD, palette: PAL };
 const same = (img, x, y, color) => img.get(x, y).slice(0, 3).join() === hex(color).slice(0, 3).join();
+const pixelsOf = (img, color) => {
+  const points = [];
+  for (let y = 0; y < img.h; y++) for (let x = 0; x < img.w; x++) {
+    if (img.alpha(x, y) && same(img, x, y, color)) points.push([x, y]);
+  }
+  return points;
+};
 
 /** Filas ocupadas y ancho máximo de una franja de filas de un frame. */
 function rowsInfo(img, y0 = 0, y1 = img.h - 1) {
@@ -66,25 +73,24 @@ test('buildProtaFrame: el rebote sube cabeza, torso y brazos, pero no las pierna
   const up = buildProtaFrame({ ...pose, lift: -1 }, PROTA_M_HEAD.down, PAL);
   assert.equal(rowsInfo(up).top, rowsInfo(still).top - 1, 'la cabeza sube 1 px');
   assert.equal(rowsInfo(up).bottom, rowsInfo(still).bottom, 'los pies no se mueven');
-  // Tirador verde: fila 20 de pie, fila 19 con el rebote.
-  const gx = PROTA.x + PARTS.TORSO_DOWN.x + 5;
-  assert.ok(same(still, gx, 20, PAL.G) && same(up, gx, 19, PAL.G));
+  const green = pixelsOf(still, PAL.G);
+  assert.ok(green.length > 0, 'tirador verde visible');
+  assert.deepEqual(pixelsOf(up, PAL.G), green.map(([x, y]) => [x, y - 1]), 'el tirador sigue el rebote');
   const noHead = buildProtaFrame(pose, PROTA_M_HEAD.down, PAL, { skip: ['head'] });
   assert.ok(rowsInfo(noHead).top >= PROTA.bodyY, 'sin cabeza, nada por encima de la rejilla del cuerpo');
 });
 
-test('proporciones BW: cabeza de 17 filas (≈ la mitad), más ancha que el torso, figura de 29 filas', () => {
+test('proporciones BW: cabeza de media figura, pecho estrecho y altura humana de 29 filas', () => {
   const [row] = splitSheet(buildProtaSheet(SPEC, PROTA_WALK), 32, 32);
   const f = row[0];
   const all = rowsInfo(f);
   assert.equal(all.top, 2, 'coronilla en la fila 2');
   assert.equal(all.bottom, 30, 'suela en la fila 30');
-  const head = rowsInfo(f, 2, 18);
-  const body = rowsInfo(f, 19, 30);
-  assert.equal(head.bottom - head.top + 1, 17);
-  assert.ok(head.maxW >= 18 && head.maxW > body.maxW, `cabeza ${head.maxW} px, cuerpo ${body.maxW} px`);
-  const torso = rowsInfo(buildProtaFrame({ ...PROTA_WALK.down[0], arms: null }, null, PAL), 19, 24);
-  assert.ok(head.maxW - torso.maxW >= 6, `torso ${torso.maxW} px`);
+  const head = rowsInfo(buildProtaFrame({}, PROTA_M_HEAD.down, PAL));
+  assert.ok(head.bottom - head.top + 1 >= (all.bottom - all.top + 1) / 2, 'cabeza grande de estilo BW');
+  // Las manos y los hombros se abren; se compara con el pecho, no con la anchura de los brazos.
+  const chest = rowsInfo(buildProtaFrame({ torso: PROTA_WALK.down[0].torso }, null, PAL), 21, 25);
+  assert.ok(head.maxW >= chest.maxW * 2, `cabeza ${head.maxW} px, pecho ${chest.maxW} px`);
 });
 
 test('ciclos: caminar 3 poses (p2 = p0) y correr 4 por dirección; hojas 128×128 nativas con la derecha espejada', () => {
@@ -111,17 +117,16 @@ test('mochila: withBag no modifica las poses y sigue el torso (torsoDx de la car
   assert.equal(custom.down[0].bag, undefined, 'sin bolsa para esa vista, la pose no cambia');
 });
 
-test('protagonistas: el masculino usa el kit nuevo y la femenina el antiguo, con la misma API de campo', () => {
-  assert.ok(usesKit('protagonista_m'));
-  assert.ok(!usesKit('protagonista_f'));
+test('protagonistas: los dos usan el kit, con la misma API de campo', () => {
   assert.throws(() => prota('gael'), /Sin datos de protagonista/);
   for (const id of ['protagonista_m', 'protagonista_f']) {
     assert.deepEqual([walkSheet(id).w, runSheet(id).h], [128, 128]);
     for (const dir of ['down', 'left', 'up']) assert.equal(riderFrame(id, dir).w, 32);
     assert.ok(hangingLeg(id).h >= 5);
+    const climb = climbCycle(id);
+    assert.equal(climb.length, 4);
+    assert.ok(climb.every((f) => f.w === 32 && f.h === 32));
   }
-  assert.equal(kitClimb('protagonista_f'), null);
-  assert.equal(kitClimb('protagonista_m').length, 4);
   assert.equal(KIT_HANGING_LEG.length, 5);
 });
 

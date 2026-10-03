@@ -55,7 +55,7 @@ export const CHARACTERS = Object.freeze({
   }),
   protagonista_f: charset('protagonista_f.png', {
     name: 'Protagonista (femenina)',
-    note: 'Azul marino casi nocturno y acento verde (biblia §13.2), mochila teja (D06). Melena, chaqueta clara y pantalón corto con mallas: PROPUESTA pendiente de D30.',
+    note: 'Azul marino casi nocturno (biblia §13.2): media melena con las puntas hacia fuera y trenza con goma verde #B9FF66, chaqueta crema, pantalón corto marino, mallas y botines teja; mochila teja (D06). Propuesta X32 recuperada del WIP, provisional (D30).',
     variants: { run: 'protagonista_f_run', ...fieldVariants('protagonista_f') },
     battle: { back: 'protagonista_f_back' },
   }),
@@ -111,7 +111,7 @@ export const CHARACTERS = Object.freeze({
   }),
   protagonista_f_back: battleBack('protagonista_f_back.png', {
     name: 'Protagonista (femenina) — combate, espalda',
-    note: 'Estilo BW, 5 frames como la masculina. Diseño femenino pendiente (D30).',
+    note: 'Estilo BW, 5 frames como la masculina: melena con anillo de brillo, trenza con goma verde y mochila teja (X32). Se recorta por abajo.',
   }),
   gael_front: battleFront('gael_front.png', {
     name: 'Gael — combate, frontal',

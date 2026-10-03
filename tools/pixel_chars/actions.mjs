@@ -1,20 +1,15 @@
 // Acciones de campo de los protagonistas con Zygarde (CAMPANA §2.7–2.8): buceo dentro de la burbuja
 // verde del 50%, trepar (vista de espaldas agarrado a la pared) y pescar (4 direcciones, 4 frames).
 // Todas 4×4 (abajo, izquierda, derecha, arriba) y PROVISIONALES (D30).
-import { Img, compose, sheet, fromRows, splitSheet, hex } from '../pixel.mjs';
-import { buildFrame, buildHumanSheet, NATIVE, checkRows } from './assemble.mjs';
-import { withBackpack } from './backpack.mjs';
-import { prota, WALK_BAG } from './rider.mjs';
+import { Img, compose, sheet, fromRows, hex } from '../pixel.mjs';
+import { PROTA } from './prota_kit.mjs';
+import { prota, walkFrames, climbCycle } from './rider.mjs';
+
+const NATIVE = PROTA.native;
 
 export const ACTION_SIZE = 48;
 const S = ACTION_SIZE;
 const DIRS = ['down', 'left', 'right', 'up'];
-
-/** Frames nativos 32×32 de caminar del protagonista: frames[fila][patrón]. */
-function walkFrames(id) {
-  const { heads, palette } = prota(id);
-  return splitSheet(buildHumanSheet({ heads, palette }, WALK_BAG), NATIVE, NATIVE);
-}
 
 // ───────────────────────────── Buceo: burbuja verde ─────────────────────────────
 
@@ -66,63 +61,12 @@ export function buildDiveSheet(id) {
 
 // ───────────────────────────── Trepar ─────────────────────────────
 
-const CLIMB_TORSO = [
-  '....kkkkkkkkkk....',
-  '...kJJJJJJJJjjk...',
-  '...kJJJJJJJJjjk...',
-  '...kJJJJJJJJjjk...',
-  '...kJJJJJJJJjjk...',
-  '...kjJJJJJJJjjk...',
-  '...kjjjjjjjjjjk...',
-];
-const EMPTY = '..................';
-
-const CLIMB_BODIES = {
-  // Pierna derecha recogida (sube), izquierda estirada.
-  a: [EMPTY, ...CLIMB_TORSO, '....kPPPPPPPpk....', '....kPPPkkPPpk....', '....kPPk.kQqk.....', '....kQqk.kBbk.....',
-    '....kQqk..kk......', '....kBBk..........', '.....kk...........', EMPTY],
-  // Cuerpo elevado 1 px, piernas parejas.
-  b: [...CLIMB_TORSO, '....kPPPPPPPpk....', '....kPPPkkPPpk....', '....kPPk..kPpk....', '....kQqk..kQqk....',
-    '....kQqk..kQqk....', '....kBBk..kBBk....', '.....kk....kk.....', EMPTY, EMPTY],
-  // Pierna izquierda recogida.
-  c: [EMPTY, ...CLIMB_TORSO, '....kPPPPPPPpk....', '....kPPkkPPPpk....', '.....kQqk.kPpk....', '.....kBbk.kQqk....',
-    '......kk..kQqk....', '..........kBBk....', '...........kk.....', EMPTY],
-};
-
-// Brazos (coordenadas del frame 32×32): 'up' con la mano por encima de la cabeza, 'mid' a la altura de la oreja.
-const ARM_UP = {
-  x: 3, y: 6, rows: ['.kk.....', 'kSsk....', 'kssk....', 'kLJk....', '.kLJk...', '.kLJk...', '..kLJk..', '..kLJk..',
-    '...kLJk.', '...kLJk.', '....kLJk', '....kLJk', '.....kJk'],
-};
-const ARM_MID = {
-  x: 4, y: 11, rows: ['.kk....', 'kSsk...', 'kssk...', 'kLJk...', '.kLJk..', '..kLJk.', '...kLJk', '....kJk'],
-};
-
-/** Brazo derecho = espejo del izquierdo con la manga en sombra (la luz viene de la izquierda). */
-function rightArm(arm) {
-  const swap = { L: 'J', J: 'j', S: 's' };
-  const rows = arm.rows.map((r) => [...r].reverse().map((ch) => swap[ch] || ch).join(''));
-  return { x: NATIVE - arm.x - rows[0].length, y: arm.y, rows };
-}
-
-function climbFrame(id, body, left, right, lift) {
-  const { heads, palette } = prota(id);
-  const bag = withBackpack({ down: [], left: [], up: [{ key: 'up0', lift, body: checkRows('trepar', body, 18) }] }).up[0];
-  const person = buildFrame({ head: heads.up, body: bag.body, lift }, palette);
-  const armL = { img: fromRows(left.rows, palette), x: left.x, y: left.y + lift };
-  const r = rightArm(right);
-  const armR = { img: fromRows(r.rows, palette), x: r.x, y: r.y + lift };
-  return compose(NATIVE, NATIVE, [armL, armR, person]);
-}
-
-/** Hoja nativa (128×128): trepar de espaldas, 4 frames; las 4 filas son iguales (sirve en cualquier dirección). */
+/**
+ * Hoja nativa (128×128): trepar de espaldas, 4 frames (prota_field.mjs → kitClimbCycle); las 4 filas son
+ * iguales (sirve en cualquier dirección).
+ */
 export function buildClimbSheet(id) {
-  const cycle = [
-    climbFrame(id, CLIMB_BODIES.a, ARM_UP, ARM_MID, 0),
-    climbFrame(id, CLIMB_BODIES.b, ARM_MID, ARM_MID, -1),
-    climbFrame(id, CLIMB_BODIES.c, ARM_MID, ARM_UP, 0),
-    climbFrame(id, CLIMB_BODIES.b, ARM_MID, ARM_MID, -1),
-  ];
+  const cycle = climbCycle(id);
   return sheet([cycle, cycle, cycle, cycle], NATIVE, NATIVE);
 }
 
@@ -136,10 +80,11 @@ const ROD = { cork: hex('#C89858'), shaft: hex('#4A5064'), tip: hex('#8890A0'), 
  * de pesca de Essentials). 0 = caña atrás, 1 = en alto, 2 = lanzada, 3 = lanzada con el sedal y la punta
  * vencida. `behind`: la caña se dibuja detrás del cuerpo.
  */
+// `hand`: mano derecha del kit de protagonistas (prota_body.mjs) en el lienzo 48×48.
 const FISH = {
-  down: { hand: [28, 32], tips: [[37, 12], [30, 5], [37, 45], [36, 46]], behind: [true, true, false, false] },
+  down: { hand: [29, 32], tips: [[37, 12], [30, 5], [37, 45], [36, 46]], behind: [true, true, false, false] },
   left: { hand: [23, 32], tips: [[36, 13], [25, 5], [4, 27], [4, 29]], behind: [true, true, false, false], line: 3 },
-  up: { hand: [28, 32], tips: [[19, 44], [26, 2], [30, 2], [30, 3]], behind: [false, true, true, true] },
+  up: { hand: [29, 32], tips: [[19, 44], [26, 2], [30, 2], [30, 3]], behind: [false, true, true, true] },
 };
 
 function drawLine(img, x0, y0, x1, y1, colorAt) {
@@ -160,10 +105,10 @@ function drawLine(img, x0, y0, x1, y1, colorAt) {
   }
 }
 
-function rodLayer(dir, frame, skin) {
+function rodLayer(dir, frame, skin, hand = FISH[dir].hand) {
   const cfg = FISH[dir];
   const img = new Img(S, S);
-  const [hx, hy] = cfg.hand;
+  const [hx, hy] = hand;
   const [tx, ty] = cfg.tips[frame];
   drawLine(img, hx, hy, tx, ty, (i, n) => (i < 2 ? ROD.cork : i > n - 3 ? ROD.tip : ROD.shaft));
   if (cfg.line === frame) for (let y = ty + 1; y <= 38; y++) img.set(tx, y, ROD.line);

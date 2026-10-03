@@ -5,8 +5,7 @@
 // Además, una hoja de partículas sueltas (zygarde_hex). PROVISIONALES (D30).
 import { Img, compose, fromRows, hex } from '../pixel.mjs';
 import { ACTION_SIZE } from './actions.mjs';
-import { prota, WALK_BAG } from './rider.mjs';
-import { buildFrame } from './assemble.mjs';
+import { walkFrames } from './rider.mjs';
 
 const S = ACTION_SIZE;
 export const FLIGHT_FRAMES = 8;
@@ -33,9 +32,7 @@ const cellOf = (x, y) => {
 
 /** Figura de partida: el protagonista de frente (con mochila) en el lienzo, pies en la fila 46. */
 function standing(id) {
-  const { heads, palette } = prota(id);
-  const p = WALK_BAG.down[0];
-  return compose(S, S, [{ img: buildFrame({ head: heads.down, body: p.body, lift: p.lift }, palette), x: 8, y: 16 }]);
+  return compose(S, S, [{ img: walkFrames(id)[0][0], x: 8, y: 16 }]);
 }
 
 /** Celdas ocupadas por la figura con su umbral de disgregación (los pies antes que la cabeza). */

@@ -77,14 +77,27 @@ function waterline(img, water, phase) {
   if (!cols.length) return out;
   const x0 = cols[0];
   const x1 = cols[cols.length - 1];
-  for (let x = x0 - 2; x <= x1 + 2; x++) {
+  // La estela se compacta en los perfiles anchos para conservar las ondas enteras dentro del frame.
+  const minX = 1;
+  const maxX = img.w - 2;
+  for (let x = Math.max(minX, x0 - 2); x <= Math.min(maxX, x1 + 2); x++) {
     out.set(x, water, (x + phase) % 3 === 0 ? FOAM2 : FOAM);
     const inRipple = (x + phase * 2) % 6 < 4;
     if (inRipple && x >= x0 - 4) out.set(x, water + 1, RIPPLE);
   }
   // Estela lateral: dos píxeles de espuma a cada lado, pegados a la línea.
-  for (const x of [x0 - 3, x0 - 4, x1 + 3, x1 + 4]) out.set(x, water, FOAM2);
-  for (const x of [x0 - 5, x0 - 6, x1 + 5, x1 + 6]) if ((phase + x) % 2 === 0) { out.set(x, water + 1, RIPPLE); out.set(x + (x < x0 ? 1 : -1), water + 1, RIPPLE); }
+  for (const x of [x0 - 3, x0 - 4, x1 + 3, x1 + 4]) {
+    if (x >= minX && x <= maxX) out.set(x, water, FOAM2);
+  }
+  for (const x of [x0 - 5, x0 - 6, x1 + 5, x1 + 6]) {
+    if ((phase + x) % 2 !== 0) continue;
+    const towardBody = x < x0 ? 1 : -1;
+    const waveX = Math.max(minX, Math.min(maxX, x));
+    const nextX = waveX + towardBody;
+    if (nextX < minX || nextX > maxX) continue;
+    out.set(waveX, water + 1, RIPPLE);
+    out.set(nextX, water + 1, RIPPLE);
+  }
   return out;
 }
 

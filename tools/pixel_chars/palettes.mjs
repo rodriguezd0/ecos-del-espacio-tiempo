@@ -11,11 +11,13 @@ export const SKIN_TAN = { S: '#E8B888', s: '#C98E5E', r: '#99603A', o: '#5A3420'
 
 export const PALETTES = {
   // Protagonista masculino (biblia §13.1): castaño cobrizo, chaqueta azul petróleo cerrada, camiseta
-  // clara reducida, pantalón y calzado oscuros, tirador de cremallera verde #B9FF66.
+  // clara reducida, pantalón y calzado oscuros, tirador de cremallera verde #B9FF66. Kit nuevo
+  // (prota_kit.mjs): iris castaño cálido `i` bajo la pupila (color de ojos no canónico, propuesta).
   protagonista_m: {
     k: '#1C1820',
     H: '#E8A060', h: '#BC6630', m: '#8C4424', n: '#5C2A1A',
     ...SKIN_LIGHT,
+    i: '#7A4A2C',
     L: '#3E8E96', J: '#256870', j: '#194A52', d: '#0E3036',
     G: ZYGARDE_GREEN,
     T: '#EEF2EE', t: '#B8C4C0',
@@ -25,17 +27,19 @@ export const PALETTES = {
     A: '#E2C890', a: '#BC9A5E', D: '#8A6A3A', z: '#5A4222',
   },
   // Protagonista femenina (biblia §13.2): azul marino profundo con lectura azul; comparte el acento
-  // verde. PROPUESTA PROVISIONAL (D30): chaqueta corta clara (blanco hueso) cerrada, cuello interior
-  // azul noche, pantalón corto oscuro sobre mallas, calzado oscuro.
+  // verde. Diseño PROVISIONAL (DECIDIDO-DEV, docs/DECISIONES.md): media melena con trenza lateral atada
+  // con goma verde #B9FF66, chaqueta corta crema cerrada con cuello azul noche, pantalón corto marino,
+  // mallas oscuras y botines teja; iris azul `i` (propuesta).
   protagonista_f: {
     k: '#161624',
     H: '#5A6CB4', h: '#34427E', m: '#222C58', n: '#141A38',
     ...SKIN_LIGHT,
+    i: '#3E64B0',
     L: '#F6F4EE', J: '#DCD8CC', j: '#A9A496', d: '#6C685E',
     G: ZYGARDE_GREEN,
     T: '#2A3052', t: '#1C2038',
-    P: '#343850', p: '#22253A', Q: '#24242E', q: '#17171F',
-    B: '#3A3446', b: '#231E2A', W: '#6C6A7A',
+    P: '#3A4474', p: '#272E54', Q: '#2A2A36', q: '#1C1C26',
+    B: '#A4553C', b: '#6E3426', W: '#4A3028',
     // Mochila (D06): teja, legible sobre la chaqueta clara y bajo la melena azul noche.
     A: '#EA8A6C', a: '#C45C42', D: '#8E3C2C', z: '#5A221A',
   },

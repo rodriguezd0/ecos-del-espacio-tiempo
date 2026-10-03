@@ -1,10 +1,8 @@
 // Elenco de sprites provisionales: qué hojas se generan para cada personaje.
 import { PALETTES } from './palettes.mjs';
 import { WALK } from './body_jacket.mjs';
-import { RUN } from './body_run.mjs';
 import { COAT, SKIRT, APRON } from './overlays.mjs';
-import { withBackpack } from './backpack.mjs';
-import { PROTA_M, PROTA_F } from './heads_protas.mjs';
+import { walkSheet, runSheet } from './rider.mjs';
 import { GAEL, PROFESOR, POLICIA, VECINO, VECINA, ANCIANO } from './heads_cast.mjs';
 import { MADRE, AYUDANTE, GUARDIANA } from './heads_b01.mjs';
 import { KID_WALK, KID_SKIRT, NINO, NINA } from './kids.mjs';
@@ -34,10 +32,6 @@ const human = (id, heads, extra = {}) => ({
   ...extra,
 });
 
-// Protagonistas con mochila (D06, 24-09-2026).
-const WALK_BAG = withBackpack(WALK);
-const RUN_BAG = withBackpack(RUN);
-
 // Elenco de la campaña: paleta de palettes_campaign.mjs; `withFront` añade el sprite frontal de combate.
 const cast = (id, heads, extra = {}) => ({
   id, palette: CAMPAIGN_PALETTES[id], heads, sheets: [{ id, poses: WALK }], ...extra,
@@ -59,23 +53,21 @@ const fieldSheets = (id) => [
   { id: `${id}_vuelo`, kind: 'effect', grid: ACTION_SIZE, build: () => buildFlightStrip(id) },
 ];
 
+/** Todas las hojas de un protagonista del kit recuperado (prota_kit.mjs; docs/arte.md §9). */
+const protagonist = (id) => ({
+  id,
+  sheets: [
+    { id, build: () => walkSheet(id) },
+    { id: `${id}_run`, build: () => runSheet(id) },
+    backSheet(id),
+    ...fieldSheets(id),
+  ],
+});
+
 export const CHARACTERS = [
-  human('protagonista_m', PROTA_M, {
-    sheets: [
-      { id: 'protagonista_m', poses: WALK_BAG },
-      { id: 'protagonista_m_run', poses: RUN_BAG },
-      backSheet('protagonista_m'),
-      ...fieldSheets('protagonista_m'),
-    ],
-  }),
-  human('protagonista_f', PROTA_F, {
-    sheets: [
-      { id: 'protagonista_f', poses: WALK_BAG },
-      { id: 'protagonista_f_run', poses: RUN_BAG },
-      backSheet('protagonista_f'),
-      ...fieldSheets('protagonista_f'),
-    ],
-  }),
+  // Protagonistas con mochila (D06, 24-09-2026), los dos con el kit de protagonistas (rider.mjs → PROTAS).
+  protagonist('protagonista_m'),
+  protagonist('protagonista_f'),
   human('gael', GAEL, {
     sheets: [
       { id: 'gael', poses: WALK },

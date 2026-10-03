@@ -51,34 +51,68 @@ function handPos(kind, [lx, ly]) {
   return null;
 }
 
-/** Pelo del protagonista masculino visto de espaldas: masa, puntas hacia su izquierda y nuca. */
+/**
+ * Pelo del protagonista masculino visto de espaldas (kit nuevo, 3.ª pasada): coronilla redonda con
+ * mechones barridos hacia su izquierda (izquierda de la pantalla, como en el charset de espaldas), un
+ * mechón lateral que sale hacia ese lado y nuca en tres puntas.
+ */
 function hairMaleMask([lx, ly]) {
-  const m = ellipse(W, H, 40 + lx, 28 + ly, 18, 17);
+  const m = ellipse(W, H, 40 + lx, 29 + ly, 19, 17);
   const tufts = [
-    [[37, 14], [46, 12], [35, 2]],
-    [[45, 14], [54, 17], [49, 5]],
-    [[25, 19], [32, 14], [22, 9]],
-    [[30, 41], [37, 41], [33, 48]],
-    [[37, 42], [44, 42], [40, 50]],
-    [[44, 41], [51, 40], [48, 47]],
+    [[26, 17], [38, 11], [25, 10], [20, 10]], // mechón alto hacia arriba-izquierda
+    [[35, 12], [50, 14], [39, 7], [34, 5]], // mechón central, el más largo
+    [[22, 29], [24, 19], [19, 20], [17, 23]], // mechón lateral hacia la izquierda
+    [[51, 15], [57, 22], [57, 12]], // punta corta del lado derecho
+    [[30, 42], [38, 43], [32, 51]],
+    [[38, 43], [46, 43], [41, 52]],
+    [[46, 42], [53, 39], [51, 49]],
   ].map((pts) => poly(W, H, pts.map(([x, y]) => [x + lx, y + ly])));
   return m.union(...tufts);
 }
 
-/** Melena de la protagonista femenina vista de espaldas (hasta los hombros). */
+/**
+ * Media melena de la protagonista femenina vista de espaldas (kit nuevo, como su charset): hasta los
+ * hombros, con las puntas en pico y la del lado derecho de la pantalla (su derecha) abierta hacia fuera;
+ * por su izquierda el pelo va recogido en la trenza (drawBraid), así que ese lado cae más corto.
+ */
 function hairFemaleMask([lx, ly]) {
   const head = ellipse(W, H, 40 + lx, 28 + ly, 18, 17);
   const curtain = poly(W, H, [
-    [22, 28], [58, 28], [61, 52], [59, 60], [54, 57], [48, 62], [42, 59], [36, 62], [30, 58], [24, 61], [19, 55],
+    [23, 28], [58, 28], [59, 44], [61, 49], [65, 53], [60, 56], [55, 55], [50, 59], [44, 56], [38, 60], [32, 56],
+    [27, 57], [24, 52], [22, 44],
   ].map(([x, y]) => [x + lx, y + ly]));
   return head.union(curtain);
+}
+
+const GREEN_TIE = { light: '#E8FFD0', base: '#B9FF66', shadow: '#7ACC3C', line: '#2E6420' };
+
+/**
+ * Trenza de la protagonista (su izquierda = izquierda de la pantalla de espaldas): eslabones alternos que
+ * bajan por delante del hombro, goma verde #B9FF66 (su acento) y punta abierta.
+ */
+function drawBraid(img, tones, [lx, ly]) {
+  const [x0, y0, x1, y1] = [25, 40, 21, 63];
+  const links = 7;
+  for (let i = 0; i < links; i++) {
+    const t = i / (links - 1);
+    const cx = x0 + (x1 - x0) * t + (i % 2 ? -1 : 1) + lx;
+    const cy = y0 + (y1 - y0) * t + ly;
+    paint(img, ellipse(W, H, cx, cy, 3.2, 2.6), tones, { lightW: 1, shadowW: 1 });
+  }
+  const tuft = poly(W, H, [[18, 66], [24, 66], [26, 72], [22, 70], [20, 73], [17, 71]].map(([x, y]) => [x + lx, y + ly]));
+  paint(img, tuft, tones, { lightW: 1, shadowW: 1 });
+  paint(img, ellipse(W, H, x1 + lx, y1 + 3 + ly, 3.4, 2.2), GREEN_TIE, { lightW: 1, shadowW: 1 });
 }
 
 const CONFIGS = {
   protagonista_m: {
     hairMask: hairMaleMask,
     hair: { light: '#E8A060', base: '#BC6630', shadow: '#8C4424', line: '#5C2A1A' },
-    strands: [[33, 22, 29, 36], [39, 27, 37, 42], [45, 24, 47, 38], [51, 28, 54, 34], [28, 32, 27, 38]],
+    // Rayas de los mechones (tramos): siguen el barrido de abajo-derecha a arriba-izquierda, curvadas.
+    strands: [[47, 41, 42, 30], [42, 30, 37, 18], [40, 43, 34, 33], [34, 33, 28, 23], [54, 35, 49, 25],
+      [49, 25, 46, 16], [33, 42, 26, 33]],
+    // Brillos en banda sobre la coronilla (como en BW).
+    lights: [[29, 18, 35, 13], [38, 19, 44, 14], [47, 21, 51, 17]],
     jacket: { light: '#3E8E96', base: '#256870', shadow: '#194A52', line: '#0E3036' },
     collar: { light: '#56A8B0', base: '#3E8E96', shadow: '#256870', line: '#0E3036' },
     bag: { light: '#E2C890', base: '#BC9A5E', shadow: '#8A6A3A', line: '#5A4222' }, // mochila (D06)
@@ -87,10 +121,13 @@ const CONFIGS = {
   protagonista_f: {
     hairMask: hairFemaleMask,
     hair: { light: '#5A6CB4', base: '#34427E', shadow: '#222C58', line: '#141A38' },
-    strands: [[32, 30, 30, 57], [40, 32, 40, 58], [48, 30, 50, 57], [26, 36, 23, 52], [54, 36, 57, 52]],
-    band: true,
+    // Mechones que bajan de la coronilla a cada punta, y anillo de brillo en la coronilla (como el charset).
+    strands: [[36, 33, 32, 55], [44, 34, 44, 55], [51, 35, 55, 54], [29, 36, 27, 50]],
+    lights: [[39, 40, 38, 55], [48, 39, 50, 55], [32, 41, 30, 53], [57, 44, 61, 51]],
+    ring: [[40, 25, 15.5, 10], [40, 26.5, 10.5, 5.5]], // elipses exterior e interior [cx, cy, rx, ry]
+    braid: drawBraid,
     jacket: { light: '#F6F4EE', base: '#DCD8CC', shadow: '#A9A496', line: '#6C685E' },
-    collar: { light: '#FFFFFF', base: '#F6F4EE', shadow: '#DCD8CC', line: '#6C685E' },
+    collar: { light: '#3C4470', base: '#2A3052', shadow: '#1C2038', line: '#141A38' },
     bag: { light: '#EA8A6C', base: '#C45C42', shadow: '#8E3C2C', line: '#5A221A' }, // mochila (D06)
     ears: false,
   },
@@ -143,11 +180,14 @@ function drawFrame(cfg, pose) {
   if (arm && !behind) paint(img, arm, cfg.jacket); // bajo el pelo (la melena cubre el hombro)
   const hair = cfg.hairMask(pose.lean);
   paint(img, hair, cfg.hair, { lightW: 3, shadowW: 4 });
-  if (cfg.band) {
-    const band = ellipse(W, H, 40 + lx, 25 + ly, 15, 11).minus(ellipse(W, H, 40 + lx, 28 + ly, 15, 11)).and(hair);
-    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (band.has(x, y)) img.set(x, y, hex(cfg.hair.light));
+  if (cfg.ring) { // anillo de brillo en la coronilla (pelo redondo al estilo BW)
+    const [[ox, oy, orx, ory], [ix, iy, irx, iry]] = cfg.ring;
+    const ring = ellipse(W, H, ox + lx, oy + ly, orx, ory).minus(ellipse(W, H, ix + lx, iy + ly, irx, iry)).and(hair);
+    for (let y = 0; y < H; y++) for (let x = 0; x < W; x++) if (ring.has(x, y)) img.set(x, y, hex(cfg.hair.light));
   }
   for (const [x0, y0, x1, y1] of cfg.strands) lineIn(img, hair, x0 + lx, y0 + ly, x1 + lx, y1 + ly, cfg.hair.shadow);
+  for (const [x0, y0, x1, y1] of cfg.lights || []) lineIn(img, hair, x0 + lx, y0 + ly, x1 + lx, y1 + ly, cfg.hair.light);
+  if (cfg.braid) cfg.braid(img, cfg.hair, pose.lean);
   const hand = handPos(pose.arm, pose.lean);
   if (hand) paint(img, ellipse(W, H, hand[0], hand[1], 4, 4), SKIN, { lightW: 1, shadowW: 2 });
   let out = silhouette(img, OUTLINE);
