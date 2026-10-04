@@ -1191,10 +1191,12 @@ en `validate_content`), `tools/check_seams.mjs` (costuras: árboles partidos, ob
       evoluciones. «Aprender movimiento» lo decide el dueño y se envía (`lm`).
     - Cada partida aplica su parte (`applyCoopResult`, respetando los huevos) y marca al entrenador como derrotado
       (`coopMark`).
+    - Las evoluciones por horario usan `request.time`, el horario compartido del anfitrión, aunque el reloj del
+      compañero sea distinto. Si se aplica un resultado sin horario, se usa el reloj de esa partida.
     - Si pierden, cada uno vuelve a su punto de cura.
     - Si el compañero se desconecta, el combate se interrumpe sin ganador.
     - No se usan objetos de la Mochila en ningún combate online.
-    - Prueba: `node tools/net_coop_smoke.mjs`.
+    - Prueba: `node tools/net_coop_smoke.mjs`; `--evolution=day|night` comprueba dos Eevee con relojes opuestos.
   - `installLink` sustituye `pbCommandPhase` (primero el humano local, luego el intercambio y después la IA),
     `pbSwitchInBetween`, `pbRunMenu` (rendirse) y `pbEndOfBattle`.
   - El runner recibe `request.link` y `state = null`, así que no toca la partida.

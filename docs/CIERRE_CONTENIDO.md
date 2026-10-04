@@ -47,6 +47,9 @@ Correcciones verificadas:
   versiones anteriores: sus flags también pueden corresponder a Pokémon liberados o intercambiados.
 - Wurmple y Happiny disponen de sus métodos de evolución; seis pruebas nuevas comprueban personalidad, horario,
   objeto, cancelación y guardados anteriores. El auditor usa evolución y crianza reales con recursos distribuídos.
+- Las evoluciones por horario del cooperativo reciben el horario compartido del combate. Cinco regresiones
+  cubren a ambos dueños, Eevee, Happiny y el horario local de respaldo. Dos recorridos Chrome con relojes opuestos
+  terminan con ambos Eevee en Espeon de día y Umbreon de noche; los dos ganan experiencia y no hay errores de página.
 - La profundidad existente del seguidor evita que Zygarde tape al jugador en B14: doce posiciones reales en tres
   capas con formas 10 % y 50 %, sin errores de página.
 
@@ -55,7 +58,7 @@ etiqueta provisional.
 
 ## Comprobaciones de integración
 
-La suite completa del checkpoint pasa **2191/2191**, sin fallos, saltos ni cancelaciones. El validador construyó
+La suite completa del checkpoint pasa **2201/2201**, sin fallos, saltos ni cancelaciones. El validador construyó
 272 mapas y no dio errores. Las 45 conexiones actuales pasan la revisión de costuras. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
 suelo y los 13 obstáculos altos de los espejos. No hay árboles cortados, objetos sobre árboles ni costuras defectuosas.
@@ -67,5 +70,6 @@ Las hojas propias tienen generador reproducible y comprobación de dimensiones.
 
 Evidencia local en `tools/cache/`: `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y
-checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json` y `b14_follower_review.json`.
+checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json`, `b14_follower_review.json`
+y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.

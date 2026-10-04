@@ -64,7 +64,7 @@ export async function runCoopBattle(scene, { request, channel, contribution, mar
   const levelsBefore = contribution.party.map((p) => p.level);
   const raw = await playLinkedBattle(scene, request, channel);
   const result = raw || { outcome: 'draw', playerParty: null, allyParty: null };
-  const { evolutions } = raw ? applyCoopResult(state, engine.data, { result: raw, role, slots: contribution.slots, levelsBefore }) : { evolutions: [] };
+  const { evolutions } = raw ? applyCoopResult(state, engine.data, { result: raw, role, slots: contribution.slots, levelsBefore, time: request.time }) : { evolutions: [] };
   if (result.outcome === 'win' && mark) {
     state.setSelfSwitch(mark.mapId, mark.eventId, 'A', true);
     scene.world.requestRefresh();

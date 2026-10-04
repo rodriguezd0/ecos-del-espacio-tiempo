@@ -11,6 +11,7 @@ import { LinkChannel } from './linkSession.js';
 import { pokemonFromSpec } from '../battle/scene/setup.js';
 import { evolutionTarget } from '../battle/core/pokemon.js';
 import { isExpShareOn } from '../ui/logic/expShare.js';
+import { isNightHour } from '../render/dayNight.js';
 
 export const COOP_ANSWER_MS = 5000; // lo que espera el anfitrión antes de combatir solo
 export const COOP_START_MS = 8000;
@@ -133,7 +134,7 @@ export function coopStoryRequest({ role, host, guest, trainer, seed, env = {}, c
  * Aplica el resultado del combate en equipo a MI partida: mi parte del equipo (respetando huevos y posiciones),
  * dinero y vistos. Devuelve las evoluciones pendientes [{ index, species }].
  */
-export function applyCoopResult(state, db, { result, role, slots, levelsBefore }) {
+export function applyCoopResult(state, db, { result, role, slots, levelsBefore, time }) {
   const mine = (role === 'host' ? result.playerParty : result.allyParty) || [];
   const party = state.party.slice();
   slots.forEach((stateIndex, i) => { if (mine[i]) party[stateIndex] = mine[i]; });
@@ -143,10 +144,12 @@ export function applyCoopResult(state, db, { result, role, slots, levelsBefore }
   else if (delta < 0) state.addMoney(-Math.min(state.player.money, -delta));
   for (const sp of result.seen || []) state.registerSeen(sp);
   const evolutions = [];
+  // Los dos motores usaron el horario del anfitrión; los relojes de las partidas pueden ser distintos.
+  const isDay = time ? time !== 'night' : !isNightHour(state.hour);
   slots.forEach((stateIndex, i) => {
     const p = party[stateIndex];
     if (!p || p.hp <= 0 || !(p.level > levelsBefore[i])) return;
-    const target = evolutionTarget(db, p, { trigger: 'level' });
+    const target = evolutionTarget(db, p, { trigger: 'level', isDay });
     if (target) evolutions.push({ index: stateIndex, species: target });
   });
   return { evolutions };
