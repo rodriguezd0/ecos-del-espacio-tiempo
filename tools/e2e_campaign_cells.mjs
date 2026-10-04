@@ -1,6 +1,6 @@
 // Recogida de opcionales en la misma partida: solo observa eventos y pulsa controles.
 import { cellByKey } from '../game/src/content/zygarde/cells.js';
-import { installB13Observer } from './e2e_campaign_b13_page.mjs?shore=5';
+import { installB13Observer } from './e2e_campaign_b13_page.mjs?shore=6';
 import { Driver as SeaDriver } from './e2e_b13_driver.mjs';
 
 export async function collectLandCells(d, keys) {

@@ -86,8 +86,7 @@ export async function installB13Observer(page){await page.evaluate(async()=>{
     }
 
     /**
-     * Ruta nadando que puede terminar a pie: por agua mientras se nada; al pisar tierra se desembarca y desde ahí solo
-     * se camina (sin volver a entrar en el agua). → direcciones o null.
+     * Ruta con el mismo cambio de Nadar que Player: algunos suelos sobre agua conservan su terrain tag y Nadar.
      */
     function routeMixed(tx, ty, limit = 60000) {
       const m = map();
@@ -114,10 +113,11 @@ export async function installB13Observer(page){await page.evaluate(async()=>{
             if (!view.passable(x, y, d)) continue;
             const water = isWater(nx, ny);
             if (!s && water) continue;
-            const nk = K(nx, ny, s && water);
+            const nextSurfing=s&&canSurfFreely(m.world.terrainAt(view,nx,ny));
+            const nk = K(nx, ny, nextSurfing);
             if (prev.has(nk)) continue;
             prev.set(nk, [K(x, y, s), d]);
-            q.push([nx, ny, s && water]);
+            q.push([nx, ny, nextSurfing]);
           }
         }
       } finally {
