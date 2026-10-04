@@ -1,7 +1,7 @@
 // Sprite de personaje (Sprite_Character de Essentials): fotograma por patrón y dirección, profundidad de
 // arbusto (BushBitmap: corte con dos franjas semitransparentes), opacidad, sombra, salto y orden de dibujo.
 import * as THREE from 'three';
-import { loadCharset } from './charsets.js';
+import { loadCharset, loadedCharset } from './charsets.js';
 import { tryRawTexture } from './textures.js';
 import { engine } from '../core/engine.js';
 import { regularTileAtlasPos, TILE } from '../shared/autotile.js';
@@ -87,40 +87,53 @@ export class CharacterSprite {
     this.loading = null;
     this.frameH = 0;
     this.shadowReady = false;
+    this.disposed = false;
     this.loadShadow();
   }
 
   async loadShadow() {
     if (!shadowTexPromise) shadowTexPromise = tryRawTexture(engine.assets.anil('Graphics/Characters/Shadows/defaultShadow.png'));
     const tex = await shadowTexPromise;
-    if (!tex) return;
+    if (!tex || this.disposed) return;
     this.shadow.material.uniforms.map.value = tex;
     this.shadow.scale.set(tex.image.width, tex.image.height, 1);
     this.shadowReady = true;
   }
 
   /** Cambia el gráfico (clave de charset). */
-  setGraphic(key) {
-    if (key === this.key) return;
+  setGraphic(key, { keepPrevious = false } = {}) {
+    if (this.disposed || key === this.key) return;
     this.key = key;
-    this.sheet = null;
+    const cached = keepPrevious ? loadedCharset(key) : null;
+    // El jugador mantiene su hoja visible durante una carga fría; vacío y otros personajes siguen ocultándose.
+    this.sheet = cached || (key && keepPrevious ? this.sheet : null);
     this.tileKey = null;
-    if (!key) return;
+    if (!key) { this.loading = null; return; }
+    if (cached) {
+      this.applySheet(cached);
+      this.loading = Promise.resolve(cached);
+      return;
+    }
     const want = key;
     this.loading = loadCharset(key).then((sheet) => {
-      if (this.key !== want || !sheet) return;
-      this.sheet = sheet;
-      this.material.uniforms.map.value = sheet.tex;
-      // frameH = alto dibujado (con la escala de los seguidores grandes); uFrameH = píxeles del fotograma (arbustos).
-      const k = sheet.scale || 1;
-      this.frameH = sheet.frameH * k;
-      this.material.uniforms.uFrameH.value = sheet.frameH;
-      this.mesh.scale.set(sheet.frameW * k, sheet.frameH * k, 1);
+      if (this.disposed || this.key !== want || !sheet) return;
+      this.applySheet(sheet);
     });
+  }
+
+  applySheet(sheet) {
+    this.sheet = sheet;
+    this.material.uniforms.map.value = sheet.tex;
+    // frameH = alto dibujado; uFrameH = píxeles del fotograma para el recorte de arbustos.
+    const k = sheet.scale || 1;
+    this.frameH = sheet.frameH * k;
+    this.material.uniforms.uFrameH.value = sheet.frameH;
+    this.mesh.scale.set(sheet.frameW * k, sheet.frameH * k, 1);
   }
 
   /** Gráfico de tile (eventos con tile_id). */
   setTile(res, tileId) {
+    if (this.disposed) return;
     const tk = `${res.id}:${tileId}`;
     if (this.tileKey === tk) return;
     this.key = null;
@@ -141,8 +154,9 @@ export class CharacterSprite {
    * Devuelve la profundidad usada.
    */
   sync(ch, ox = 0, oy = 0, { visible = true, shadow = true, tileRes = null } = {}) {
+    if (this.disposed) return 0;
     if (ch.tileId > 0 && tileRes) this.setTile(tileRes, ch.tileId);
-    else this.setGraphic(ch.characterName);
+    else this.setGraphic(ch.characterName, { keepPrevious: Boolean(ch.isPlayer) });
     // Siempre booleanos: Three.js solo oculta con `visible === false`; un null/'' (evento sin gráfico, `shadow` de
     // `characterName && …`) dibujaba la malla y la sombra sin posicionar en el origen del mapa (óvalo negro en (0,0)).
     const ready = Boolean(this.sheet) || Boolean(this.tileKey && ch.tileId > 0);
@@ -176,6 +190,9 @@ export class CharacterSprite {
   headY() { return this.mesh.position.y - this.frameH + 10; }
 
   dispose() {
+    this.disposed = true;
+    this.key = this.sheet = this.tileKey = null;
+    this.mesh.visible = this.shadow.visible = false;
     this.mesh.removeFromParent();
     this.shadow.removeFromParent();
     this.material.dispose();

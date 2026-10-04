@@ -11,6 +11,7 @@ import { followerScale, sheetContentExtent, parseFollowerKey } from './followerS
 import { measureCharsetFootprint, registerCharsetFootprint } from '../world/followerSpacing.js';
 
 const cache = new Map();
+const loaded = new Map();
 let registryPromise = null;
 
 function registry() {
@@ -62,10 +63,12 @@ export function loadCharset(key) {
         try {
           const tex = await loadRawTexture(url);
           const img = tex.image;
-          return {
+          const sheet = {
             key, url, tex, width: img.width, height: img.height, frameW: img.width / 4, frameH: img.height / 4,
             offset: /offset/i.test(key), scale: charsetGeometry(key, img),
           };
+          loaded.set(key, sheet);
+          return sheet;
         } catch { /* probar la siguiente */ }
       }
       console.warn(`Gráfico de personaje no encontrado: "${key}"`);
@@ -74,6 +77,9 @@ export function loadCharset(key) {
   }
   return cache.get(key);
 }
+
+/** Hoja ya disponible, sin esperar otra microtarea de su promesa cacheada. */
+export function loadedCharset(key) { return loaded.get(key) || null; }
 
 /** Medición única al cargar: conserva la escala existente y publica los límites opacos del dibujo. */
 function charsetGeometry(key, img) {

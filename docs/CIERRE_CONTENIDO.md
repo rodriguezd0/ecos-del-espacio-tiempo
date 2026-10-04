@@ -131,9 +131,10 @@ La aprobación anterior de frontales y tamaños tuvo revisión independiente sin
 
 ## Comprobaciones de integración
 
-La última suite completa de integración pasó **2475/2475**, sin fallos, saltos ni cancelaciones, incluidos el arte
+La última suite completa de integración pasó **2484/2484**, sin fallos, saltos ni cancelaciones, incluidos el arte
 aprobado, su UI, C059/C065, recargas, retornos B14/B15, PC y separación global de seguidores
-y reanudaciones B17–B21 y la salida segura al límite de intentos de Arceus (`suite_b21_retry_integrated.log`, 28,962 s). El último
+y reanudaciones B17–B21, la salida segura al límite de Arceus y la transición reposo/carrera
+(`suite_player_sprite_transition.log`, 29,526 s). El último
 validador posterior a ambos arreglos construyó 272 mapas sin errores: 31 avisos enumerados, ninguno de Mar/Talasa.
 Las 45 conexiones actuales pasan la revisión de costuras, incluidas las seis de esos dos mapas. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
