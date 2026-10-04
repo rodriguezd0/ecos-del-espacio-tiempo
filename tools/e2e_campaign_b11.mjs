@@ -45,39 +45,36 @@ async function neblino(d) {
 }
 
 async function ruta10(d) {
+  await d.settle();
   // Sin pista de Zygarde hacia casa (Zygarde habla muy poco): se sube del sendero del Neblino.
   const s0 = await d.snapState();
-  if (s0.y > 30) await d.walkTo(21, 29);
-  await d.climb(30, 17, 'up', [30, 13]);
-  await d.milestone('ruta10_alto');
-  // C049 en la repisa de la pared de raíces.
-  await d.climb(15, 6, 'up', [15, 2]);
-  await d.walkTo(14, 1);
-  await d.settle();
-  await d.milestone('c049', (s) => (s.cells.includes('cell_ruta_10_2') ? null : 'sin C049'));
-  await d.climb(15, 2, 'down', [15, 6]);
+  if (!s0.cells.includes('cell_ruta_10_2')) {
+    if (s0.y > 30) await d.walkTo(21, 29);
+    await d.climb(30, 17, 'up', [30, 13]);
+    await d.milestone('ruta10_alto');
+    // C049 en la repisa de la pared de raíces.
+    await d.climb(15, 6, 'up', [15, 2]);
+    await d.walkTo(14, 1);
+    await d.settle();
+    await d.milestone('c049', (s) => (s.cells.includes('cell_ruta_10_2') ? null : 'sin C049'));
+    await d.climb(15, 2, 'down', [15, 6]);
+  }
   // Alarma a propósito: esperar a que el centinela 2 mire abajo y pisar su línea.
-  await d.walkTo(39, 12);
-  const end = Date.now() + 20000;
-  while (Date.now() < end) {
-    const dir = await d.eval(() => window.__b11.eventPos('centinela_2')?.dir);
-    if (dir === 2) break;
-    await d.wait(60);
+  if (!d.milestones.includes('t10_punto_seguro')) {
+    await d.walkTo(39, 12);
+    const end = Date.now() + 20000;
+    while (Date.now() < end) {
+      const dir = await d.eval(() => window.__b11.eventPos('centinela_2')?.dir);
+      if (dir === 2) break;
+      await d.wait(60);
+    }
+    await d.step(6);
+    await d.settle({ watch: [{ re: /voz de alarma/, name: 't10_alarma', delay: 200 }] });
+    await d.expectSaid(/voz de alarma/, 'la alarma del centinela');
+    await d.milestone('t10_punto_seguro', (s) => (s.x === 31 && s.y === 13 ? null : `tras la alarma en (${s.x},${s.y})`));
   }
-  await d.step(6);
-  await d.settle({ watch: [{ re: /voz de alarma/, name: 't10_alarma', delay: 200 }] });
-  await d.expectSaid(/voz de alarma/, 'la alarma del centinela');
-  await d.milestone('t10_punto_seguro', (s) => (s.x === 31 && s.y === 13 ? null : `tras la alarma en (${s.x},${s.y})`));
   // Sigilo: planificador con el reloj de los centinelas.
-  for (let n = 0; n < 400; n++) {
-    const s = await d.snapState();
-    if (s.busy || s.top !== 'MapScene') throw new Error(`El sigilo ha fallado en (${s.x},${s.y}): ${s.lastText}`);
-    if (s.x === 46 && s.y === 7) break;
-    const a = await d.eval(() => window.__b11.stealthNext(46, 7));
-    if (a === null) throw new Error(`Sin plan de sigilo desde (${s.x},${s.y})`);
-    if (a === 0) { await d.wait(70); continue; }
-    await d.step(a);
-  }
+  await crossSentinelSlope(d);
   await d.milestone('t10_sigilo', (s) => (s.x === 46 && s.y === 7 ? null : `no se llegó a la cornisa: (${s.x},${s.y})`));
   await d.climb(46, 7, 'up', [46, 3]);
   // La cuadrilla.
@@ -98,6 +95,18 @@ async function ruta10(d) {
   await d.climb(30, 13, 'down', [30, 17]);
   await d.walkTo(59, 20);
   await d.crossEdge('right', 'ruta_1');
+}
+
+export async function crossSentinelSlope(d) {
+  for (let n = 0; n < 800; n++) {
+    const s = await d.snapState();
+    if (s.busy || s.top !== 'MapScene') { await d.settle(); continue; }
+    if (s.x === 46 && s.y === 7) return s;
+    const a = await d.eval(() => window.__b11.stealthNext(46, 7, { margin: 22 }));
+    if (a === 0 || a === null) { await d.wait(70); continue; }
+    await d.step(a);
+  }
+  throw Error('No se llegó a la cornisa tras recorrer la ladera.');
 }
 
 async function villa(d) {
@@ -161,7 +170,7 @@ async function campamento(d) {
 }
 
 async function t09(d) {
- await d.exitTo('right','ruta_10'); await d.climb(30,13,'down',[30,17]); await d.travel('aldea_mnemos'); await d.walkTo(5,20,{face:'up'});
+ await d.travel('ruta_10'); await d.climb(30,13,'down',[30,17]); await d.travel('aldea_mnemos'); await d.walkTo(5,20,{face:'up'});
   await d.exitTo('up', 'mnemos_casa_iker'); // puerta de la casa de Íker (B10: ikerDoorEvent)
   await d.settle();
   await d.milestone('casa_iker');
@@ -218,9 +227,14 @@ async function t09(d) {
 }
 
 async function cerro(d) {
- await d.exitTo('aldea_mnemos'); await d.travel('ruta_1'); await d.walkTo(23,7,{face:'right'});
-  await d.interact();
-  await d.until((s) => s.map === 'cerro_alba' && s.ready, { timeout: 15000, what: 'subir al Cerro del Alba' });
+  // La salida de Íker es un contacto del felpudo, no un warp declarado.
+  if ((await d.snap()).map !== 'cerro_alba') {
+    if ((await d.snap()).map === 'mnemos_casa_iker') { await d.walkTo(7,10); await d.exitTo('down','aldea_mnemos'); }
+    await d.travel('ruta_1'); await d.mount(); await d.walkTo(23,7,{face:'right'});
+    await d.interact();
+    await d.until((s) => s.map === 'cerro_alba' && s.ready, { timeout: 15000, what: 'subir al Cerro del Alba' });
+  }
+  await d.toggleMount(false);
   await d.settle();
   await d.expectSaid(/tejados de Villa Alba/, 'la llegada al cerro');
   await d.climb(11, 23, 'up', [11, 19]);

@@ -97,5 +97,5 @@ La recuperación del epílogo añade `epilogue_recovery_report.md`, `epilogue_re
 El conductor de la partida continua comprueba también el huevo del inicial real de Gael, su entrega única,
 el PC y la elección de P9 después de recargar; exige 100 células, cinco núcleos, diez Fragmentos y dieciocho
 Tablillas. Sus seis regresiones pasan con los guiones de regalo reales. Este tramo está preparado para B21;
-la ejecución continua sigue en B11.
+la ejecución continua ha guardado B11 y sigue en B12.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.
