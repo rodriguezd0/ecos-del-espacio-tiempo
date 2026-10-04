@@ -4,7 +4,7 @@
 revisable por el autor según la política de autonomía de `docs/DECISIONES.md`.
 
 **Fuentes de canon (por orden de precedencia):** decisiones del autor en `docs/DECISIONES.md` (D01–D08, D02b, D05b,
-X01, X03, X04, X05, TEC-01…06) → `docs/biblia_axis_v2.txt` (VIGENTE) → `docs/bloques/B01_apertura.md` (bloque 1 ya
+X01, X03, X04, X05, X34–X36, TEC-01…06) → `docs/biblia_axis_v2.txt` (VIGENTE) → `docs/bloques/B01_apertura.md` (bloque 1 ya
 guionado). Datos: `game/data/species.json`, `items.json`, `items_axis.json`, `moves.json`, `dex_axis.json`.
 
 **Documentos hermanos:** `docs/TABLILLAS.md` (sección 4: T01–T15, museo, Crónica, las tres de Arceus, Libreta) ·
@@ -25,8 +25,10 @@ guionado). Datos: `game/data/species.json`, `items.json`, `items_axis.json`, `mo
 
 **Lo que este documento NO reintroduce (DESCARTADO en la biblia):** sueño o voz explicativa, altar, trato policial,
 Mankey/paquete, Snorlax con Poké Flauta, campeón de Sinnoh o amnesia, fase Hada, Estabilizador Z, Unown como
-transporte, suero o muerte de Gael, tres plantas por Pilar como fórmula, Guardianes como líderes de gimnasio
+transporte, suero o muerte de Gael, Guardianes como líderes de gimnasio
 disfrazados, topónimos de Añil/Kanto/Sinnoh como canon (salvo Columna Lanza, VIGENTE).
+
+La estructura vertical de tres pisos es una decisión posterior del autor (X36); el reparto vigente está en §1.5.
 
 ### La campaña en doce líneas
 

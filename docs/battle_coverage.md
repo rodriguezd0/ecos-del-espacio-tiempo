@@ -8,9 +8,9 @@
 | Área | Implementado | Total | Cobertura |
 |---|---:|---:|---:|
 | Códigos de función de movimientos (moves.json) | 463 | 463 | 100.0 % |
-| Movimientos aprendibles por el inventario Axis | 734 | 734 | 100.0 % |
+| Movimientos aprendibles por el inventario Axis | 737 | 737 | 100.0 % |
 | Habilidades (abilities.json) | 327 | 328 | 99.7 % |
-| Habilidades de especies Axis | 214 | 214 | 100.0 % |
+| Habilidades de especies Axis | 218 | 218 | 100.0 % |
 | Objetos equipados con efecto (manejadores) | 190 | — | — |
 | Objetos de mochila usables en combate | 82 | 83 | 98.8 % |
 | Poké Balls con modificador | 26 | 26 | 100.0 % |
@@ -219,10 +219,10 @@ Ninguna (todas usan su ratio).
 | `LowerTargetEvasion1RemoveSideEffects` | 1 | 1 | Despejar |
 | `LowerTargetEvasion2` | 1 | 1 | Dulce Aroma |
 | `LowerTargetHPToUserHP` | 1 | 1 | Esfuerzo |
-| `LowerTargetSpAtk1` | 8 | 7 | Golpe Rastrero, Estoicismo, Alarido |
+| `LowerTargetSpAtk1` | 8 | 8 | Golpe Rastrero, Estoicismo, Alarido |
 | `LowerTargetSpAtk2` | 1 | 1 | Onda Anómala |
 | `LowerTargetSpAtk2IfCanAttract` | 1 | 1 | Seducción |
-| `LowerTargetSpDef1` | 10 | 9 | Zumbido, Onda Certera, Bola Sombra |
+| `LowerTargetSpDef1` | 10 | 10 | Zumbido, Onda Certera, Bola Sombra |
 | `LowerTargetSpDef2` | 5 | 4 | Llanto Falso, Fulgor Semilla, Bomba Ácida |
 | `LowerTargetSpeed1` | 11 | 10 | Electrotela, Puntapié, Batería Asalto |
 | `LowerTargetSpeed1AlwaysHitsInRain` | 1 | 1 | Vendaval Gélido |
@@ -437,7 +437,7 @@ Ninguna (todas usan su ratio).
 | `TrapTargetInBattle` | 5 | 2 | Telaraña, Puntada Sombría, Bloqueo |
 | `TrapTargetInBattleLowerTargetDefSpDef1EachTurn` | 1 | 0 | Octopresa |
 | `TrapTargetInBattleMainEffect` | 1 | 1 | Mil Temblores |
-| `TrapUserAndTargetInBattle` | 1 | 0 | Presa Maxilar |
+| `TrapUserAndTargetInBattle` | 1 | 1 | Presa Maxilar |
 | `TwoTurnAttackBurnTarget` | 1 | 1 | Llama Gélida |
 | `TwoTurnAttackChargeRaiseUserDefense1` | 1 | 1 | Cabezazo |
 | `TwoTurnAttackChargeRaiseUserSpAtk1` | 1 | 1 | Rayo Meteórico |
