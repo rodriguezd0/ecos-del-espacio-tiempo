@@ -28,20 +28,20 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | Mapa de Axis y Vuelo | ✅ | Atlas de CAMPANA §1; ilustración provisional |
 | Tren regional y ferris | ✅ | Sistema; estaciones con cada bloque |
 | Combate: motor (daño, tipos, estados, efectos, habilidades, objetos, IA) | ✅ | 463/463 códigos de función, 327/328 habilidades |
-| Combate: escena estilo BW2 | ✅ | Animaciones genéricas por tipo/categoría |
+| Combate: escena estilo BW2 | ✅ | Animaciones de Añil; respaldo genérico por tipo/categoría |
 | Captura, experiencia, subir nivel, aprender movimientos, evolución | ✅ | |
 | Megaevolución | ✅ | Mega Aro en T04 (B07) |
 | Alpha (raros, tamaño) y shiny | 🟨 | Tasas provisionales D29 (Alpha ×1.2) |
 | Condiciones de captura legendaria comunicadas en UI | ✅ | Motor + escena |
 | Fases de jefe (Arceus) | ✅ | Mecánica genérica; reglas de B21 |
 | Zygarde: Core compañero de campo | ✅ | |
-| Zygarde: 100 células y 5 núcleos, latido, rótulo, Detección mejorada | ✅ | Registro `content/zygarde/cells.js` |
+| Zygarde: 100 células y 5 núcleos, rótulo y registro | ✅ | `content/zygarde/cells.js`; sin latido, pitido ni flecha de proximidad |
 | Zygarde 10%: montura, Embestida, Terreno complicado, Trepar | ✅ | |
 | Zygarde 50%: Nadar, Buceo (burbuja con medidor) | ✅ | |
 | Zygarde Completo: Vuelo, Reconstrucción persistente | ✅ | |
-| Salto de Convergencia, Anclaje espacial | 🟨 | API lista; escenas en B21/postgame |
+| Salto de Convergencia, Anclaje espacial | ✅ | Salto en B21; Red, caras y Senda de Anclaje en B22a, recorridos en Chrome |
 | Arca de Zygarde (formas, sin coerción) | ✅ | |
-| Libreta: pistas (2–3 abiertas), Profecía (Unown), Crónica, Tablillas | ✅ | Pestañas Diario/Células en corrección |
+| Libreta: pistas (2–3 abiertas), Profecía (Unown), Crónica, Tablillas, Diario y Células | ✅ | Modelo y seis pestañas implementados; `story_notebook_tabs.test.mjs` |
 | Secuencia «Pilar restaurado» (Fragmento, verso, efecto local) | ✅ | `ctx.story.restorePillar` |
 | Kit de Pilar con tinte por Pilar | ✅ | Arte provisional |
 | Cordón Unión (evolución por intercambio en solitario) | ✅ | Venta en Lúmina (B09), evolución implementada |
@@ -97,7 +97,8 @@ Bramaluna Alfa = ROARINGMOON (P7) · Tornadus/Thundurus/Landorus (P10) · Arceus
 
 Pokédex de Axis: 425 entradas (412 del inventario + 13 reconciliaciones, D28 DECIDIDO-DEV). Catálogo y generador
 corregidos (e717e01), con numeración anterior conservada y las 13 especies visibles en la lista. Distribución por
-zonas en `docs/POKEDEX_DISTRIBUCION.md`; auditoría final de captura, regalos, crianza y evolución en marcha.
+zonas en `docs/POKEDEX_DISTRIBUCION.md`; auditoría de métodos en solitario cerrada: 425/425 y elecciones
+compatibles. Alcance y evidencia en `docs/CIERRE_CONTENIDO.md`.
 
 ## Objetos clave
 
@@ -111,14 +112,14 @@ zonas en `docs/POKEDEX_DISTRIBUCION.md`; auditoría final de captura, regalos, c
 | Mega Aro + megapiedras | ✅ B07 y búsquedas del postgame; Zygardita en Almenara |
 | Cordón Unión | ✅ B09 |
 
-## TODO de integración entre bloques (Bloque 1)
+## Integración entre bloques (Bloque 1)
 
-Enlaces que el Bloque 1 deja preparados (`game/src/content/maps/b01/pending_links.js`): mientras el mapa de destino no
-esté registrado hay un aviso neutro; al crearlo y ejecutar `node tools/gen_registries.mjs` la conexión se abre sola.
+Los destinos de los enlaces preparados en `game/src/content/maps/b01/pending_links.js` ya están registrados.
+El aviso neutro de ese módulo se conserva como respaldo para un destino ausente.
 
-| Estado | Enlace | Bloque | Qué falta |
+| Estado | Enlace | Bloque | Verificación actual |
 |---|---|---|---|
-| ✅ | Ruta 1 → **Ruta 10** (cruce oeste, tramo bajo; C007) | B11 | Crear `ruta_10` con su salida este en y 20–21 y conexión `east` a `ruta_1` con offset 4. Hasta entonces: «El camino del oeste está cortado por un desprendimiento.» |
+| ✅ | Ruta 1 → **Ruta 10** (cruce oeste, tramo bajo; C007) | B11 | Conexión bidireccional implementada; definiciones y costura revisadas. |
 | ✅ | Ruta 1 → **Villa Zaguán** (salida sur) | B02 | Conexión implementada, costura limpia y recorrida desde Nueva partida. |
 | ✅ | Ruta 1 → **Cerro del Alba** (cornisa, Trepar) | B11/postgame | Raíces en el mirador (24,7) → `cerro_alba` (C054); encuentro de Ho-Oh implementado y capturado en B22c. |
 | ✅ | Monte del Portal: C050, C051 y C076 | B12 | Hecho en B12: `montana_portal` ampliado en su sitio a 50×50 (se conserva la llegada (17,48) del campamento); C050 (26,46), C051 (17,21), C076 (39,41, Nadar). |
