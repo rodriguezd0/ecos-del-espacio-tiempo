@@ -109,3 +109,19 @@ test('campaña: la entrada a Lúmina reconoce el traslado canónico de la gala s
     assert.equal(JSON.parse(fs.readFileSync(file,'utf8')).after.map,'lumina_hotel');
   } finally { if(fs.existsSync(file))fs.unlinkSync(file);fs.rmdirSync(d.outDir); }
 });
+
+test('campaña: el Suelo Olvidado arma la liberación de tecla al empezar cada paso real', async () => {
+  const original = Driver.prototype.step, d = driver(), controls = [];
+  let map = 'archivo_hondo';
+  d.snap = async () => ({ map });
+  d.eval = async (_fn, key) => { controls.push(['releaseOnMove', key]); };
+  Driver.prototype.step = async dir => { controls.push(['step', dir]); };
+  try {
+    await d.step(6);
+    assert.deepEqual(controls, [['releaseOnMove', 'ArrowRight'], ['step', 6]]);
+    controls.length = 0;
+    map = 'aldea_mnemos';
+    await d.step(8);
+    assert.deepEqual(controls, [['step', 8]], 'las rutas normales conservan su control');
+  } finally { Driver.prototype.step = original; }
+});

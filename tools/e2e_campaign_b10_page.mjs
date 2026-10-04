@@ -1,6 +1,6 @@
 // Observaciones y planes puros; los controles ejecutan todos los pasos de la partida.
 export async function installB10Observer(page){await page.evaluate(async()=>{
-const {engine}=await import('/src/core/engine.js');
+const {engine}=window.__campaign;
     const DIRS = [[2, 0, 1], [4, -1, 0], [6, 1, 0], [8, 0, -1]];
     const map = () => window.__map;
     /** ¿Hay en (x, y) un evento de contacto activo (se dispara al pisarlo)? */
@@ -84,5 +84,8 @@ const {engine}=await import('/src/core/engine.js');
       },
     };
 
-window.__e2e.route=window.__b10.safeRoute;
+// Solo el puzzle tiene contactos que hay que rodear; los caminos exteriores
+// incluyen pasos de guion obligatorios, como el puente de la Marisma.
+window.__e2e.route=(...args)=>map()?.world?.map?.id==='archivo_hondo'
+  ? window.__b10.safeRoute(...args) : window.__campaign.route(...args);
 });}

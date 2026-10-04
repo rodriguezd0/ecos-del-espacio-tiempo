@@ -69,7 +69,7 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | B19–B20 | Calzada del Rey / P10 Origen (Trío de las Nubes, Gael, Flauta) | ✅ E2E + verificación |
 | B21 | Columna Lanza: Salto, captura voluntaria de Zygarde, Arceus 3 fases, epílogo | ✅ E2E + verificación |
 | Tablillas | 15 arcos T01–T15 (museo T06) repartidos en B03–B19 | ✅ con sus bloques |
-| Partida continua | De «Nueva partida» a los créditos sin preajustes (curva de niveles, dinero, banderas) | 🟨 B01–B08 y B09a recorridos y guardados por UI con la misma partida; B09b en marcha |
+| Partida continua | De «Nueva partida» a los créditos sin preajustes (curva de niveles, dinero, banderas) | 🟨 B01–B10 recorridos y guardados por UI con la misma partida; B11 en marcha |
 | B22 | Postgame del juego base (búsquedas legendarias) | ✅ a–e recorridos en Chrome con capturas y retornos reales |
 | B23 | DLC 1 «Almenara» (Gael, Hoopa, Mega Zygarde) | ✅ 13 hitos, 9 combates reales; derrota/reintento, sellado, captura opcional y final abierto |
 | B24 | DLC 2 Registro de Expediciones | ✅ 30/30 Hallazgos, 47 combates reales, siete Ultrazonas, Naganadel/Necrozma y ambas hipótesis insulares |

@@ -1,5 +1,5 @@
 import {refreshDriver} from './e2e_campaign_refresh.mjs';
-import {installB10Observer} from './e2e_campaign_b10_page.mjs';
+import {installB10Observer} from './e2e_campaign_b10_page.mjs?routes=2';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 import { NPC, BUILDINGS, BAMBOO, RISCO, EXITS, FOG_WALL_Y, INTERIOR_ENTRIES } from '../game/src/content/maps/b10/mnemos_layout.js';
@@ -56,7 +56,7 @@ async function notes(d) {
   await d.milestone('notas_repartidas', (s) => {
     const missing = ['sabina', 'tome', 'jacinta', 'amaro', 'bruno'].filter((k) => !s.flags[`b10_nota_${k}`]);
     if (missing.length) return `faltan ${missing.join(', ')}`;
-    return s.party.includes('SINISTEA') ? null : 'sin Sinistea';
+    return s.party.includes('SINISTEA') || s.boxedPokemon?.some(p=>p.species==='SINISTEA') ? null : 'sin Sinistea en equipo ni PC';
   });
   await d.exitInterior(INTERIOR_ENTRIES.mnemos_casa_te, 'aldea_mnemos');
   // C045 en el claro del bambú, tras la casa de té.
@@ -99,17 +99,8 @@ async function archivo(d) {
 
 // ───────────────────────────── Archivo Hondo ─────────────────────────────
 
-const PATH_DIRS = (() => {
-  const out = [];
-  let [px, py] = [SUELO.start.x, SUELO.start.y];
-  for (const [x, y] of [...SUELO.path, [SUELO.exit.x, SUELO.exit.y]]) {
-    out.push(x > px ? 'right' : x < px ? 'left' : y > py ? 'down' : 'up');
-    [px, py] = [x, y];
-  }
-  return out;
-})();
-
 async function suelo(d) {
+  await refreshDriver(d); await installB10Observer(d.page);
   await d.milestone('hondo_llegada');
   // Eco del custodio: la losa de recuerdo.
   await d.walkTo(SUELO.losa.x, SUELO.losa.y, { watch: [{ re: /papel viejo/, name: 'eco_suelo', delay: 1400 }] });
@@ -122,8 +113,12 @@ async function suelo(d) {
   await d.expectSaid(/El suelo no estaba ahí/, 'la caída del Suelo Olvidado');
   let s = await d.snapState();
   if (!(s.x === SUELO.start.x && s.y === SUELO.start.y)) throw new Error(`La caída no devuelve al borde: (${s.x},${s.y})`);
-  // El camino del custodio.
-  await d.stepsExact(PATH_DIRS);
+  // Caminar permite recalcular desde la posición observada si Chrome entrega
+  // tarde una pulsación. La ruta evita las trampas reales y reproduce el camino
+  // del custodio; no se avanza por un contador de pasos después de una caída.
+  await d.page.keyboard.up('ShiftLeft');
+  try { await d.walkTo(SUELO.exit.x, SUELO.exit.y); }
+  finally { await d.page.keyboard.down('ShiftLeft'); }
   await d.settle();
   s = await d.milestone('suelo_cruzado', (st) => (st.flags.b10_suelo ? null : `sin b10_suelo en (${st.x},${st.y})`));
 }
@@ -268,4 +263,11 @@ async function salida(d) {
 // ───────────────────────────── Principal ─────────────────────────────
 
 
-export async function runB10(d){await refreshDriver(d); await installB10Observer(d.page); await d.stages('B10',{entrada:async d=>d.travel('aldea_mnemos'),mnemos,notes,archivo,suelo,manos,lectura,rollos,mural,olvido,nucleo,salida});}
+export async function runB10(d){await refreshDriver(d); await installB10Observer(d.page); await d.stages('B10',{
+ entrada:async d=>{
+  await d.travel('mnemos_centro');await d.talk('enfermera');
+  const s=await d.snap(),stock=s.items.SUPERPOTION||0;
+  if(stock<12)await d.purchase({SUPERPOTION:12-stock});
+  await d.milestone('equipo_curado',s=>s.pokemon.every(p=>p.hp===p.maxHP&&!p.status)?null:'el Centro no curó el equipo');
+  await d.travel('aldea_mnemos');
+ },mnemos,notes,archivo,suelo,manos,lectura,rollos,mural,olvido,nucleo,salida});}

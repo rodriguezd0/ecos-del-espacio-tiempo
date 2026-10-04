@@ -10,6 +10,7 @@ export class CampaignDriver extends Driver {
   pos(id) { return id ? this.eval(id => window.__campaign.eventPos(id), id) : super.pos(); }
   async step(dir, { settle = true } = {}) {
     const before = await this.snap();
+    if (before.map === 'archivo_hondo') await this.eval(code => window.__b10?.releaseOnMove?.(code), KEY[dir]);
     if (before.map !== 'camara_contrapesos') return super.step(dir);
     await this.page.keyboard.down(KEY[dir]);
     try { await this.eval(a => window.__b08.waitChange(a), { x: before.x, y: before.y, map: before.map,
