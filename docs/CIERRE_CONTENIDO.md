@@ -1,7 +1,8 @@
 # Revisión del contenido — 04-10-2026
 
-Objetivo activo: terminar el juego completo. Este documento registra el cierre del postgame y los DLC; sigue en
-marcha la partida continua desde Nueva partida y la auditoría de obtención. El pase de arte humano está integrado.
+Objetivo activo: terminar el juego completo. Este documento registra el cierre del postgame, DLC y auditorías de
+obtención; sigue en marcha la partida continua desde Nueva partida y la revisión final de integración. El pase de
+arte humano está integrado.
 
 ## Requisitos y evidencia
 
@@ -12,12 +13,18 @@ marcha la partida continua desde Nueva partida y la auditoría de obtención. El
 | B23 | D1-01…05, EXP-03 natural, Zygardita voluntaria, Gael 80–82, Hoopa 80, sellado/captura opcional y fuga de Gael | 42 pruebas Node; Chrome: 13 hitos, nueve combates reales y regreso por ferri |
 | B24 | Seis categorías, máximo tres activos, Rumor → Indicio → Hallazgo, cuatro oleadas y todas las búsquedas canónicas | 155 pruebas Node; Chrome: 30/30 Hallazgos, 79 hitos distintos, 47 combates reales, crianza/evoluciones y ambos lugares insulares marcados en MAPA |
 | Pokédex D28 | 346 generales, ocho Paradojas, 11 Ultraentes, 60 legendarios/singulares, obtenibles en solitario | Catálogo corregido en e717e01; auditor efectivo 425/425 en 261 mapas, 21 pruebas y elecciones compatibles |
+| Inventario de progresión | 100 células, cinco núcleos, diez Fragmentos y dieciocho Tablillas | Fuentes registradas, contrato en un GameState, 95 entradas/retornos locales y 146 pruebas existentes; sin dependencias circulares |
 | Dobles | Dos Pokémon propios separados, sombras y efectos sobre sus posiciones | 3c0bafe; pruebas de disposición y combate cooperativo real con ambos motores |
 | Arte humano | Proporciones y poses de los trece NPC, torso/mochila de las dos espaldas, escala entera y exportación reproducible | 36 pruebas y 15 capturas del visor real; comparativas con Añil en `tools/cache/arte-final/` |
 
 Los recorridos de bloque preparan bancos aislados de equipo, historia y recursos. Sus pasos, menús, combates,
 capturas, evoluciones y crianza se ejecutan en el motor real. La comprobación de progresión sin preajustes usa
 `tools/e2e_campaign.mjs` y el mismo guardado obtenido jugando.
+
+El auditor del inventario ejecuta las 95 recogidas físicas y las cinco entregas de guion, los núcleos, P8 parcial y
+la resolución de Arceus en una instancia aislada. Las Tablillas intermedias y restauraciones restantes usan la API
+de historia tras comprobar sus fuentes. Combates, presentación, desplazamientos y puzzles pendientes usan fixtures
+declarados: el contrato y las rutas locales no sustituyen la campaña continua de navegador.
 
 ## Revisión independiente
 
@@ -71,5 +78,5 @@ Las hojas propias tienen generador reproducible y comprobación de dimensiones.
 Evidencia local en `tools/cache/`: `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y
 checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json`, `b14_follower_review.json`
-y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`.
+y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`, `progression_inventory_report.md` y sus trazas.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.

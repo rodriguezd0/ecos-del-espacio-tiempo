@@ -36,7 +36,7 @@
 > - El creador tiene que confirmar la regla de tamaño de los Pokémon en el mapa (afecta a unas 140 especies).
 > - Rocas de cueva: implican rehacer 3 puzles.
 
-Actualizado: 04-10-2026. En marcha: **inventario de progresión y partida continua hasta los créditos**.
+Actualizado: 04-10-2026. En marcha: **partida continua hasta los créditos y revisión final de integración**.
 
 ## Objetivo activo: terminar el juego completo
 
@@ -139,10 +139,11 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 - B22a–e y B23 «Almenara» implementados y recorridos; documentación junto a sus mapas y herramientas `e2e_b22*.mjs` / `e2e_b23.mjs`.
 - B24 «Registro de Expediciones» implementado y recorrido con 30/30 Hallazgos (`e2e_b24.mjs`).
 - Catálogo de la Pokédex corregido a 425 entradas; generador y numeración anterior verificados (e717e01). Auditoría terminada: 425/425 métodos conectados en solitario y elecciones compatibles; 21 pruebas del auditor.
+- Inventario de progresión auditado: 95 células físicas y cinco por guion, cinco núcleos, diez Fragmentos y dieciocho Tablillas. Fuentes registradas y entrada/retorno local de las 95 coordenadas; P8 parcial y C100 previas a Completo sin ciclos. El contrato usa fixtures declarados, separados de la partida continua; 146 pruebas existentes.
 - Sinistea rechazado sigue disponible tras P5 y cargar la partida (a1eb5ea). Entregas con equipo y PC llenos corregidas: regalos pendientes, fósiles conservados y PC libre utilizado; 11 pruebas y dos recorridos Chrome.
 - Wurmple y Happiny evolucionan con sus métodos reales; personalidad estable y consumo de Piedra Oval al aceptar, con seis regresiones nuevas.
 - Suite actual: 2201/2201 sin fallos ni omisiones; validador: 272 mapas, sin errores.
-- Partida continua completa y pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión.
+- Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
 ## 6. Menores
 - Seguidor Zygarde en B14 comprobado: la regla de profundidad existente lo deja detrás del jugador. Chrome: 12 posiciones en tres capas, formas 10 % y 50 %, seis capturas y ningún error.

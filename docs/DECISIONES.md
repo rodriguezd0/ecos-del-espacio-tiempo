@@ -195,10 +195,9 @@ de Ciudad Caudal: seguimos en el inicio, como máximo nivel 30.»
   Sur a 45–50 con el jugador a ~38: su tabla pasa a 40–46. Los cierres de contacto que devuelven al jugador
   (`blockedLink` de los bloques, niebla del Neblino) llevan `gate: true` para que la auditoría los trate como muros.
 
-**Nota técnica detectada (propuesta TEC-07):** `tools/extract_data.mjs` descarta los campos vacíos de `Evolutions`, por
-lo que `species.json` pierde o desalinea las evoluciones con parámetro vacío (`Happiness`, `Trade`: Golbat, Buneary,
-Chansey, Cleffa, Pichu, Munchlax, Riolu, Azurill, Togepi, Pawmo, Kadabra, Graveler, Machoke, Haunter, Gurdurr, Eevee).
-Hay que conservar los vacíos al trocear en tripletas antes de implementar evoluciones.
+**TEC-07 corregido:** `tools/extract_data.mjs` conserva los campos vacíos de `Evolutions` antes de agruparlos en
+tripletas y los convierte en `null`. El catálogo conserva las evoluciones sin parámetro (`Happiness`, `Trade`,
+`HappinessDay`, `HappinessNight`); Golbat, Kadabra y Eevee se comprobaron también en los datos generados.
 
 **X36 — Pilares verticales** (DECIDIDO por el creador, 26-09-2026; P1–P5 implementados el 03-10-2026).
 
