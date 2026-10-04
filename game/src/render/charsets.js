@@ -8,6 +8,7 @@
 import { engine } from '../core/engine.js';
 import { loadRawTexture } from './textures.js';
 import { followerScale, sheetContentExtent, parseFollowerKey } from './followerSize.js';
+import { measureCharsetFootprint, registerCharsetFootprint } from '../world/followerSpacing.js';
 
 const cache = new Map();
 let registryPromise = null;
@@ -63,7 +64,7 @@ export function loadCharset(key) {
           const img = tex.image;
           return {
             key, url, tex, width: img.width, height: img.height, frameW: img.width / 4, frameH: img.height / 4,
-            offset: /offset/i.test(key), scale: followerSheetScale(key, img),
+            offset: /offset/i.test(key), scale: charsetGeometry(key, img),
           };
         } catch { /* probar la siguiente */ }
       }
@@ -74,22 +75,24 @@ export function loadCharset(key) {
   return cache.get(key);
 }
 
-/** Escala de una hoja de seguidor (1 para el resto de gráficos o si no se puede medir). */
-function followerSheetScale(key, img) {
+/** Medición única al cargar: conserva la escala existente y publica los límites opacos del dibujo. */
+function charsetGeometry(key, img) {
   const f = parseFollowerKey(key);
-  if (!f) return 1;
   try {
     const c = document.createElement('canvas');
     c.width = img.width;
     c.height = img.height;
     const g = c.getContext('2d', { willReadFrequently: true });
     g.drawImage(img, 0, 0);
-    const extent = sheetContentExtent(g.getImageData(0, 0, img.width, img.height).data, img.width, img.height);
-    const sp = engine.data?.species?.[f.species];
-    const height = (f.form ? sp?.forms?.[f.form]?.height : null) ?? sp?.height;
-    return followerScale(extent, height, f.species);
+    const rgba = g.getImageData(0, 0, img.width, img.height).data;
+    const extent = f ? sheetContentExtent(rgba, img.width, img.height) : 0;
+    const sp = f && engine.data?.species?.[f.species];
+    const height = (f?.form ? sp?.forms?.[f.form]?.height : null) ?? sp?.height;
+    const scale = f ? followerScale(extent, height, f.species) : 1;
+    registerCharsetFootprint(key, measureCharsetFootprint(rgba, img.width, img.height, { scale, offset: /offset/i.test(key) }));
+    return scale;
   } catch (err) {
-    console.warn(`[charsets] No se pudo medir el seguidor ${key}`, err);
+    console.warn(`[charsets] No se pudo medir ${key}`, err);
     return 1;
   }
 }

@@ -215,17 +215,20 @@ test('entrenador: línea de visión (pbEventCanReachPlayer) con obstáculos', ()
   assert.equal(ev.canReachPlayer(player, 4), false, 'muro en medio');
 });
 
-test('seguidor: ocupa la casilla que deja el líder', () => {
-  const map = mapFromRows(['.....']);
+test('seguidor individual: separación global y movimiento interpolado por la trayectoria', () => {
+  const map = mapFromRows(['.'.repeat(20)]);
   const w = miniWorld(map);
-  const leader = new Character(w, { map, x: 1, y: 0, speed: 4 });
+  const leader = new Character(w, { map, x: 10, y: 0, speed: 4, dir: 6 });
   const f = new Follower(w, { map, x: 0, y: 0 });
   f.setPokemon({ species: 'PIKACHU', form: 0, shiny: false });
+  f.placeBehind(leader);
+  assert.equal(f.x, 7);
   leader.moveGeneric(6);
   f.follow(leader);
-  assert.equal(f.x, 1);
+  assert.equal(f.x, 8);
+  assert.equal(f.realX, 7 * 32, 'no se recoloca en el destino');
   step(f, 20);
-  assert.equal(f.realX, 32);
+  assert.equal(f.realX, 8 * 32);
 });
 
 test('ruta forzada: se resuelve al terminar y admite saltos y esperas', async () => {

@@ -5,9 +5,10 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { mapFromRows, miniWorld } from './world_helpers.mjs';
+import { mapFromRows, miniWorld, step } from './world_helpers.mjs';
 import { Character } from '../game/src/world/character.js';
 import { Follower, followChain, placeChainBehind } from '../game/src/world/follower.js';
+import { followerBounds, boundsSeparated } from '../game/src/world/followerSpacing.js';
 import { MapEvent, normalizeEventDef } from '../game/src/world/mapEvent.js';
 import { expandEventDef } from '../game/src/world/eventTypes.js';
 import { dx, dy } from '../game/src/world/gameMap.js';
@@ -48,7 +49,7 @@ function reachable(map, sx, sy) {
 
 function chain(map) {
   const w = miniWorld(map);
-  const leader = new Character(w, { map, x: 3, y: 0, speed: 4, dir: 6 });
+  const leader = new Character(w, { map, x: 10, y: 0, speed: 4, dir: 6 });
   const core = new Follower(w, { id: 'core', kind: 'core', map });
   core.setGraphic('zygarde_core');
   const pk = new Follower(w, { map });
@@ -57,53 +58,69 @@ function chain(map) {
   return { leader, core, pk };
 }
 
+function settleChain(leader, core, pk) {
+  for (let i = 0; i < 60; i++) { step(leader); step(core); step(pk); }
+  const shown = [leader, core, pk].filter(ch => !ch.hidden && !ch.transparent);
+  for (let i = 0; i < shown.length; i++) for (let j = i + 1; j < shown.length; j++)
+    assert.ok(boundsSeparated(followerBounds(shown[i]), followerBounds(shown[j]), 0), 'sin solape de actores visibles');
+}
+
 // ----------------------------------------------------------------------------- seguidores en cadena (D06)
 
 test('cadena: se coloca en fila detrás del jugador (jugador → Core → Pokémon)', () => {
-  const { core, pk } = chain(mapFromRows(['.........']));
-  assert.deepEqual([core.x, pk.x], [2, 1]);
+  const { leader, core, pk } = chain(mapFromRows(['.'.repeat(25)]));
+  assert.deepEqual([leader.x, core.x, pk.x], [10, 8, 5]);
+  settleChain(leader, core, pk);
 });
 
-test('cadena: el Core ocupa la casilla que deja el jugador y el Pokémon la que deja el Core', () => {
-  const { leader, core, pk } = chain(mapFromRows(['.........']));
+test('cadena: Core y Pokémon avanzan por la trayectoria con separación global', () => {
+  const { leader, core, pk } = chain(mapFromRows(['.'.repeat(25)]));
   leader.moveGeneric(6);
   followChain(leader, [core, pk]);
-  assert.deepEqual([leader.x, core.x, pk.x], [4, 3, 2]);
+  assert.deepEqual([leader.x, core.x, pk.x], [11, 9, 6]);
+  settleChain(leader, core, pk);
 });
 
 test('cadena: al darse la vuelta nadie pisa la casilla nueva del jugador', () => {
-  const { leader, core, pk } = chain(mapFromRows(['.........']));
-  leader.moveGeneric(4); // vuelve sobre el Core
+  const { leader, core, pk } = chain(mapFromRows(['.'.repeat(25)]));
+  leader.moveGeneric(4); // vuelve hacia el Core
   followChain(leader, [core, pk]);
-  assert.equal(leader.x, 2);
-  assert.equal(core.x, 3, 'el Core pasa a la casilla que dejó el jugador');
+  assert.equal(leader.x, 9);
+  assert.equal(core.x, 7, 'el Core cede espacio por la trayectoria');
   assert.notEqual(pk.x, leader.x, 'el Pokémon no se mete debajo del jugador');
+  settleChain(leader, core, pk);
 });
 
 test('cadena: un seguidor oculto no rompe la fila (el Pokémon sigue al jugador)', () => {
-  const { leader, core, pk } = chain(mapFromRows(['.........']));
+  const { leader, core, pk } = chain(mapFromRows(['.'.repeat(25)]));
   core.setGraphic('');
   leader.moveGeneric(6);
   followChain(leader, [core, pk]);
-  assert.equal(pk.x, 3);
+  settleChain(leader, core, pk);
+  assert.equal(pk.x, 8, 'se adapta al jugador sin el Core');
 });
 
 test('cadena: tras un saliente, el segundo seguidor salta por encima como el primero', () => {
-  const map = mapFromRows(['.', '.', '.', 'L', '.', '.', '.']);
+  const map = mapFromRows(Array.from({ length: 20 }, (_, y) => y === 7 ? 'L' : '.'));
   const w = miniWorld(map);
-  const leader = new Character(w, { map, x: 0, y: 2, speed: 4, dir: 2 });
+  const leader = new Character(w, { map, x: 0, y: 6, speed: 4, dir: 2 });
   const core = new Follower(w, { id: 'core', map }); core.setGraphic('zygarde_core');
   const pk = new Follower(w, { map }); pk.setPokemon({ species: 'PIKACHU' });
-  core.moveTo(0, 1); pk.moveTo(0, 0);
-  leader.jump(0, 2); // salta el saliente (2 → 4)
+  placeChainBehind(leader, [core, pk]);
+  leader.jump(0, 2); // salta el saliente (6 → 8)
   followChain(leader, [core, pk]);
-  assert.deepEqual([core.y, pk.y], [2, 1]);
-  leader.endMovement?.(); leader.moveTo(0, 4);
-  leader.startStep(2); // 4 → 5
-  core.moveTo(core.x, core.y); pk.moveTo(pk.x, pk.y);
+  settleChain(leader, core, pk);
+  assert.deepEqual([core.y, pk.y], [6, 4]);
+  leader.startStep(2); // 8 → 9: Core espera hasta que haya espacio después del saliente.
   followChain(leader, [core, pk]);
-  assert.equal(core.y, 4, 'el Core salta el saliente');
-  assert.equal(pk.y, 2, 'el Pokémon ocupa la casilla que dejó el Core');
+  settleChain(leader, core, pk);
+  assert.equal(core.y, 6);
+  leader.startStep(2); followChain(leader, [core, pk]);
+  assert.equal(core.jumping(), true, 'el Core salta el mismo saliente');
+  settleChain(leader, core, pk);
+  for (let i = 0; i < 4; i++) { leader.startStep(2); followChain(leader, [core, pk]); settleChain(leader, core, pk); }
+  assert.ok(pk.y > 7, 'el segundo seguidor también cruza');
+  assert.ok(![core.y, pk.y].includes(7), 'nadie pisa el saliente');
 });
 
 test('Core como compañero: gráfico por forma y solo si hay forma', () => {

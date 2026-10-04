@@ -1,9 +1,13 @@
 // Seguidores: el Pokémon acompañante (primero del equipo) y los compañeros de campo como el Core de
-// Zygarde (D06). Port de Game_Follower de Essentials: ocupa la casilla que deja el líder, salta salientes,
-// se atraviesa y mira al líder al parar. Varios seguidores forman una CADENA (jugador → Core → Pokémon):
-// cada uno sigue al anterior con followChain/placeChainBehind.
+// Zygarde (D06). Siguen la trayectoria real, separados por sus huellas de dibujo; saltan salientes,
+// se atraviesan y miran al líder al parar. Cadena: jugador → Core → Pokémon.
 import { Character } from './character.js';
 import { dx, dy } from './gameMap.js';
+import { followerGapTiles } from './followerSpacing.js';
+import {
+  placeFollowerFormation, followFollowerFormation, advanceFollowerFormation, followerFormation,
+  refreshFormationVisibility, shiftFollowerFormation, recordControlledFollower,
+} from './followerFormation.js';
 
 /** Clave de gráfico de seguidor: 'follower:ESPECIE[:forma][:shiny]'. */
 export function followerSpriteKey(pkmn) {
@@ -41,16 +45,23 @@ export class Follower extends Character {
 
   get visible() { return !this.hidden && Boolean(this.characterName) && !this.transparent; }
 
+  update(dt) {
+    recordControlledFollower(this);
+    const formation = followerFormation(this);
+    advanceFollowerFormation(formation);
+    super.update(dt);
+    recordControlledFollower(this);
+    refreshFormationVisibility(formation);
+  }
+
+  shiftBy(ox, oy) {
+    super.shiftBy(ox, oy);
+    shiftFollowerFormation(this, ox, oy);
+  }
+
   /** Colocar detrás del líder (tras un warp o al aparecer). */
   placeBehind(leader) {
-    const bx = leader.x - dx(leader.direction);
-    const by = leader.y - dy(leader.direction);
-    const map = leader.map;
-    const ok = map.valid(bx, by) && map.passable(bx, by, 0, null, this.world?.env?.() || {}) && !map.terrainTagAt(bx, by).ledge;
-    this.map = map;
-    this.moveTo(ok ? bx : leader.x, ok ? by : leader.y);
-    this.direction = leader.direction;
-    this.transparent = !ok;
+    placeFollowerFormation(leader, [this]);
   }
 
   endMovement() {
@@ -62,13 +73,9 @@ export class Follower extends Character {
     this.jumpFraction = 0;
   }
 
-  /** follow_leader: se mueve a la casilla que dejó el líder (o salta 2 si hubo saliente). */
+  /** Seguidor individual: usa la misma separación y trayectoria que la cadena. */
   follow(leader) {
-    const back = 10 - leader.direction;
-    let tx = leader.x + dx(back);
-    let ty = leader.y + dy(back);
-    if (leader.map.terrainTagAt(tx, ty).ledge) { tx += dx(back); ty += dy(back); }
-    this.followTo(tx, ty, leader);
+    followFollowerFormation(leader, [this]);
   }
 
   /** Se mueve a (tx, ty) al ritmo del líder: paso, dos pasos, salto de saliente o recolocación. */
@@ -85,23 +92,15 @@ export class Follower extends Character {
     if (dist === 1 && (ddx === 0 || ddy === 0)) {
       this.stepThrough(dir);
     } else if (dist === 2 && (ddx === 0 || ddy === 0)) {
-      const mx = this.x + dx(dir);
-      const my = this.y + dy(dir);
-      if (!this.map.terrainTagAt(mx, my).ledge) {
-        this.stepThrough(dir);
-        this.endMovement();
-        this.stepThrough(dir);
-      } else {
-        this.setJumpSpeed(leader.jumping() ? leader.jumpSpeed : leader.moveSpeed);
-        this.jumpTime /= leader.jumping() ? 1 : 2;
-        const old = this.through;
-        this.through = true;
-        this.jump(ddx, ddy);
-        this.through = old;
-      }
-    } else {
-      this.moveTo(tx, ty);
-      this.direction = leader.direction;
+      this.setJumpSpeed(leader.jumping() ? leader.jumpSpeed : leader.moveSpeed);
+      this.jumpTime /= leader.jumping() ? 1 : 2;
+      const old = this.through;
+      this.through = true;
+      this.jump(ddx, ddy);
+      this.through = old;
+    } else if (Math.abs(ddx) === 1 && Math.abs(ddy) === 1) {
+      this.turnGeneric(dir);
+      this.startStep(ddy > 0 ? (ddx > 0 ? 3 : 1) : (ddx > 0 ? 9 : 7));
     }
   }
 
@@ -113,7 +112,7 @@ export class Follower extends Character {
     this.through = old;
   }
 
-  turnTowardsLeader(leader) { this.turnToward(leader); }
+  turnTowardsLeader(leader) { if (!this.moveRouteForcing) this.turnToward(leader); }
 }
 
 /** Seguidores activos (visibles o no, pero no ocultos) de una cadena, en orden. */
@@ -122,29 +121,15 @@ export function activeChain(followers) {
 }
 
 /**
- * Mueve la cadena: el primer seguidor ocupa la casilla que deja el líder y cada uno de los siguientes la
- * que acaba de dejar el anterior. Si un eslabón no se mueve, los de detrás tampoco (conserva la formación);
- * al darse la vuelta el líder, nadie pisa su casilla nueva.
+ * Registra el paso del líder; cada acompañante sigue sus migas manteniendo separación visual.
  */
 export function followChain(leader, followers) {
-  let prev = null;
-  for (const f of activeChain(followers)) {
-    const ox = f.x;
-    const oy = f.y;
-    if (!prev) f.follow(leader);
-    else if (!(prev.ox === leader.x && prev.oy === leader.y)) f.followTo(prev.ox, prev.oy, prev.ch);
-    if (f.x === ox && f.y === oy) break;
-    prev = { ch: f, ox, oy };
-  }
+  followFollowerFormation(leader, followers || []);
 }
 
 /** Coloca la cadena en fila detrás del líder (tras un warp o al aparecer un seguidor). */
 export function placeChainBehind(leader, followers) {
-  let prev = leader;
-  for (const f of activeChain(followers)) {
-    f.placeBehind(prev);
-    prev = f;
-  }
+  placeFollowerFormation(leader, followers || []);
 }
 
 /** Al terminar un paso: cada seguidor mira a su propio líder. */
@@ -154,4 +139,33 @@ export function turnChainTowardsLeaders(leader, followers) {
     f.turnTowardsLeader(prev);
     prev = f;
   }
+}
+
+/** A sigue alcanzando al compañero separado: delante, dentro de la formación y sin obstáculos. */
+export function canTalkToFollower(leader, follower) {
+  const world = leader.world;
+  const vx = follower.x - leader.x, vy = follower.y - leader.y;
+  const distance = Math.abs(vx) + Math.abs(vy);
+  if (!distance || vx !== dx(leader.direction) * distance || vy !== dy(leader.direction) * distance) return false;
+  let range = 0, previous = leader;
+  for (const f of activeChain(world?.followers || [follower])) {
+    range += followerGapTiles(previous, f);
+    previous = f;
+    if (f === follower) break;
+  }
+  if (distance > range) return false;
+  const env = world?.env?.() || {};
+  const tileAt = (x, y) => {
+    if (leader.map.valid(x, y)) return { map: leader.map, x, y };
+    const hit = world?.entryAt?.(x, y);
+    return hit && { map: hit.entry.map, x: hit.x, y: hit.y };
+  };
+  for (let i = 1; i <= distance; i++) {
+    const tile = tileAt(leader.x + dx(leader.direction) * i, leader.y + dy(leader.direction) * i);
+    const from = tileAt(leader.x + dx(leader.direction) * (i - 1), leader.y + dy(leader.direction) * (i - 1));
+    if (!tile || !from || !from.map.passable(from.x, from.y, leader.direction, leader, env)
+      || !tile.map.passable(tile.x, tile.y, 10 - leader.direction, leader, env)) return false;
+    if (tile.map.events.some(ev => !ev.through && !ev.erased && ev.at(tile.x, tile.y) && (ev.characterName || ev.solid))) return false;
+  }
+  return true;
 }

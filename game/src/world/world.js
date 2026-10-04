@@ -3,7 +3,7 @@
 // warps, cruce de conexiones y encuentros. La escena (MapScene) aporta los "hooks" asíncronos.
 import { MapEvent, normalizeEventDef } from './mapEvent.js';
 import { Player } from './player.js';
-import { Follower, followChain, turnChainTowardsLeaders } from './follower.js';
+import { Follower, followChain, turnChainTowardsLeaders, canTalkToFollower } from './follower.js';
 import { EncounterSystem, allowEncounter, buildZoneEncounters, zoneEncountersAt } from './encounters.js';
 import { dx, dy } from './gameMap.js';
 import { TERRAIN_NONE } from './terrain.js';
@@ -343,7 +343,7 @@ export class World {
     }
     const fx = p.x + dx(p.direction);
     const fy = p.y + dy(p.direction);
-    const f = this.followers.find((c) => c.visible && c.x === fx && c.y === fy && !c.busy());
+    const f = this.followers.find((c) => c.visible && !c.busy() && canTalkToFollower(p, c));
     if (f) {
       this.hooks.followerTalk?.(f);
       return true;
