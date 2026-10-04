@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Driver, KEY, DIR } from './e2e_b16_driver.mjs';
-import {findTravelPath} from './e2e_campaign_routes.mjs';
+import {findTravelPath,scriptEntrance,connectionApproach} from './e2e_campaign_routes.mjs?doors=3';
 
 export class CampaignDriver extends Driver {
   constructor(page, errors, options) { super(page, errors, options); this.choiceRules = [{ re: /mote/i, index: 1 }]; }
@@ -55,6 +55,12 @@ export class CampaignDriver extends Driver {
     const route = await findTravelPath(from,target);
     if (!route) throw new Error(`No hay camino de regreso de ${from} a ${target}`);
     for (const next of route) {
+      const scripted = scriptEntrance((await this.snap()).map, next);
+      if (scripted) {
+        await this.walkTo(scripted.x, scripted.y);
+        await this.pushUntil(scripted.dir, s => s.map === next, `puerta real ${next}`);
+        continue;
+      }
       const edge = await this.eval(async next => {
         const def = window.__campaign.map().world.current.def;
         const c = def.connections?.find(c => c.to === next);
@@ -68,7 +74,9 @@ export class CampaignDriver extends Driver {
       if(edge.scriptDoor) {
         await this.walkTo(edge.x,edge.y);await this.pushUntil(edge.dir,s=>s.map===next,`puerta real ${next}`);continue;
       }
-      let spot = await this.eval(dir => window.__campaign.edgeRoute(dir), edge.dir);
+      const approach = connectionApproach((await this.snap()).map, next);
+      const approachRoute = approach && await this.eval(([x,y]) => window.__campaign.route(x,y), [approach.x, approach.y]);
+      let spot = approachRoute ? approach : await this.eval(dir => window.__campaign.edgeRoute(dir), edge.dir);
       if (!spot && (await this.snap()).abilities.run && !(await this.snap()).riding) {
         const canRide = await this.eval(async () => (await import('/src/world/zygarde/mount.js')).canRide(window.__campaign.map().world));
         if (canRide) { await this.mount(); spot = await this.eval(dir => window.__campaign.edgeRoute(dir), edge.dir); }
@@ -187,13 +195,28 @@ export class CampaignDriver extends Driver {
     if (second) return super.exitTo(to, second, opts);
     const warp = await this.eval(to => window.__e2e.warpTo(to), to);
     if (!warp) throw new Error(`No hay warp a ${to}`);
-    const direct = await this.eval(([x, y]) => window.__e2e.route(x, y), [warp.x, warp.y]);
+    let direct = await this.eval(([x, y]) => window.__e2e.route(x, y), [warp.x, warp.y]);
+    const s = await this.snap();
+    if (!direct && s.abilities.run && !s.riding) {
+      const canRide = await this.eval(async () => (await import('/src/world/zygarde/mount.js')).canRide(window.__campaign.map().world));
+      if (canRide) {
+        await this.mount();
+        direct = await this.eval(([x, y]) => window.__e2e.route(x, y), [warp.x, warp.y]);
+      }
+    }
     await this.walkTo(warp.x, warp.y + (direct ? 0 : 1), { stopWhen: s => s.map === to });
     if (!direct && (await this.snap()).map !== to) await this.hold('ArrowUp', 400);
     if ((await this.snap()).map !== to && warp.dirTrigger) await this.hold(KEY[warp.dirTrigger], 400);
     return this.until(s => s.map === to && s.ready, { timeout: 20000, what: `warp ${to}` });
   }
-  async crossEdge(dir, to) { return this.pushUntil(DIR[dir] || dir, s => s.map === to, `conexión ${to}`); }
+  async crossEdge(dir, to, opts = {}) {
+    const before = await this.snap();
+    const result = await this.pushUntil(DIR[dir] || dir, s => s.map === to || Boolean(opts.acceptArrival?.(s)), `conexión ${to}`, opts);
+    const after = await this.snap();
+    const point = s => ({ map: s.map, x: s.x, y: s.y, riding: s.riding, surfing: s.surfing, abilities: s.abilities });
+    fs.appendFileSync(path.join(this.outDir,'campaign_connections.jsonl'),JSON.stringify({before:point(before),after:point(after),dir})+'\n');
+    return result;
+  }
   async mount() {
     const s = await this.snap(); if (s.riding) return;
     await this.press('KeyE', 400); await this.settle();

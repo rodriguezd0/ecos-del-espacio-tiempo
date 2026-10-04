@@ -243,6 +243,12 @@ async function regreso(d) {
 }
 
 async function fondo(d) {
+  // Regreso al arrecife después de comprobar el ferri en la superficie.
+  if ((await d.snap()).map === 'caleta_sonda') {
+    await d.swimTo(4,28);
+    await d.interact();
+    await d.until(s=>s.map==='arrecife_eco'&&s.ready,{timeout:20000,what:'volver a bucear al arrecife'});
+  }
   await d.walkTo(43, 17);
   await d.exitTo('right', 'fondo_mar_sur');
   await d.milestone('fondo', (s) => need(s.dive, 'sin burbuja'));
@@ -255,7 +261,12 @@ async function fondo(d) {
     if (!s.cells.includes(key)) throw new Error(`Sin ${key} en (${x},${y})`);
     console.log(`  · ${key}`);
   }
-  await d.milestone('fondo_celulas', (s) => need(s.cells.length >= 81, `${s.cells.length} células`));
+  await d.milestone('fondo_celulas', (s) => need(cells.every(([key])=>s.cells.includes(key)), 'faltan células del Fondo'));
+  await d.travel('arrecife_eco');
+  await d.walkTo(24,19);
+  await d.interact();
+  await d.until(s=>s.map==='caleta_sonda'&&s.ready,{timeout:20000,what:'emerger después del Fondo'});
+  await d.toLand();
 }
 
 const STAGES = { caleta, arrecife, sala1, sala2, sala3, sala4, fosa, regreso, fondo };
@@ -273,6 +284,6 @@ function stageList() {
 export async function runB14(d){
  await refreshDriver(d);await installB14Observer(d.page);
  for(const method of ['walkTo','caracola','sneakTo','swimTo','toLand'])d[method]=EchoDriver.prototype[method];
- await d.stages('B14',{preparacion:async d=>{await d.travel('caleta_tienda');await d.purchase({DIVEBALL:10});await d.travel('caleta_sonda');},caleta,arrecife,sala1,sala2,sala3,sala4,fosa,regreso,fondo});
+ await d.stages('B14',{preparacion:async d=>{await d.travel('caleta_tienda');await d.purchase({DIVEBALL:10,ULTRABALL:10});await d.travel('caleta_sonda');},caleta,arrecife,sala1,sala2,sala3,sala4,fosa,regreso,fondo});
  for(const method of ['walkTo','caracola','sneakTo','swimTo','toLand'])delete d[method];
 }

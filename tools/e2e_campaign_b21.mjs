@@ -1,4 +1,5 @@
 import {refreshDriver} from './e2e_campaign_refresh.mjs';
+import {reloadCompletedCampaign} from './e2e_campaign_reload.mjs';
 import {installB21Observer} from './e2e_campaign_b21_page.mjs';
 import { COLUMNA } from '../game/src/content/maps/b21/layout.js';
 import { EPI } from '../game/src/content/events/b21_epilogo.js';
@@ -94,5 +95,6 @@ async function final(d) {
 }
 
 
-export async function runB21(d){await refreshDriver(d);await installB21Observer(d.page);
- await d.stages('B21',{salto:d=>salto(d,{node:{map:'nucleo_origen',event:'nucleo_origen'}}),cumbre,gael,final});}
+export async function runB21(d,name){await refreshDriver(d);await installB21Observer(d.page);
+ await d.stages('B21',{salto:d=>salto(d,{node:{map:'nucleo_origen',event:'nucleo_origen'}}),cumbre,gael,final,
+ persistencia:d=>reloadCompletedCampaign(d,name)});}

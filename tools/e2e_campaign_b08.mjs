@@ -71,6 +71,20 @@ async function dunas(d) {
 }
 
 async function cerro(d) {
+  if ((await d.snap()).map !== 'cerro_plomo') {
+    const s = await d.snap();
+    if (s.map === 'dunas_ceniza' && s.y < DUNAS.west.y0) {
+      await d.travel('ciudad_estrato');
+      await d.walkTo(ESTRATO.east.x, ESTRATO.east.y0 + 1);
+      await d.crossEdge(6, 'dunas_ceniza');
+    }
+    if (s.map === s.healPoint?.mapId && s.battles.at(-1)?.outcome === 'lose') {
+      await d.travel('estrato_centro');
+      await d.talk('enfermera');
+      await d.purchase({ SUPERPOTION: 8 });
+    }
+    await d.travel('cerro_plomo');
+  }
   await d.until((s) => s.map === 'cerro_plomo' && s.ready, { timeout: 30000, what: 'Cerro Plomo' });
   await d.settle();
   const [fx, fy] = CERRO.gateFront[1];
@@ -284,6 +298,13 @@ async function cooperativa(d) {
 }
 
 async function t05(d) {
+  if (!(await d.snap()).flags[F.tournament]) {
+    await d.travel('estrato_centro');
+    await d.talk('enfermera');
+    const potions = await d.eval(()=>window.__campaign.engine.state.itemCount('SUPERPOTION'));
+    if(potions<8)await d.purchase({SUPERPOTION:8-potions});
+    await d.travel('ciudad_estrato');
+  }
   await d.until((s) => s.map === 'ciudad_estrato' && s.ready, { timeout: 30000, what: 'Ciudad Estrato' });
   await d.settle();
   // Herminia en la Escuela del Pico.
@@ -301,7 +322,7 @@ async function t05(d) {
   // Torneo: con la derrota simulada en la 2.ª ronda se reinicia; se vuelve a hablar con Herminia.
   const T = ESTRATO.tournament;
   const watch = [{ re: /Ronda 1/, name: 'torneo_ronda_1', delay: 200 }, { re: /¡Y ahora, la final!/, name: 'torneo_final', delay: 200 }];
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 8; i++) {
     const s = await d.snapState();
     if (s.flags[F.tournament]) break;
     await d.walkTo(T.herminia.x + 1, T.herminia.y, { face: 'left' });

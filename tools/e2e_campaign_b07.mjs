@@ -177,17 +177,25 @@ async function herreria(d) {
 }
 
 async function mega(d) {
-  // Paso despejado: se cruza el antiguo derrumbe; el Minero Tino combate y Lucario megaevoluciona.
-
+  // La partida nueva conserva su equipo real: el Aro habilita la opción, pero
+  // este combate no exige una especie con megapiedra. Curamos y compramos en UI.
+  if (!d.tinoPrepared) {
+    await d.travel('brontia_centro');
+    await d.talk('enfermera');
+    await d.purchase({ SUPERPOTION: 8 });
+    d.tinoPrepared = true;
+  }
+  await d.travel('ruta_6');
   await d.walkTo(RUTA6.rubbleSouth.x, RUTA6.rubbleSouth.y);
   await d.milestone('derrumbe_despejado');
-  const watch = [{ scene: 'BattleScene', name: 'combate_mega', delay: 6000 }];
-  await d.walkTo(15, 49, { watch, stopWhen: (s) => s.battles.some((b) => b.id === 'b07_minero_tino') });
-  await d.settle({ watch });
-  const s = await d.snapState();
-  if (!s.battles.some((b) => b.id === 'b07_minero_tino' && b.ring)) throw new Error('El Minero Tino no ha combatido con el Mega Aro');
-  await d.expectSaid(/ha megaevolucionado/, 'la Megaevolución en combate');
-  await d.milestone('megaevolucion');
+  const watch = [{ scene: 'BattleScene', name: 'combate_tino_con_aro', delay: 2500 }];
+  for (let tries = 0; tries < 6; tries++) {
+    if ((await d.snap()).battles.some((b) => b.id === 'b07_minero_tino' && b.outcome === 'win' && b.ring)) break;
+    await d.talk('minero_tino', { watch });
+  }
+  await d.milestone('tino_vencido_con_aro', (s) =>
+    s.battles.some((b) => b.id === 'b07_minero_tino' && b.outcome === 'win' && b.ring)
+      ? null : 'sin victoria real contra Tino con el Mega Aro');
 }
 
 async function estrato(d) {

@@ -1,5 +1,6 @@
 import {refreshDriver} from './e2e_campaign_refresh.mjs';
 import {installB11Observer} from './e2e_campaign_b11_page.mjs';
+import {collectLandCells} from './e2e_campaign_cells.mjs';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 
@@ -243,4 +244,6 @@ const STAGES = { neblino, ruta10, villa, campamento, t09, cerro };
 // ───────────────────────────── Principal ─────────────────────────────
 
 
-export async function runB11(d){await refreshDriver(d); await installB11Observer(d.page); await d.stages('B11',{preparar:async d=>{await d.travel('mnemos_centro');if((await d.snap()).partyList.length===6)await d.depositAtPC('EEVEE');await d.travel('ruta_9_neblino');await d.rest('mnemos_centro','Noche');},neblino,ruta10,villa,campamento,t09,cerro});}
+export async function runB11(d){await refreshDriver(d); await installB11Observer(d.page); await d.stages('B11',{preparar:async d=>{await d.travel('mnemos_centro');if((await d.snap()).partyList.length===6)await d.depositAtPC('EEVEE');await d.travel('ruta_9_neblino');await d.rest('mnemos_centro','Noche');},neblino,ruta10,villa,campamento,t09,cerro,
+ opcionales:async d=>{await collectLandCells(d,['cell_ruta_1_5','cell_ruta_1_6','cell_ruta_10_1','cell_neblino_2','cell_garganta_3','cell_ruta_6_2']);}
+ });}

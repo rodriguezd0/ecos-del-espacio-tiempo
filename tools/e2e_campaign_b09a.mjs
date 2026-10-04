@@ -1,5 +1,6 @@
 import {refreshDriver} from './e2e_campaign_refresh.mjs';
 import {installB09aObserver} from './e2e_campaign_b09a_page.mjs';
+import {collectLandCells} from './e2e_campaign_cells.mjs';
 
 const RETRY=false;
 const pick = (label) => (s) => { const i = s.choices.findIndex((c) => c === label || c.startsWith(label)); return i < 0 ? 0 : i; };
@@ -7,6 +8,8 @@ const pick = (label) => (s) => { const i = s.choices.findIndex((c) => c === labe
 // ───────────────────────────── Recorrido ─────────────────────────────
 
 async function ruta7(d) {
+  const current=await d.snap();
+  if(current.map==='lumina_hotel'&&current.flags.b09_gala&&current.cells.includes('cell_ruta_7_1'))return;
   await d.until((s) => s.top === 'MapScene' && s.map === 'ruta_7' && s.ready, { timeout: 30000, what: 'la Ruta 7' });
   await d.settle();
   await d.walkTo(84, 17);
@@ -18,7 +21,7 @@ async function ruta7(d) {
   await d.settle();
   await d.milestone('c041', (s) => (s.cells.includes('cell_ruta_7_1') ? null : 'sin C041'));
   await d.walkTo(0, 21);
-  await d.crossEdge('left', 'ciudad_lumina');
+  await d.crossEdge('left', 'ciudad_lumina',{acceptArrival:s=>s.map==='lumina_hotel'&&(s.busy||s.flags?.b09_gala)});
 }
 
 async function gala(d) {
@@ -48,6 +51,10 @@ async function gaelB3(d) {
 }
 
 async function t07(d) {
+  const current=await d.snap();
+  const flowerFlags=['b09_t07_flor_pradera','b09_t07_flor_ribera','b09_t07_flor_huerto'];
+  if(!flowerFlags.every(flag=>(current.flags||{})[flag])) {
+  await d.travel('ciudad_lumina');
   // Iván en el Centro
   await d.push(57, 44, 'up', 'lumina_centro');
   await d.talk(7, 8, 'left', { watch: [{ re: /Soy Iván/, name: 'ivan', delay: 200 }] });
@@ -73,9 +80,13 @@ async function t07(d) {
   await d.talk(38, 30, 'up');
   await d.talk(43, 46, 'up');
   await d.milestone('t07_flores', (s) => (['b09_t07_flor_pradera', 'b09_t07_flor_ribera', 'b09_t07_flor_huerto'].every((f) => s.flags[f]) ? null : 'faltan flores'));
+  }
   // La reina: Vespiquen Alfa (derrota simulada y reintento)
   const watch = [{ re: /¡La reina sale de la colmena!/, name: 'reina', delay: 200 }, { scene: 'BattleScene', name: 'vespiquen_alfa', delay: 3500 }];
-  await d.talk(40, 29, 'up', { watch });
+  for(let attempt=0;attempt<4;attempt++) {
+    if((await d.snap()).tablets.includes('INSECTPLATE'))break;
+    await d.talk(40, 29, 'up', { watch });
+  }
   if (RETRY) {
     await d.milestone('t07_reintento', (s) => (s.lost.includes('VESPIQUEN') && !s.flags.b09_t07_tablilla && s.x === 40 && s.y === 29 ? null : `tras perder: (${s.x},${s.y})`));
     await d.turn('up');
@@ -186,4 +197,8 @@ async function gifts(d) {
 
 // ───────────────────────────── Principal ─────────────────────────────
 
-export async function runB09a(d){await refreshDriver(d);await installB09aObserver(d.page);await d.stages('B09a',{ruta7,gala,gaelB3,t07,t06,gifts});await d.travel('ciudad_lumina'); await d.travel('ruta_8_marisma');}
+export async function runB09a(d){await refreshDriver(d);await installB09aObserver(d.page);await d.stages('B09a',{
+ opcionales:async d=>{await collectLandCells(d,['cell_dunas_2','cell_ruta_6_1']);await d.travel('ruta_7');},
+ ruta7,gala,gaelB3,t07,
+ celulas:async d=>{await collectLandCells(d,['cell_lumina_1','cell_reserva_1']);await d.travel('ciudad_lumina');},
+ t06,gifts});await d.travel('ciudad_lumina'); await d.travel('ruta_8_marisma');}

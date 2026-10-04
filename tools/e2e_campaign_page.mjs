@@ -203,13 +203,17 @@ export async function installCampaignHelpers(page) {
         choiceIndex: top?.win?.index || 0, lastText: log.at(-1)?.text || '', battles: battles.map(b => ({ ...b })), b02: b02(),
       };
     };
-    const fieldPlan = dir => {
+    const fieldPlan = destination => {
       const m=map(),p=m.world.player;
       if (!engine.state.zygardeAbility('climb')) return null;
       const walls=m.world.events.filter(e=>e.def?.type==='climbWall'&&!e.erased&&e.page&&Array.isArray(e.def.to));
       const q=[{start:[p.x,p.y],ids:[]}],seen=new Set([`${p.x},${p.y}`]);
       while(q.length){
-        const cur=q.shift(); if(route(0,0,{edge:dir,start:cur.start})) return cur.ids;
+        const cur=q.shift();
+        const reached = typeof destination === 'number'
+          ? route(0,0,{edge:destination,start:cur.start})
+          : route(destination.tx,destination.ty,{start:cur.start});
+        if(reached) return cur.ids;
         for(const e of walls){
           const k=e.def.to.join(','); if(seen.has(k)||!route(e.x,e.y,{onto:false,start:cur.start})) continue;
           seen.add(k);q.push({start:[...e.def.to],ids:[...cur.ids,e.id]});

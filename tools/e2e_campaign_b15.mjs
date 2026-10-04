@@ -6,8 +6,11 @@ import { SENDA, wrongTops, stairColumn, footRow } from '../game/src/content/maps
 import { RUTA13 } from '../game/src/content/maps/b15/layout_ruta13.js';
 import { BOREAL, OBSERVATORIO, TERRAZA, TALLERES } from '../game/src/content/maps/b15/layout_boreal.js';
 import { LAGO, lakeToMap } from '../game/src/content/maps/b15/layout_lago.js';
-import { ESCARCHA } from '../game/src/content/maps/b15/layout_escarcha.js';
+import { ESCARCHA, MAR as MAR_BOREAL } from '../game/src/content/maps/b15/layout_escarcha.js';
 import { LAKE, solveLake, runSteps, initialState } from '../game/src/content/events/b15_lago_logic.js';
+import {collectDiveCells,collectWaterCells} from './e2e_campaign_cells.mjs';
+import {installB13Observer} from './e2e_campaign_b13_page.mjs';
+import {Driver as SeaDriver} from './e2e_b13_driver.mjs';
 const RETRY=false;
 const need = (ok, msg) => (ok ? null : msg);
 
@@ -214,7 +217,27 @@ async function gruta(d) {
 
 const STAGES = { ruta11, paso, senda, ruta13, boreal, lago, gael, gruta };
 
+async function opcionalesNorte(d) {
+  await collectWaterCells(d,['cell_escarcha_1']);
+  await d.travel('villa_boreal');
+  await installB13Observer(d.page);
+  const swim=(x,y)=>SeaDriver.prototype.walkTo.call(d,x,y,{router:(tx,ty)=>d.eval(([x,y])=>window.__b13.routeMixed(x,y),[tx,ty])});
+  await SeaDriver.prototype.startSwim.call(d,0,18);
+  await swim(0,18);
+  await d.crossEdge(4,'mar_boreal');
+  await collectWaterCells(d,['cell_mar_boreal_1']);
+  if(!(await d.snap()).surfing)await SeaDriver.prototype.startSwim.call(d,MAR_BOREAL.width-1,18);
+  await swim(MAR_BOREAL.width-1,18);
+  await d.crossEdge(6,'villa_boreal');
+  const land=await d.eval(()=>window.__b13.shoreFor(20,18));
+  if(!land)throw Error('No hay regreso a tierra en Villa Boreal');
+  await swim(land.x,land.y);
+  await d.settle();
+}
+
 // ───────────────────────────── Principal ─────────────────────────────
 
 
-export async function runB15(d){await refreshDriver(d);await installB15Observer(d.page);await d.stages('B15',{entrada:async d=>d.travel('ruta_11'),ruta11,paso,senda,ruta13,boreal,lago,gael,gruta});}
+export async function runB15(d){await refreshDriver(d);await installB15Observer(d.page);await d.stages('B15',{
+ regresosBuceo:async d=>collectDiveCells(d,['cell_caleta_2','cell_reserva_3','cell_garganta_5']),
+ entrada:async d=>d.travel('ruta_11'),ruta11,paso,senda,ruta13,boreal,lago,gael,gruta,opcionalesNorte});}
