@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { GameState } from '../game/src/core/state.js';
+import { GameState, SaveSystem, saveKey } from '../game/src/core/state.js';
 import { isPostgame } from '../game/src/content/events/b22a_common.js';
 import { postgame } from '../game/src/content/events/b22d_common.js';
 import { reloadProofError, reloadCompletedCampaign } from '../tools/e2e_campaign_reload.mjs';
@@ -88,9 +88,13 @@ test('campaign reload: a reset, missing or invalid saved clock cannot hide insid
   assert.equal(reloadProofError(nearMidnight, afterMidnight, 'QA'), null);
 });
 
-async function finalReload({ corruptBox = false } = {}) {
+async function finalReload({ corruptBox = false, postSaveAdvance = 0, loadedClock } = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecos-final-reload-'));
   const originalWindow = globalThis.window;
+  const originalStorage = Object.getOwnPropertyDescriptor(globalThis, 'localStorage');
+  const stored = new Map([['ecos.lastSlot', '1']]);
+  Object.defineProperty(globalThis, 'localStorage', { configurable: true, writable: true,
+    value: { getItem: key => stored.get(key) ?? null, setItem: (key, value) => stored.set(key, String(value)) } });
   const snapshot = saved(), state = GameState.create({ name: 'QA' }), events = [];
   Object.assign(state.data, structuredClone(snapshot.saveData));
   globalThis.window = { __campaign: { engine: { state } } };
@@ -99,20 +103,27 @@ async function finalReload({ corruptBox = false } = {}) {
     outDir: dir,
     page: { reload: async () => {
       events.push('reload'); screen = 'TitleScene'; titleStage = 'opening';
-      if (corruptBox) state.data.boxes[0][0].uid = 'different-after-load';
     }, evaluate: async () => {}, waitForFunction: async () => {} },
     snap: async () => ({ ...structuredClone(snapshot), top: screen, titleStage, ready: screen === 'MapScene' }),
-    log: async () => [{ text: 'Final observado' }], save: async label => events.push(`save ${label}`),
+    log: async () => [{ text: 'Final observado' }], save: async label => {
+      events.push(`save ${label}`); SaveSystem.save(1, state);
+      state.data.clock.minutes = (state.data.clock.minutes + postSaveAdvance) % 1440;
+      state.data.playTimeFrames += postSaveAdvance * 60;
+    },
     wait: async () => {}, settle: async () => {},
     press: async key => {
       assert.equal(key, 'KeyZ'); events.push(screen);
       if (screen === 'TitleScene' && titleStage === 'opening') titleStage = 'menu';
       else if (screen === 'TitleScene') screen = 'SaveLoadScene';
       else if (screen === 'SaveLoadScene') screen = 'ChoiceScene';
-      else screen = 'MapScene';
+      else {
+        screen = 'MapScene'; state.data = JSON.parse(stored.get(saveKey(1)));
+        if (corruptBox) state.data.boxes[0][0].uid = 'different-after-load';
+        if (loadedClock !== undefined) state.data.clock.minutes = loadedClock;
+      }
     },
     until: async check => assert.ok(check(await d.snap())),
-    eval: async fn => fn.constructor.name === 'AsyncFunction' ? isPostgame(state) && postgame(state) : fn(),
+    eval: async (fn, arg) => String(fn).includes('b22a_common.js') ? isPostgame(state) && postgame(state) : fn(arg),
     milestone: async (name, check) => { const error = check(await d.snap()); if (error) throw Error(error); events.push(name); },
   };
   try {
@@ -122,10 +133,12 @@ async function finalReload({ corruptBox = false } = {}) {
     const before = JSON.parse(fs.readFileSync(path.join(dir, 'campaign_final_before_reload.json'), 'utf8'));
     const after = JSON.parse(fs.readFileSync(path.join(dir, 'campaign_final_after_reload.json'), 'utf8'));
     assert.equal(before.saveData.player.id, state.player.id);
+    assert.equal(before.saveData.clock.minutes, JSON.parse(stored.get(saveKey(1))).clock.minutes, 'baseline must use the exact UI save payload');
     assert.equal(after.saveData.boxes[0][0].uid, 'torterra-real');
   } finally {
     if (d.liveTicker) clearInterval(d.liveTicker);
     if (originalWindow === undefined) delete globalThis.window; else globalThis.window = originalWindow;
+    if (originalStorage === undefined) delete globalThis.localStorage; else Object.defineProperty(globalThis, 'localStorage', originalStorage);
     assert.ok(path.resolve(dir).startsWith(path.resolve(os.tmpdir()) + path.sep));
     fs.rmSync(dir, { recursive: true });
   }
@@ -137,4 +150,12 @@ test('campaign reload: final UI loading reads complete GameState data before and
 
 test('campaign reload: final UI loading rejects a changed boxed UID even when the screen summary stays identical', async () => {
   await assert.rejects(finalReload({ corruptBox: true }), /datos completos.*distintos/);
+});
+
+test('campaign reload: closing the Save menus may advance the live clock after the persisted payload was written', async () => {
+  await finalReload({ postSaveAdvance: 2 });
+});
+
+test('campaign reload: a clock earlier than the actual saved payload still fails after live time advances', async () => {
+  await assert.rejects(finalReload({ postSaveAdvance: 2, loadedClock: 479 }), /hora guardada retrocedió/);
 });

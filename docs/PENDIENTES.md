@@ -28,7 +28,7 @@
 > 3. Arte humano y atlas aprobados por el autor el 04-10: trece poses de NPC, kit M/F completo, 29 personajes de campo e ilustración regional. Aprobación registrada por archivo, sin cambiar los PNG mostrados.
 > 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
 > 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
-> 6. Partida continua desde «Nueva partida»: B01–B12 recorridos y guardados por UI; B13 en marcha, con el mismo equipo, dinero y objetos obtenidos en juego. Último guardado: Villa Alba, 57 células, diez Tablillas, tres Núcleos y seis Fragmentos. P6, sus caídas sin daño y sus regresos están comprobados; la forma 50 % habilitó Nadar y Togepi eclosionó caminando.
+> 6. Partida continua desde «Nueva partida»: B01–B13 recorridos y guardados por UI; B14 en marcha, con el mismo equipo, dinero y objetos obtenidos en juego. Último guardado: Caleta Sonda, 77 células, doce Tablillas, cuatro Núcleos y seis Fragmentos. Guardar/recargar/Continuar/Cargar conservó el GameState completo y el reloj exacto del archivo. P6, sus caídas sin daño y sus regresos están comprobados; Nadar y Buceo se habilitaron jugando y Togepi eclosionó caminando.
 > 7. QA final de P8–P10: escalera visible del Puente, columnas y fachadas sin solapes accidentales. Las 45 conexiones siguen limpias; subida y regreso de P9 recorridos en Chrome.
 >
 > Pendientes menores:
@@ -152,13 +152,18 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
   guardar/cargar el final recuperado conserva regalos únicos y capacidades.
 - C065 corregida: Ezequiel deja libre la casilla después de acercarse y combatir. Dos regresiones RED,
   24 pruebas B13 GREEN y QA local sin avisos; identidad, equipo y premio canónicos conservados (7ddaf7c).
+- C059 corregida: Nerea deja libre la célula y la puerta del laboratorio de Talasa, incluso al volver por el
+  oeste desde el despacho. Tres regresiones RED, cuatro pruebas nuevas y 28 pruebas B13 GREEN; premio de 1920,
+  tarjeta/N4 y trayecto anterior al despacho conservados (efbb93b).
 - Conductor continuo revisado: derrota/reintento solo tras un combate nuevo, victoria doble de Talasa con
   ambos rivales y recarga con comparación del GameState completo/UID/PC/pistas/viajes/posición de cura.
-  El reloj admite avance normal y rechaza reinicios. Las 72 regresiones pasan; falta ejecutar las recargas
-  del checkpoint B13 y del final en la partida continua.
-- Última suite completa de integración: 2334/2334 sin fallos, omisiones ni cancelaciones, incluidos el arte
-  aprobado, su UI, C065 y conductores de recarga (`suite_campaign_reload_integrated.log`); foco de arte: 48/48.
-  Validador: 272 mapas, sin errores.
+  El reloj se compara con el payload que escribió la UI, admitiendo avance normal y rechazando reinicios.
+  Las 80 regresiones del recorrido pasan. La recarga real de B13 ya pasó con el reloj 1219→1219 y todos los campos completos
+  iguales; falta la recarga del final (`campaign_b13_reload_audit.json`).
+- Última suite completa de integración: 2344/2344 sin fallos, omisiones ni cancelaciones, incluidos el arte
+  aprobado, su UI, C059/C065 y conductores de recarga (`suite_slot_reload_integrated.log`); foco de arte: 48/48.
+  Validador posterior a C059/C065: 272 mapas sin errores; 45/45 costuras limpias y cero incidencias de arte sin
+  revisión. Las dos regresiones posteriores del tramo de entrada de B14 pasan en el foco de 80 pruebas.
 - Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
 ## 6. Menores

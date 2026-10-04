@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { refreshDriver } from './e2e_campaign_refresh.mjs';
-import { persistentSaveData, readPersistentSaveData, clockReloadError } from './e2e_campaign_checkpoint_reload.mjs';
+import { persistentSaveData, readPersistentSaveData, readSavedSlotData, clockReloadError } from './e2e_campaign_checkpoint_reload.mjs?slot=1';
 
 export function reloadProofError(before, s, name) {
   const same = (key) => JSON.stringify(s[key]) === JSON.stringify(before[key]);
@@ -27,7 +27,9 @@ export function reloadProofError(before, s, name) {
 // Continuar, Cargar. La comprobación nunca prepara ni modifica progreso.
 export async function reloadCompletedCampaign(d, name) {
   await d.save('B21');
-  const before = { ...await d.snap(), saveData: await readPersistentSaveData(d) };
+  const liveSaveData = await readPersistentSaveData(d);
+  const before = { ...await d.snap(), saveData: await readSavedSlotData(d) };
+  fs.writeFileSync(path.join(d.outDir, 'campaign_final_before_reload_live.json'), JSON.stringify(liveSaveData, null, 2));
   fs.writeFileSync(path.join(d.outDir, 'campaign_final_before_reload.json'), JSON.stringify(before, null, 2));
   fs.writeFileSync(path.join(d.outDir, 'campaign_final_dialogos.json'), JSON.stringify(await d.log(), null, 2));
   await d.page.reload({ waitUntil: 'load' });

@@ -83,12 +83,21 @@ Correcciones verificadas:
   recogida única, entrada al agua y regreso. La QA local no da avisos y la coordenada cambiada tiene cobertura
   del 100 % (`c065_trainer_cell_report.md`). La partida continua recogió la célula mediante un viaje normal
   de Buceo que reconstruyó el mapa; no se modificó su progreso para resolver el bloqueo.
+- C059: el regreso occidental desde el despacho permitía que Nerea terminara sobre la célula de Talasa.
+  Su origen se mueve una casilla al este, conservando dirección, alcance, entrenador, premio de 1920 y páginas.
+  Tres regresiones RED pasan con el cambio: cuatro pruebas nuevas y 28 pruebas B13 GREEN. Se comprueban ambas
+  células, todas las posiciones visibles de reto, el regreso y la reconstrucción, además del trayecto anterior
+  a recibir la tarjeta. La QA no encuentra avisos y el módulo de disposición tiene cobertura del 100 %
+  (`c059_local_qa.json`, `c059_trainer_cell_focus.log`); imagen de la puerta y las dos células revisada.
 - El conductor solo reintenta Talasa y Tizón después de una nueva derrota registrada con regreso al Centro.
   La victoria doble exige a Casia y Garrido en el mismo combate, también en el recorrido normal. Las recargas
   comparan el GameState completo, incluidos UID, posición de cada Pokémon en el PC, pistas, viajes, selfswitches
   y punto de cura. Solo excluyen el tiempo jugado y el reloj de la comparación literal; el reloj se valida
-  aparte, admitiendo hasta quince minutos de avance normal, incluido el cambio de día. La revisión independiente
-  confirmó estas correcciones; las 72 regresiones enfocadas pasan (`campaign_driver_closure_green.log`).
+  aparte, admitiendo hasta quince minutos de avance normal, incluido el cambio de día. El baseline es el payload
+  exacto escrito en la ranura, validado contra la partida viva antes de cargar: cerrar los menús puede avanzar
+  el reloj después de la escritura. La revisión independiente confirmó estas correcciones; las regresiones
+  del recorrido pasan: 80/80, incluidas las dos regresiones posteriores del tramo Caleta→Buceo de B14
+  (`campaign_b14_stage_green.log`; la cobertura de recarga está en `campaign_slot_clock_green.log`).
 
 No quedan hallazgos críticos o altos de esta revisión. El autor aprobó las trece poses frontales nuevas, el kit
 M/F completo, los 29 personajes de campo y el atlas, y confirmó la regla de tamaños el 04-10-2026. D30 queda
@@ -105,11 +114,14 @@ La aprobación anterior de frontales y tamaños tuvo revisión independiente sin
 
 ## Comprobaciones de integración
 
-La última suite completa de integración pasó **2334/2334**, sin fallos, saltos ni cancelaciones, incluidos el arte
-aprobado, su UI, C065 y los conductores de recarga (`suite_campaign_reload_integrated.log`, 32,2 s). El validador construyó
-272 mapas y no dio errores. Las 45 conexiones actuales pasan la revisión de costuras. La auditoría de progresión
+La última suite completa de integración pasó **2344/2344**, sin fallos, saltos ni cancelaciones, incluidos el arte
+aprobado, su UI, C059/C065 y los conductores de recarga (`suite_slot_reload_integrated.log`, 41,1 s). El último
+validador posterior a ambos arreglos construyó 272 mapas sin errores: 31 avisos enumerados, ninguno de Mar/Talasa.
+Las 45 conexiones actuales pasan la revisión de costuras, incluidas las seis de esos dos mapas. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
 suelo y los 13 obstáculos altos de los espejos. No hay árboles cortados, objetos sobre árboles ni costuras defectuosas.
+No quedan mapas con incidencias de arte sin revisar. Informes: `trainer_contact_final_checks_report.md`,
+`trainer_contact_final_validator.json` y `trainer_contact_final_map_qa.json`.
 
 Cobertura de módulos nuevos: B22c 99,46 % líneas / 93,88 % ramas / 91,89 % funciones; B23 95,73 / 91,30 / 81,82;
 B24 97,12 / 82,47 / 85,03; auditor de obtención 97,29 / 90,80 / 93,02. Las 53 instrucciones modificadas de regalos
@@ -126,7 +138,7 @@ Evidencia: `door_animation_report.md`, `door_final_coverage.log`, `door_inventor
 `door_chrome_phases_`. Los seis perfiles temporales anteriores permanecen en caché porque su borrado fue
 rechazado por la revisión automática («blocked by policy»); sus navegadores están cerrados.
 
-Evidencia local en `tools/cache/`: `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
+Evidencia local en `tools/cache/`: `suite_slot_reload_integrated.log`, `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y
 checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json`, `b14_follower_review.json`
 y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`, `progression_inventory_report.md` y sus trazas.
@@ -134,11 +146,13 @@ La recuperación del epílogo añade `epilogue_recovery_report.md`, `epilogue_re
 `epilogue_recovery_coverage.log` y `epilogue_recovery_changed_coverage.json`.
 El conductor de la partida continua comprueba también el huevo del inicial real de Gael, su entrega única,
 el PC y la elección de P9 después de recargar; exige 100 células, cinco núcleos, diez Fragmentos y dieciocho
-Tablillas. Ocho pruebas de recarga final y seis del checkpoint comprueban los datos completos, continuidad del
-reloj y rechazo de cambios invisibles en un resumen de pantalla. El foco de ambos módulos alcanza 97,30 % líneas,
-97,78 % ramas y 92,31 % funciones; los modelos de UI son pruebas aisladas, sin sustituir la carga real pendiente.
-Este tramo está preparado para B21;
-la ejecución continua ha guardado B12 en Villa Alba y sigue en B13: 57 células, diez Tablillas, tres Núcleos,
-seis Fragmentos y Nadar. P6 conserva solo puzzles; se comprobaron sus caídas sin daño, anclas, puentes,
-cascadas y regresos antes y después de restaurarlo. Togepi eclosionó durante los desplazamientos reales.
+Tablillas. Diez pruebas de recarga final y diez del checkpoint comprueban los datos completos, continuidad del
+reloj y rechazo de cambios invisibles en un resumen de pantalla. Cobertura por módulo: checkpoint 100 % líneas /
+98,18 % ramas / 94,74 % funciones; recarga final 94,64 / 98,21 / 90. Los modelos de UI son pruebas aisladas;
+la recarga real intermedia ya se ejecutó, y la del final queda preparada para B21.
+La ejecución continua ha guardado y recargado B13 en Caleta Sonda: 77 células, doce Tablillas, cuatro Núcleos,
+seis Fragmentos, Nadar y Buceo. Comparación independiente del payload y el estado recargado: todos los campos
+persistentes idénticos, reloj 1219→1219 y misma identidad QAut8uoab (`campaign/campaign_b13_reload_audit.json`).
+Talasa, Lumbre/fiesta, las tres coladas, respiraderos, jefa/Tabla Llama y el retorno marítimo están completos.
+El recorrido continúa en B14. P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.

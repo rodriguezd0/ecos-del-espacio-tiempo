@@ -2,13 +2,14 @@ import {refreshDriver} from './e2e_campaign_refresh.mjs';
 import {installB14Observer} from './e2e_campaign_b14_page.mjs';
 import {Driver as EchoDriver} from './e2e_b14_driver.mjs';
 import {FONDO} from '../game/src/content/maps/b14/layout.js';
-import {reloadCheckpoint} from './e2e_campaign_checkpoint_reload.mjs';
+import {reloadCheckpoint} from './e2e_campaign_checkpoint_reload.mjs?slot=1';
 const RETRY=false;
 const need = (cond, msg) => (cond ? null : msg);
+const has = (s, key) => Boolean(s.flags?.[key]);
 
 // ───────────────────────────── Tramos ─────────────────────────────
 
-async function caleta(d) {
+export async function caleta(d) {
   // La escena la lanza un vigilante en paralelo en cuanto el jugador está quieto en tierra.
   await d.until((s) => has(s, 'b14_caleta_intro') || s.busy || s.top !== 'MapScene', { timeout: 15000, what: 'la escena de la playa' });
   await d.settle({ watch: [{ re: /¡Otra vez la marea!/, name: 'caleta_tobias', delay: 150 }] });

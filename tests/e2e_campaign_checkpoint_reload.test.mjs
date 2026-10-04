@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import * as checkpoint from '../tools/e2e_campaign_checkpoint_reload.mjs';
-import {GameState} from '../game/src/core/state.js';
+import {GameState,SaveSystem,saveKey} from '../game/src/core/state.js';
 const {checkpointReloadError,reloadCheckpoint}=checkpoint;
 
 const saved=()=>({playerName:'QA',map:'caleta_sonda',x:12,y:24,money:8000,
@@ -67,13 +67,71 @@ test('campaign checkpoint reload: saved hour permits small elapsed time and midn
  assert.ok(checkpoint.clockReloadError({clock:{minutes:500}},{}));
 });
 
+async function withActualSavedSlot(check) {
+ const oldWindow=Object.getOwnPropertyDescriptor(globalThis,'window'),oldStorage=Object.getOwnPropertyDescriptor(globalThis,'localStorage'),records=new Map();
+ Object.defineProperty(globalThis,'localStorage',{configurable:true,writable:true,value:{getItem:key=>records.get(key)??null,setItem:(key,value)=>records.set(key,String(value))}});
+ const state=new GameState(fullSave()),d={eval:async(fn,arg)=>fn(arg)};
+ state.data.clock.minutes=500;
+ Object.defineProperty(globalThis,'window',{configurable:true,writable:true,value:{__campaign:{engine:{state}}}});
+ try {
+  SaveSystem.save(1,state);localStorage.setItem('ecos.lastSlot','1');
+  await check({state,d,records});
+ } finally {
+  if(oldWindow===undefined)delete globalThis.window;else Object.defineProperty(globalThis,'window',oldWindow);
+  if(oldStorage===undefined)delete globalThis.localStorage;else Object.defineProperty(globalThis,'localStorage',oldStorage);
+ }
+}
+
+test('campaign checkpoint reload: the actual saved payload is the clock baseline after the UI resumes live time',async()=>{
+ await withActualSavedSlot(async({state,d,records})=>{
+  const stored=JSON.parse(records.get(saveKey(1)));state.advanceMinutes(2);state.data.playTimeFrames+=110;
+  const liveBefore=structuredClone(state.data),rawBefore=records.get(saveKey(1));
+  const payload=await checkpoint.readSavedSlotData(d);
+  assert.equal(payload.clock.minutes,stored.clock.minutes);
+  assert.equal(checkpoint.clockReloadError(payload,stored),null);
+  assert.deepEqual(state.data,liveBefore,'reading the slot never rewinds the live clock or changes GameState');
+  assert.equal(records.get(saveKey(1)),rawBefore,'the saved payload is read without another save');
+ });
+});
+
+test('campaign checkpoint reload: stale identity, Pokémon UIDs and other payload fields fail before loading',async()=>{
+ for(const change of [d=>d.player.name='another',d=>d.player.id++,d=>d.party[0].uid='other',
+  d=>d.boxes[2][7].exp++,d=>d.clues=[],d=>d.lastHeal.x++,d=>d.savedAt--]) {
+  await withActualSavedSlot(async({d,records})=>{
+   const payload=JSON.parse(records.get(saveKey(1)));change(payload);records.set(saveKey(1),JSON.stringify(payload));
+   await assert.rejects(checkpoint.readSavedSlotData(d),/identidad|payload/i);
+  });
+ }
+});
+
+test('campaign checkpoint reload: an absent, invalid or unreadable saved slot is rejected',async()=>{
+ for(const slot of [null,'0','99','1.5','not-a-slot'])await withActualSavedSlot(async({d,records})=>{
+  if(slot===null)records.delete('ecos.lastSlot');else records.set('ecos.lastSlot',slot);
+  await assert.rejects(checkpoint.readSavedSlotData(d),/ranura/i);
+ });
+ for(const raw of [null,'broken JSON',JSON.stringify({savedAt:0}),JSON.stringify({savedAt:'123'})])await withActualSavedSlot(async({d,records})=>{
+  if(raw===null)records.delete(saveKey(1));else records.set(saveKey(1),raw);
+  await assert.rejects(checkpoint.readSavedSlotData(d));
+ });
+});
+
+test('campaign checkpoint reload: actual payload clock resets or large live jumps cannot pass as a save delay',async()=>{
+ for(const minutes of [499,520])await withActualSavedSlot(async({state,d,records})=>{
+  state.data.clock.minutes=minutes;
+  await assert.rejects(checkpoint.readSavedSlotData(d),/hora guardada/);
+ });
+});
+
 test('campaign checkpoint reload: the same slot loads through title and confirmation after saving',async()=>{
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'ecos-checkpoint-')),events=[];
+ const oldWindow=Object.getOwnPropertyDescriptor(globalThis,'window'),oldStorage=Object.getOwnPropertyDescriptor(globalThis,'localStorage'),records=new Map();
+ Object.defineProperty(globalThis,'localStorage',{configurable:true,writable:true,value:{getItem:key=>records.get(key)??null,setItem:(key,value)=>records.set(key,String(value))}});
  const state=saved(),data=fullSave();state.ready=true;state.battles=[{tag:'a',outcome:'win'}];let screen='MapScene',titleStage=null;
- const page={reload:async()=>{events.push('reload');screen='TitleScene';titleStage='opening';},
+ const engineState=new GameState(data);Object.defineProperty(globalThis,'window',{configurable:true,writable:true,value:{__campaign:{engine:{state:engineState}}}});
+ const page={reload:async()=>{events.push('reload');screen='TitleScene';titleStage='opening';engineState.data=JSON.parse(records.get(saveKey(1)));},
   waitForFunction:async()=>{},evaluate:async()=>{},keyboard:{up:async()=>events.push('release run')}};
  const d={outDir:dir,page,snap:async()=>({...structuredClone(state),top:screen,titleStage}),log:async()=>[{text:'old evidence'}],
-  save:async label=>events.push(`save ${label}`),wait:async()=>{},
+  save:async label=>{events.push(`save ${label}`);SaveSystem.save(1,engineState);localStorage.setItem('ecos.lastSlot','1');engineState.advanceMinutes(2);engineState.data.playTimeFrames+=110;},wait:async()=>{},
   press:async key=>{
    assert.equal(key,'KeyZ');events.push(screen);
    if(screen==='TitleScene'&&titleStage==='opening')titleStage='menu';
@@ -81,7 +139,7 @@ test('campaign checkpoint reload: the same slot loads through title and confirma
    else if(screen==='SaveLoadScene')screen='ChoiceScene';
    else screen='MapScene';
   },until:async fn=>assert.ok(fn(await d.snap())),settle:async()=>{},
-  eval:async(fn,records)=>{if(!records)return structuredClone(data);assert.deepEqual(records.battles,state.battles);events.push('evidence');},
+  eval:async(fn,arg)=>{if(arg&&typeof arg==='object'){assert.deepEqual(arg.battles,state.battles);events.push('evidence');return;}return fn(arg);},
   milestone:async(name,check)=>{assert.equal(check(await d.snap()),null);events.push(name);},
   configureOptions:async()=>events.push('options')};
  // The refresh updates only the driver/observer; preserve the small UI model for this isolated test.
@@ -91,9 +149,15 @@ test('campaign checkpoint reload: the same slot loads through title and confirma
   await reloadCheckpoint(d,'QA','B13');
   assert.deepEqual(events.slice(0,6),['save B13','reload','TitleScene','TitleScene','SaveLoadScene','ChoiceScene']);
   assert.ok(events.includes('b13_recargado'));
+  const payload=JSON.parse(fs.readFileSync(path.join(dir,'campaign_b13_before_reload_slot.json')));
+  const liveBefore=JSON.parse(fs.readFileSync(path.join(dir,'campaign_b13_before_reload_save.json')));
+  assert.equal(liveBefore.clock.minutes-payload.clock.minutes,2,'the UI resumed time after writing the save');
+  assert.equal(engineState.data.clock.minutes,payload.clock.minutes,'reload restored the clock actually saved');
   assert.equal(JSON.parse(fs.readFileSync(path.join(dir,'campaign_b13_after_reload.json'))).playerName,'QA');
  } finally {
   if(d.liveTicker)clearInterval(d.liveTicker);
+  if(oldWindow===undefined)delete globalThis.window;else Object.defineProperty(globalThis,'window',oldWindow);
+  if(oldStorage===undefined)delete globalThis.localStorage;else Object.defineProperty(globalThis,'localStorage',oldStorage);
   assert.ok(path.resolve(dir).startsWith(path.resolve(os.tmpdir())+path.sep));fs.rmSync(dir,{recursive:true});
  }
 });
