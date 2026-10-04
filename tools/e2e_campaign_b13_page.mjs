@@ -1,6 +1,6 @@
 // Rutas y observaciones; los escenarios posibles se calculan sobre copias, sin mover al jugador.
 export async function installB13Observer(page){await page.evaluate(async()=>{
- const [{engine},{canSurfFreely}]=await Promise.all([import('/src/core/engine.js'),import('/src/world/terrain.js')]);
+ const {engine,canSurfFreely,canOfferSwim}=window.__campaign;
     const map = () => window.__map;
     const DV = { 2: [0, 1], 4: [-1, 0], 6: [1, 0], 8: [0, -1] };
     const findEvent = (id) => map()?.world?.events?.find((e) => e.id === id) || null;
@@ -61,6 +61,12 @@ export async function installB13Observer(page){await page.evaluate(async()=>{
           for (const d of [2, 4, 6, 8]) {
             const wx = x + DV[d][0]; const wy = y + DV[d][1];
             if (isWater(wx, wy) && !isWater(x, y)) {
+              if ((m.world.followers || []).some(f => f.visible && f.x === wx && f.y === wy && !f.busy())) continue;
+              const view = Object.create(p);
+              Object.defineProperties(view, { x: { value: x }, y: { value: y }, direction: { value: d }, surfing: { value: false } });
+              const worldView = Object.create(m.world);
+              Object.defineProperty(worldView, 'player', { value: view });
+              if (!canOfferSwim(worldView)) continue;
               const score = Math.abs(wx - tx) + Math.abs(wy - ty);
               if (!best || score < best.score) best = { x, y, face: d, score };
             }

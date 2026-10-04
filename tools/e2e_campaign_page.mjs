@@ -3,9 +3,10 @@
 export async function installCampaignHelpers(page) {
   await page.waitForFunction(() => document.querySelector('#stage'), null, { timeout: 30000 });
   await page.evaluate(async () => {
-    const [{ engine }, api, { MessageBox }, { Autopilot }, { maxHP,types:pkTypes,calcStats }, { calculateEffectiveness }] = await Promise.all([
+    const [{ engine }, api, { MessageBox }, { Autopilot }, { maxHP,types:pkTypes,calcStats }, { calculateEffectiveness }, { canSurfFreely }, { canOfferSwim }] = await Promise.all([
       import('/src/core/engine.js'), import('/src/battle/api.js'), import('/src/ui/message/messageBox.js'),
       import('/src/battle/scene/autopilot.js'), import('/src/battle/core/pokemon.js'), import('/src/battle/core/typeChart.js'),
+      import('/src/world/terrain.js'), import('/src/world/waterAccess.js'),
     ]);
     const previous = window.__campaign;
     const log = previous?.log || [], battles = previous?.battles || [];
@@ -222,7 +223,7 @@ export async function installCampaignHelpers(page) {
       }
       return null;
     };
-    window.__campaign = { engine, map, log, battles, control, route, eventPos, snap, fieldPlan, edgeRoute: dir => route(0, 0, { edge: dir }),
+    window.__campaign = { engine, canSurfFreely, canOfferSwim, map, log, battles, control, route, eventPos, snap, fieldPlan, edgeRoute: dir => route(0, 0, { edge: dir }),
       originalShow: show, originalMove: oldMove,
       originalAction: oldAction, originalItem: oldItem, originalConfirm:oldConfirm,originalSwitch:oldSwitch };
     window.__e2e = { ...window.__e2e, engine, log, route, eventPos, eventInfo: eventPos, snap, b02, battles,

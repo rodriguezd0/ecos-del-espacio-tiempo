@@ -1,21 +1,30 @@
 import {refreshDriver} from './e2e_campaign_refresh.mjs';
-import {installB13Observer} from './e2e_campaign_b13_page.mjs';
+import {installB13Observer} from './e2e_campaign_b13_page.mjs?shore=3';
 import {Driver as SeaDriver} from './e2e_b13_driver.mjs';
 import {mar,talasaArrival,talasa,caleta,swimAcross} from './e2e_b13_steps.mjs';
 import {buceo,lumbre,tizon} from './e2e_b13_islands.mjs';
 import * as MAR from '../game/src/content/maps/b13/mar_layout.js';
 import * as TAL from '../game/src/content/maps/b13/talasa_layout.js';
 import * as CL from '../game/src/content/maps/b09b/caleta_layout.js';
-import {collectWaterCells} from './e2e_campaign_cells.mjs?shore=2';
+import {collectWaterCells} from './e2e_campaign_cells.mjs?shore=3';
 import {collectEasternSea,returnToCaleta} from './e2e_campaign_sea.mjs';
+import {POND} from '../game/src/content/maps/b10/mnemos_layout.js';
+
+/** Reanuda el regreso si la célula ya quedó recogida antes de una pausa en el islote. */
+export async function recoverMnemosIslet(d) {
+ const s=await d.snap();
+ if(s.map!=='aldea_mnemos'||s.x!==POND.islet.x||s.y!==POND.islet.y)return;
+ await d.swimTo(POND.islet.x,POND.y-1); await d.settle();
+ await d.milestone('mnemos_regreso_islote',s=>!s.surfing&&s.x===POND.islet.x&&s.y===POND.y-1?null:'no regresó a la orilla');
+}
 export async function runB13(d){
  await refreshDriver(d); await installB13Observer(d.page);
  d.snapState=()=>d.eval(()=>({...window.__campaign.snap(),party:window.__b13.party()}));
  for(const method of ['walkTo','startSwim','swimTo','tap','quickPos','expectNotSaid'])d[method]=SeaDriver.prototype[method];
- await d.stages('B13',{regresos:async d=>collectWaterCells(d,[
+ await d.stages('B13',{regresos:async d=>{await recoverMnemosIslet(d);await collectWaterCells(d,[
   'cell_zaguan_3','cell_caudal_2','cell_garganta_4','cell_ruta_4_3',
   'cell_reserva_2','cell_marisma_2','cell_mnemos_2','cell_nexo_1',
- ]),preparar:async d=>{
+ ]);},preparar:async d=>{
   await d.travel('caleta_centro');await d.talk('enfermera');
   const s=await d.snap();if(s.partyList.length===6){
    const reserve=s.pokemon.filter(p=>!['TORTERRA','GROTLE','TURTWIG','ROTOM'].includes(p.species)).sort((a,b)=>a.level-b.level)[0];

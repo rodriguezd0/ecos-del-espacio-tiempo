@@ -8,7 +8,7 @@ import { BOREAL, OBSERVATORIO, TERRAZA, TALLERES } from '../game/src/content/map
 import { LAGO, lakeToMap } from '../game/src/content/maps/b15/layout_lago.js';
 import { ESCARCHA, MAR as MAR_BOREAL } from '../game/src/content/maps/b15/layout_escarcha.js';
 import { LAKE, solveLake, runSteps, initialState } from '../game/src/content/events/b15_lago_logic.js';
-import {collectDiveCells,collectWaterCells} from './e2e_campaign_cells.mjs?shore=2';
+import {collectDiveCells,collectWaterCells} from './e2e_campaign_cells.mjs?shore=3';
 import {installB13Observer} from './e2e_campaign_b13_page.mjs';
 import {Driver as SeaDriver} from './e2e_b13_driver.mjs';
 const RETRY=false;
