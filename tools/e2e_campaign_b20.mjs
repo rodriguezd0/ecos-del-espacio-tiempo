@@ -11,6 +11,7 @@ import { solveAxis } from '../game/src/world/axis/logic.js';
 import { CAMPAIGN_TABLETS } from '../game/src/content/story/tablets.js';
 import { facetMasks } from '../game/src/world/impossible/logic.js';
 import { F as F19 } from '../game/src/content/events/b19_common.js';
+import {returnToOrigen} from './e2e_campaign_b20_return.mjs';
 
 const has = (s, f) => Boolean(s.flags[f]);
 const need = (cond, msg) => (cond ? null : msg);
@@ -354,6 +355,5 @@ async function nucleo(d) {
 
 export async function runB20(d){await refreshDriver(d);await installB16Observer(d.page);await installB20Observer(d.page);d.retry=false;
  for(const method of ['walkTo','interactTimes','faceTo'])d[method]=Driver20.prototype[method];
- await d.stages('B20',{puerta,t1,t2,t3,t4,t5,t6,t7,t8,t9,cielo,terraza,nucleo});
- await d.travel('nucleo_origen');
+ await d.stages('B20',{puerta,t1,t2,t3,t4,t5,t6,t7,t8,t9,cielo,terraza,nucleo,salto_listo:returnToOrigen});
  for(const method of ['walkTo','interactTimes','faceTo'])delete d[method];}
