@@ -2,7 +2,7 @@
 
 Fuentes: `CAMPANA.md`, `DECISIONES.md`, `TABLILLAS.md`, `POKEDEX_DISTRIBUCION.md` y `COBERTURA.md`.
 El objetivo sigue activo. La campaña, el postgame y los dos DLC están implementados; la partida continua está
-en B15. Los bancos de bloque declaran sus preajustes de historia, equipo y recursos. La partida continua conserva
+en B16. Los bancos de bloque declaran sus preajustes de historia, equipo y recursos. La partida continua conserva
 el guardado creado desde el título, con sus recompensas, derrotas, dinero y objetos reales.
 
 ## Campaña y progresión
@@ -23,14 +23,14 @@ el guardado creado desde el título, con sus recompensas, derrotas, dinero y obj
 | B12: Pilar Invertido | P6 de puzzles: Cara Vuelta → Mirada → Sumidero; caídas, anclas y regresos | Guardado B12: 57 células, diez Tablillas, F06, N3 y Nadar |
 | B13: Talasa, Lumbre y Tizón | Mar, doble Casia/Garrido con Alerce, N4, capacidades acuáticas, fiesta y tres coladas | Guardado y recargado por UI: 77 células, doce Tablillas, cuatro Núcleos, seis Fragmentos y Buceo |
 | B14: Antea | P7 vertical, capas del tiempo, eco y Alfa físico | Guardado por UI: 85 células, siete Fragmentos, doce Tablillas, Bramaluna58 en PC y regreso del Fondo |
-| B15–B16: Boreal y Alma | Buceo, Gael, P8: Uxie → Mesprit → Azelf/Telar | B15 en curso; B16 pendiente en el mismo guardado |
+| B15–B16: Boreal y Alma | Buceo, Gael, P8: Uxie → Mesprit → Azelf/Telar | B15 guardado y recargado: 95 células, cinco Núcleos y trece Tablillas; B16 activo |
 | B17–B18: Mesa y Cruce | T14, P9: puente → Cámara → Dialga/Palkia; elección y regresos | Pendiente en el mismo guardado |
 | B19–B20: Sima y Origen | P10: Senda → Cielo Interior → Gael/núcleo | Pendiente en el mismo guardado |
 | B21: Columna y epílogo | Motor de fases, resolución y epílogo contrastados; recuperación de copias antiguas corregida | Pendiente en el mismo guardado |
 | 100 células, cinco núcleos y diez Fragmentos | Fuentes y contrato auditados, 95 entradas/retornos locales; P8 parcial/C100 sin ciclo | Recogidas opcionales en curso; el cierre exige todos los totales |
-| Dieciocho Tablillas | T01–T15 de episodios; Terrax/Terror/Legendaria tras Arceus, con captura o KO | Doce recibidas hasta B14; pista T13 abierta |
+| Dieciocho Tablillas | T01–T15 de episodios; Terrax/Terror/Legendaria tras Arceus, con captura o KO | Trece recibidas hasta B15; pista T13 resuelta en el Lago Viejo |
 
-Evidencia continua: `tools/cache/campaign/campaign_checkpoint_B04.json`…`campaign_checkpoint_B14.json`,
+Evidencia continua: `tools/cache/campaign/campaign_checkpoint_B04.json`…`campaign_checkpoint_B15.json`,
 `campaign_checkpoint.json`, `campaign_live.json`, capturas y transcripciones. El inventario independiente tiene
 sus fuentes, geometría, trazas y límites de fixtures en `tools/cache/progression_inventory_report.md`.
 
@@ -49,7 +49,7 @@ sus fuentes, geometría, trazas y límites de fixtures en `tools/cache/progressi
 | Olmedo, Mamá, llave de Alerce, montaje y Clefairy condicionales | Guiones/recorridos B21 y pruebas de alcance | Verificado en banco; continuo pendiente |
 | Nota de Gael y huevo de su inicial, disponible con equipo lleno y entrega única | Guion real; pruebas B21/regalos y tres regresiones del conductor | Verificado en banco; prueba continua preparada |
 | TV, carguero, cuaderno ausente, créditos y despertar con Completo por voluntad | Epílogo normal y recuperación: once comprobaciones Chrome | Verificado en banco; continuo pendiente |
-| Guardar/Continuar/Cargar: identidad, Pokémon completos/UID/posiciones del PC, huevo, colección, bolsa, dinero, elección, capacidades y reloj | Comparación del payload exacto con GameState completo; diez pruebas finales y diez del checkpoint, con rechazo de corrupción y continuidad del reloj | Recarga real B13 verificada; recarga continua del final pendiente |
+| Guardar/Continuar/Cargar: identidad, Pokémon completos/UID/posiciones del PC, huevo, colección, bolsa, dinero, elección, capacidades y reloj | Comparación del payload exacto con GameState completo; diez pruebas finales y diez del checkpoint, con rechazo de corrupción y continuidad del reloj | Recargas reales B13 y B15 verificadas; recarga continua del final pendiente |
 
 ## Postgame B22 — CAMPANA §8.1
 
@@ -120,17 +120,17 @@ en `tools/cache/b24_entrega.md`, trazas `e2e_b24_*.log` y checkpoints de `screen
 | C059 recogible tras combatir con Nerea, incluido regreso occidental del despacho | Tres fallos RED; cuatro regresiones con visión/aproximación/combate reales, premio, ambas células y retorno; 28 pruebas B13 GREEN | Corregido en efbb93b; QA local sin avisos y progresión de tarjeta/N4 conservada |
 | Puertas normales cerradas: apertura/cierre sobre el panel original | 56 accesos/36 variantes resueltos, máscaras y raster; ocho transiciones Chrome, curación/recarga y 24 fases visibles | Verificado, incluidos guiones y stamps locales |
 | Seguidor B14, aro negro de Gael y Diario | Profundidad en tres capas/ambas formas; datos de B15/B20; pestañas y pruebas | Verificado |
-| Separación global entre jugador, Zygarde y Pokémon acompañante (X38) | Petición del autor: mantener tamaños y dejar espacio según huella visual, incluidos giros y paradas | En implementación y comprobación |
+| Separación global entre jugador, Zygarde y Pokémon acompañante (X38) | Huellas RGBA y fila adaptativa; 182 pruebas enfocadas, 46 + 16 comprobaciones Chrome y recuperación lateral adicional | Verificado en 5a3bdbb; giros, paradas, pasillos, monturas, rutas de guion e interacción A sin solapes |
 | F9 espera al jugador/guion; recuperación del final tras televisión | Once regresiones y once comprobaciones Chrome | Verificado en be63ae7 |
 | Protagonistas M/F: acciones, mochila, monturas y espaldas/lanzamientos | 51 pruebas/18 capturas; lámina del kit completo y aprobación fechada en 18 hojas | Aprobado por el autor el 04-10-2026 |
 | Trece poses de combate de NPC | 36 pruebas, 15 capturas y lámina; registro y alias con aprobación fechada | Aprobado por el autor el 04-10-2026 |
 | Elenco propio de campo, incluido Vértice líder | Lámina de 29 charsets; hashes originales y aprobación registrada por archivo/alias | Aprobado por el autor el 04-10-2026 |
 | Ilustración del atlas de Axis | Imagen mostrada y aprobada; JSON/generador con fecha, PNG idénticos y 56 lugares conservados | Aprobado por el autor el 04-10-2026 |
 | Escala de Pokémon del mapa, incluidos Onix/Yanma | Módulo y cuatro pruebas; el autor elige mantener la regla actual | Confirmado por el autor el 04-10-2026 (X37) |
-| Suite completa sobre el resultado integrado | 2373/2373, sin fallos, omisiones ni cancelaciones; `suite_b14_retry_integrated.log`, 40,0 s | Arte aprobado/UI, C059/C065, recargas, reintentos/captura B14 y conductor B15 verificados; cuatro pruebas posteriores de retorno B14 pasan por separado |
+| Suite completa sobre el resultado integrado | 2428/2428, sin fallos, omisiones ni cancelaciones; `suite_followers_final.log`, 32,0 s | Incluye arte aprobado/UI, C059/C065, recargas, retornos B14/B15, PC y separación global de seguidores |
 | Validador, costuras y QA sobre el resultado final | Tras C059/C065: 272 mapas/187 entrenadores/sin errores; 45/45 costuras limpias, seis locales; `trainer_contact_final_checks_report.md` | Sin nuevas incidencias; 31 avisos enumerados y cero mapas de arte sin revisar |
 | Guardado final desde UI y carga desde el título | Controlador preparado con comparación completa y habilitación del postgame | Pendiente al llegar a B21 |
-| Guardado intermedio desde UI y carga desde el título | B13: rawslot/after completos idénticos, reloj 1219→1219; `campaign_b13_reload_audit.json` | Verificado en la misma partida QAut8uoab |
+| Guardado intermedio desde UI y carga desde el título | B13 y B15: payload/carga completos idénticos, relojes 1219→1219 y 149→149; `campaign_b13_reload_audit.json` y `campaign_b15_checkpoint_audit.json` | Verificado en la misma partida QAut8uoab; el intercambio posterior del PC conserva los diez registros completos |
 
 Los informes de alcance y cobertura se detallan en `CIERRE_CONTENIDO.md`. `PENDIENTES.md` mantiene el punto de
 trabajo actual. Los bancos, el contrato de inventario y el auditor de obtención conservan sus límites declarados;

@@ -227,4 +227,5 @@ las cuatro regresiones existentes siguen pasando.
 El autor pide una solución global al solape visual entre el jugador, Zygarde y el Pokémon acompañante.
 Prefiere alejarlos para que se vean completos y se pueda leer bien el movimiento del jugador.
 Se conserva la regla de tamaños X37; la separación se ajusta a la huella visual y a la cadena de seguidores,
-incluidos giros, paradas y cambios de mapa. Implementación y comprobación en marcha.
+incluidos giros, paradas y cambios de mapa. Implementado en `5a3bdbb`: 182 pruebas enfocadas, suite integrada
+2428/2428 y recorridos Chrome con monturas, pasillos, rutas de guion e interacción A, sin solapes ni errores.

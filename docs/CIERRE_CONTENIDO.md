@@ -62,6 +62,10 @@ Correcciones verificadas:
   terminan con ambos Eevee en Espeon de día y Umbreon de noche; los dos ganan experiencia y no hay errores de página.
 - La profundidad existente del seguidor evita que Zygarde tape al jugador en B14: doce posiciones reales en tres
   capas con formas 10 % y 50 %, sin errores de página.
+- La separación global solicitada después en X38 está integrada en `5a3bdbb`: cada eslabón deja espacio según
+  su huella opaca y conserva escala, recorrido, saltos y presentación. 182 pruebas enfocadas y 46 + 16
+  comprobaciones Chrome cubren giros, reversas, paradas, monturas, guiones e interacción A sin solapes ni errores.
+  Una recta lateral adicional confirma los tres actores completos tras salir de un pasillo.
 - F9 espera mientras el guion, la cinemática o el paso del jugador están ocupados. Las copias antiguas de casa
   guardadas tras la televisión recuperan carguero/créditos/despertar, según lo que falte. Once regresiones nuevas,
   35 pruebas enfocadas y once comprobaciones Chrome cubren el bloqueo y la carga desde el título. El guardado
@@ -126,10 +130,9 @@ La aprobación anterior de frontales y tamaños tuvo revisión independiente sin
 
 ## Comprobaciones de integración
 
-La última suite completa de integración pasó **2373/2373**, sin fallos, saltos ni cancelaciones, incluidos el arte
-aprobado, su UI, C059/C065, recargas, reintentos/captura B14 y conductor B15 (`suite_b14_retry_integrated.log`, 40,0 s).
-Las cuatro pruebas de retorno B14 son posteriores y pasan por separado. La separación global de seguidores
-solicitada en X38 está en marcha y todavía no forma parte de esta comprobación integrada. El último
+La última suite completa de integración pasó **2428/2428**, sin fallos, saltos ni cancelaciones, incluidos el arte
+aprobado, su UI, C059/C065, recargas, retornos B14/B15, PC y separación global de seguidores
+(`suite_followers_final.log`, 32,0 s). El último
 validador posterior a ambos arreglos construyó 272 mapas sin errores: 31 avisos enumerados, ninguno de Mar/Talasa.
 Las 45 conexiones actuales pasan la revisión de costuras, incluidas las seis de esos dos mapas. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
@@ -143,6 +146,10 @@ y evoluciones están cubiertas (100 % de esas líneas, sin atribuirlo a los mód
 Las 21 líneas de código añadidas/modificadas para F9 y la recuperación del epílogo también están cubiertas
 (100 % del cambio; el informe enfocado no representa la cobertura total de los dos módulos anteriores).
 Las hojas propias tienen generador reproducible y comprobación de dimensiones.
+La separación global cubre entre 94,83 % y 100 % de las líneas ejecutables cambiadas, con hashes SHA256
+contrastados contra los módulos integrados. No se atribuye ese porcentaje a `charsets.js` completo:
+su código antiguo no modificado queda fuera del alcance. Detalle y límites: `follower_spacing_review.md`
+y `follower_spacing_changed_coverage.json`.
 El alcance de la escuela alcanza 99,15 % líneas / 100 % ramas / 88,89 % funciones; las coordenadas modificadas y el
 camino quedan cubiertos. Evidencia: `estrato_school_red.log`, `estrato_school_coverage.log`,
 `estrato_school_chrome_report.json`, `estrato_school_qa.md` y `estrato_school_validation.json`.
@@ -152,7 +159,7 @@ Evidencia: `door_animation_report.md`, `door_final_coverage.log`, `door_inventor
 `door_chrome_phases_`. Los seis perfiles temporales anteriores permanecen en caché porque su borrado fue
 rechazado por la revisión automática («blocked by policy»); sus navegadores están cerrados.
 
-Evidencia local en `tools/cache/`: `suite_b14_retry_integrated.log`, `suite_campaign_routes_integrated.log`, `suite_slot_reload_integrated.log`, `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
+Evidencia local en `tools/cache/`: `suite_followers_final.log`, `follower_spacing_review.md`, `suite_b14_retry_integrated.log`, `suite_campaign_routes_integrated.log`, `suite_slot_reload_integrated.log`, `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y
 checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json`, `b14_follower_review.json`
 y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`, `progression_inventory_report.md` y sus trazas.
@@ -173,5 +180,10 @@ Tablillas. P7 restaurado, Bramaluna Alfa 58 capturada en cinco turnos y enviada 
 cinco células del Fondo recogidas con regreso. El contraste independiente de checkpoints conserva todas las
 colecciones de B13 y la identidad QAut8uoab (`campaign/campaign_b14_checkpoint_audit.json`); su alcance es el
 resumen y los combates registrados, sin sustituir la comparación completa del guardado final.
-El recorrido continúa en B15. P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
+Después se guardó y recargó B15 por UI en Villa Boreal (6,18): 95 células únicas, cinco Núcleos, siete
+Fragmentos y trece Tablillas. Lago Viejo/T13, Gael vencido en 22 turnos/N5 y los regresos de Gruta Escarcha
+y Mar Boreal están completos. El payload exacto y la carga conservan todos los campos persistentes y el
+reloj 149→149. El intercambio posterior del PC depositó Rampardos47 y retiró Bramaluna58 conservando los
+diez registros completos, sus UID y los demás huecos (`campaign/campaign_b15_checkpoint_audit.json`).
+El recorrido continúa en B16/P8. P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.

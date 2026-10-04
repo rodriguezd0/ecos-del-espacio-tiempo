@@ -537,6 +537,14 @@ oscuridad con luces) → efectos luminosos → pasada final (destello, fundido, 
   dimensión opaca supera un presupuesto proporcional a la altura de la especie (58 px por 1,5 m; mínimo 48, máximo 96)
   se encogen a 3/4 o 1/2 (píxel nítido): Onix 1/2, Yanma 3/4 (el creador los vio «enormes»). Zygarde queda fuera.
   `render/charsets.js` mide la hoja al cargarla (`sheet.scale`) y `characterSprite.js` la aplica. Test: `follower_size`.
+- **Separación de seguidores** (`world/followerSpacing.js`, `world/followerFormation.js`, X38): al cargar cada
+  hoja se guarda su huella opaca RGBA con la escala aprobada. Una historia temporal de pasos del jugador coloca
+  la fila con un mínimo de dos casillas y margen visual de ocho píxeles, adaptándose a todos sus integrantes.
+  Usa el recorrido real y sus saltos; espera o cede visibilidad cuando no cabe y recupera la fila al salir.
+  Las rutas de guion conservan posición y orientación; ambas historias se trasladan al cruzar mapas conectados.
+  A permite hablar con el seguidor visible mediante un camino libre, respetando la prioridad de eventos.
+  No escribe formación ni huellas en la partida. Pruebas: `follower_spacing`, `follower_footprint`,
+  `follower_interaction`; navegador: `tools/e2e_follower_spacing.mjs`.
 - **Cámara como en Pokémon** (`render/camera.js`, decisión del creador 26-09): sigue SIEMPRE al jugador centrado, también
   junto a bordes y esquinas; solo un mapa que cabe entero en pantalla (≤ 16×12) se queda centrado en él (como Añil).
   `setBounds(w, h)` ya no limita. Paneos de guion (`ctx.camera.pan/reset/follow`) centran exactamente la casilla pedida.
