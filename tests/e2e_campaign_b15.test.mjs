@@ -190,3 +190,9 @@ test('campaign B15: a vanished route after an ordinary step is recalculated and 
     assert.equal(state.flag(F.sendaTop),false);assert.equal(state.data.zygarde.form,'50');
   });
 });
+test('campaign B15: ordinary north preparation heals through the real nurse and returns to the street',async()=>{
+ const campaign=await import('../tools/e2e_campaign_b15.mjs'),calls=[];
+ const d={travel:async map=>calls.push(['travel',map]),talk:async id=>calls.push(['talk',id])};
+ await campaign.prepareB15(d);
+ assert.deepEqual(calls,[['travel','lumina_centro'],['talk','enfermera'],['travel','ciudad_lumina']]);
+});

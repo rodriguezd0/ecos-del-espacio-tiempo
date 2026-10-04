@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Driver, KEY, DIR } from './e2e_b16_driver.mjs';
-import {findTravelPath,scriptEntrance,connectionApproach} from './e2e_campaign_routes.mjs?doors=3';
+import {findTravelPath,scriptEntrance,connectionApproach} from './e2e_campaign_routes.mjs?doors=5';
 
 export class CampaignDriver extends Driver {
   constructor(page, errors, options) { super(page, errors, options); this.choiceRules = [{ re: /mote/i, index: 1 }]; }
@@ -52,8 +52,8 @@ export class CampaignDriver extends Driver {
     return after.map !== before.map && after.map === after.healPoint?.mapId && after.battles.at(-1)?.outcome === 'lose';
   }
   async travel(target) {
-    const from = (await this.snap()).map;
-    const route = await findTravelPath(from,target);
+    const state = await this.snap(), from = state.map;
+    const route = await findTravelPath(from,target,undefined,{flags:state.flags||{}});
     if (!route) throw new Error(`No hay camino de regreso de ${from} a ${target}`);
     for (const next of route) {
       const scripted = scriptEntrance((await this.snap()).map, next);

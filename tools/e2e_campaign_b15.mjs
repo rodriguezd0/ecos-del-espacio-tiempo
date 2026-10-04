@@ -259,6 +259,11 @@ async function opcionalesNorte(d) {
 // ───────────────────────────── Principal ─────────────────────────────
 
 
+export async function prepareB15(d) {
+ await d.travel('lumina_centro');await d.talk('enfermera');await d.travel('ciudad_lumina');
+}
+
 export async function runB15(d){await refreshDriver(d);await installB15Observer(d.page);await d.stages('B15',{
+ preparacionNorte:prepareB15,
  regresosBuceo:async d=>collectDiveCells(d,['cell_caleta_2','cell_reserva_3','cell_garganta_5']),
  entrada:async d=>d.travel('ruta_11'),ruta11,paso,senda,ruta13,boreal,lago,gael,gruta,opcionalesNorte});}
