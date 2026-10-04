@@ -60,6 +60,7 @@ async function t1(d) {
   await d.expectSaid(/El primero mira al alba/, 'la inscripción');
   // La grava: a pie resbala; montado se sube
   await d.walkTo(12, 12, { face: 'up' });
+  if(!(await d.snapState()).riding)await d.mount();
   await d.pushUntil('up', (s) => s.y <= 10, 'subir la grava montado');
   await d.milestone('t1_grava', (s) => need(s.y <= 10, `en (${s.x},${s.y})`));
   for (const st of STONES) {
