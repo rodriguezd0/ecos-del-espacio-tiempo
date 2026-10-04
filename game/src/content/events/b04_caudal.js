@@ -81,8 +81,8 @@ export async function thanksScene(ctx, spots) {
   ctx.face(alerce, p);
   ctx.face('player', alerce);
   for (const line of THANKS_TEXT.alerce) await ctx.say(line, A);
-  await givenStarter(ctx);
-  await ctx.say(THANKS_TEXT.alerceAfter, A);
+  const received = await givenStarter(ctx);
+  await ctx.say(received ? THANKS_TEXT.alerceAfter : 'Te lo dejo aquí para cuando tengas sitio. Yo vuelvo al laboratorio.', A);
   ctx.setFlag(F.thanks);
   await ctx.fade('out', 20);
   for (const ev of [leandro, alerce, ...crowd]) ctx.erase(ev);
@@ -90,10 +90,11 @@ export async function thanksScene(ctx, spots) {
 }
 
 async function givenStarter(ctx) {
-  if (ctx.flag(F.starterGift)) return;
+  if (ctx.flag(F.starterGift)) return true;
   const species = unchosenStarter(ctx.state);
-  await ctx.givePokemon({ species, level: GIFT_STARTER_LEVEL });
+  if (!await ctx.givePokemon({ species, level: GIFT_STARTER_LEVEL })) return false;
   ctx.setFlag(F.starterGift);
+  return true;
 }
 
 /**
@@ -104,8 +105,13 @@ export function thanksEvents(spots, { id = 'gracias_leandro', x = spots.player.x
   const when = (s) => Boolean(s?.flag(F.restored)) && !s.flag(F.thanks);
   const script = (ctx) => thanksScene(ctx, spots);
   // `touch` = casillas que disparan la escena al pisarlas (reserva de la Ruta 3); si no, automática al entrar.
-  if (touch) return touch.map(([tx, ty]) => ({ id: `${id}_${tx}_${ty}`, x: tx, y: ty, when, trigger: 'touch', script }));
-  return [{ id, x, y, through: true, pages: [{ when, trigger: 'auto', script }] }];
+  const main = touch ? touch.map(([tx, ty]) => ({ id: `${id}_${tx}_${ty}`, x: tx, y: ty, when, trigger: 'touch', script }))
+    : [{ id, x, y, through: true, pages: [{ when, trigger: 'auto', script }] }];
+  return [...main, {
+    id: `${id}_inicial_pendiente`, x: spots.alerce.to.x, y: spots.alerce.to.y, name: 'Inicial de Alerce',
+    sprite: 'Object ball', dir: 2, directionFix: true, walkAnime: false, shadow: false, solid: true, noOver: true, trigger: 'action',
+    when: (s) => Boolean(s?.flag(F.restored)) && s.flag(F.thanks) && !s.flag(F.starterGift), script: givenStarter,
+  }];
 }
 
 /**

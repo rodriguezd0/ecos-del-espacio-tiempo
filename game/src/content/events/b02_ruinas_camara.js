@@ -119,7 +119,7 @@ async function offerGeodude(ctx) {
     await ctx.say('El Geodude se queda en la cámara. Parece dispuesto a esperar.');
     return;
   }
-  await ctx.givePokemon({ ...GEODUDE_GIFT });
+  if (!await ctx.givePokemon({ ...GEODUDE_GIFT })) return;
   ctx.setFlag(F.geodudeGift);
 }
 

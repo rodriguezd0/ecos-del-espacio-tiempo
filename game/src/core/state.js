@@ -129,15 +129,16 @@ export class GameState {
   get party() { return this.data.party; }
   /** Añade al equipo o, si está lleno, a la primera caja libre. Devuelve { where: 'party'|'box'|'none', box, slot }. */
   addPokemon(pkmn) {
-    this.registerCaught(pkmn.species);
     if (this.data.party.length < PARTY_MAX) {
       this.data.party = [...this.data.party, pkmn];
+      this.registerCaught(pkmn.species);
       return { where: 'party', slot: this.data.party.length - 1 };
     }
     for (let b = 0; b < this.data.boxes.length; b++) {
       const slot = this.data.boxes[b].indexOf(null);
       if (slot >= 0) {
         this.setBoxPokemon(b, slot, pkmn);
+        this.registerCaught(pkmn.species);
         return { where: 'box', box: b, slot };
       }
     }

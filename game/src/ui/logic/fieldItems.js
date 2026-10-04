@@ -185,7 +185,8 @@ export function evolvedPokemon(db, p, target) {
   const sp = speciesData(db, target, 0);
   const idx = p.abilityIndex ?? 0;
   const ability = idx >= 2 ? (sp.hiddenAbilities?.[idx - 2] || sp.abilities[0]) : (sp.abilities?.[idx] || sp.abilities?.[0] || p.ability);
-  const next = recalcHp(db, p, { ...p, species: target, form: 0, ability });
+  const consumeHeld = (speciesData(db, p.species, p.form).evolutions || []).some(([to, method, item]) => to === target && ['DayHoldItem', 'NightHoldItem'].includes(method) && p.heldItem === item);
+  const next = recalcHp(db, p, { ...p, species: target, form: 0, ability, heldItem: consumeHeld ? null : p.heldItem });
   const known = new Set(next.moves.map((m) => m.id));
   const newMoves = [...movesLearnedAtLevel(db, target, 0, 0), ...movesLearnedAtLevel(db, target, 0, p.level)]
     .filter((m, i, a) => !known.has(m) && a.indexOf(m) === i);

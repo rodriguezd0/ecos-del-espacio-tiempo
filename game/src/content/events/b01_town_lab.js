@@ -64,6 +64,7 @@ async function chooseStarter(ctx, index) {
   if (!yes) return;
 
   const pkmn = await ctx.givePokemon({ species: sp, level: STARTER_LEVEL }, { silent: true });
+  if (!pkmn) return;
   ctx.setVar(V.starter, sp);
   ctx.me(AUDIO.pokemonGet);
   await ctx.say(`¡\\PN ha recibido a ${name}!`);

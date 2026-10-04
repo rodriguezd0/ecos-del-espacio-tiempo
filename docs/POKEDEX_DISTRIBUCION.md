@@ -1,8 +1,8 @@
 # Pokédex de Axis: curva, distribución y reconciliación (sección 7 del diseño de campaña)
 
 **Fecha:** 24-09-2026 · **Estado:** DECIDIDO-DEV (D28, D29), revisable por el autor.
-**Canon aplicable (biblia §15–16):** inventario candidato de 412 nombres (336 generales, 7 Paradojas, 11 Ultraentes, 58
-legendarios); reconciliaciones pendientes: Bramaluna, Ditto, Sableye, Latias/Latios y fauna submarina; las mismas tablas
+**Canon aplicable (biblia §15–16):** inventario candidato original de 412 nombres, reconciliado a 425 en §7.8
+(346 generales, 8 Paradojas, 11 Ultraentes, 60 legendarios); las mismas tablas
 en modo clásico y visible; Alfa raro (≈3% como punto de partida, no constante); captura legendaria exigente y explicada
 en pantalla; el 100% se completa en solitario; ninguna forma regional exigida que no aparezca.
 **Datos:** IDs de `game/data/species.json` (Añil); evoluciones leídas del PBS crudo
@@ -517,11 +517,12 @@ Manaphy y Phione siguen en el DLC 2. Las 7 Paradojas de hierro quedan en el post
 
 ## 7.10 Verificación y notas técnicas
 
-- **Cobertura (script sobre `species.json` y el PBS crudo):** las **336 generales, las 11 añadidas y las 7 Paradojas**
-  se obtienen por captura, regalo o evolución con los métodos de Añil. Resultado: **0 especies sin método**. Tablas con
-  porcentajes que suman 100 (salvo las parciales marcadas). El script está en el scratchpad de la sesión
-  (`dex_synth.js`); se recomienda moverlo a `tools/` como test de datos (`node --test`) junto con los invariantes de
-  células de CAMPANA.md §2.5.
+- **Obtención comprobada (04-10-2026):** `node tools/audit_pokedex.mjs --solo` encuentra métodos conectados para
+  **425/425** especies en los 261 mapas de producción registrados. Excluye mapas de desarrollo, entrenadores,
+  exhibiciones y encuentros sin captura. Comprueba evoluciones y huevos con el motor; los objetos requieren una
+  fuente jugable. `tests/audit_pokedex.test.mjs` verifica además que las elecciones de iniciales, Dialga/Palkia,
+  Reshiram/Zekrom y Cosmoem permiten reunir las especies en la misma partida, sin intercambios online.
+  Evidencia por especie en `tools/cache/pokedex_obtainability_solo.md` y su JSON.
 - **Evoluciones fuera de la Pokédex de Axis** que permiten los datos de Añil: Scyther + Piedra Noche → Kleavor; Eevee +
   Peluca Regia / Pluma Eólica → Royaleon / Cefireon. Decisión TÉCNICA: Peluca Regia y Pluma Eólica no se distribuyen;
   la Piedra Noche avisa antes de usarse en Scyther y Kleavor no cuenta para la Pokédex regional.
@@ -530,3 +531,6 @@ Manaphy y Phione siguen en el DLC 2. Las 7 Paradojas de hierro quedan en el post
 - **Catálogo regional corregido (04-10-2026, e717e01):** el generador comparte `buildAxisDex` con
   `tools/axis_dex_source.mjs`; el JSON y la UI incluyen las 425 especies reconciliadas. Las entradas 1–412 conservan
   su número y las 13 incorporaciones ocupan 413–425. `tests/axis_dex.test.mjs` comprueba catálogo, generación y lista.
+- **Métodos de evolución:** Wurmple conserva la personalidad que fija Silcoon/Cascoon; los guardados anteriores
+  derivan una rama estable del UID. Happiny exige Piedra Oval equipada y subida de nivel de día. La piedra se
+  consume al aceptar la evolución, y se conserva al cancelarla; `tests/evolution_missing_methods.test.mjs`.

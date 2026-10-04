@@ -96,7 +96,7 @@ async function oldTv(ctx) {
     '¡Otra vez! Cada noche lo mismo: la tele, la nevera, el ventilador… Me funde las bombillas.',
     `Parece que le caes bien. Llévatelo, ${byGender(ctx.state, 'chaval', 'chavala')}, te lo regalo. Pero cuídalo: es un bicho listo.`,
   ]);
-  await ctx.givePokemon({ species: 'ROTOM', level: 20 });
+  if (!await ctx.givePokemon({ species: 'ROTOM', level: 20 })) return;
   ctx.setFlag(F.rotom);
 }
 
@@ -123,7 +123,7 @@ async function milcery(ctx) {
     'Ese Milcery se cuela cada mañana por la ventana de la cocina y se come la nata de los pasteles.',
     'Ya no sé si es mío o yo soy suyo. ¿Te lo llevas? Aquí se va a poner como una bola.',
   ]);
-  await ctx.givePokemon({ species: 'MILCERY', level: 15 });
+  if (!await ctx.givePokemon({ species: 'MILCERY', level: 15 })) return;
   ctx.setFlag(F.milcery);
 }
 

@@ -56,7 +56,7 @@ export async function rescueCosmog(ctx) {
   if (!readyAction(ctx, 'cosmog', ['b24_crater_lucero']) || ctx.flag('dlc2_cosmog_rescatado')) return false;
   if (ctx.state.party.length >= 6 && ctx.state.data.boxes.every((box) => box.every(Boolean))) { await ctx.say('Cosmog espera protegido. Deja un hueco en el equipo o en el PC y vuelve.'); return false; }
   if (!await ctx.confirm('Cosmog está atrapado bajo una losa. ¿Apartarla y ayudarlo?')) return false;
-  await ctx.givePokemon({ species: 'COSMOG', level: 40 });
+  if (!await ctx.givePokemon({ species: 'COSMOG', level: 40 })) return false;
   ctx.setFlag('dlc2_cosmog_rescatado'); markHallazgo(ctx.state, 'cosmog');
   await ctx.giveItem('SHINYSTONE', 1); await ctx.giveItem('DUSKSTONE', 1);
   await ctx.say('Cosmog quiere viajar contigo. Al nivel 43 será Cosmoem: Piedra Día para Solgaleo, Piedra Noche para Lunala. El otro espera en la Cumbre Azur con el primero en tu equipo.'); refresh(ctx); return true;

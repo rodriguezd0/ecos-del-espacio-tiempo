@@ -147,6 +147,10 @@ export function createContext(scene, event = null) {
         ...spec, ot: { name: state.player.name, id: state.player.id }, metMap: world.map?.id, obtainedMode: 'gift',
       });
       const where = state.addPokemon(pkmn);
+      if (where.where === 'none') {
+        await ui.message('No hay sitio en tu equipo ni en las cajas del PC. El Pokémon seguirá esperando.');
+        return null;
+      }
       if (where.where === 'party' && where.slot === 0) scene.refreshFollower();
       if (!silent) {
         audio?.playME?.('Pkmn get');

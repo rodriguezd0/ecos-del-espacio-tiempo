@@ -232,8 +232,7 @@ async function finale(ctx) {
   await lines(ctx, R, [
     'Y llévate a este también. Vive en el taller desde hace meses, se come mis gomas de borrar y no deja dormir al vigilante.',
   ]);
-  await ctx.givePokemon({ species: 'EEVEE', level: 10 });
-  ctx.setFlag(F.eevee);
+  if (!await giveEevee(ctx)) await say(ctx, R, 'Lo dejo aquí, a salvo, hasta que tengas sitio para él.');
   await lines(ctx, R, [
     'Una cosa más. La ficha de inventario de 1962 citaba otra tabla: «amarga», en la antigua Laguna Clara. Hoy la llaman la Marisma Turbia.',
     `Si vas hacia allí, mira bien dónde pisas, ${byGender(ctx.state, 'chico', 'chica')}.`,
@@ -242,6 +241,13 @@ async function finale(ctx) {
   await ctx.story.openClue('T08');
   await say(ctx, R, 'Mañana reabro la sala de Antea. Con la historia del rey, que para eso la escribieron. Y en el archivo… ya verás. Pasa cuando quieras.');
   if (ros) ctx.erase(ros);
+}
+
+async function giveEevee(ctx) {
+  if (ctx.flag(F.eevee)) return true;
+  if (!await ctx.givePokemon({ species: 'EEVEE', level: 10 })) return false;
+  ctx.setFlag(F.eevee);
+  return true;
 }
 
 function dockEvents() {
@@ -269,6 +275,7 @@ function dockEvents() {
       pages: [
         { when: chasing, sprite: SPRITE.slab, dir: 4, directionFix: true, shadow: false, solid: true, trigger: 'action', script: dockBattle },
         { when: when({ all: [F.t06Won], none: [F.t06Done] }), sprite: SPRITE.slab, dir: 4, directionFix: true, shadow: false, solid: true, trigger: 'action', script: finale },
+        { when: when({ all: [F.t06Done], none: [F.eevee] }), sprite: 'Object ball', dir: 2, directionFix: true, walkAnime: false, shadow: false, solid: true, trigger: 'action', script: giveEevee },
       ] },
     { id: 'rosalia_muelle', x: B.dockEntry.x, y: B.dockEntry.y + 1, name: R,
       pages: [{ when: when({ all: [F.t06Chase], none: [F.t06Done] }), sprite: SPRITE.rosalia, dir: 6, move: 'still', trigger: 'action',

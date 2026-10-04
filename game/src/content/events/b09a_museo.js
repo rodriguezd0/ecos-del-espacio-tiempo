@@ -35,14 +35,14 @@ async function reviveFossil(ctx) {
   const i = await ctx.choice([...names, 'Nada'], { message: '¿Quieres que reviva un fósil?', cancel: have.length });
   const f = have[i];
   if (!f) return;
-  ctx.state.removeItem(f.item, 1);
   await say(ctx, S, '¡Allá vamos! La máquina necesita un momento…');
   await ctx.fade('out', 20);
   ctx.se?.('Anim/Saint7');
   await ctx.wait(40);
   await ctx.fade('in', 20);
   await say(ctx, S, '¡Lo ha conseguido! Cuídalo bien: lleva mucho tiempo esperando.');
-  await ctx.givePokemon({ species: f.species, level: 25 });
+  if (!await ctx.givePokemon({ species: f.species, level: 25 })) return;
+  ctx.state.removeItem(f.item, 1);
   ctx.setFlag(f.flag);
 }
 

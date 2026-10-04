@@ -36,7 +36,7 @@
 > - El creador tiene que confirmar la regla de tamaño de los Pokémon en el mapa (afecta a unas 140 especies).
 > - Rocas de cueva: implican rehacer 3 puzles.
 
-Actualizado: 04-10-2026. En marcha: **auditoría de obtención, revisión visual y partida continua hasta los créditos**.
+Actualizado: 04-10-2026. En marcha: **inventario de progresión y partida continua hasta los créditos**.
 
 ## Objetivo activo: terminar el juego completo
 
@@ -137,12 +137,14 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 ## 5. Cierre del contenido
 - B22a–e y B23 «Almenara» implementados y recorridos; documentación junto a sus mapas y herramientas `e2e_b22*.mjs` / `e2e_b23.mjs`.
 - B24 «Registro de Expediciones» implementado y recorrido con 30/30 Hallazgos (`e2e_b24.mjs`).
-- Catálogo de la Pokédex corregido a 425 entradas; generador y numeración anterior verificados (e717e01). Auditoría de obtención en marcha.
-- Sinistea rechazado sigue disponible tras P5 y cargar la partida (a1eb5ea). En revisión: otras entregas con el equipo y PC llenos.
+- Catálogo de la Pokédex corregido a 425 entradas; generador y numeración anterior verificados (e717e01). Auditoría terminada: 425/425 métodos conectados en solitario y elecciones compatibles; 21 pruebas del auditor.
+- Sinistea rechazado sigue disponible tras P5 y cargar la partida (a1eb5ea). Entregas con equipo y PC llenos corregidas: regalos pendientes, fósiles conservados y PC libre utilizado; 11 pruebas y dos recorridos Chrome.
+- Wurmple y Happiny evolucionan con sus métodos reales; personalidad estable y consumo de Piedra Oval al aceptar, con seis regresiones nuevas.
+- Suite actual: 2191/2191 sin fallos ni omisiones; validador: 272 mapas, sin errores.
 - Partida continua completa y pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión.
 
 ## 6. Menores
-- El seguidor Zygarde a veces aparece encima del jugador en las capas de eco (B14).
+- Seguidor Zygarde en B14 comprobado: la regla de profundidad existente lo deja detrás del jugador. Chrome: 12 posiciones en tres capas, formas 10 % y 50 %, seis capturas y ningún error.
 - Gael B6 (B20): comprobado `megaRingName: 'el aro negro'` en su entrenador; también en B15.
 
 ## Forma de trabajar (pedido del usuario)

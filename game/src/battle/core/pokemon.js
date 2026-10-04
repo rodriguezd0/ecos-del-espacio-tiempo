@@ -113,12 +113,21 @@ function makeUid(rng) {
   return `${Date.now().toString(36)}${Math.floor(rng() * 1e9).toString(36)}${uidCounter}`;
 }
 
+/** Personalidad persistente; los guardados anteriores derivan una semilla de su UID sin alterarse. */
+function evolutionPersonality(p) {
+  if (Number.isInteger(p.personality) && p.personality >= 0 && p.personality <= 0xffffffff) return p.personality;
+  let hash = 2166136261;
+  for (const ch of String(p.uid || `${p.species}:${p.ot?.id || 0}:${p.metMap || ''}:${p.metLevel || 1}`)) hash = Math.imul(hash ^ ch.charCodeAt(0), 16777619) >>> 0;
+  return hash;
+}
+
 /**
  * Crea un Pokémon nuevo.
  * opts: { form, gender, nature, shiny, alpha, ivs, evs, moves:[ids], ability, abilityIndex, heldItem,
- *         nickname, ot:{name,id}, ball, metMap, rng, shinyChance, obtainedMode }
+ *         nickname, ot:{name,id}, ball, metMap, rng, shinyChance, obtainedMode, personality }
  */
 export function createPokemon(db, speciesId, level, opts = {}) {
+  if (opts.personality != null && (!Number.isInteger(opts.personality) || opts.personality < 0 || opts.personality > 0xffffffff)) throw new Error('Personalidad inválida: se requiere un entero de 32 bits sin signo');
   const rng = opts.rng || Math.random;
   const form = opts.form || 0;
   const sp = speciesData(db, speciesId, form);
@@ -163,6 +172,7 @@ export function createPokemon(db, speciesId, level, opts = {}) {
     metLevel: level,
     obtainedMode: opts.obtainedMode || 'met',
   };
+  if (opts.personality != null || (sp.evolutions || []).some(([, method]) => method === 'Silcoon' || method === 'Cascoon')) pkmn.personality = opts.personality ?? (Math.floor(rng() * 0x100000000) >>> 0);
   pkmn.hp = calcStats(db, pkmn).hp;
   return pkmn;
 }
@@ -252,6 +262,13 @@ export function evolutionTarget(db, p, ctx = {}) {
       case 'LevelNight':
         if (trigger === 'level' && p.level >= lvParam && ctx.isDay === false) return target;
         break;
+      case 'Silcoon':
+      case 'Cascoon': {
+        // Essentials 21.1: residuo decimal de los 16 bits altos, fijado al nacer.
+        const silcoon = ((evolutionPersonality(p) >>> 16) % 10) < 5;
+        if (trigger === 'level' && p.level >= lvParam && silcoon === (method === 'Silcoon')) return target;
+        break;
+      }
       case 'AttackGreater':
       case 'DefenseGreater':
       case 'AtkDefEqual': {
@@ -276,6 +293,12 @@ export function evolutionTarget(db, p, ctx = {}) {
         break;
       case 'HoldItem':
         if (trigger === 'level' && p.heldItem === param) return target;
+        break;
+      case 'DayHoldItem':
+        if (trigger === 'level' && p.heldItem === param && ctx.isDay === true) return target;
+        break;
+      case 'NightHoldItem':
+        if (trigger === 'level' && p.heldItem === param && ctx.isDay === false) return target;
         break;
       case 'Item':
         if (trigger === 'item' && ctx.item === param) return target;

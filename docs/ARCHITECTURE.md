@@ -298,7 +298,7 @@ ctx.flag(k) ctx.setFlag(k, v) ctx.var(k, def) ctx.setVar(k, v) ctx.selfSwitch('A
 ctx.erase(obj) ctx.setTile(x, y, capa, id) ctx.bridge(altura|0) ctx.zygarde('ram'|…) ctx.requestRefresh()
 // objetos y Pokémon
 await ctx.giveItem(id, n, { found, silent })   // objetos clave con addKeyItem (no se acumulan)
-await ctx.givePokemon({ species, level, … } | pokemon, { silent }) → pokemon   ctx.heal()
+await ctx.givePokemon({ species, level, … } | pokemon, { silent }) → pokemon | null (sin sitio)   ctx.heal()
 ctx.setHealPoint(x = jugador, y = jugador, dir = 2, mapId = actual)   // punto de derrota/Cuerda Huida
 ctx.bgm(nombre, opts) ctx.se(nombre) ctx.me(nombre) ctx.cry(especie, forma)
 ```
@@ -1270,3 +1270,20 @@ Guías de mapas, decisiones técnicas y arte provisional D30: los README de `map
 Recorridos Chrome: `tools/e2e_b22c.mjs`, `tools/e2e_b23.mjs`, `tools/e2e_b24.mjs`. Preparan bancos aislados y después
 ejecutan pasos, menús, combates, capturas, evoluciones y crianza reales. `tools/e2e_campaign.mjs` comprueba además la
 progresión continua desde Nueva partida, con el guardado y los recursos obtenidos jugando.
+
+## 26. Entregas y obtención regional
+
+`GameState.addPokemon` registra la captura después de guardar al Pokémon en el equipo o el PC. Si ambos están
+llenos devuelve `{ where: 'none' }` sin modificar la Pokédex; `ctx.givePokemon` lo comunica y devuelve `null`.
+Los guiones solo consumen fósiles o fijan flags de entrega después de recibir el Pokémon. Las celebraciones de
+P2 y T06 pueden terminar sin capacidad: dejan una Poké Ball interactiva que conserva el regalo pendiente al cargar,
+sin repetir la escena ni la Tablilla. Las entregas con el equipo lleno siguen usando la primera caja libre.
+
+`tools/audit_pokedex.mjs` parte de los mapas de producción del registro efectivo. Liga encuentros especiales y
+legendarios a sus eventos y factorías de combate; verifica evoluciones, crianza y fuentes de objetos. La opción
+`--solo` excluye intercambios online. Su informe contiene la evidencia de las 425 especies; las pruebas comprueban
+también las elecciones mutuamente excluyentes y sus rutas posteriores.
+
+Wurmple persiste `personality`; para partidas anteriores el motor deriva una semilla del UID sin mutar al Pokémon.
+`DayHoldItem` y `NightHoldItem` comprueban hora y objeto equipado al subir de nivel. `evolvedPokemon` consume ese
+objeto en la copia aceptada; cancelar la evolución conserva el original.
