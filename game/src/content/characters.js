@@ -1,5 +1,6 @@
 // Registro de sprites de personajes de Axis.
-// TODO el arte propio es PROVISIONAL (decisión D30 pendiente del autor): ver docs/arte.md.
+// Las trece poses frontales tienen aprobación del autor (D30, 04-10-2026); el resto sigue provisional.
+// Ver docs/arte.md para el alcance de cada revisión.
 // Los PNG se generan con `node tools/pixel_build.mjs` (fuentes en tools/pixel_chars/).
 //
 // Tipos de hoja (`kind`):
@@ -33,9 +34,13 @@ export const DIR_ROW = Object.freeze({ 2: 0, 4: 1, 6: 2, 8: 3 });
 const ASSET_DIR = 'assets/characters/';
 const FRAME = 64;
 const BATTLE_FRAME = 160;
+const APPROVED_FRONTS = new Set(['gael_front.png', 'profesor_front.png', 'guardiana_front.png', 'leandro_front.png',
+  'abril_front.png', 'fermin_front.png', 'olvido_front.png', 'sol_front.png', 'vertice_front.png', 'casia_front.png',
+  'garrido_front.png', 'genesis_tecnico_front.png', 'genesis_tecnica_front.png']);
 
 const base = (kind, file, extra) => Object.freeze({
   kind, file: ASSET_DIR + file, provisional: true, decision: 'D30', ...extra,
+  ...(APPROVED_FRONTS.has(file) ? { provisional: false, approvedOn: '2026-10-04', approvedBy: 'autor' } : {}),
 });
 const charset = (file, extra) => base('charset', file, { frameW: FRAME, frameH: FRAME, cols: 4, rows: 4, ...extra });
 const battleBack = (file, extra) => base('battle_back', file, { frameW: BATTLE_FRAME, frameH: BATTLE_FRAME, cols: 5, rows: 1, ...extra });

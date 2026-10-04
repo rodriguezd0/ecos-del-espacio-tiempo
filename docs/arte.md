@@ -1,9 +1,9 @@
-# Arte de personajes — estado y decisiones (PROVISIONAL, D30)
+# Arte de personajes — estado y decisiones (D30)
 
-Todo el arte de personajes de este documento es **provisional** y está pendiente de la decisión **D30**
-(arte final de protagonistas y resto del elenco). Cada entrada del registro
-`game/src/content/characters.js` lleva `provisional: true` y `decision: 'D30'`. Nada de lo aquí propuesto
-fija canon: donde la biblia deja un campo abierto, la solución es una propuesta para aprobar o descartar.
+El autor aprobó el 04-10-2026 las **trece poses frontales nuevas de combate** tras ver la lámina comparativa
+del apartado 10. Esas entradas de `game/src/content/characters.js` llevan `provisional: false`,
+`approvedOn: '2026-10-04'` y `approvedBy: 'autor'`. Las demás hojas conservan `provisional: true` y su revisión
+D30 pendiente. Cada entrada mantiene `decision: 'D30'` para identificar su procedencia.
 
 Visor: `http://localhost:8080/?scene=sprites` (←/→ personaje · Z modo: caminar, correr y, en los protagonistas,
 montura 10%, nado 50%, buceo, trepar, pesca y Vuelo · X zoom · C combate · E alterna con las clases genéricas de
@@ -413,8 +413,10 @@ del visor real, sin errores de carga ni ejecución. `node tools/e2e_battle_art.m
 `node tools/review_battle_art.mjs` genera las comparativas y métricas. La evidencia está en
 `tools/cache/arte-final/` (`fronts.png`, `backs.png`, `metrics.json`, `browser/result.json`).
 
-El pase técnico y visual está integrado; los diseños propios conservan la etiqueta provisional hasta la
-aprobación artística del autor (D30).
+El autor aprobó las trece poses frontales el 04-10-2026: Gael, Alerce, Casilda, Leandro, Abril, Fermín, Olvido,
+Sol, Vértice, Casia, Garrido y los dos técnicos de Genesis. La aprobación está registrada también en los alias
+de Alerce y Casilda. Las hojas de campo, protagonistas, lanzamientos y atlas conservan su estado de revisión
+propio; esta respuesta se refería a las poses frontales mostradas.
 
 
 ### Revisión del kit, 03-10-2026

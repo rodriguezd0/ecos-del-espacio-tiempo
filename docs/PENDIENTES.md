@@ -25,7 +25,7 @@
 > Después:
 > 1. P6 terminado: solo puzzles, sin Pokémon ni Guardianes.
 > 2. P7–P10 terminados con el reparto confirmado por el creador el 03-10: puzzles, combates reales, pisos, regresos y migración de guardados probados en Chrome.
-> 3. Arte humano integrado y revisado: trece poses de NPC, dos lanzamientos y 15 capturas en Chrome. Pendiente la aprobación artística del autor (D30).
+> 3. Arte humano integrado y revisado: trece poses de NPC, dos lanzamientos y 15 capturas en Chrome. Las trece poses frontales están aprobadas por el autor el 04-10; la revisión D30 de las demás hojas sigue pendiente.
 > 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
 > 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
 > 6. Partida continua desde «Nueva partida»: B01–B12 recorridos y guardados por UI; B13 en marcha, con el mismo equipo, dinero y objetos obtenidos en juego. Último guardado: Villa Alba, 57 células, diez Tablillas, tres Núcleos y seis Fragmentos. P6, sus caídas sin daño y sus regresos están comprobados; la forma 50 % habilitó Nadar y Togepi eclosionó caminando.
@@ -33,7 +33,7 @@
 >
 > Pendientes menores:
 > - Solape en dobles corregido (3c0bafe): posiciones, sombras y efectos revisados en combate cooperativo real.
-> - El creador tiene que confirmar la regla de tamaño de los Pokémon en el mapa (afecta a unas 140 especies).
+> - Regla de tamaños del mapa confirmada por el autor el 04-10: se mantiene la actual para todas las especies (X37).
 > - Rocas de cueva: implican rehacer 3 puzles.
 
 Actualizado: 04-10-2026. En marcha: **partida continua hasta los créditos y revisión final de integración**.
@@ -46,7 +46,7 @@ La rama de pausa se revisa por módulos; sus versiones antiguas de mapas no sust
 | Frente | Estado al reanudar | Verificación necesaria |
 |---|---|---|
 | Campaña B01–B21 | Implementada; los diez Pilares verticales terminados y probados | Recorrido continuo sin saltos de progresión, final y carga del epílogo |
-| Arte humano | Acciones M/F, trece poses de NPC y dos lanzamientos integrados; 15 capturas de Chrome sin errores | Aprobación artística D30; comprobación en la partida continua |
+| Arte humano | Acciones M/F, trece poses de NPC y dos lanzamientos integrados; frontales aprobados el 04-10 | Revisión D30 de las demás hojas; comprobación en la partida continua |
 | B22, postgame base | a–e implementados y recorridos en Chrome; B22c incluye siete capturas y sus retornos | Auditoría final de requisitos e integración |
 | B23, Almenara | D1-01…05 terminadas; derrota/reintento de Gael, Mega Zygarde, sellado, captura opcional y regreso real probados | Revisión visual y suite de integración |
 | B24, Expediciones | 30/30 Hallazgos recorridos en Chrome; siete Ultrazonas, Naganadel, Necrozma y ambas hipótesis insulares probados | Auditoría final de obtención e integración |
@@ -132,7 +132,7 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 - **Protagonistas M/F** en estilo BW chibi: acciones y sprites integrados (c362de9), 51 pruebas y 18 capturas de navegador.
   Las espaldas de combate también tienen el pase de torso, mochila y lanzamiento del 04-10.
 - **Diseño de la protagonista:** registrado como X32 en DECISIONES.
-- **Sprites de combate de NPC/entrenadores:** trece frontales rehechos a escala de Añil; 36 pruebas y 15 capturas en Chrome. Comparativas en `tools/cache/arte-final/`; falta aprobación artística D30.
+- **Sprites de combate de NPC/entrenadores:** trece frontales rehechos a escala de Añil y aprobados por el autor el 04-10. Fecha y autor registrados en cada entrada y sus alias; 34 pruebas enfocadas de arte/registro/tamaños pasan. Comparativas en `tools/cache/arte-final/`.
 - **Core y célula de Zygarde:** ya son los sprites originales del creador (hecho, f5c89f2).
 
 ## 5. Cierre del contenido
@@ -145,7 +145,7 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 - El guardado F9 espera a que termine la escena; las copias antiguas interrumpidas tras la televisión retoman
   créditos/despertar. Once regresiones nuevas, 35 pruebas enfocadas y once comprobaciones en Chrome sin errores;
   guardar/cargar el final recuperado conserva regalos únicos y capacidades.
-- Suite integrada actual: 2287/2287 sin fallos, omisiones ni cancelaciones; validador: 272 mapas, sin errores.
+- Última suite completa de integración: 2287/2287 sin fallos, omisiones ni cancelaciones; aprobación de arte posterior: 34/34 enfocadas. Validador: 272 mapas, sin errores.
 - Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
 ## 6. Menores

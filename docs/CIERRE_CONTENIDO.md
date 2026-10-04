@@ -78,12 +78,16 @@ Correcciones verificadas:
   transiciones. Se revisaron las imágenes de Alba, Caudal y Mnemos; el jugador queda sobre el panel y no
   persisten recursos temporales.
 
-No quedan hallazgos críticos o altos de esta revisión. Arte D30 y decisiones del autor abiertas conservan su
-etiqueta provisional.
+No quedan hallazgos críticos o altos de esta revisión. El autor aprobó las trece poses frontales nuevas y confirmó
+la regla de tamaños del mapa el 04-10-2026. Las demás hojas de arte D30 conservan su revisión provisional.
+La aprobación cambia solo los metadatos de esas trece entradas y sus alias: imágenes, dimensiones, variantes y
+escala conservan su contenido. Revisión independiente sin hallazgos; 34 pruebas enfocadas pasan y el registro
+de personajes alcanza 100 % líneas / 95,52 % ramas / 100 % funciones (`art_approval_red.log` y
+`art_approval_green.log`).
 
 ## Comprobaciones de integración
 
-La suite completa del resultado integrado pasa **2287/2287**, sin fallos, saltos ni cancelaciones. El validador construyó
+La última suite completa de integración pasó **2287/2287**, sin fallos, saltos ni cancelaciones. El validador construyó
 272 mapas y no dio errores. Las 45 conexiones actuales pasan la revisión de costuras. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
 suelo y los 13 obstáculos altos de los espejos. No hay árboles cortados, objetos sobre árboles ni costuras defectuosas.

@@ -26,12 +26,24 @@ test('cada hoja registrada existe y mide cols×frameW por rows×frameH', () => {
   }
 });
 
-test('todo el arte propio está marcado como provisional (D30) y documentado', () => {
+test('D30 aprueba las trece poses frontales y conserva provisional el resto del arte propio', () => {
+  const approved = new Set(['gael_front', 'profesor_front', 'guardiana_front', 'leandro_front', 'abril_front',
+    'fermin_front', 'olvido_front', 'sol_front', 'vertice_front', 'casia_front', 'garrido_front',
+    'genesis_tecnico_front', 'genesis_tecnica_front']);
   for (const [id, ch] of Object.entries(CHARACTERS)) {
-    assert.equal(ch.provisional, true, `${id} debe ser provisional`);
+    assert.equal(ch.provisional, !approved.has(id), `${id}: alcance de la aprobación del autor`);
     assert.equal(ch.decision, 'D30');
     assert.ok(ch.name && ch.note, `${id} necesita name y note`);
+    if (approved.has(id)) {
+      assert.equal(ch.kind, 'battle_front');
+      assert.equal(ch.approvedOn, '2026-10-04');
+      assert.equal(ch.approvedBy, 'autor');
+    } else {
+      assert.equal(ch.approvedOn, undefined, `${id} no recibió aprobación en esta tanda`);
+    }
   }
+  assert.equal(getBattleSprite('casilda_front').provisional, false);
+  assert.equal(getBattleSprite('alerce_front').approvedOn, '2026-10-04');
 });
 
 test('las referencias a variantes y sprites de combate apuntan a entradas existentes', () => {

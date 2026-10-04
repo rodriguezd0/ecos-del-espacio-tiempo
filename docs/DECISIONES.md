@@ -57,7 +57,7 @@ concedida por el autor; revisable) · PENDIENTE · TÉCNICO (decisión de implem
 | D27 | NPC del DLC 2 y sistema de misiones activas | DECIDIDO-DEV (ver sección de diseño) | |
 | D28 | Distribución de 412 especies y nuevas necesidades | DECIDIDO-DEV (ver sección de diseño) | |
 | D29 | Tasas Alpha/shiny y condiciones de captura | DECIDIDO-DEV (ver sección de diseño) | |
-| D30 | Arte final de protagonistas y resto del elenco | DECIDIDO-DEV (ver sección de diseño) | Arte provisional etiquetado mientras tanto |
+| D30 | Arte final de protagonistas y resto del elenco | DECIDIDO parcial 04-10-2026 | El autor aprueba las trece poses frontales nuevas de combate; el resto del arte conserva su revisión pendiente |
 
 ## Otras decisiones abiertas detectadas al implementar
 
@@ -99,7 +99,7 @@ Gael, postgame y DLC), `docs/TABLILLAS.md` (T01–T15, museo, Crónica, Libreta)
 | D27 | NPC y sistema del DLC 2 | Sabela Ferreiro, cronista y cartógrafa (Aduana Vieja de Nexo). Registro de Expediciones: 3 activas, Rumor → Indicio → Hallazgo, marcado en el mapa sin penalización | Biblia §12, §13.9: no es Galletano ni la curadora del museo |
 | D28 | Distribución y reconciliación | Pokédex de 425 (+Bramaluna, Ditto, Sableye, Latias, Latios, 8 especies de Buceo). Tablas por zona verificadas por script (0 especies sin método). Megapiedras solo de la lista del autor | Biblia §16: reconciliaciones pendientes; 100% en solitario |
 | D29 | Tasas y condiciones de captura | Alfa 1/64; variocolor 1/4096 (1/1365 con Amuleto Iris). Captura legendaria explicada en pantalla, intentos bloqueados gratuitos, reaparición al descansar | Biblia §15: rareza sin frustración |
-| D30 | Arte final del elenco | Parcial: briefs de Genesis (paleta, uniformes) y descripciones del elenco nuevo; todo el arte sigue provisional y etiquetado hasta la aprobación del autor | Biblia §13, §14, §20: una imagen guardada no es un arte aprobado |
+| D30 | Arte final del elenco | Trece frontales de combate aprobados por el autor el 04-10-2026 tras ver la comparativa. El registro conserva fecha y autor de esa aprobación; las demás hojas siguen provisionales | Biblia §13, §14, §20: aprobación por alcance |
 | X02 | Atlas de Axis | Atlas completo (CAMPANA.md §1): 12 poblaciones, Rutas 1–15, mar del sur en un solo mapa por capas | Biblia §17–18: topónimos propios; nombres antiguos solo si encajan |
 | X06 | Guardianes de P1–P5 | Casilda Roquer (64, escepticismo, Roca/Tierra), Leandro Alcántara (38, orgullo), Abril Céspedes (19, tedio), Fermín Galena (51, carga familiar), Olvido Arrieta (78, fascinación) | Biblia §6, §13.7; D07 |
 | X07 | Elenco secundario | Agente Olmedo, familia Arenzana, ayudante Lía, Rosalía Quintana, Nilo, Remedios, Ramón, Maestra Brasa, Rosendo, Don Evaristo, Peregrinos del Rey | D04, X03, biblia §13.8 |
@@ -213,3 +213,10 @@ tripletas y los convierte en `null`. El catálogo conserva las evoluciones sin p
   - P8: Uxie → Mesprit → Azelf y Telar.
   - P9: puente (Casia, Garrido, Vértice) → Cámara del Cruce → Dialga/Palkia.
   - P10: Senda → Cielo Interior (Trío) → Gael y núcleo.
+
+**X37 — Tamaños de Pokémon en el mapa** (DECIDIDO por el autor, 04-10-2026).
+
+Se mantiene la regla actual de `render/followerSize.js` para todas las especies: se reducen los gráficos
+sobredimensionados según su tamaño, sin ampliar a los pequeños. Onix usa escala 0,5 y Yanma 0,75.
+Zygarde conserva su tamaño. El autor eligió «Mantener la regla actual» tras revisar ese alcance;
+las cuatro regresiones existentes siguen pasando.
