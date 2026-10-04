@@ -49,10 +49,7 @@ async function arrecife(d) {
   await d.interact({ watch: [{ re: /Soy Adela/, name: 'adela', delay: 200 }, { scene: 'BattleScene', name: 'adela_combate', delay: 3000 }] });
   await d.expectSaid(/planos de la corona del rey de Antea/, 'los planos de la corona');
   await d.expectSaid(/Al doctor le interesa/, 'la mención al doctor');
-  await d.milestone('adela', (s) => {
-    const all = ['b14_tecnico_rufino', 'b14_tecnica_eulalia', 'b14_jefa_adela'].filter((t) => !s.battles.some(b=>b.id===t));
-    return all.length ? `faltan combates: ${all}` : need(has(s, 'b14_jefa_vencida') && has(s, 'b14_draga_apartada'), 'la draga sigue en la puerta');
-  });
+  await d.milestone('adela', reefVictoryError);
   await d.walkTo(8, 10);
   await d.exitTo('down', 'arrecife_eco');
   const aside = await d.eval(() => [window.__b14.eventAlive('draga_cabezal'), window.__b14.eventAlive('draga_apartada')]);
@@ -68,6 +65,28 @@ async function arrecife(d) {
   await d.walkTo(13, 6);
   await d.exitTo('up', 'antea_1_presente');
   await d.milestone('p7_piso2_capas', (s) => need(s.map === 'antea_1_presente', 'sin segundo piso'));
+}
+
+export function reefVictoryError(s) {
+ const missing=['b14_tecnico_rufino','b14_tecnica_eulalia','b14_jefa_adela'].filter(id=>!s.battles.some(b=>b.id===id&&b.outcome==='win'));
+ return missing.length?`faltan victorias reales: ${missing}`:need(has(s,'b14_jefa_vencida')&&has(s,'b14_draga_apartada'),'la draga sigue en la puerta');
+}
+
+/** Recupera una derrota nueva por la entrada normal de Buceo; el planificador de tierra no cruza ese enlace. */
+export async function completeArrecife(d,{run=arrecife,enter=caleta}={}) {
+ for(let attempt=0;attempt<3;attempt++) {
+  if(['nexo_centro','caleta_centro','caleta_sonda'].includes((await d.snap()).map)) {
+   await d.travel('caleta_centro');await d.talk('enfermera');await d.travel('caleta_sonda');await enter(d);
+  }
+  const before=await d.snap(),battleCount=before.battles.length;
+  try {await run(d);return;}
+  catch(error) {
+   const after=await d.snap();
+   if(after.battles.length<=battleCount||after.battles.at(-1)?.outcome!=='lose'||!d.whiteout(before,after))throw error;
+   console.log('DERROTA REAL en el arrecife: cura en Caleta y regreso por su remolino.');
+  }
+ }
+ throw Error('Tres derrotas reales en el arrecife; hace falta preparar el equipo.');
 }
 
 async function sala1(d) {
@@ -292,6 +311,6 @@ export async function runB14(d,name){
  await d.stages('B14',{recargaB13:d=>reloadCheckpoint(d,name,'B13')});
  await refreshDriver(d);await installB14Observer(d.page);
  for(const method of ['walkTo','caracola','sneakTo','swimTo','toLand'])d[method]=EchoDriver.prototype[method];
- await d.stages('B14',{preparacion:prepareB14,caleta,arrecife,sala1,sala2,sala3,sala4,fosa,regreso,fondo});
+ await d.stages('B14',{preparacion:prepareB14,caleta,arrecife:completeArrecife,sala1,sala2,sala3,sala4,fosa,regreso,fondo});
  for(const method of ['walkTo','caracola','sneakTo','swimTo','toLand'])delete d[method];
 }
