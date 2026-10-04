@@ -28,7 +28,7 @@
 > 3. Arte humano y atlas aprobados por el autor el 04-10: trece poses de NPC, kit M/F completo, 29 personajes de campo e ilustración regional. Aprobación registrada por archivo, sin cambiar los PNG mostrados.
 > 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
 > 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
-> 6. Partida continua desde «Nueva partida»: B01–B15 recorridos y guardados por UI; B16 en marcha con los recursos obtenidos jugando. Último guardado: Villa Boreal (6,18), 95 células, trece Tablillas, cinco Núcleos y siete Fragmentos. Las recargas reales de B13 y B15 conservaron todos los campos persistentes y el reloj exacto del archivo. Al preparar B16, se retiró Bramaluna Alfa 58 del PC y se depositó Rampardos sin cambiar ni perder registros. P6, sus caídas sin daño y sus regresos están comprobados; Nadar y Buceo se habilitaron jugando y Togepi eclosionó caminando. B14 incluye P7 restaurado, ferri activo y las cinco células del Fondo con retorno normal.
+> 6. Partida continua desde «Nueva partida»: B01–B16 recorridos y guardados por UI; continúa hacia P9 con los recursos obtenidos jugando. Último guardado: Correos de Nexo (7,8), 100 células únicas, trece Tablillas, cinco Núcleos y ocho Fragmentos. Las recargas reales de B13 y B15 conservaron todos los campos persistentes y el reloj exacto del archivo. Al preparar B16, se retiró Bramaluna Alfa 58 del PC y se depositó Rampardos sin cambiar ni perder registros. P6, sus caídas sin daño y sus regresos están comprobados; Nadar y Buceo se habilitaron jugando y Togepi eclosionó caminando. P8/Telar está restaurado; Completo, Volar y Reconstruir se habilitaron jugando.
 > 7. QA final de P8–P10: escalera visible del Puente, columnas y fachadas sin solapes accidentales. Las 45 conexiones siguen limpias; subida y regreso de P9 recorridos en Chrome.
 >
 > Detalles revisados:
@@ -175,7 +175,11 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 - B15 guardado y recargado por UI: Lago Viejo/T13, Gael vencido en 22 turnos/N5 y regresos de Escarcha/Mar
   Boreal; 95 células, cinco Núcleos, siete Fragmentos y trece Tablillas. El payload completo coincide con la
   carga y el reloj 149→149. El PC de preparación de B16 conserva los diez Pokémon completos y sus UID
-  (`campaign_b15_checkpoint_audit.json`). La partida sigue en B16/P8; la recarga completa del final aún falta.
+  (`campaign_b15_checkpoint_audit.json`).
+- B16 guardado por UI en Correos de Nexo (7,8): 100 células únicas, cinco Núcleos, F01–F08 y trece Tablillas.
+  Saber/Sentir/Querer y Telar resueltos, descenso por ambas plantas, Azelf58 vencido con la Mochila sellada
+  y dinero intacto, Forma Completa/Volar/Reconstruir y ambos tramos del puente. Las colecciones de B15 se
+  conservan (`campaign_b16_checkpoint_audit.json`). Sigue hacia P9; falta la recarga completa del final.
 - Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
 ## 6. Menores

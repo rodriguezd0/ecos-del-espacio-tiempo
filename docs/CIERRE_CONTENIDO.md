@@ -185,5 +185,11 @@ Fragmentos y trece Tablillas. Lago Viejo/T13, Gael vencido en 22 turnos/N5 y los
 y Mar Boreal están completos. El payload exacto y la carga conservan todos los campos persistentes y el
 reloj 149→149. El intercambio posterior del PC depositó Rampardos47 y retiró Bramaluna58 conservando los
 diez registros completos, sus UID y los demás huecos (`campaign/campaign_b15_checkpoint_audit.json`).
-El recorrido continúa en B16/P8. P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
+Después se guardó B16 por UI en Correos de Nexo (7,8): 100 células únicas, cinco Núcleos, ocho Fragmentos
+y trece Tablillas. Saber, Sentir, Querer y Telar resueltos; Azelf58 vencido con la Mochila sellada, sin
+huida/captura y conservando 42576 de dinero. P8 restaurado y descendido por ambas plantas; Completo,
+Volar, Reconstruir, Cadena Roja y los dos tramos del puente habilitados por su guion. El contraste independiente
+conserva identidad y colecciones de B15 (`campaign/campaign_b16_checkpoint_audit.json`); el alcance es el
+checkpoint y los combates observados, y no sustituye la comparación completa del payload del final.
+El recorrido continúa hacia P9. P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.

@@ -2,7 +2,7 @@
 
 Fuentes: `CAMPANA.md`, `DECISIONES.md`, `TABLILLAS.md`, `POKEDEX_DISTRIBUCION.md` y `COBERTURA.md`.
 El objetivo sigue activo. La campaña, el postgame y los dos DLC están implementados; la partida continua está
-en B16. Los bancos de bloque declaran sus preajustes de historia, equipo y recursos. La partida continua conserva
+en el tramo B17–B18 hacia P9. Los bancos de bloque declaran sus preajustes de historia, equipo y recursos. La partida continua conserva
 el guardado creado desde el título, con sus recompensas, derrotas, dinero y objetos reales.
 
 ## Campaña y progresión
@@ -23,14 +23,14 @@ el guardado creado desde el título, con sus recompensas, derrotas, dinero y obj
 | B12: Pilar Invertido | P6 de puzzles: Cara Vuelta → Mirada → Sumidero; caídas, anclas y regresos | Guardado B12: 57 células, diez Tablillas, F06, N3 y Nadar |
 | B13: Talasa, Lumbre y Tizón | Mar, doble Casia/Garrido con Alerce, N4, capacidades acuáticas, fiesta y tres coladas | Guardado y recargado por UI: 77 células, doce Tablillas, cuatro Núcleos, seis Fragmentos y Buceo |
 | B14: Antea | P7 vertical, capas del tiempo, eco y Alfa físico | Guardado por UI: 85 células, siete Fragmentos, doce Tablillas, Bramaluna58 en PC y regreso del Fondo |
-| B15–B16: Boreal y Alma | Buceo, Gael, P8: Uxie → Mesprit → Azelf/Telar | B15 guardado y recargado: 95 células, cinco Núcleos y trece Tablillas; B16 activo |
+| B15–B16: Boreal y Alma | Buceo, Gael, P8: Uxie → Mesprit → Azelf/Telar | B15 guardado/recargado; B16 guardado: 100 células únicas, cinco Núcleos, ocho Fragmentos, trece Tablillas y Completo |
 | B17–B18: Mesa y Cruce | T14, P9: puente → Cámara → Dialga/Palkia; elección y regresos | Pendiente en el mismo guardado |
 | B19–B20: Sima y Origen | P10: Senda → Cielo Interior → Gael/núcleo | Pendiente en el mismo guardado |
 | B21: Columna y epílogo | Motor de fases, resolución y epílogo contrastados; recuperación de copias antiguas corregida | Pendiente en el mismo guardado |
-| 100 células, cinco núcleos y diez Fragmentos | Fuentes y contrato auditados, 95 entradas/retornos locales; P8 parcial/C100 sin ciclo | Recogidas opcionales en curso; el cierre exige todos los totales |
+| 100 células, cinco núcleos y diez Fragmentos | Fuentes y contrato auditados, 95 entradas/retornos locales; P8 parcial/C100 sin ciclo | 100 células únicas y cinco Núcleos obtenidos jugando; F01–F08; faltan los dos últimos Fragmentos |
 | Dieciocho Tablillas | T01–T15 de episodios; Terrax/Terror/Legendaria tras Arceus, con captura o KO | Trece recibidas hasta B15; pista T13 resuelta en el Lago Viejo |
 
-Evidencia continua: `tools/cache/campaign/campaign_checkpoint_B04.json`…`campaign_checkpoint_B15.json`,
+Evidencia continua: `tools/cache/campaign/campaign_checkpoint_B04.json`…`campaign_checkpoint_B16.json`,
 `campaign_checkpoint.json`, `campaign_live.json`, capturas y transcripciones. El inventario independiente tiene
 sus fuentes, geometría, trazas y límites de fixtures en `tools/cache/progression_inventory_report.md`.
 
