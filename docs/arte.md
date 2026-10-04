@@ -386,7 +386,7 @@ API de campo de los dos) y `tests/prota_f.test.mjs` (cabeza de 22 px centrada co
 altura, goma verde en los 16 frames y nunca en la chaqueta, vuelo del pantalón, alturas de las poses, paleta y
 espalda de combate). También verifican los 18 PNG exportados, los ciclos completos y que ningún píxel opaco de campo se pierda fuera del frame.
 
-## 10. Sprites de combate humanos: calidad de origen (revisión del 25-09-2026) — para una tarea de arte posterior
+## 10. Retratos humanos de combate (pase de arte, 04-10-2026)
 
 El creador vio los sprites de combate de los humanos «muy cuadrados». Causa técnica (ya corregida en
 `battle/scene/camera.js`): la cámara del combate ampliaba ×1,3–1,4 en la entrada y ×1,08–1,14 al enfocar, con muestreo
@@ -394,25 +394,27 @@ al vecino más cercano, así que los píxeles de arte (2×2) salían como bloque
 siempre 1 y **no se amplían de más**: todos se dibujan 1:1 (frame 160×160 = nativo 80×80 ×2, como los de Añil; medido
 con `tools/cache/cb_pixscale.mjs`: todos tienen píxel de 2×2 exacto).
 
-Aun a escala correcta, la revisión del 25-09 encontró siluetas rígidas y sombreado plano en el arte de combate
-propio. El kit recuperado el 03-10 renueva las cabezas de los protagonistas, pero conserva su torso y mochila
-procedurales. Las observaciones de NPC siguen pendientes de una pasada de arte:
+Se rehízo la geometría del cuerpo de los trece frontales: caderas y hombros en tres cuartos, rodillas flexionadas,
+peso sobre una pierna, mangas separadas del torso y pliegues en chaquetas, abrigos y falda. Gael presenta una Ball,
+Alerce sostiene su libreta y los técnicos tienen poses diferentes. Se conservan vestuario, paletas y accesorios del
+elenco; la revisión compara también los entrenadores `CHICO`, `CAZABICHOS` y `CIENTIFICO` de Añil a escala real.
 
-| Sprite | Problema observado |
-|---|---|
-| `protagonista_m_back` | Pelo con mechones y banda de brillo; torso y mochila aún rectangulares (primer frame: 112×150 px, 68 % de relleno, 18 colores). Pendiente de aprobación y acabado artístico (D30). |
-| `protagonista_f_back` | Melena, trenza y goma verde integradas; torso y mochila todavía rígidos (primer frame: 112×138 px, 75 % de relleno, 18 colores). Diseño provisional (D30). |
-| `gael_front`, `profesor_front`, `guardiana_front` | Figura rígida de frente que ocupa casi todo el alto (148–156 px frente a ~120 de los de Añil), torso rectangular con los brazos pegados, piernas como dos columnas. |
-| `leandro_front`, `abril_front`, `fermin_front`, `olvido_front`, `sol_front` | Mismo esqueleto frontal («4 cabezas») con contorno recto; el atrezo (llave, pico, libreta) no rompe la silueta. |
-| `vertice_front`, `casia_front`, `garrido_front` | Batas y trajes como rectángulos con poco volumen; 25–29 colores y casi sin sombreado. |
-| `genesis_tecnico_front`, `genesis_tecnica_front` | Uniforme simétrico en bloque; los dos son el mismo cuerpo con cambios mínimos. |
+`front_kit.mjs` construye las prendas y extremidades. Las cabezas se dibujan en una capa independiente del atrezo;
+`front_layout.mjs` compone la figura en la rejilla nativa, con el apoyo común de los pies y aire sobre la cabeza.
+Las figuras exportadas miden 120–128 px dentro del frame de 160×160. El PNG se genera a ×2 entero; el juego lo
+dibuja a ×1. No hay puntas sueltas ni contornos cortados.
 
-Referencia de calidad: los entrenadores de Añil (`Graphics/Trainers`, p. ej. `CHICO.png`, `CAZABICHOS.png`) ocupan
-~120 px de alto con un 37–41 % de relleno de su caja (poses dinámicas, silueta abierta, antialias de color) frente al
-55–75 % de los propios. Una pasada de arte debería: bajar la figura a ~120 px dentro del frame de 160, abrir la
-silueta (pose en 3/4, brazos separados, peso en una pierna), sombrear en 3–4 tonos por material y rehacer las
-espaldas de los protagonistas con la mochila integrada en la silueta. Mientras tanto, las clases genéricas de Añil
-(`content/anilClasses.js`) no tienen este problema.
+Las dos espaldas conservan las cabezas del kit y los cinco tiempos del lanzamiento. El torso tiene hombros
+curvos, pliegues y un giro que acompaña al brazo; la mochila se estrecha, inclina y muestra solapa y bolsillo
+lateral. El corte inferior sigue siendo intencional, como en BW. La trenza y su goma verde se conservan.
+
+Verificación: 36 pruebas de arte y protagonistas, PNG reproducibles desde las fuentes y 15 capturas de Chrome
+del visor real, sin errores de carga ni ejecución. `node tools/e2e_battle_art.mjs` repite la integración;
+`node tools/review_battle_art.mjs` genera las comparativas y métricas. La evidencia está en
+`tools/cache/arte-final/` (`fronts.png`, `backs.png`, `metrics.json`, `browser/result.json`).
+
+El pase técnico y visual está integrado; los diseños propios conservan la etiqueta provisional hasta la
+aprobación artística del autor (D30).
 
 
 ### Revisión del kit, 03-10-2026
@@ -425,6 +427,5 @@ de caminar, correr, montura, nado, buceo, trepar, pesca, Vuelo y lanzamiento se 
 La revisión en Chrome recorre los ocho modos de ambos protagonistas y el lanzamiento, sin errores de carga ni
 de ejecución: 18 capturas y el resultado en `tools/cache/art/browser/`. Las hojas completas comparadas entre
 opciones M/F están en `tools/cache/art/modes/`; las comparativas con NPC, en `tools/cache/art/`.
-Sigue pendiente la
-aprobación del autor D30; la composición procedural de las espaldas de combate aún puede recibir una pasada
-artística. El retrato de combate se recorta por abajo de forma intencional, como en BW.
+La aprobación del autor D30 sigue pendiente. El pase del 04-10 del apartado anterior renueva la composición de
+las espaldas de combate; el corte inferior permanece intencional, como en BW.

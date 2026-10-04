@@ -5,6 +5,7 @@
 import { Img, hex } from '../pixel.mjs';
 import { ellipse, poly, capsule, rect, paint, silhouette, stamp, lineIn } from './raster.mjs';
 import { FACE, FRONT_SIZE, drawHead } from './battle_front.mjs';
+import { finishFront } from './front_layout.mjs';
 
 const W = FRONT_SIZE;
 const H = FRONT_SIZE;
@@ -56,14 +57,15 @@ function drawHair(img) {
 }
 
 export function buildGuardianaFront() {
-  const img = new Img(W, H);
+  let img = new Img(W, H);
   paint(img, rect(W, H, 37, 25, 6, 6), C.skin, { lightW: 0 }); // cuello
   // Piernas y botas altas.
-  paint(img, rect(W, H, 29, 52, 22, 5).union(capsule(W, H, 35, 55, 34, 66, 4.5), capsule(W, H, 45, 55, 46, 66, 4.5)), C.pants);
-  paint(img, rect(W, H, 29, 62, 10, 12).union(ellipse(W, H, 33, 75, 6, 3.5)), C.boots, { lightW: 1 });
-  paint(img, rect(W, H, 41, 62, 10, 12).union(ellipse(W, H, 47, 75, 6, 3.5)), C.boots, { lightW: 1 });
+  paint(img, P([[32, 52], [48, 52], [46, 59], [38, 60], [33, 57]])
+    .union(capsule(W, H, 35, 55, 32, 66, 3.5), capsule(W, H, 44, 55, 47, 64, 3.5)), C.pants);
+  paint(img, P([[29, 62], [36, 63], [34, 74], [27, 75]]).union(ellipse(W, H, 30, 75, 5.5, 2.5)), C.boots, { lightW: 1 });
+  paint(img, P([[43, 62], [50, 62], [53, 72], [46, 73]]).union(ellipse(W, H, 50, 73, 5.5, 2.5)), C.boots, { lightW: 1 });
   // Chaqueta de campo abierta sobre camisa oscura, con pañuelo al cuello.
-  const torso = P([[26, 30], [54, 30], [57, 37], [55, 56], [25, 56], [23, 37]]);
+  const torso = P([[30, 31], [38, 29], [49, 30], [53, 36], [48, 46], [51, 54], [44, 57], [29, 54], [32, 45], [27, 36]]);
   paint(img, torso, C.jacket, { shadowW: 4 });
   paint(img, P([[35, 29], [45, 29], [44, 55], [36, 55]]), C.shirt, { lightW: 1 });
   lineIn(img, torso, 35, 30, 34, 55, C.jacket.line);
@@ -73,6 +75,7 @@ export function buildGuardianaFront() {
   paint(img, P([[34, 28], [46, 28], [40, 36]]), C.scarf, { lightW: 1, shadowW: 1 });
   // Correa del zurrón cruzada (hombro derecho → cadera izquierda) y bolsillos de la chaqueta.
   paint(img, capsule(W, H, 50, 31, 29, 53, 1.6), C.strap, { lightW: 0, shadowW: 1 });
+  paint(img, P([[25, 50], [31, 53], [30, 62], [23, 61], [20, 57], [22, 51]]), C.strap, { lightW: 1, shadowW: 2 });
   paint(img, rect(W, H, 27, 47, 7, 6), C.jacket, { lightW: 1, shadowW: 1 });
   paint(img, rect(W, H, 46, 47, 7, 6), C.jacket, { lightW: 1, shadowW: 1 });
   // Brazos cruzados: brazos junto al cuerpo y antebrazos en horizontal sobre el pecho.
@@ -82,8 +85,10 @@ export function buildGuardianaFront() {
   paint(img, ellipse(W, H, 50, 40, 3, 2.5), C.skin, { lightW: 1, shadowW: 1 });
   paint(img, capsule(W, H, 55, 44, 33, 43, 3.8), C.jacket, { shadowW: 2 });
   paint(img, ellipse(W, H, 30, 43, 3, 2.5), C.skin, { lightW: 1, shadowW: 1 });
+  const body = img;
+  img = new Img(W, H);
   drawHead(img, C.skin);
   drawHair(img);
   drawOldFace(img);
-  return silhouette(img, C.outline);
+  return finishFront(body, C.outline, { head: img, height: 61 });
 }

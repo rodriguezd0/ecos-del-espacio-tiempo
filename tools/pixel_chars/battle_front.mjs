@@ -3,6 +3,7 @@
 // expresión seria sin cejas furiosas). Profesor: propuesta neutral sin emblemas (D03 abierto).
 import { Img, hex } from '../pixel.mjs';
 import { ellipse, poly, capsule, rect, paint, silhouette, stamp, lineIn } from './raster.mjs';
+import { finishFront } from './front_layout.mjs';
 
 export const FRONT_SIZE = 80;
 const W = FRONT_SIZE;
@@ -44,25 +45,33 @@ const GAEL = {
 
 export function buildGaelFront() {
   const c = GAEL;
-  const img = new Img(W, H);
+  let img = new Img(W, H);
   paint(img, rect(W, H, 37, 25, 6, 6), c.skin, { lightW: 0 }); // cuello
   // Piernas y botas.
-  paint(img, rect(W, H, 29, 50, 22, 6).union(capsule(W, H, 35, 54, 34, 68, 4.5), capsule(W, H, 45, 54, 46, 68, 4.5)), c.pants);
-  paint(img, rect(W, H, 30, 64, 8, 10).union(ellipse(W, H, 33, 75, 5.5, 3.5)), c.boots, { lightW: 1 });
-  paint(img, rect(W, H, 42, 64, 8, 10).union(ellipse(W, H, 47, 75, 5.5, 3.5)), c.boots, { lightW: 1 });
+  const pants = P([[33, 50], [48, 51], [47, 56], [42, 60], [34, 56]])
+    .union(capsule(W, H, 35, 54, 31, 65, 3.7), capsule(W, H, 44, 55, 46, 63, 3.5));
+  paint(img, pants, c.pants, { lightW: 1, shadowW: 3 });
+  lineIn(img, pants, 32, 61, 36, 60, c.pants.shadow);
+  paint(img, P([[28, 64], [34, 63], [31, 74], [24, 75]]).union(ellipse(W, H, 27, 75, 5.5, 2.5)), c.boots, { lightW: 1 });
+  paint(img, P([[43, 61], [49, 62], [53, 72], [46, 73]]).union(ellipse(W, H, 51, 73, 5.5, 2.5)), c.boots, { lightW: 1 });
   // Chaqueta bordó abierta en V sobre camiseta oscura, cremallera metálica.
-  const torso = P([[27, 30], [53, 30], [56, 36], [53, 54], [27, 54], [24, 36]]);
+  const torso = P([[31, 31], [38, 28], [49, 30], [52, 36], [48, 46], [50, 52], [44, 55], [31, 52], [33, 44], [28, 36]]);
   paint(img, torso, c.jacket, { shadowW: 4 });
   paint(img, P([[37, 29], [43, 29], [40, 39]]), c.shirt, { lightW: 0 });
   lineIn(img, torso, 40, 39, 40, 53, '#A8A8B0');
   lineIn(img, torso, 36, 30, 39, 40, c.jacket.line);
   lineIn(img, torso, 44, 30, 41, 40, c.jacket.line);
-  lineIn(img, torso, 28, 52, 52, 52, c.jacket.shadow); // bajo elástico
-  // Brazo izquierdo colgando; derecho con la mano en la cadera (pose seria, sin agresividad).
-  paint(img, capsule(W, H, 26, 33, 22, 46, 4).union(capsule(W, H, 22, 46, 23, 53, 3.5)), c.jacket);
-  paint(img, capsule(W, H, 54, 33, 59, 42, 4).union(capsule(W, H, 59, 42, 53, 49, 3.5)), c.jacket);
-  paint(img, ellipse(W, H, 23, 56, 3, 3), c.skin, { lightW: 1, shadowW: 1 });
+  lineIn(img, torso, 32, 51, 49, 53, c.jacket.shadow); // bajo y pliegues al cargar el peso
+  lineIn(img, torso, 32, 36, 37, 39, c.jacket.light);
+  lineIn(img, torso, 45, 47, 49, 49, c.jacket.line);
+  // Un brazo presenta la Ball; el contrario descansa en la cadera, con el codo separado.
+  paint(img, capsule(W, H, 30, 33, 20, 43, 3.5).union(capsule(W, H, 20, 43, 17, 33, 3)), c.jacket);
+  paint(img, capsule(W, H, 50, 33, 62, 42, 3.5).union(capsule(W, H, 62, 42, 53, 49, 3)), c.jacket);
+  paint(img, ellipse(W, H, 17, 31, 3, 3), c.skin, { lightW: 1, shadowW: 1 });
+  stamp(img, ['.kkk.', 'kRRRk', 'kkWkk', 'kWWWk', '.kkk.'], { k: c.outline, R: '#D84C48', W: '#F4ECE4' }, 14, 26);
   paint(img, ellipse(W, H, 52, 50, 3, 2.5), c.skin, { lightW: 1, shadowW: 1 });
+  const body = img;
+  img = new Img(W, H);
   drawHead(img, c.skin);
   // Pelo rubio en puntas barridas hacia atrás y a su izquierda; frente despejada con dos mechones.
   const spikes = [
@@ -77,7 +86,7 @@ export function buildGaelFront() {
   lineIn(img, hair, 36, 6, 33, 12, c.hair.shadow);
   lineIn(img, hair, 44, 6, 46, 11, c.hair.shadow);
   drawFace(img, { iris: '#58A0D8', pupil: '#28507A', brow: c.hair.shadow, mouth: c.skin.line, lash: c.outline });
-  return silhouette(img, c.outline);
+  return finishFront(body, c.outline, { head: img, height: 60 });
 }
 
 const PROF = {
@@ -92,13 +101,14 @@ const PROF = {
 
 export function buildProfesorFront() {
   const c = PROF;
-  const img = new Img(W, H);
+  let img = new Img(W, H);
   paint(img, rect(W, H, 37, 25, 6, 6), c.skin, { lightW: 0 });
   // Piernas y zapatos bajo el abrigo.
-  paint(img, capsule(W, H, 35, 60, 35, 72, 4).union(capsule(W, H, 45, 60, 45, 72, 4)), c.pants);
-  paint(img, ellipse(W, H, 34, 75, 5, 3).union(ellipse(W, H, 46, 75, 5, 3)), c.shoes, { lightW: 1 });
+  paint(img, capsule(W, H, 35, 58, 33, 73, 3.5).union(capsule(W, H, 44, 58, 48, 71, 3.3)), c.pants);
+  paint(img, ellipse(W, H, 31, 75, 5, 2.5).union(ellipse(W, H, 50, 73, 5, 2.5)), c.shoes, { lightW: 1 });
   // Abrigo largo de campo, abierto: jersey pizarra y pantalón en la abertura.
-  const coat = P([[27, 30], [53, 30], [56, 36], [58, 64], [22, 64], [24, 36]]);
+  const coat = P([[31, 31], [38, 28], [49, 30], [52, 36], [48, 45], [54, 62],
+    [43, 64], [39, 61], [33, 64], [25, 62], [31, 44], [28, 36]]);
   paint(img, coat, c.coat, { shadowW: 4 });
   paint(img, P([[37, 29], [43, 29], [44, 48], [36, 48]]), c.sweater, { lightW: 1 });
   paint(img, P([[36, 48], [44, 48], [45, 64], [35, 64]]), c.pants, { lightW: 0 });
@@ -107,10 +117,14 @@ export function buildProfesorFront() {
   lineIn(img, coat, 34, 31, 31, 40, c.coat.shadow); // solapas
   lineIn(img, coat, 46, 31, 49, 40, c.coat.shadow);
   // Mangas y manos.
-  paint(img, capsule(W, H, 26, 34, 23, 52, 4.5), c.coat);
-  paint(img, capsule(W, H, 54, 34, 57, 52, 4.5), c.coat);
-  paint(img, ellipse(W, H, 23, 55, 3, 3), c.skin, { lightW: 1, shadowW: 1 });
-  paint(img, ellipse(W, H, 57, 55, 3, 3), c.skin, { lightW: 1, shadowW: 1 });
+  paint(img, capsule(W, H, 30, 34, 23, 46, 3.5).union(capsule(W, H, 23, 46, 26, 53, 3)), c.coat);
+  paint(img, capsule(W, H, 50, 33, 58, 44, 3.5).union(capsule(W, H, 58, 44, 65, 37, 3)), c.coat);
+  paint(img, ellipse(W, H, 26, 55, 3, 2.5), c.skin, { lightW: 1, shadowW: 1 });
+  paint(img, ellipse(W, H, 67, 36, 3, 2.5), c.skin, { lightW: 1, shadowW: 1 });
+  paint(img, P([[61, 28], [72, 30], [71, 38], [60, 36]]), c.sweater, { lightW: 1 });
+  paint(img, P([[62, 29], [70, 30], [70, 35], [62, 34]]), c.coat, { lightW: 1 });
+  const body = img;
+  img = new Img(W, H);
   drawHead(img, c.skin);
   // Pelo corto y ordenado con raya y flequillo peinado hacia un lado.
   const hair = ellipse(W, H, 40, 11, 11, 7).and(rect(W, H, 0, 0, W, 12))
@@ -120,5 +134,5 @@ export function buildProfesorFront() {
   lineIn(img, hair, 45, 4, 44, 10, c.hair.shadow); // raya
   lineIn(img, hair, 43, 11, 37, 13, c.hair.shadow);
   drawFace(img, { iris: '#5A4030', pupil: '#2A1C14', brow: c.hair.base, mouth: c.skin.line, lash: c.outline });
-  return silhouette(img, c.outline);
+  return finishFront(body, c.outline, { head: img, height: 63 });
 }

@@ -1,7 +1,7 @@
 # Revisión del contenido — 04-10-2026
 
 Objetivo activo: terminar el juego completo. Este documento registra el cierre del postgame y los DLC; sigue en
-marcha la partida continua desde Nueva partida, la auditoría de obtención y el pase de arte humano.
+marcha la partida continua desde Nueva partida y la auditoría de obtención. El pase de arte humano está integrado.
 
 ## Requisitos y evidencia
 
@@ -13,6 +13,7 @@ marcha la partida continua desde Nueva partida, la auditoría de obtención y el
 | B24 | Seis categorías, máximo tres activos, Rumor → Indicio → Hallazgo, cuatro oleadas y todas las búsquedas canónicas | 155 pruebas Node; Chrome: 30/30 Hallazgos, 79 hitos distintos, 47 combates reales, crianza/evoluciones y ambos lugares insulares marcados en MAPA |
 | Pokédex D28 | 346 generales, ocho Paradojas, 11 Ultraentes, 60 legendarios/singulares | Catálogo de 425 entradas y generador corregidos en e717e01; cuatro pruebas de catálogo/UI y regresión del motor |
 | Dobles | Dos Pokémon propios separados, sombras y efectos sobre sus posiciones | 3c0bafe; pruebas de disposición y combate cooperativo real con ambos motores |
+| Arte humano | Proporciones y poses de los trece NPC, torso/mochila de las dos espaldas, escala entera y exportación reproducible | 36 pruebas y 15 capturas del visor real; comparativas con Añil en `tools/cache/arte-final/` |
 
 Los recorridos de bloque preparan bancos aislados de equipo, historia y recursos. Sus pasos, menús, combates,
 capturas, evoluciones y crianza se ejecutan en el motor real. La comprobación de progresión sin preajustes usa

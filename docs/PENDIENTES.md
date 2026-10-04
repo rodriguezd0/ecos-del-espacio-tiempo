@@ -25,10 +25,10 @@
 > Después:
 > 1. P6 terminado: solo puzzles, sin Pokémon ni Guardianes.
 > 2. P7–P10 terminados con el reparto confirmado por el creador el 03-10: puzzles, combates reales, pisos, regresos y migración de guardados probados en Chrome.
-> 3. Arte humano integrado; pendiente el pase visual final y la aprobación del autor (D30).
+> 3. Arte humano integrado y revisado: trece poses de NPC, dos lanzamientos y 15 capturas en Chrome. Pendiente la aprobación artística del autor (D30).
 > 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
 > 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
-> 6. Partida continua desde «Nueva partida»: B01–B03 recorridos con el mismo guardado, equipo, dinero y objetos obtenidos en juego.
+> 6. Partida continua desde «Nueva partida»: B01–B04 recorridos y guardados por UI; B05 en marcha, con el mismo equipo, dinero y objetos obtenidos en juego.
 >
 > Pendientes menores:
 > - Solape en dobles corregido (3c0bafe): posiciones, sombras y efectos revisados en combate cooperativo real.
@@ -45,7 +45,7 @@ La rama de pausa se revisa por módulos; sus versiones antiguas de mapas no sust
 | Frente | Estado al reanudar | Verificación necesaria |
 |---|---|---|
 | Campaña B01–B21 | Implementada; los diez Pilares verticales terminados y probados | Recorrido continuo sin saltos de progresión, final y carga del epílogo |
-| Arte humano | Acciones de protagonistas M/F integradas y probadas | Pase visual de poses y NPC de combate; sin recortes ni solapes |
+| Arte humano | Acciones M/F, trece poses de NPC y dos lanzamientos integrados; 15 capturas de Chrome sin errores | Aprobación artística D30; comprobación en la partida continua |
 | B22, postgame base | a–e implementados y recorridos en Chrome; B22c incluye siete capturas y sus retornos | Auditoría final de requisitos e integración |
 | B23, Almenara | D1-01…05 terminadas; derrota/reintento de Gael, Mega Zygarde, sellado, captura opcional y regreso real probados | Revisión visual y suite de integración |
 | B24, Expediciones | 30/30 Hallazgos recorridos en Chrome; siete Ultrazonas, Naganadel, Necrozma y ambas hipótesis insulares probados | Auditoría final de obtención e integración |
@@ -128,20 +128,21 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 
 ## 4. Arte
 - **Protagonistas M/F** en estilo BW chibi: acciones y sprites integrados (c362de9), 51 pruebas y 18 capturas de navegador.
-  Falta el pase visual final de poses de combate. Zygarde no se toca.
-- **Diseño de la protagonista:** registrarlo como X32 en DECISIONES (X31 ya lo ocupa B19).
-- **Sprites de combate de NPC/entrenadores** en estilo BW (pase de arte).
+  Las espaldas de combate también tienen el pase de torso, mochila y lanzamiento del 04-10.
+- **Diseño de la protagonista:** registrado como X32 en DECISIONES.
+- **Sprites de combate de NPC/entrenadores:** trece frontales rehechos a escala de Añil; 36 pruebas y 15 capturas en Chrome. Comparativas en `tools/cache/arte-final/`; falta aprobación artística D30.
 - **Core y célula de Zygarde:** ya son los sprites originales del creador (hecho, f5c89f2).
 
 ## 5. Cierre del contenido
 - B22a–e y B23 «Almenara» implementados y recorridos; documentación junto a sus mapas y herramientas `e2e_b22*.mjs` / `e2e_b23.mjs`.
 - B24 «Registro de Expediciones» implementado y recorrido con 30/30 Hallazgos (`e2e_b24.mjs`).
 - Catálogo de la Pokédex corregido a 425 entradas; generador y numeración anterior verificados (e717e01). Auditoría de obtención en marcha.
+- Sinistea rechazado sigue disponible tras P5 y cargar la partida (a1eb5ea). En revisión: otras entregas con el equipo y PC llenos.
 - Partida continua completa y pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión.
 
 ## 6. Menores
 - El seguidor Zygarde a veces aparece encima del jugador en las capas de eco (B14).
-- Gael B6 (B20): comprobar `megaRingName: 'el aro negro'`.
+- Gael B6 (B20): comprobado `megaRingName: 'el aro negro'` en su entrenador; también en B15.
 
 ## Forma de trabajar (pedido del usuario)
 Menos agentes a la vez, informes frecuentes. El usuario quiere supervisar el desarrollo.

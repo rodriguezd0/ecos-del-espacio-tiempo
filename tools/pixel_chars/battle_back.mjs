@@ -34,10 +34,10 @@ function armMask(kind, [lx, ly]) {
   const sx = 57 + lx;
   const sy = 58 + ly;
   switch (kind) {
-    case 'down': return capsule(W, H, sx, sy, sx + 6, 82, 6);
-    case 'windup': return capsule(W, H, sx, sy, sx + 9, sy + 10, 6).union(capsule(W, H, sx + 9, sy + 10, sx + 5, sy + 17, 5));
-    case 'raise': return capsule(W, H, sx, sy - 2, sx + 10, sy - 12, 6).union(capsule(W, H, sx + 10, sy - 12, sx + 6, sy - 27, 5));
-    case 'throw': return capsule(W, H, sx - 1, sy - 4, sx + 3, sy - 18, 6).union(capsule(W, H, sx + 3, sy - 18, sx + 1, sy - 33, 5));
+    case 'down': return capsule(W, H, sx - 2, sy, sx + 4, 69, 4.8).union(capsule(W, H, sx + 4, 69, sx + 1, 82, 4.2));
+    case 'windup': return capsule(W, H, sx - 2, sy, sx + 9, sy + 10, 4.8).union(capsule(W, H, sx + 9, sy + 10, sx + 5, sy + 17, 4.2));
+    case 'raise': return capsule(W, H, sx - 2, sy - 2, sx + 10, sy - 12, 4.8).union(capsule(W, H, sx + 10, sy - 12, sx + 6, sy - 27, 4.2));
+    case 'throw': return capsule(W, H, sx - 1, sy - 4, sx + 3, sy - 18, 4.8).union(capsule(W, H, sx + 3, sy - 18, sx + 1, sy - 33, 4.2));
     default: return null; // 'follow': el brazo queda oculto tras el cuerpo
   }
 }
@@ -139,44 +139,47 @@ const BUCKLE = ['kkk', 'kWk', 'kWk', 'kkk'];
  * Mochila vista de espaldas (D06): correas que suben por encima de los hombros, asa, cuerpo con
  * solapa y hebilla central, y bolsillo inferior; se sale del marco por abajo como el torso.
  */
-function drawBackpack(img, tones, [lx, ly]) {
-  const P = (pts) => poly(W, H, pts.map(([x, y]) => [x + lx, y + ly]));
+function drawBackpack(img, tones, [lx, ly], twist) {
+  const P = (pts) => poly(W, H, pts.map(([x, y]) => [x + lx + twist * (y - 59) / 24, y + ly]));
   const straps = capsule(W, H, 31 + lx, 62 + ly, 25 + lx, 52 + ly, 2.4)
     .union(capsule(W, H, 49 + lx, 62 + ly, 55 + lx, 52 + ly, 2.4));
   paint(img, straps, tones, { lightW: 1, shadowW: 1 });
-  const handle = ellipse(W, H, 40 + lx, 58 + ly, 5, 4).minus(ellipse(W, H, 40 + lx, 58.5 + ly, 2.6, 2.2));
+  const handle = ellipse(W, H, 38 + lx, 58 + ly, 4, 3).minus(ellipse(W, H, 38 + lx, 58.5 + ly, 2, 1.5));
   paint(img, handle, tones, { lightW: 0, shadowW: 0 });
-  const body = P([[30, 59], [50, 59], [54, 64], [56, 80], [24, 80], [26, 64]]);
+  const body = P([[30, 60], [38, 58], [47, 60], [51, 64], [53, 71], [52, 81], [28, 81], [25, 72], [27, 64]]);
   paint(img, body, tones, { lightW: 2, shadowW: 3 });
-  const flap = P([[30, 59], [50, 59], [53, 64], [53, 69], [40, 71], [27, 69], [27, 64]]).and(body);
+  const flap = P([[30, 60], [38, 59], [47, 61], [49, 65], [47, 69], [37, 71], [28, 68], [27, 64]]).and(body);
   paint(img, flap, tones, { lightW: 2, shadowW: 2 });
-  const pocket = P([[31, 73], [49, 73], [50, 80], [30, 80]]);
+  const pocket = P([[30, 74], [45, 73], [48, 77], [47, 81], [29, 81]]);
   paint(img, pocket, tones, { lightW: 1, shadowW: 2 });
-  lineIn(img, pocket, 31, 76, 49, 76, tones.shadow);
-  stamp(img, BUCKLE, { k: tones.line, W: '#D8D8E0' }, 39 + lx, 67 + ly);
+  paint(img, P([[50, 70], [54, 69], [56, 76], [54, 80], [51, 79]]), tones, { lightW: 0, shadowW: 2 });
+  lineIn(img, pocket, 30 + lx, 77 + ly, 45 + lx, 76 + ly, tones.shadow);
+  lineIn(img, body, 28 + lx, 68 + ly, 29 + lx, 75 + ly, tones.light);
+  stamp(img, BUCKLE, { k: tones.line, W: '#D8D8E0' }, 36 + lx, 67 + ly);
 }
 
 function drawFrame(cfg, pose) {
   const img = new Img(W, H);
   const [lx, ly] = pose.lean;
+  const twist = pose.arm === 'throw' ? -4 : pose.arm === 'windup' ? 3 : 0;
   const arm = armMask(pose.arm, pose.lean);
   const behind = pose.arm === 'throw';
   if (arm && behind) paint(img, arm, cfg.jacket);
-  const torso = ellipse(W, H, 25 + lx, 61 + ly, 12, 9).union(
-    ellipse(W, H, 55 + lx, 61 + ly, 12, 9),
-    rect(W, H, 13 + lx, 61 + ly, 55, 22),
-    poly(W, H, [[24, 53], [56, 53], [62, 62], [18, 62]].map(([x, y]) => [x + lx, y + ly])),
-  );
+  const torso = poly(W, H, [[28, 54], [41, 51], [53, 54], [60, 60], [63, 69],
+    [58 + twist, 83], [21 + twist, 83], [18, 71], [20, 62]].map(([x, y]) => [x + lx, y + ly]));
   paint(img, torso, cfg.jacket, { shadowW: 4 });
-  lineIn(img, torso, 40 + lx, 64 + ly, 40 + lx, 80, cfg.jacket.shadow); // costura central
-  paint(img, capsule(W, H, 23 + lx, 59 + ly, 17 + lx, 82, 6), cfg.jacket); // brazo izquierdo
+  lineIn(img, torso, 54 + lx, 65 + ly, 58 + lx + twist, 76, cfg.jacket.shadow);
+  lineIn(img, torso, 21 + lx, 64 + ly, 26 + lx, 70 + ly, cfg.jacket.light);
+  lineIn(img, torso, 24 + lx, 74 + ly, 28 + lx + twist, 78, cfg.jacket.line);
+  paint(img, capsule(W, H, 24 + lx, 58 + ly, 17 + lx, 68, 4.8)
+    .union(capsule(W, H, 17 + lx, 68, 20 + lx + twist, 83, 4.2)), cfg.jacket); // brazo que compensa el giro
   paint(img, rect(W, H, 34 + lx, 40 + ly, 12, 12), SKIN, { lightW: 0 }); // cuello
   paint(img, poly(W, H, [[29, 47], [51, 47], [54, 55], [26, 55]].map(([x, y]) => [x + lx, y + ly])), cfg.collar);
   if (cfg.ears) {
     paint(img, ellipse(W, H, 22 + lx, 33 + ly, 3, 4), SKIN, { lightW: 1, shadowW: 1 });
     paint(img, ellipse(W, H, 58 + lx, 33 + ly, 3, 4), SKIN, { lightW: 1, shadowW: 1 });
   }
-  if (cfg.bag) drawBackpack(img, cfg.bag, pose.lean);
+  if (cfg.bag) drawBackpack(img, cfg.bag, pose.lean, twist);
   if (arm && !behind) paint(img, arm, cfg.jacket); // bajo el pelo (la melena cubre el hombro)
   const hair = cfg.hairMask(pose.lean);
   paint(img, hair, cfg.hair, { lightW: 3, shadowW: 4 });

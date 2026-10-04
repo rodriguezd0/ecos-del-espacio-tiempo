@@ -21,25 +21,33 @@ export function neck(img, skin) {
   paint(img, R(37, 25, 6, 6), skin, { lightW: 0 });
 }
 
-/** Pantalón y calzado. `boots`: caña alta; `shoes`: zapato bajo. */
-export function legs(img, pants, shoes, { boots = false, gap = 10 } = {}) {
-  const lx = 40 - gap / 2;
-  const rx = 40 + gap / 2;
-  paint(img, R(29, 50, 22, 6).union(CAP(lx, 54, lx - 1, 68, 4.5), CAP(rx, 54, rx + 1, 68, 4.5)), pants);
-  if (boots) {
-    paint(img, R(lx - 6, 62, 10, 12).union(E(lx - 2, 75, 6, 3.5)), shoes, { lightW: 1 });
-    paint(img, R(rx - 4, 62, 10, 12).union(E(rx + 2, 75, 6, 3.5)), shoes, { lightW: 1 });
-  } else {
-    paint(img, E(lx - 1, 75, 5, 3).union(R(lx - 4, 70, 7, 4)), shoes, { lightW: 1 });
-    paint(img, E(rx + 1, 75, 5, 3).union(R(rx - 3, 70, 7, 4)), shoes, { lightW: 1 });
+/** Peso sobre una pierna, rodilla contraria flexionada y pies en tres cuartos. */
+export function legs(img, pants, shoes, { boots = false, gap = 10, stance = 'rest' } = {}) {
+  const spread = (gap - 10) / 2;
+  const left = stance === 'stride' ? [[35, 53], [31 - spread, 62], [28 - spread, 72]]
+    : [[35, 53], [34 - spread, 63], [34 - spread, 72]];
+  const right = stance === 'wide' ? [[44, 54], [47 + spread, 64], [51 + spread, 72]]
+    : [[44, 54], [45 + spread, 61], [48 + spread, 70]];
+  const hip = P([[32, 49], [48, 50], [49, 55], [41, 59], [33, 56]]);
+  for (const points of [left, right]) {
+    const [[hx, hy], [kx, ky], [fx, fy]] = points;
+    const leg = CAP(hx, hy, kx, ky, 3.7).union(CAP(kx, ky, fx, fy, 3.1));
+    paint(img, leg, pants, { lightW: 1, shadowW: 2 });
+    lineIn(img, leg, kx - 2, ky - 1, kx + 2, ky + 1, pants.shadow);
+    const boot = boots ? P([[kx - 3, ky + 1], [kx + 3, ky + 1], [fx + 3, fy + 2], [fx - 3, fy + 2]])
+      : R(fx - 3, fy - 1, 6, 4);
+    const foot = boot.union(E(fx + (points === left ? -2 : 2), fy + 3, 5.3, 2.5));
+    paint(img, foot, shoes, { lightW: 1, shadowW: 2 });
+    lineIn(img, foot, fx - 3, fy + 4, fx + 4, fy + 4, shoes.line);
   }
+  paint(img, hip, pants, { lightW: 1, shadowW: 2 });
 }
 
 /** Piernas con falda larga por encima (de la cintura a media pantorrilla). */
 export function longSkirt(img, skirt, stockings, shoes) {
   paint(img, CAP(35, 66, 34, 72, 3.5).union(CAP(45, 66, 46, 72, 3.5)), stockings, { lightW: 0 });
   paint(img, E(34, 75, 5, 3).union(E(46, 75, 5, 3)), shoes, { lightW: 1 });
-  const s = P([[28, 48], [52, 48], [57, 70], [23, 70]]);
+  const s = P([[32, 48], [48, 49], [51, 58], [56, 69], [43, 71], [26, 68], [29, 57]]);
   paint(img, s, skirt, { shadowW: 4 });
   lineIn(img, s, 34, 52, 31, 69, skirt.shadow);
   lineIn(img, s, 46, 52, 49, 69, skirt.shadow);
@@ -48,8 +56,12 @@ export function longSkirt(img, skirt, stockings, shoes) {
 /** Torso de chaqueta. `open`: abierta con la prenda interior; `width` estrecha o ensancha los hombros. */
 export function jacket(img, t, { inner = null, open = false, width = 0, zip = null } = {}) {
   const w = width;
-  const torso = P([[27 - w, 30], [53 + w, 30], [56 + w, 36], [53 + w, 54], [27 - w, 54], [24 - w, 36]]);
+  const torso = P([[31 - w, 31], [38, 28], [49 + w, 30], [52 + w, 36], [48 + w, 46],
+    [50 + w, 52], [44, 55], [31 - w, 52], [32 - w, 44], [28 - w, 36]]);
   paint(img, torso, t, { shadowW: 4 });
+  lineIn(img, torso, 31 - w, 36, 35, 40, t.light);
+  lineIn(img, torso, 45, 47, 49 + w, 49, t.line);
+  lineIn(img, torso, 32, 49, 38, 51, t.shadow);
   if (open && inner) {
     paint(img, P([[36, 29], [44, 29], [42, 53], [38, 53]]), inner, { lightW: 1 });
     lineIn(img, torso, 36, 30, 38, 53, t.line);
@@ -64,7 +76,8 @@ export function jacket(img, t, { inner = null, open = false, width = 0, zip = nu
 /** Abrigo o bata larga hasta la rodilla, abierta: interior y pantalón en la abertura. */
 export function longCoat(img, t, { inner, pants, width = 0, lapel = null } = {}) {
   const w = width;
-  const coat = P([[27 - w, 30], [53 + w, 30], [56 + w, 36], [58 + w, 64], [22 - w, 64], [24 - w, 36]]);
+  const coat = P([[31 - w, 31], [38, 28], [49 + w, 30], [52 + w, 36], [48 + w, 45],
+    [50 + w, 54], [56 + w, 63], [46, 66], [40, 62], [33, 64], [24 - w, 62], [30 - w, 45], [28 - w, 36]]);
   paint(img, coat, t, { shadowW: 4 });
   paint(img, P([[37, 29], [43, 29], [44, 48], [36, 48]]), inner, { lightW: 1 });
   if (pants) paint(img, P([[36, 48], [44, 48], [45, 64], [35, 64]]), pants, { lightW: 0 });
@@ -75,6 +88,9 @@ export function longCoat(img, t, { inner, pants, width = 0, lapel = null } = {})
   lineIn(img, coat, 46, 31, 49, 40, l);
   lineIn(img, coat, 35, 31, 32, 40, l);
   lineIn(img, coat, 45, 31, 48, 40, l);
+  lineIn(img, coat, 31, 46, 29, 60, t.light);
+  lineIn(img, coat, 48, 48, 53 + w, 61, t.shadow);
+  lineIn(img, coat, 33, 54, 36, 55, t.line);
   return coat;
 }
 
@@ -85,28 +101,33 @@ export function longCoat(img, t, { inner, pants, width = 0, lapel = null } = {})
  */
 export function arm(img, side, pose, sleeve, skin, { dx = 0 } = {}) {
   const m = side === 'L' ? 1 : -1; // L = brazo que queda a la derecha de la pantalla
-  const sx = 40 + m * (14 + dx);
+  const sx = 40 + m * (10 + dx);
   const X = (v) => 40 + m * (v - 40);
   let hand = null;
   switch (pose) {
     case 'hips':
-      paint(img, CAP(sx, 33, X(59 + dx), 44, 4).union(CAP(X(59 + dx), 44, X(53 + dx), 50, 3.5)), sleeve);
-      hand = [X(52 + dx), 50];
+      paint(img, CAP(sx, 33, X(61 + dx), 42, 3.5).union(CAP(X(61 + dx), 42, X(52 + dx), 49, 3)), sleeve);
+      hand = [X(51 + dx), 49];
       paint(img, E(hand[0], hand[1], 3, 2.5), skin, { lightW: 1, shadowW: 1 });
       break;
     case 'pockets':
-      paint(img, CAP(sx, 33, X(56 + dx), 46, 4.5).union(CAP(X(56 + dx), 46, X(51 + dx), 50, 3.8)), sleeve);
+      paint(img, CAP(sx, 33, X(58 + dx), 43, 3.6).union(CAP(X(58 + dx), 43, X(50 + dx), 49, 3)), sleeve);
       break;
     case 'behind':
-      paint(img, CAP(sx, 33, X(55 + dx), 47, 4.3), sleeve);
+      paint(img, CAP(sx, 33, X(54 + dx), 43, 3.5), sleeve);
+      break;
+    case 'present':
+      paint(img, CAP(sx, 33, X(59 + dx), 43, 3.5).union(CAP(X(59 + dx), 43, X(67 + dx), 36, 3)), sleeve);
+      hand = [X(69 + dx), 35];
+      paint(img, E(hand[0], hand[1], 3, 2.5), skin, { lightW: 1, shadowW: 1 });
       break;
     case 'hold':
-      paint(img, CAP(sx, 33, X(56 + dx), 44, 4.2).union(CAP(X(56 + dx), 44, X(46), 42, 3.6)), sleeve, { shadowW: 2 });
+      paint(img, CAP(sx, 33, X(59 + dx), 43, 3.5).union(CAP(X(59 + dx), 43, X(46), 42, 3)), sleeve, { shadowW: 2 });
       hand = [X(45), 42];
       paint(img, E(hand[0], hand[1], 3, 2.5), skin, { lightW: 1, shadowW: 1 });
       break;
     default: // 'down'
-      paint(img, CAP(sx, 34, X(57 + dx), 52, 4.5), sleeve);
+      paint(img, CAP(sx, 34, X(57 + dx), 44, 3.5).union(CAP(X(57 + dx), 44, X(57 + dx), 52, 3)), sleeve);
       hand = [X(57 + dx), 55];
       paint(img, E(hand[0], hand[1], 3, 3), skin, { lightW: 1, shadowW: 1 });
   }

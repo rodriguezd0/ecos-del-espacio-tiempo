@@ -168,7 +168,7 @@ test('elenco con nombre y combate: charset + frontal registrados y de 160×160',
     assert.equal(front?.kind, 'battle_front', `${id}: frontal`);
     const img = load(ch.battle.front);
     assert.deepEqual([img.w, img.h], [160, 160]);
-    assert.ok(img.bbox().h > 120, `${id}_front: figura completa`);
+    assert.ok(img.bbox().h >= 116 && img.bbox().h <= 132, `${id}_front: figura a escala de Añil`);
   }
   assert.equal(getCharacter('vertice_lider').battle.front, 'vertice_front');
   for (const id of ['genesis_investigador', 'genesis_investigadora', 'enfermera', 'dependiente', 'molinero', 'buzo', 'archivista']) {
