@@ -1225,11 +1225,14 @@ en `validate_content`), `tools/check_seams.mjs` (costuras: árboles partidos, ob
 
 ## 24. Modo desarrollador (`src/dev/dev*.js`; guía para el creador en `docs/MODO_DESARROLLADOR.md`)
 
-Siempre disponible en esta versión (`dev/devConfig.js#DEV_MODE`; `false` lo quita todo): **F9** en el mapa
+Siempre disponible en esta versión (`dev/devConfig.js#DEV_MODE`; `false` lo quita todo): **F9** en el mapa libre
 (`devRuntime.js#installDevMenuKey`, instalado por MapScene en `enter`/`exit`) y la entrada «Desarrollador» del menú de
 pausa (con el recordatorio «F9: modo desarrollador» bajo el recuadro de hora). No sustituye a `world/devTools.js`
 (parámetros de URL y teclas con `?debug`): los interruptores se leen del mapa (`world.debugThrough`,
 `scene.noEncounters`, `world.devRunBoost`), así que la tecla G y el menú siempre coinciden.
+- `installDevMenuKey` y `openDevMenuOn` esperan al guion, la cinemática y el paso actual del jugador. Así el
+  guardado de desarrollo no interrumpe una escena. El epílogo recupera las copias antiguas de casa que tengan
+  `b21_tele` o `b21_creditos` sin `b21_fin`: completa créditos/despertar sin repetir la noticia ni los regalos.
 - **Módulos puros** (probados en `tests/dev_{arrival,give,progress}.test.mjs`): `devArrival` (casilla de llegada:
   `start` → `flyPoint` → delante de un warp → borde de una conexión → la más cercana al centro; pisable, sin evento
   sólido y con salida; `spotNear` para «x,y»), `devMaps` (catálogo por carpeta de bloque del registro generado, con

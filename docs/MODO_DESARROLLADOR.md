@@ -6,7 +6,8 @@ activo.
 
 ## Cómo se abre
 
-- **F9** en el mapa (vuelve a pulsar F9 para cerrarlo).
+- **F9** cuando el mapa está libre (vuelve a pulsar F9 para cerrarlo). Durante un guion, una cinemática,
+  una transición o un paso todavía en movimiento, espera a que termine antes de abrir el menú.
 - O desde el menú de pausa (**C** o **Tab**) → **Desarrollador**. Debajo de la hora verás el recordatorio
   «F9: modo desarrollador».
 

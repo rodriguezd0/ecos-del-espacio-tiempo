@@ -101,9 +101,14 @@ export function refreshAfterMenu(scene) {
   scene.refreshFollower?.();
 }
 
+/** No interrumpir un guion o guardar la posición de un paso aún sin terminar. */
+function devMenuBusy(scene) {
+  return scene.runner?.busy || scene.cinematic || scene.world.scriptBusy() || scene.world.player.busy();
+}
+
 /** Abre el menú de desarrollador sobre el mapa y ejecuta la acción que devuelva. */
 export async function openDevMenuOn(scene) {
-  if (scene.devMenuOpen) return;
+  if (scene.devMenuOpen || devMenuBusy(scene)) return;
   scene.devMenuOpen = true;
   scene.menuOpen = true;
   const p = scene.world.player;
@@ -124,14 +129,14 @@ export async function openDevMenuOn(scene) {
 
 /**
  * Instala la tecla F9 en un mapa (siempre en esta versión; DEV_MODE = false la desactiva). Solo abre el menú si el
- * mapa es la escena superior (no encima de mensajes o combates). Devuelve la función para quitarla.
+ * mapa está libre y es la escena superior. Devuelve la función para quitarla.
  */
 export function installDevMenuKey(scene) {
   if (!DEV_MODE || typeof window === 'undefined') return () => {};
   applyDevSettings(scene);
   const onKey = (e) => {
     if (e.code !== DEV_KEY || e.repeat) return;
-    if (!scene.ready || engine.scenes.top !== scene || scene.transferring || scene.inBattle) return;
+    if (!scene.ready || engine.scenes.top !== scene || scene.transferring || scene.inBattle || devMenuBusy(scene)) return;
     e.preventDefault();
     openDevMenuOn(scene);
   };

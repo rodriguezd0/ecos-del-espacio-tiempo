@@ -245,8 +245,23 @@ export async function wakeUp(ctx) {
   }
 }
 
+/** El carguero y los créditos pendientes; también recupera copias antiguas guardadas entre esas escenas. */
+async function finishTvEpilogue(ctx) {
+  if (!ctx.flag(F.creditsDone)) {
+    await shipScene(ctx, { map: 'casa_prota_1f', x: EPI.tv.x, y: EPI.tv.y, dir: 8 });
+    const mom = eventById(ctx, 'mama');
+    if (mom) ctx.face(mom, ctx.player);
+    await lines(ctx, SPEAKER.mom, EPILOGUE_TEXT.momAfterTv);
+    await creditsRoll(ctx);
+  }
+  await ctx.warp('casa_prota_2f', EPI.bed.x, EPI.bed.y, EPI.bed.dir, { fade: false });
+  ctx.bgm(MUSIC.village, { fadeOutPrevious: 30 });
+  await wakeUp(ctx);
+}
+
 /** La tele (auto al entrar en casa tras la nota de Gael) → carguero → créditos → despertar. */
 export async function tvScene(ctx) {
+  if (ctx.flag(F.tvNews)) return finishTvEpilogue(ctx);
   const mom = eventById(ctx, 'mama');
   if (mom) {
     ctx.face(mom, ctx.player);
@@ -259,20 +274,14 @@ export async function tvScene(ctx) {
   await ctx.flash([200, 220, 255], 8, 90);
   await lines(ctx, SPEAKER.tv, EPILOGUE_TEXT.tv);
   ctx.setFlag(F.tvNews);
-  await shipScene(ctx, { map: 'casa_prota_1f', x: EPI.tv.x, y: EPI.tv.y, dir: 8 });
-  if (mom) ctx.face(mom, ctx.player);
-  await lines(ctx, SPEAKER.mom, EPILOGUE_TEXT.momAfterTv);
-  await creditsRoll(ctx);
-  await ctx.warp('casa_prota_2f', EPI.bed.x, EPI.bed.y, EPI.bed.dir, { fade: false });
-  ctx.bgm(MUSIC.village, { fadeOutPrevious: 30 });
-  await wakeUp(ctx);
+  await finishTvEpilogue(ctx);
 }
 
 /** Eventos que añade la planta baja de casa (casa_prota_1f.js). */
 export function b21CasaEvents() {
   return [
     {
-      id: 'b21_tele', x: 0, y: 0, trigger: 'auto', when: when({ all: [F.gaelNoteRead], none: [F.tvNews] }), script: tvScene,
+      id: 'b21_tele', x: 0, y: 0, trigger: 'auto', when: when({ all: [F.gaelNoteRead], none: [F.epilogueEnd] }), script: tvScene,
     },
     {
       id: 'b21_mama_aviso', x: 1, y: 0, trigger: 'auto',
@@ -285,11 +294,13 @@ export function b21CasaEvents() {
   ];
 }
 
-/** Eventos que añade el cuarto (casa_prota_2f.js): si los créditos terminaron sin despertar, se despierta al entrar. */
+/** Eventos del cuarto: retoma los créditos o el despertar pendientes de una copia anterior. */
 export function b21CuartoEvents() {
   return [{
-    id: 'b21_despertar', x: 0, y: 1, trigger: 'auto', when: when({ all: [F.creditsDone], none: [F.epilogueEnd] }),
+    id: 'b21_despertar', x: 0, y: 1, trigger: 'auto',
+    when: (s) => (s.flag(F.tvNews) || s.flag(F.creditsDone)) && !s.flag(F.epilogueEnd),
     script: async (ctx) => {
+      if (!ctx.flag(F.creditsDone)) return finishTvEpilogue(ctx);
       await ctx.fade('out', 1);
       placePlayer(ctx, EPI.bed.x, EPI.bed.y, EPI.bed.dir);
       await wakeUp(ctx);

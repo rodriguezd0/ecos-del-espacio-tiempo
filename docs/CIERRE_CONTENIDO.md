@@ -59,13 +59,17 @@ Correcciones verificadas:
   terminan con ambos Eevee en Espeon de día y Umbreon de noche; los dos ganan experiencia y no hay errores de página.
 - La profundidad existente del seguidor evita que Zygarde tape al jugador en B14: doce posiciones reales en tres
   capas con formas 10 % y 50 %, sin errores de página.
+- F9 espera mientras el guion, la cinemática o el paso del jugador están ocupados. Las copias antiguas de casa
+  guardadas tras la televisión recuperan carguero/créditos/despertar, según lo que falte. Once regresiones nuevas,
+  35 pruebas enfocadas y once comprobaciones Chrome cubren el bloqueo y la carga desde el título. El guardado
+  normal del final recuperado vuelve a cargar sin repetir créditos, llave ni huevo y conserva las capacidades.
 
 No quedan hallazgos críticos o altos de esta revisión. Arte D30 y decisiones del autor abiertas conservan su
 etiqueta provisional.
 
 ## Comprobaciones de integración
 
-La suite completa del checkpoint pasa **2201/2201**, sin fallos, saltos ni cancelaciones. El validador construyó
+La suite completa del checkpoint pasa **2221/2221**, sin fallos, saltos ni cancelaciones. El validador construyó
 272 mapas y no dio errores. Las 45 conexiones actuales pasan la revisión de costuras. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
 suelo y los 13 obstáculos altos de los espejos. No hay árboles cortados, objetos sobre árboles ni costuras defectuosas.
@@ -73,10 +77,14 @@ suelo y los 13 obstáculos altos de los espejos. No hay árboles cortados, objet
 Cobertura de módulos nuevos: B22c 99,46 % líneas / 93,88 % ramas / 91,89 % funciones; B23 95,73 / 91,30 / 81,82;
 B24 97,12 / 82,47 / 85,03; auditor de obtención 97,29 / 90,80 / 93,02. Las 53 instrucciones modificadas de regalos
 y evoluciones están cubiertas (100 % de esas líneas, sin atribuirlo a los módulos completos).
+Las 21 líneas de código añadidas/modificadas para F9 y la recuperación del epílogo también están cubiertas
+(100 % del cambio; el informe enfocado no representa la cobertura total de los dos módulos anteriores).
 Las hojas propias tienen generador reproducible y comprobación de dimensiones.
 
 Evidencia local en `tools/cache/`: `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y
 checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json`, `b14_follower_review.json`
 y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`, `progression_inventory_report.md` y sus trazas.
+La recuperación del epílogo añade `epilogue_recovery_report.md`, `epilogue_recovery_chrome_report.json`,
+`epilogue_recovery_coverage.log` y `epilogue_recovery_changed_coverage.json`.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.

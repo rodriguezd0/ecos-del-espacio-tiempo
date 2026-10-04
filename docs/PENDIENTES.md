@@ -28,7 +28,7 @@
 > 3. Arte humano integrado y revisado: trece poses de NPC, dos lanzamientos y 15 capturas en Chrome. Pendiente la aprobación artística del autor (D30).
 > 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
 > 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
-> 6. Partida continua desde «Nueva partida»: B01–B07 recorridos y guardados por UI; B08 en marcha, con el mismo equipo, dinero y objetos obtenidos en juego.
+> 6. Partida continua desde «Nueva partida»: B01–B08 recorridos y guardados por UI; B09a en marcha, con el mismo equipo, dinero y objetos obtenidos en juego.
 > 7. QA final de P8–P10: escalera visible del Puente, columnas y fachadas sin solapes accidentales. Las 45 conexiones siguen limpias; subida y regreso de P9 recorridos en Chrome.
 >
 > Pendientes menores:
@@ -142,7 +142,10 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 - Inventario de progresión auditado: 95 células físicas y cinco por guion, cinco núcleos, diez Fragmentos y dieciocho Tablillas. Fuentes registradas y entrada/retorno local de las 95 coordenadas; P8 parcial y C100 previas a Completo sin ciclos. El contrato usa fixtures declarados, separados de la partida continua; 146 pruebas existentes.
 - Sinistea rechazado sigue disponible tras P5 y cargar la partida (a1eb5ea). Entregas con equipo y PC llenos corregidas: regalos pendientes, fósiles conservados y PC libre utilizado; 11 pruebas y dos recorridos Chrome.
 - Wurmple y Happiny evolucionan con sus métodos reales; personalidad estable y consumo de Piedra Oval al aceptar, con seis regresiones nuevas.
-- Suite actual: 2201/2201 sin fallos ni omisiones; validador: 272 mapas, sin errores.
+- El guardado F9 espera a que termine la escena; las copias antiguas interrumpidas tras la televisión retoman
+  créditos/despertar. Once regresiones nuevas, 35 pruebas enfocadas y once comprobaciones en Chrome sin errores;
+  guardar/cargar el final recuperado conserva regalos únicos y capacidades.
+- Suite actual: 2221/2221 sin fallos ni omisiones; validador: 272 mapas, sin errores.
 - Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
 ## 6. Menores
