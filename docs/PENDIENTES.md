@@ -64,9 +64,9 @@ Los criterios de cierre se contrastan con CAMPANA, DECISIONES, TABLILLAS, POKEDE
 - Solape en dobles corregido: el espacio de ambos sprites se calcula con todos sus fotogramas, y sombras y efectos siguen sus posiciones.
 - Evoluciones por horario en equipo corregidas: ambos jugadores usan el horario del combate. Cinco regresiones y dos recorridos Chrome con relojes opuestos verifican Espeon y Umbreon.
 
-## 1. Trabajo apartado (rama)
-El trabajo a medias de arte y postgame está en `wip-pausa-25-09`; no hay ningún stash.
-Se debe retomar y revisar en esa rama antes de integrarlo. Master conserva la versión jugable.
+## 1. Rama de la pausa
+`wip-pausa-25-09` conserva el trabajo de la pausa. Sus módulos de arte y postgame ya se revisaron e integraron
+en master; sus mapas antiguos no sustituyen las correcciones posteriores. No hay ningún stash.
 El módulo que faltaba en `tests/prota_kit.test.mjs` ya está integrado; esa prueba vuelve a pasar.
 
 ## 2. Correcciones del creador (jugó B01–B03): tandas 1–4 terminadas
