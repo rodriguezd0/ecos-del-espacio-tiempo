@@ -1,9 +1,10 @@
 # Revisión de requisitos de cierre — 04-10-2026
 
 Fuentes: `CAMPANA.md`, `DECISIONES.md`, `TABLILLAS.md`, `POKEDEX_DISTRIBUCION.md` y `COBERTURA.md`.
-El objetivo sigue activo. La campaña, el postgame y los dos DLC están implementados; la partida continua está
-en B21/Columna, con B01–B20 guardados. Los bancos de bloque declaran sus preajustes de historia, equipo y recursos. La partida continua conserva
-el guardado creado desde el título, con sus recompensas, derrotas, dinero y objetos reales.
+La campaña, el postgame y los dos DLC están terminados y revisados. La partida continua B01–B21 completó
+créditos, despertar y recarga normal del guardado final. Los bancos de postgame/DLC declaran sus preajustes
+de historia, equipo y recursos. La partida continua conserva el guardado creado desde el título, con sus
+recompensas, derrotas, dinero y objetos reales; no se atribuyen a ella los recorridos de esos bancos.
 
 ## Campaña y progresión
 
@@ -26,30 +27,30 @@ el guardado creado desde el título, con sus recompensas, derrotas, dinero y obj
 | B15–B16: Boreal y Alma | Buceo, Gael, P8: Uxie → Mesprit → Azelf/Telar | B15 guardado/recargado; B16 guardado: 100 células únicas, cinco Núcleos, ocho Fragmentos, trece Tablillas y Completo |
 | B17–B18: Mesa y Cruce | T14, P9: puente → Cámara → Dialga/Palkia; elección y regresos | Ambos guardados: T14, torres, Vigilia, Círculo, Cámara resuelta, Dialga vencido/P9 restaurado y regresos entre plantas |
 | B19–B20: Sima y Origen | P10: Senda → Cielo Interior → Gael/núcleo | Ambos guardados: Calzada/T15, nueve tramos, Trío, Gael B6, Flauta/F10 y regresos entre plantas |
-| B21: Columna y epílogo | Motor de fases, resolución y epílogo contrastados; recuperación de copias antiguas corregida | Salto y llegada a la Columna recorridos; resolución en marcha |
+| B21: Columna y epílogo | Motor de fases, resolución y epílogo contrastados; recuperación de copias antiguas y salida al límite de reintentos corregidas | Salto, adhesión, Arceus75, resolución, créditos, despertar, guardado y recarga desde el título completos |
 | 100 células, cinco núcleos y diez Fragmentos | Fuentes y contrato auditados, 95 entradas/retornos locales; P8 parcial/C100 sin ciclo | Colección completa obtenida jugando: 100 células únicas, cinco Núcleos y F01–F10 |
-| Dieciocho Tablillas | T01–T15 de episodios; Terrax/Terror/Legendaria tras Arceus, con captura o KO | Quince recibidas, incluida Tabla Draco en B19; T13/T14/T15 resueltas |
+| Dieciocho Tablillas | T01–T15 de episodios; Terrax/Terror/Legendaria tras Arceus, con captura o KO | Dieciocho obtenidas jugando y conservadas tras cargar; T13/T14/T15 resueltas |
 
-Evidencia continua: `tools/cache/campaign/campaign_checkpoint_B04.json`…`campaign_checkpoint_B20.json`,
-`campaign_checkpoint.json`, `campaign_live.json`, capturas y transcripciones. El inventario independiente tiene
+Evidencia continua: `tools/cache/campaign/campaign_checkpoint_B04.json`…`campaign_checkpoint_B21.json`,
+`campaign_checkpoint.json`, `campaign_final_reload_audit.json`, capturas y transcripciones. El inventario independiente tiene
 sus fuentes, geometría, trazas y límites de fixtures en `tools/cache/progression_inventory_report.md`.
 
 ## Final B21: D21–D24
 
 | Requisito | Evidencia | Estado |
 |---|---|---|
-| Salto: aviso, nodo que espera, Forma 10 % y regreso al laberinto | `b21_content.test.mjs`, recorrido B21/B22a | Verificado en banco; continuo pendiente |
-| Zygarde voluntario: Sí/Todavía no; toca Honor Ball; Completo70/Agrupamiento/cuatro movimientos | Pruebas B21 y guion real de adhesión | Verificado en banco; continuo pendiente |
-| Equipo lleno: envío obligatorio al PC; capacidades independientes del equipo | Pruebas de adhesión y capacidades | Verificado en banco; continuo pendiente |
+| Salto: aviso, nodo que espera, Forma 10 % y regreso al laberinto | `b21_content.test.mjs`, recorrido B21/B22a y checkpoint B21 | Banco verificado; continuo: Salto y nodo de espera recorridos |
+| Zygarde voluntario: Sí/Todavía no; toca Honor Ball; Completo70/Agrupamiento/cuatro movimientos | Pruebas B21, adhesión real y registro completo tras cargar | Banco y adhesión continua verificados; Zygarde70/Completo/Honor Ball conservado |
+| Equipo lleno: envío obligatorio al PC; capacidades independientes del equipo | Pruebas de adhesión, Arca y capacidades; uso real de Arca/PC en B21 | Verificado; la recarga conserva equipo, huecos del PC y capacidades |
 | Arceus75/Multitipo: Tierra → Fantasma → Normal, con objetos/movimientos canónicos | Combates del motor real en `b21_content.test.mjs` | Verificado |
 | Transiciones: PS completos, limpieza de mejoras/trampas y 25 % al equipo vivo | Pruebas del combate real y de curación | Verificado |
 | Captura bloqueada sin Ball/turno en fases 1–2; bajo 50 % y sin Recuperación tras Legendaria en fase3 | Combates reales, Master Ball y KO final | Verificado |
-| Derrota: instantánea de equipo/objetos, reintento y retirada con fase persistida | Pruebas de sesión, Mega y retirada | Verificado |
-| Resolución: 18 Tablillas, eje no elegido reparado y ciclo celeste normal | Pruebas para ambas elecciones; conductor usa `p9_choice` real | Verificado en banco; continuo pendiente |
-| Olmedo, Mamá, llave de Alerce, montaje y Clefairy condicionales | Guiones/recorridos B21 y pruebas de alcance | Verificado en banco; continuo pendiente |
-| Nota de Gael y huevo de su inicial, disponible con equipo lleno y entrega única | Guion real; pruebas B21/regalos y tres regresiones del conductor | Verificado en banco; prueba continua preparada |
-| TV, carguero, cuaderno ausente, créditos y despertar con Completo por voluntad | Epílogo normal y recuperación: once comprobaciones Chrome | Verificado en banco; continuo pendiente |
-| Guardar/Continuar/Cargar: identidad, Pokémon completos/UID/posiciones del PC, huevo, colección, bolsa, dinero, elección, capacidades y reloj | Comparación del payload exacto con GameState completo; diez pruebas finales y diez del checkpoint, con rechazo de corrupción y continuidad del reloj | Recargas reales B13 y B15 verificadas; recarga continua del final pendiente |
+| Derrota: instantánea de equipo/objetos, reintento y retirada con fase persistida | Pruebas de sesión/Mega/retirada; regresión del límite de 99 intentos y once del conductor acotado | Verificado; en continuo hubo 99 derrotas iniciales y victoria tras el manantial, sin otra retirada |
+| Resolución: 18 Tablillas, eje no elegido reparado y ciclo celeste normal | Pruebas para ambas elecciones; resolución continua con `p9_choice = DIALGA` | Banco y resolución continua verificados; dieciocho Tablillas tras cargar |
+| Olmedo, Mamá, llave de Alerce, montaje y Clefairy condicionales | Guiones/recorridos B21, pruebas de alcance y epílogo continuo | Condiciones verificadas en banco; pueblo y montaje recorridos en la partida continua |
+| Nota de Gael y huevo de su inicial, disponible con equipo lleno y entrega única | Guion real, Arca/PC y segunda visita tras cargar | Verificado en continuo: Litten del inicial real de Gael, UID único y segunda entrega rechazada |
+| TV, carguero, cuaderno ausente, créditos y despertar con Completo por voluntad | Epílogo normal/recuperación y capturas continuas 886–892 | Banco y recorrido continuo verificados; postgame habilitado tras cargar |
+| Guardar/Continuar/Cargar: identidad, Pokémon completos/UID/posiciones del PC, huevo, colección, bolsa, dinero, elección, capacidades y reloj | Payload exacto frente a GameState completo; auditoría independiente `campaign_final_reload_audit.json`, diez pruebas finales y diez del checkpoint | Recargas B13, B15 y final verificadas; igualdad persistente completa, reloj 484→484 y doce UID distintos |
 
 ## Postgame B22 — CAMPANA §8.1
 
@@ -127,11 +128,11 @@ en `tools/cache/b24_entrega.md`, trazas `e2e_b24_*.log` y checkpoints de `screen
 | Elenco propio de campo, incluido Vértice líder | Lámina de 29 charsets; hashes originales y aprobación registrada por archivo/alias | Aprobado por el autor el 04-10-2026 |
 | Ilustración del atlas de Axis | Imagen mostrada y aprobada; JSON/generador con fecha, PNG idénticos y 56 lugares conservados | Aprobado por el autor el 04-10-2026 |
 | Escala de Pokémon del mapa, incluidos Onix/Yanma | Módulo y cuatro pruebas; el autor elige mantener la regla actual | Confirmado por el autor el 04-10-2026 (X37) |
-| Suite completa sobre el resultado integrado | 2463/2463, sin fallos, omisiones ni cancelaciones; `suite_b20_return_integrated.log`, 32,17 s | Incluye arte aprobado/UI, C059/C065, recargas, retornos B14/B15, PC, separación global y reanudaciones B17–B20 |
+| Suite completa sobre el resultado integrado | 2475/2475, sin fallos, omisiones ni cancelaciones; `suite_b21_retry_integrated.log`, 28,962 s | Incluye arte aprobado/UI, C059/C065, recargas, retornos B14/B15, PC, separación global, reanudaciones B17–B21 y salida segura al límite de Arceus |
 | Validador, costuras y QA sobre el resultado final | Tras C059/C065: 272 mapas/187 entrenadores/sin errores; 45/45 costuras limpias, seis locales; `trainer_contact_final_checks_report.md` | Sin nuevas incidencias; 31 avisos enumerados y cero mapas de arte sin revisar |
-| Guardado final desde UI y carga desde el título | Controlador preparado con comparación completa y habilitación del postgame | Pendiente al llegar a B21 |
+| Guardado final desde UI y carga desde el título | Ranura completa y datos vivos/cargados; `campaign_final_reload_audit.json` y `campaign_b21_final_slot_audit.json` | Verificado: cuarto de casa (8,6), datos persistentes/PC idénticos, reloj 484→484, doce UID, huevo único y postgame |
 | Guardado intermedio desde UI y carga desde el título | B13 y B15: payload/carga completos idénticos, relojes 1219→1219 y 149→149; `campaign_b13_reload_audit.json` y `campaign_b15_checkpoint_audit.json` | Verificado en la misma partida QAut8uoab; el intercambio posterior del PC conserva los diez registros completos |
 
-Los informes de alcance y cobertura se detallan en `CIERRE_CONTENIDO.md`. `PENDIENTES.md` mantiene el punto de
-trabajo actual. Los bancos, el contrato de inventario y el auditor de obtención conservan sus límites declarados;
+Los informes de alcance y cobertura se detallan en `CIERRE_CONTENIDO.md`. `PENDIENTES.md` registra el cierre.
+Los bancos, el contrato de inventario y el auditor de obtención conservan sus límites declarados;
 la columna de partida continua registra únicamente lo observado en el guardado nuevo.

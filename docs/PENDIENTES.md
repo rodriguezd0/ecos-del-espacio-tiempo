@@ -28,7 +28,7 @@
 > 3. Arte humano y atlas aprobados por el autor el 04-10: trece poses de NPC, kit M/F completo, 29 personajes de campo e ilustración regional. Aprobación registrada por archivo, sin cambiar los PNG mostrados.
 > 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
 > 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
-> 6. Partida continua desde «Nueva partida»: B01–B20 recorridos y guardados por UI; B21 en marcha con los recursos obtenidos jugando. Último guardado: Núcleo del Origen (10,22), 100 células únicas, quince Tablillas, cinco Núcleos y diez Fragmentos. Las recargas reales de B13 y B15 conservaron todos los campos persistentes y el reloj del archivo. Los diez Pilares están restaurados, incluidos el Trío, Gael B6, F10/Flauta Azur y los regresos por las tres plantas de P10. El Salto ya llevó la partida a la Columna. Quedan la resolución, créditos, despertar y comparación completa del guardado final.
+> 6. Partida continua desde «Nueva partida» terminada: B01–B21 recorridos con la misma partida QAut8uoab, recursos obtenidos jugando y guardados por UI. Arceus vencido, resolución, créditos, despertar y recarga normal del final comprobados. Último guardado: cuarto de casa (8,6), 100 células únicas, dieciocho Tablillas, cinco Núcleos y diez Fragmentos. El payload completo coincide con el estado cargado, incluido el reloj 484→484, los doce UID y todos los huecos del PC; el huevo de Litten de Gael se entrega una sola vez, también después de cargar. El proceso terminó con código 0 y cerró su navegador de QA.
 > 7. QA final de P8–P10: escalera visible del Puente, columnas y fachadas sin solapes accidentales. Las 45 conexiones siguen limpias; subida y regreso de P9 recorridos en Chrome.
 >
 > Detalles revisados:
@@ -36,22 +36,23 @@
 > - Regla de tamaños del mapa confirmada por el autor el 04-10: se mantiene la actual para todas las especies (X37).
 > - Rocas de cueva: se conserva la excepción de los tres puzzles que usan su parte superior como suelo.
 
-Actualizado: 04-10-2026. En marcha: **partida continua hasta los créditos y revisión final de integración**.
+Actualizado: 04-10-2026. **Campaña, postgame, ambos DLC y revisión final terminados.**
 
-## Objetivo activo: terminar el juego completo
+## Objetivo cumplido: terminar el juego completo
 
-El trabajo continúa hasta cerrar la campaña, el postgame y los dos DLC. Una tanda terminada no cierra este objetivo.
+La campaña se completó desde Nueva partida hasta los créditos, el despertar y la carga del guardado final.
+El postgame y los dos DLC tienen recorridos de bloque en Chrome con sus fixtures declarados y auditoría de requisitos.
 La rama de pausa se revisa por módulos; sus versiones antiguas de mapas no sustituyen las correcciones guardadas.
 
-| Frente | Estado al reanudar | Verificación necesaria |
+| Frente | Resultado | Verificación |
 |---|---|---|
-| Campaña B01–B21 | Implementada; los diez Pilares verticales terminados y probados | Recorrido continuo sin saltos de progresión, final y carga del epílogo |
-| Arte humano y atlas | D30 cerrado: kit M/F, trece poses de NPC, 29 personajes de campo y atlas aprobados el 04-10 | Comprobación en la partida continua |
-| B22, postgame base | a–e implementados y recorridos en Chrome; B22c incluye siete capturas y sus retornos | Auditoría final de requisitos e integración |
-| B23, Almenara | D1-01…05 terminadas; derrota/reintento de Gael, Mega Zygarde, sellado, captura opcional y regreso real probados | Revisión visual y suite de integración |
-| B24, Expediciones | 30/30 Hallazgos recorridos en Chrome; siete Ultrazonas, Naganadel, Necrozma y ambas hipótesis insulares probados | Auditoría final de obtención e integración |
-| Sistemas y balance | Base jugable y multijugador terminado | Guardados y migraciones, crianza/evoluciones, captura, viajes, economía y combates dobles |
-| Cierre | Pendiente | Suite completa sin fallos, validador, costuras/QA, pruebas reales y auditoría de requisitos |
+| Campaña B01–B21 | Diez Pilares verticales y final terminados | Recorrido continuo sin saltos de progresión, créditos, despertar y recarga normal del epílogo |
+| Arte humano y atlas | D30 cerrado: kit M/F, trece poses de NPC, 29 personajes de campo y atlas aprobados el 04-10 | Pruebas, revisión visual y uso en la partida continua |
+| B22, postgame base | a–e implementados; B22c incluye siete capturas y sus retornos | Recorridos de bloque en Chrome y auditoría final de requisitos |
+| B23, Almenara | D1-01…05 terminadas | Chrome: derrota/reintento de Gael, Mega Zygarde, sellado, captura opcional y regreso por ferri |
+| B24, Expediciones | 30/30 Hallazgos, siete Ultrazonas, Naganadel, Necrozma y ambas hipótesis insulares | Recorrido de bloque, obtención/crianza/evolución reales y auditoría |
+| Sistemas y balance | Multijugador, persistencia, entregas, evoluciones, viajes, economía y dobles revisados | Regresiones y pruebas reales; la campaña continua conserva sus derrotas y recursos |
+| Cierre | Terminado | 2475/2475 pruebas; 272 mapas sin errores, 45/45 costuras limpias, pruebas reales y auditoría de requisitos |
 
 Las aprobaciones del autor se registran con fecha y alcance; las nuevas hojas futuras requieren su propia revisión.
 Los criterios de cierre se contrastan con CAMPANA, DECISIONES, TABLILLAS, POKEDEX_DISTRIBUCION y COBERTURA.
@@ -159,10 +160,10 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
   ambos rivales y recarga con comparación del GameState completo/UID/PC/pistas/viajes/posición de cura.
   El reloj se compara con el payload que escribió la UI, admitiendo avance normal y rechazando reinicios.
   Las 80 regresiones del recorrido pasan. La recarga real de B13 ya pasó con el reloj 1219→1219 y todos los campos completos
-  iguales; falta la recarga del final (`campaign_b13_reload_audit.json`).
-- Última suite completa de integración: 2463/2463 sin fallos, omisiones ni cancelaciones, incluidos el arte
+  iguales; la recarga final también está terminada (`campaign_b13_reload_audit.json`, `campaign_final_reload_audit.json`).
+- Última suite completa de integración: 2475/2475 sin fallos, omisiones ni cancelaciones, incluidos el arte
   aprobado, su UI, C059/C065, recargas, retornos B14/B15, PC y separación global de seguidores
-  y reanudaciones B17–B20 (`suite_b20_return_integrated.log`, 32,17 s); foco de arte: 48/48.
+  y reanudaciones B17–B21 (`suite_b21_retry_integrated.log`, 28,962 s); foco de arte: 48/48.
   Validador posterior a C059/C065: 272 mapas sin errores; 45/45 costuras limpias y cero incidencias de arte sin
   revisión. Las dos regresiones posteriores del tramo de entrada de B14 pasan en el foco de 80 pruebas.
 - Reintentos reales de B14 verificados: vuelta por Buceo tras perder con Eulalia y reintento local de Adela
@@ -198,9 +199,21 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
   retornos anteriores a los encuentros y descenso completo tras restaurar; regreso físico al núcleo comprobado.
   Conserva las colecciones de B19, con diez Fragmentos (`campaign_b20_checkpoint_audit.json`). Seis regresiones
   del regreso pasan y el helper tiene cobertura del 100 % en líneas/ramas/funciones (`6a0d07b`).
-  B21 comenzó el Salto y llegó a la Columna; quedan resolución, créditos, despertar y recarga final.
-  Falta la recarga completa del final.
-- Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
+- B21 terminado: Zygarde se incorporó por voluntad con Honor Ball y Arca; Arceus75 vencido en 17 turnos tras
+  curarse por interacción normal al manantial, con 92040 de dinero intactos. Resolución, T16–T18, pueblo libre,
+  huevo de Litten único, televisión/carguero, créditos y despertar recorridos. El guardado y la carga desde el
+  título conservan todos los campos persistentes, doce UID y huecos del PC, reloj 484→484, elección DIALGA,
+  Completo/Salto/Anclaje y acceso al postgame (`campaign_final_reload_audit.json`). Los contadores de tiempo
+  se contrastan por separado con la ranura: el reloj vivo avanza al cerrar Guardar y los fotogramas avanzan
+  normalmente después de cargar. Una segunda visita a Gael tras cargar confirma que el huevo no se duplica;
+  el último guardado vuelve a dejar al jugador en casa (`campaign_b21_final_slot_audit.json`).
+- B21: el conductor inicial provocó 99 derrotas reales al repetir «Reintentar fase» con el equipo debilitado.
+  Se corrigieron el reintento del conductor (`46b20b6`, once regresiones) y una salida de producto que al
+  límite de 99 intentos omitía curar y recolocar al jugador (`9366916`, regresión propia). En esta partida
+  bastó el manantial para ganar la fase restante; no necesitó otra retirada. El helper tiene cobertura del
+  100 %; la línea de producto añadida también está cubierta al 100 %, sin atribuirlo a su módulo completo.
+- No queda trabajo requerido abierto para este cierre. Alcance y evidencia en `REVISION_REQUISITOS.md`,
+  `CIERRE_CONTENIDO.md` y `tools/e2e_campaign_README.md`.
 
 ## 6. Menores
 - Separación global de seguidores terminada (X38, `5a3bdbb`): Zygarde y el Pokémon acompañante dejan espacio

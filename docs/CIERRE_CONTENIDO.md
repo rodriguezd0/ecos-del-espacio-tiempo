@@ -1,8 +1,9 @@
 # Revisión del contenido — 04-10-2026
 
-Objetivo activo: terminar el juego completo. Este documento registra el cierre del postgame, DLC y auditorías de
-obtención; sigue en marcha la partida continua desde Nueva partida y la revisión final de integración. El pase de
-arte humano y el atlas están integrados y aprobados por el autor.
+Objetivo cumplido: terminar el juego completo. Este documento registra el cierre de campaña, postgame, DLC,
+auditorías de obtención e integración. La partida continua desde Nueva partida completó B01–B21, créditos,
+despertar y recarga normal del guardado final; los bancos de postgame/DLC conservan sus fixtures declarados.
+El pase de arte humano y el atlas están integrados y aprobados por el autor.
 
 ## Requisitos y evidencia
 
@@ -26,8 +27,8 @@ capturas, evoluciones y crianza se ejecutan en el motor real. La comprobación d
 
 El auditor del inventario ejecuta las 95 recogidas físicas y las cinco entregas de guion, los núcleos, P8 parcial y
 la resolución de Arceus en una instancia aislada. Las Tablillas intermedias y restauraciones restantes usan la API
-de historia tras comprobar sus fuentes. Combates, presentación, desplazamientos y puzzles pendientes usan fixtures
-declarados: el contrato y las rutas locales no sustituyen la campaña continua de navegador.
+de historia tras comprobar sus fuentes. Los combates, presentación, desplazamientos y puzzles de ese banco usan
+fixtures declarados: el contrato y las rutas locales no sustituyen la campaña continua de navegador.
 
 ## Revisión independiente
 
@@ -107,7 +108,7 @@ Correcciones verificadas:
   enfocadas pasan; el navegador ya ejecutó ambos tipos de regreso y venció a los tres. En B15, el conductor
   evita las escaleras falsas durante los trayectos y conserva el intento voluntario del puzzle: diez pruebas
   nuevas, revisión independiente y 21/23 líneas del cambio cubiertas (91,30 %). El fixture llega al mirador;
-  el recorrido continuo posterior sigue pendiente (`campaign_future_driver_review.md`). El eco dispone de
+  el recorrido continuo posterior también se completó (`campaign_future_driver_review.md` recoge la revisión previa). El eco dispone de
   reentrada por la escalera real y controles de derrota nueva, protección y dinero observado: 15/15 pruebas.
   La captura física exige resultado caught, flag y posesión real en equipo/PC; cinco pruebas nuevas y módulo
   con cobertura 100/100/100. El foco B14 pasa 20/20 (`campaign_b14_capture_root_review.log`). Cuatro pruebas
@@ -130,9 +131,9 @@ La aprobación anterior de frontales y tamaños tuvo revisión independiente sin
 
 ## Comprobaciones de integración
 
-La última suite completa de integración pasó **2463/2463**, sin fallos, saltos ni cancelaciones, incluidos el arte
+La última suite completa de integración pasó **2475/2475**, sin fallos, saltos ni cancelaciones, incluidos el arte
 aprobado, su UI, C059/C065, recargas, retornos B14/B15, PC y separación global de seguidores
-y reanudaciones B17–B20 (`suite_b20_return_integrated.log`, 32,17 s). El último
+y reanudaciones B17–B21 y la salida segura al límite de intentos de Arceus (`suite_b21_retry_integrated.log`, 28,962 s). El último
 validador posterior a ambos arreglos construyó 272 mapas sin errores: 31 avisos enumerados, ninguno de Mar/Talasa.
 Las 45 conexiones actuales pasan la revisión de costuras, incluidas las seis de esos dos mapas. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
@@ -170,7 +171,7 @@ el PC y la elección de P9 después de recargar; exige 100 células, cinco núcl
 Tablillas. Diez pruebas de recarga final y diez del checkpoint comprueban los datos completos, continuidad del
 reloj y rechazo de cambios invisibles en un resumen de pantalla. Cobertura por módulo: checkpoint 100 % líneas /
 98,18 % ramas / 94,74 % funciones; recarga final 94,64 / 98,21 / 90. Los modelos de UI son pruebas aisladas;
-la recarga real intermedia ya se ejecutó, y la del final queda preparada para B21.
+las recargas reales intermedias y la del final ya se ejecutaron sobre la misma partida QAut8uoab.
 La ejecución continua ha guardado y recargado B13 en Caleta Sonda: 77 células, doce Tablillas, cuatro Núcleos,
 seis Fragmentos, Nadar y Buceo. Comparación independiente del payload y el estado recargado: todos los campos
 persistentes idénticos, reloj 1219→1219 y misma identidad QAut8uoab (`campaign/campaign_b13_reload_audit.json`).
@@ -220,6 +221,31 @@ captura sellada; respuesta real «zygarde». Gael B6 fue vencido en 18 turnos. F
 completos, conservando las colecciones de B19 (`campaign/campaign_b20_checkpoint_audit.json`). El regreso
 usa las entradas por evento en vez del grafo incompleto; exige cinco hitos reales y evita repetir la entrega.
 Seis regresiones pasan, con cobertura del helper del 100 % en líneas/ramas/funciones (`6a0d07b`).
-El recorrido continúa en B21: Salto y llegada a la Columna, con resolución, créditos y recarga final pendientes.
+Se completó B21: Salto, nodo de espera, adhesión voluntaria de Zygarde con Honor Ball/Arca y Arceus75.
+El conductor inicial repitió «Reintentar fase» hasta 99 derrotas reales, conservando la instantánea debilitada.
+Se reanudó desde la fase guardada y se curó mediante interacción normal al manantial: Fantasma/Normal fueron
+vencidas en 17 turnos, sin captura y con los 92040 de dinero intactos. El conductor ahora limita los reintentos,
+elige retirada tras una segunda derrota nueva y comprueba la fase persistida y la cura; once regresiones y
+revisión independiente sin hallazgos, con 100 % de líneas/ramas/funciones del helper (`46b20b6`). Esta QA no
+necesitó una nueva retirada después de la cura. También se corrigió el producto: al alcanzar 99 intentos se llama
+a la retirada canónica para curar y recolocar al jugador, preservando la fase (`9366916`). Su regresión falla
+antes de la corrección y pasa después; la línea añadida está cubierta al 100 %, sin atribuir ese porcentaje al
+módulo completo (`arceus_retry_limit_changed_coverage.json`).
+
+Resolución, las tres Tablillas finales, pueblo libre, nota/huevo de Gael, TV/carguero, créditos y despertar pasaron.
+La carga normal desde el título recuperó la posición de casa (8,6), identidad QAut8uoab, 100 células únicas,
+cinco Núcleos, diez Fragmentos, dieciocho Tablillas, T13, DIALGA y Completo/Salto/Anclaje. Los doce Pokémon
+tienen UID distintos; se conservan los diez anteriores, Zygarde70 y el huevo de Litten1 del inicial real de Gael.
+Una segunda visita tras cargar rechaza otra entrega; el último guardado UI vuelve a dejar al jugador en casa.
+El proceso original terminó con código 0 y cerró únicamente su navegador de QA; el servidor sigue disponible.
+
+La auditoría independiente `campaign/campaign_final_reload_audit.json` contrasta recursivamente el payload
+exacto de la ranura con el estado vivo anterior y el cargado: todos los campos persistentes, registros completos
+y huecos del PC coinciden. Reloj guardado/cargado 484→484; el vivo había avanzado a 486 al cerrar Guardar.
+Los fotogramas se comprueban por separado: 2793068 guardados → 2793128 cargados, avance normal de 60.
+El postgame queda habilitado. Fuentes: `campaign_final_before_reload.json`, `campaign_final_before_reload_live.json`,
+`campaign_final_after_reload.json`, `campaign_b21_worker_audit.json` y `campaign_b21_final_slot_audit.json`.
+Capturas continuas 874–897: manantial, resolución, PC, regalo, epílogo, créditos, despertar, recarga y visita de
+comprobación. Este contraste de artefactos es de lectura; no modifica la partida ni concede progreso.
 P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
-El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.
+El cierre y las decisiones conservadas se registran en `docs/PENDIENTES.md`.
