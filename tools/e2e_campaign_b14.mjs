@@ -2,6 +2,7 @@ import {refreshDriver} from './e2e_campaign_refresh.mjs';
 import {installB14Observer} from './e2e_campaign_b14_page.mjs';
 import {Driver as EchoDriver} from './e2e_b14_driver.mjs';
 import {FONDO} from '../game/src/content/maps/b14/layout.js';
+import {reloadCheckpoint} from './e2e_campaign_checkpoint_reload.mjs';
 const RETRY=false;
 const need = (cond, msg) => (cond ? null : msg);
 
@@ -281,9 +282,15 @@ function stageList() {
 }
 
 
-export async function runB14(d){
+export async function prepareB14(d) {
+ await d.travel('nexo_centro');await d.talk('enfermera');await d.purchase({HYPERPOTION:30,ULTRABALL:15});
+ await d.travel('caleta_tienda');await d.purchase({DIVEBALL:10});await d.travel('caleta_sonda');
+}
+
+export async function runB14(d,name){
+ await d.stages('B14',{recargaB13:d=>reloadCheckpoint(d,name,'B13')});
  await refreshDriver(d);await installB14Observer(d.page);
  for(const method of ['walkTo','caracola','sneakTo','swimTo','toLand'])d[method]=EchoDriver.prototype[method];
- await d.stages('B14',{preparacion:async d=>{await d.travel('caleta_tienda');await d.purchase({DIVEBALL:10,ULTRABALL:10});await d.travel('caleta_sonda');},caleta,arrecife,sala1,sala2,sala3,sala4,fosa,regreso,fondo});
+ await d.stages('B14',{preparacion:prepareB14,caleta,arrecife,sala1,sala2,sala3,sala4,fosa,regreso,fondo});
  for(const method of ['walkTo','caracola','sneakTo','swimTo','toLand'])delete d[method];
 }

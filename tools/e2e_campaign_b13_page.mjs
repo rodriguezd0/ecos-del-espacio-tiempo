@@ -66,6 +66,7 @@ export async function installB13Observer(page){await page.evaluate(async()=>{
               Object.defineProperties(view, { x: { value: x }, y: { value: y }, direction: { value: d }, surfing: { value: false } });
               const worldView = Object.create(m.world);
               Object.defineProperty(worldView, 'player', { value: view });
+              if(worldView.eventsInFront?.(['action','touch','eventTouch']).length)continue;
               if (!canOfferSwim(worldView)) continue;
               const score = Math.abs(wx - tx) + Math.abs(wy - ty);
               if (!best || score < best.score) best = { x, y, face: d, score };
@@ -128,7 +129,7 @@ export async function installB13Observer(page){await page.evaluate(async()=>{
     window.__b13 = {
       routeMixed,
       lost: [],
-      battles: window.__campaign.battles,
+      get battles() {return window.__campaign.battles.map(b=>({...b,trainers:b.trainers||[]}));},
       surfing: () => Boolean(map()?.world?.player?.surfing),
       vars: () => ({ ...(engine.state?.data?.vars || {}) }),
       clues: () => (engine.state?.clues || []).map((c) => ({ id: c.id, step: c.step, status: c.status })),

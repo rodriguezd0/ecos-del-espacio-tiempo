@@ -77,6 +77,18 @@ Correcciones verificadas:
   capturas de fase negras; se corrigió el monitor y un ensayo adicional obtuvo 24 fases visibles de seis
   transiciones. Se revisaron las imágenes de Alba, Caudal y Mnemos; el jugador queda sobre el panel y no
   persisten recursos temporales.
+- C065: el acercamiento de Ezequiel terminaba sobre la célula e impedía recogerla por contacto. Su posición
+  inicial pasa a (135,15), conservando combate, mirada, alcance y premio. Dos regresiones fallaron con la
+  disposición anterior; las 24 pruebas de B13 pasan con la corrección, incluida victoria real, premio de 1104,
+  recogida única, entrada al agua y regreso. La QA local no da avisos y la coordenada cambiada tiene cobertura
+  del 100 % (`c065_trainer_cell_report.md`). La partida continua recogió la célula mediante un viaje normal
+  de Buceo que reconstruyó el mapa; no se modificó su progreso para resolver el bloqueo.
+- El conductor solo reintenta Talasa y Tizón después de una nueva derrota registrada con regreso al Centro.
+  La victoria doble exige a Casia y Garrido en el mismo combate, también en el recorrido normal. Las recargas
+  comparan el GameState completo, incluidos UID, posición de cada Pokémon en el PC, pistas, viajes, selfswitches
+  y punto de cura. Solo excluyen el tiempo jugado y el reloj de la comparación literal; el reloj se valida
+  aparte, admitiendo hasta quince minutos de avance normal, incluido el cambio de día. La revisión independiente
+  confirmó estas correcciones; las 72 regresiones enfocadas pasan (`campaign_driver_closure_green.log`).
 
 No quedan hallazgos críticos o altos de esta revisión. El autor aprobó las trece poses frontales nuevas, el kit
 M/F completo, los 29 personajes de campo y el atlas, y confirmó la regla de tamaños el 04-10-2026. D30 queda
@@ -122,7 +134,10 @@ La recuperación del epílogo añade `epilogue_recovery_report.md`, `epilogue_re
 `epilogue_recovery_coverage.log` y `epilogue_recovery_changed_coverage.json`.
 El conductor de la partida continua comprueba también el huevo del inicial real de Gael, su entrega única,
 el PC y la elección de P9 después de recargar; exige 100 células, cinco núcleos, diez Fragmentos y dieciocho
-Tablillas. Sus seis regresiones pasan con los guiones de regalo reales. Este tramo está preparado para B21;
+Tablillas. Ocho pruebas de recarga final y seis del checkpoint comprueban los datos completos, continuidad del
+reloj y rechazo de cambios invisibles en un resumen de pantalla. El foco de ambos módulos alcanza 97,30 % líneas,
+97,78 % ramas y 92,31 % funciones; los modelos de UI son pruebas aisladas, sin sustituir la carga real pendiente.
+Este tramo está preparado para B21;
 la ejecución continua ha guardado B12 en Villa Alba y sigue en B13: 57 células, diez Tablillas, tres Núcleos,
 seis Fragmentos y Nadar. P6 conserva solo puzzles; se comprobaron sus caídas sin daño, anclas, puentes,
 cascadas y regresos antes y después de restaurarlo. Togepi eclosionó durante los desplazamientos reales.

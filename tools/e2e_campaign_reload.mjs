@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { refreshDriver } from './e2e_campaign_refresh.mjs';
+import { persistentSaveData, readPersistentSaveData, clockReloadError } from './e2e_campaign_checkpoint_reload.mjs';
 
 export function reloadProofError(before, s, name) {
   const same = (key) => JSON.stringify(s[key]) === JSON.stringify(before[key]);
@@ -15,6 +16,10 @@ export function reloadProofError(before, s, name) {
   if (s.tablets.length !== 18 || !same('tablets')) return 'Tablillas distintas tras cargar';
   if (s.money !== before.money || !same('bag') || !same('keyItems')) return 'dinero o bolsa distintos tras cargar';
   if (s.zygarde.form !== 'complete' || !s.zygarde.jump || !s.zygarde.anchor || !same('abilities')) return 'capacidades distintas tras cargar';
+  if (!before.saveData || !s.saveData) return 'faltan datos completos del guardado';
+  const clockError = clockReloadError(before.saveData, s.saveData);
+  if (clockError) return clockError;
+  if (JSON.stringify(persistentSaveData(before.saveData)) !== JSON.stringify(persistentSaveData(s.saveData))) return 'datos completos de la partida distintos tras cargar';
   return null;
 }
 
@@ -22,7 +27,7 @@ export function reloadProofError(before, s, name) {
 // Continuar, Cargar. La comprobación nunca prepara ni modifica progreso.
 export async function reloadCompletedCampaign(d, name) {
   await d.save('B21');
-  const before = await d.snap();
+  const before = { ...await d.snap(), saveData: await readPersistentSaveData(d) };
   fs.writeFileSync(path.join(d.outDir, 'campaign_final_before_reload.json'), JSON.stringify(before, null, 2));
   fs.writeFileSync(path.join(d.outDir, 'campaign_final_dialogos.json'), JSON.stringify(await d.log(), null, 2));
   await d.page.reload({ waitUntil: 'load' });
@@ -37,7 +42,9 @@ export async function reloadCompletedCampaign(d, name) {
   await d.press('KeyZ', 700);
   await d.until(s => s.top === 'MapScene' && s.ready, { timeout: 30000, what: 'guardado final cargado' });
   await d.settle();
-  await d.milestone('postgame_recargado', s => reloadProofError(before,s,name));
+  const saveData = await readPersistentSaveData(d);
+  fs.writeFileSync(path.join(d.outDir, 'campaign_final_after_reload.json'), JSON.stringify({ ...await d.snap(), saveData }, null, 2));
+  await d.milestone('postgame_recargado', s => reloadProofError(before, { ...s, saveData }, name));
   const enabled = await d.eval(async () => {
     const { isPostgame } = await import('/src/content/events/b22a_common.js');
     const { postgame } = await import('/src/content/events/b22d_common.js');

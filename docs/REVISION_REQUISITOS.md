@@ -48,7 +48,7 @@ sus fuentes, geometría, trazas y límites de fixtures en `tools/cache/progressi
 | Olmedo, Mamá, llave de Alerce, montaje y Clefairy condicionales | Guiones/recorridos B21 y pruebas de alcance | Verificado en banco; continuo pendiente |
 | Nota de Gael y huevo de su inicial, disponible con equipo lleno y entrega única | Guion real; pruebas B21/regalos y tres regresiones del conductor | Verificado en banco; prueba continua preparada |
 | TV, carguero, cuaderno ausente, créditos y despertar con Completo por voluntad | Epílogo normal y recuperación: once comprobaciones Chrome | Verificado en banco; continuo pendiente |
-| Guardar/Continuar/Cargar: equipo, PC, huevo, colección, bolsa, dinero, elección y capacidades | Seis regresiones del conductor de epílogo/recarga | Preparado para el guardado continuo final |
+| Guardar/Continuar/Cargar: identidad, Pokémon completos/UID/posiciones del PC, huevo, colección, bolsa, dinero, elección, capacidades y reloj | Comparación del GameState completo; ocho pruebas de recarga final y seis del checkpoint, con rechazo de corrupción y continuidad del reloj | Preparado; recarga real del guardado continuo final pendiente |
 
 ## Postgame B22 — CAMPANA §8.1
 
@@ -115,6 +115,7 @@ en `tools/cache/b24_entrega.md`, trazas `e2e_b24_*.log` y checkpoints de `screen
 | Dobles: sprites propios separados, sombras y efectos | Disposición y combate cooperativo real | Verificado |
 | Cámara, árboles enteros, pasabilidad de flores/rocas y costuras | QA de mapas, validador y 45 conexiones | Verificado; rocas de tres puzzles conservan la excepción documentada |
 | Escuela de Estrato: arco, marcador y entrada/retorno alineados | Cuatro regresiones, 51 pruebas, siete hitos Chrome y tres costuras limpias | Verificado en 8689c3f |
+| C065 recogible tras combatir con Ezequiel | Dos fallos RED del acercamiento real; 24 pruebas B13 GREEN, premio, contacto único, Nadar/regreso y QA local sin avisos | Corregido en 7ddaf7c; el guardado continuo la recogió mediante Buceo y reconstrucción normal del mapa |
 | Puertas normales cerradas: apertura/cierre sobre el panel original | 56 accesos/36 variantes resueltos, máscaras y raster; ocho transiciones Chrome, curación/recarga y 24 fases visibles | Verificado, incluidos guiones y stamps locales |
 | Seguidor B14, aro negro de Gael y Diario | Profundidad en tres capas/ambas formas; datos de B15/B20; pestañas y pruebas | Verificado |
 | F9 espera al jugador/guion; recuperación del final tras televisión | Once regresiones y once comprobaciones Chrome | Verificado en be63ae7 |
@@ -123,7 +124,7 @@ en `tools/cache/b24_entrega.md`, trazas `e2e_b24_*.log` y checkpoints de `screen
 | Elenco propio de campo, incluido Vértice líder | Lámina de 29 charsets; hashes originales y aprobación registrada por archivo/alias | Aprobado por el autor el 04-10-2026 |
 | Ilustración del atlas de Axis | Imagen mostrada y aprobada; JSON/generador con fecha, PNG idénticos y 56 lugares conservados | Aprobado por el autor el 04-10-2026 |
 | Escala de Pokémon del mapa, incluidos Onix/Yanma | Módulo y cuatro pruebas; el autor elige mantener la regla actual | Confirmado por el autor el 04-10-2026 (X37) |
-| Suite completa sobre el resultado integrado | 2314/2314, sin fallos, omisiones ni cancelaciones; `suite_final_approval.log` | Verificado sobre puertas, escuela, arte aprobado/UI y conductores actuales |
+| Suite completa sobre el resultado integrado | Última completa: 2314/2314, sin fallos, omisiones ni cancelaciones; `suite_final_approval.log` | Arte aprobado/UI verificados; cambios posteriores de C065 y conductor pasan sus focos de 24 y 72 pruebas |
 | Validador, costuras y QA sobre el resultado final | Último validador: 272 mapas/187 entrenadores/sin errores; Estrato 0/3 costuras defectuosas | Repetir al cierre si cambian mapas |
 | Guardado final desde UI y carga desde el título | Controlador preparado con comparación completa y habilitación del postgame | Pendiente al llegar a B21 |
 
