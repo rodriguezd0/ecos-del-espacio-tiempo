@@ -3,6 +3,7 @@ import {installB14Observer} from './e2e_campaign_b14_page.mjs';
 import {Driver as EchoDriver} from './e2e_b14_driver.mjs';
 import {FONDO} from '../game/src/content/maps/b14/layout.js';
 import {reloadCheckpoint} from './e2e_campaign_checkpoint_reload.mjs?slot=1';
+import {completeRealMoon} from './e2e_campaign_b14_capture.mjs';
 const RETRY=false;
 const need = (cond, msg) => (cond ? null : msg);
 const has = (s, key) => Boolean(s.flags?.[key]);
@@ -263,17 +264,15 @@ export async function completeEcho(d, { run = echoFight } = {}) {
 
 async function fosa(d) {
   await completeEcho(d);
-  await d.walkTo(15, 13, { face: 'up' });
-  await d.interact({ watch: [{ scene: 'VerseScene', name: 'verso_vii', delay: 1500 }] });
-  await d.expectSaid(/La decimotercera tabla espera en el hielo más viejo/, 'la pista T13');
-  await d.expectSaid(/ya no es un eco/, 'la Bramaluna real');
+  if (!has(await d.snap(), 'p7_restored')) {
+    await d.walkTo(15, 13, { face: 'up' });
+    await d.interact({ watch: [{ scene: 'VerseScene', name: 'verso_vii', delay: 1500 }] });
+    await d.expectSaid(/La decimotercera tabla espera en el hielo más viejo/, 'la pista T13');
+    await d.expectSaid(/ya no es un eco/, 'la Bramaluna real');
+  }
   const story = await d.eval(() => ({ fragments: window.__b14.fragments(), t13: window.__b14.hasClue('T13') }));
   await d.milestone('p7_restaurado', (s) => need(has(s, 'p7_restored') && has(s, 'b14_t13') && story.fragments.includes('F07') && story.t13, `P7 ${has(s, 'p7_restored')}, ${JSON.stringify(story)}`));
-  await d.faceEvent('bramaluna_real');
-  await d.interact({ watch: [{ scene: 'BattleScene', name: 'bramaluna_real', delay: 4000 }] });
-  const real = await d.eval(() => window.__b14.battles.filter((b) => b.tag === 'bramaluna_real').pop());
-  const captured = await d.eval(() => window.__b14.captured().includes('ROARINGMOON'));
-  await d.milestone('bramaluna_real', () => need(real && real.level === 58 && real.alpha && !real.catchRule && real.outcome === 'caught' && captured, `captura real: ${JSON.stringify(real)}`));
+  await completeRealMoon(d);
   await d.walkTo(24, 19);
   await d.interact();
   await d.until((s) => s.map === 'caleta_sonda' && s.ready, { timeout: 15000, what: 'subir a Caleta Sonda' });
