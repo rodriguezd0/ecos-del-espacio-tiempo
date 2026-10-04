@@ -87,4 +87,8 @@ checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.j
 y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`, `progression_inventory_report.md` y sus trazas.
 La recuperación del epílogo añade `epilogue_recovery_report.md`, `epilogue_recovery_chrome_report.json`,
 `epilogue_recovery_coverage.log` y `epilogue_recovery_changed_coverage.json`.
+El conductor de la partida continua comprueba también el huevo del inicial real de Gael, su entrega única,
+el PC y la elección de P9 después de recargar; exige 100 células, cinco núcleos, diez Fragmentos y dieciocho
+Tablillas. Sus seis regresiones pasan con los guiones de regalo reales. Este tramo está preparado para B21;
+la ejecución continua sigue en B11.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.

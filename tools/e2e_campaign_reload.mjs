@@ -8,8 +8,10 @@ export function reloadProofError(before, s, name) {
   if (!s.flags.game_cleared || !s.flags.b21_fin) return 'el postgame no quedó guardado';
   if (s.map !== before.map || s.x !== before.x || s.y !== before.y) return 'posición final distinta';
   if (s.cells.length !== 100 || s.cores.length !== 5 || !same('cells') || !same('cores')) return 'colección incompleta tras cargar';
-  if (!same('fragments')) return 'fragmentos distintos';
-  if (!same('pokemon')) return 'equipo distinto tras cargar';
+  if (s.fragments.length !== 10 || !same('fragments')) return 'fragmentos incompletos o distintos';
+  if (!same('pokemon') || !same('partyFull') || !same('boxedPokemon')) return 'equipo o PC distintos tras cargar';
+  if (!s.flags.b21_huevo_gael || s.flags.b21_huevo_espera || s.vars?.gael_starter !== before.vars?.gael_starter) return 'huevo de Gael distinto o pendiente tras cargar';
+  if (s.vars?.p9_choice !== before.vars?.p9_choice) return 'elección del P9 distinta tras cargar';
   if (s.tablets.length !== 18 || !same('tablets')) return 'Tablillas distintas tras cargar';
   if (s.money !== before.money || !same('bag') || !same('keyItems')) return 'dinero o bolsa distintos tras cargar';
   if (s.zygarde.form !== 'complete' || !s.zygarde.jump || !s.zygarde.anchor || !same('abilities')) return 'capacidades distintas tras cargar';
