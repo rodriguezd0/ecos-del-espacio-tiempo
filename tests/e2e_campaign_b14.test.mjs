@@ -97,3 +97,86 @@ test('campaign B14: the safe Adela loss retries in the same bell with the canoni
  assert.equal(attempts,2);assert.deepEqual(calls,[['reef','arrecife_eco'],['reef','arrecife_campana']]);
  assert.deepEqual(state.flags,{b14_caleta_intro:true});
 });
+
+function echoRecovery() {
+ const state={map:'antea_4_presente',battles:[],flags:{b14_aliviadero:true}},calls=[];
+ const d={snap:async()=>structuredClone(state),walkTo:async(x,y)=>calls.push(['walk',x,y]),
+  exitTo:async(dir,map)=>{calls.push(['stairs',dir,map]);state.map=map;}};
+ const loss={tag:'bramaluna_eco',outcome:'lose',canLose:true,noMoneyLoss:true,moneyBefore:34936,moneyAfter:34936};
+ return {state,calls,d,loss};
+}
+
+test('campaign B14: a safe echo defeat returns through the real floor-three stairs before retrying',async()=>{
+ const {state,calls,d,loss}=echoRecovery();let attempts=0;
+ await campaign.completeEcho(d,{run:async()=>{
+  calls.push(['echo',state.map]);
+  if(++attempts===1){state.map='antea_4_presente';state.battles.push(loss);throw Error('no victory dialogue');}
+ }});
+ assert.equal(attempts,2);
+ assert.deepEqual(calls,[['walk',16,5],['stairs','up','fosa_eco'],['echo','fosa_eco'],['walk',16,5],['stairs','up','fosa_eco'],['echo','fosa_eco']]);
+ assert.deepEqual(state.flags,{b14_aliviadero:true});
+});
+
+test('campaign B14: an old echo defeat cannot excuse an unrelated failure or unexpected map',async()=>{
+ const {state,d,loss}=echoRecovery();state.map='fosa_eco';state.battles.push(loss);let attempts=0;
+ await assert.rejects(campaign.completeEcho(d,{run:async()=>{attempts++;state.map='antea_4_presente';throw Error('unrelated failure');}}),/unrelated failure/);
+ assert.equal(attempts,1);
+ state.map='caleta_sonda';
+ await assert.rejects(campaign.completeEcho(d,{run:async()=>{attempts++;}}),/fuera de la Fosa/);
+ assert.equal(attempts,1);
+});
+
+test('campaign B14: only a new protected echo loss at its canonical retry map may be recovered',async()=>{
+ for(const change of [{tag:'bramaluna_real'},{canLose:false},{noMoneyLoss:false},{outcome:'win'},{moneyAfter:1},{map:'caleta_sonda'}]){
+  const {state,d,loss}=echoRecovery();state.map='fosa_eco';let attempts=0;
+  await assert.rejects(campaign.completeEcho(d,{run:async()=>{
+   attempts++;state.map=change.map||'antea_4_presente';state.battles.push({...loss,...change});throw Error('unsafe loss');
+  }}),/unsafe loss/);
+  assert.equal(attempts,1);
+ }
+});
+
+test('campaign B14: missing or invalid money observations do not prove a protected echo retry',async()=>{
+ for(const money of [undefined,null,'34936',NaN,-1,Number.MAX_SAFE_INTEGER+1]){
+  const {state,d,loss}=echoRecovery();state.map='fosa_eco';let attempts=0;
+  await assert.rejects(campaign.completeEcho(d,{run:async()=>{
+   attempts++;state.map='antea_4_presente';state.battles.push({...loss,moneyBefore:money,moneyAfter:money});throw Error('missing money evidence');
+  }}),/missing money evidence/);
+  assert.equal(attempts,1);
+ }
+});
+
+test('campaign B14: three protected echo defeats stop without granting restoration or a catch',async()=>{
+ const {state,d,loss}=echoRecovery();let attempts=0;
+ await assert.rejects(campaign.completeEcho(d,{run:async()=>{
+  attempts++;state.map='antea_4_presente';state.battles.push({...loss});throw Error('lost');
+ }}),/Tres derrotas reales contra el eco/);
+ assert.equal(attempts,3);assert.deepEqual(state.flags,{b14_aliviadero:true});
+});
+
+test('campaign B14: echo victory evidence requires the actual uncapturable alpha and a recorded win',()=>{
+ const s={flags:{b14_bramaluna_eco:true},battles:[{tag:'bramaluna_eco',outcome:'win',level:56,alpha:true,ability:'PROTOSYNTHESIS',item:'BOOSTERENERGY',canRun:false,catchRule:{allowed:false,reason:'Es un eco: no hay nada que atrapar'}}]};
+ assert.equal(campaign.echoVictoryError(s),null);
+ for(const change of [{outcome:'lose'},{level:58},{alpha:false},{ability:'PRESSURE'},{item:null},{canRun:true},{catchRule:{allowed:true}}]){
+  assert.ok(campaign.echoVictoryError({...s,battles:[{...s.battles[0],...change}]}));
+ }
+ assert.ok(campaign.echoVictoryError({...s,flags:{}}));
+});
+
+test('campaign B14: the default echo path uses the touch encounter and checks its recorded victory',async()=>{
+ const {state,calls,d}=echoRecovery();
+ const win={tag:'bramaluna_eco',outcome:'win',level:56,alpha:true,ability:'PROTOSYNTHESIS',item:'BOOSTERENERGY',canRun:false,catchRule:{allowed:false,reason:'Es un eco: no hay nada que atrapar'}};
+ const walk=d.walkTo;
+ d.walkTo=async(x,y,opts)=>{
+  await walk(x,y);
+  if(x===15&&y===16){assert.equal(opts.stopWhen(state),false);state.battles.push(win);state.flags.b14_bramaluna_eco=true;assert.equal(opts.stopWhen(state),true);}
+ };
+ d.settle=async()=>{};
+ d.expectSaid=async(re)=>{assert.match('La Bramaluna se deshace en ondas verdes',re);calls.push(['victory-dialogue']);};
+ d.milestone=async(name,check)=>{assert.equal(check(state),null);calls.push(['milestone',name]);};
+ await campaign.completeEcho(d);
+ assert.deepEqual(calls,[['walk',16,5],['stairs','up','fosa_eco'],['walk',15,16],['victory-dialogue'],['milestone','eco_vencido']]);
+ calls.length=0;
+ await campaign.completeEcho(d);
+ assert.deepEqual(calls,[['milestone','eco_vencido']]);
+});

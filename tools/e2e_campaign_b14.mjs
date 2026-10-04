@@ -219,20 +219,50 @@ async function sala4(d) {
   await d.exitTo('up', 'fosa_eco');
 }
 
-async function fosa(d) {
-  await d.settle();
-  const inFosa = (s) => s.map !== 'fosa_eco' || has(s, 'b14_bramaluna_eco');
+export function echoVictoryError(s) {
+  if (!has(s, 'b14_bramaluna_eco')) return 'el eco sigue en pie';
+  const echo = s.battles.filter((b) => b.tag === 'bramaluna_eco' && b.outcome === 'win').at(-1);
+  if (!echo || echo.level !== 56 || !echo.alpha || echo.ability !== 'PROTOSYNTHESIS' || echo.item !== 'BOOSTERENERGY') return `combate del eco: ${JSON.stringify(echo)}`;
+  if (echo.canRun !== false || echo.catchRule?.allowed !== false || !/Es un eco: no hay nada que atrapar/.test(echo.catchRule?.reason || '')) return `reglas del eco: ${JSON.stringify(echo)}`;
+  return null;
+}
 
-  await d.walkTo(15, 16, { stopWhen: inFosa, watch: [{ re: /se yergue en su nido/, name: 'bramaluna_eco', delay: 200 }, { scene: 'BattleScene', name: 'combate_eco', delay: 5000 }] });
+async function echoFight(d) {
   await d.settle();
-  await d.expectSaid(/se deshace en ondas verdes/, 'la victoria sobre el eco');
-  const echo = await d.eval(() => window.__b14.battles.filter((b) => b.tag === 'bramaluna_eco').pop());
-  await d.milestone('eco_vencido', (s) => {
-    if (!has(s, 'b14_bramaluna_eco')) return 'el eco sigue en pie';
-    if (!echo || echo.level !== 56 || !echo.alpha || echo.ability !== 'PROTOSYNTHESIS' || echo.item !== 'BOOSTERENERGY') return `combate del eco: ${JSON.stringify(echo)}`;
-    if (echo.canRun !== false || echo.catchRule?.allowed !== false || !/Es un eco: no hay nada que atrapar/.test(echo.catchRule?.reason || '')) return `reglas del eco: ${JSON.stringify(echo)}`;
-    return null;
-  });
+  if (!has(await d.snap(), 'b14_bramaluna_eco')) {
+    const inFosa = (s) => s.map !== 'fosa_eco' || has(s, 'b14_bramaluna_eco');
+    await d.walkTo(15, 16, { stopWhen: inFosa, watch: [{ re: /se yergue en su nido/, name: 'bramaluna_eco', delay: 200 }, { scene: 'BattleScene', name: 'combate_eco', delay: 5000 }] });
+    await d.settle();
+    await d.expectSaid(/se deshace en ondas verdes/, 'la victoria sobre el eco');
+  }
+  await d.milestone('eco_vencido', echoVictoryError);
+}
+
+/** bossBattle cura en el manantial de la sala 4; el reintento sube por la misma puerta del piso 3. */
+export async function completeEcho(d, { run = echoFight } = {}) {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const entry = await d.snap();
+    if (entry.map === 'antea_4_presente') {
+      await d.walkTo(16, 5);
+      await d.exitTo('up', 'fosa_eco');
+    } else if (entry.map !== 'fosa_eco') throw Error(`Reintento del eco fuera de la Fosa: ${entry.map}`);
+    const before = await d.snap();
+    try { await run(d); return; }
+    catch (error) {
+      const after = await d.snap(), battle = after.battles.at(-1);
+      if (after.battles.length <= before.battles.length || battle?.tag !== 'bramaluna_eco'
+        || battle.outcome !== 'lose' || battle.canLose !== true || battle.noMoneyLoss !== true
+        || !Number.isSafeInteger(battle.moneyBefore) || battle.moneyBefore < 0
+        || !Number.isSafeInteger(battle.moneyAfter) || battle.moneyAfter < 0
+        || battle.moneyBefore !== battle.moneyAfter || after.map !== 'antea_4_presente') throw error;
+      console.log('DERROTA REAL contra el eco: equipo curado en el manantial y regreso por la escalera de la Fosa.');
+    }
+  }
+  throw Error('Tres derrotas reales contra el eco; hace falta preparar el equipo.');
+}
+
+async function fosa(d) {
+  await completeEcho(d);
   await d.walkTo(15, 13, { face: 'up' });
   await d.interact({ watch: [{ scene: 'VerseScene', name: 'verso_vii', delay: 1500 }] });
   await d.expectSaid(/La decimotercera tabla espera en el hielo más viejo/, 'la pista T13');
