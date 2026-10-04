@@ -1,4 +1,5 @@
 import {refreshDriver} from './e2e_campaign_refresh.mjs';
+import {prepareB16} from './e2e_campaign_pc.mjs';
 import {installB16Observer} from './e2e_campaign_b16_page.mjs';
 import {
   PATIO, SABER, SENTIR, QUERER, TELAR, P8_MAPS, P8_UP, floorTop,
@@ -381,5 +382,5 @@ async function evaristo(d) {
 
 export async function runB16(d){
  await refreshDriver(d);await installB16Observer(d.page);d.retry=false;
- await d.stages('B16',{entrada:async d=>d.travel('lagos_alma'),lagos,saber,sentir,querer,telar,hito,evaristo:async d=>{await d.travel('nexo_correos');await evaristo(d);}});
+ await d.stages('B16',{preparacion:prepareB16,entrada:async d=>d.travel('lagos_alma'),lagos,saber,sentir,querer,telar,hito,evaristo:async d=>{await d.travel('nexo_correos');await evaristo(d);}});
 }
