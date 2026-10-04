@@ -28,7 +28,7 @@
 > 3. Arte humano y atlas aprobados por el autor el 04-10: trece poses de NPC, kit M/F completo, 29 personajes de campo e ilustración regional. Aprobación registrada por archivo, sin cambiar los PNG mostrados.
 > 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
 > 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
-> 6. Partida continua desde «Nueva partida»: B01–B16 recorridos y guardados por UI; continúa hacia P9 con los recursos obtenidos jugando. Último guardado: Correos de Nexo (7,8), 100 células únicas, trece Tablillas, cinco Núcleos y ocho Fragmentos. Las recargas reales de B13 y B15 conservaron todos los campos persistentes y el reloj exacto del archivo. Al preparar B16, se retiró Bramaluna Alfa 58 del PC y se depositó Rampardos sin cambiar ni perder registros. P6, sus caídas sin daño y sus regresos están comprobados; Nadar y Buceo se habilitaron jugando y Togepi eclosionó caminando. P8/Telar está restaurado; Completo, Volar y Reconstruir se habilitaron jugando.
+> 6. Partida continua desde «Nueva partida»: B01–B17 recorridos y guardados por UI; P9 en marcha con los recursos obtenidos jugando. Último guardado: Puente de Convergencia (20,1), 100 células únicas, catorce Tablillas, cinco Núcleos y ocho Fragmentos. Las recargas reales de B13 y B15 conservaron todos los campos persistentes y el reloj exacto del archivo. Al preparar B16, se retiró Bramaluna Alfa 58 del PC y se depositó Rampardos sin cambiar ni perder registros. P6, sus caídas sin daño y sus regresos están comprobados; Nadar y Buceo se habilitaron jugando y Togepi eclosionó caminando. P8/Telar está restaurado; Completo, Volar y Reconstruir se habilitaron jugando. B17 incluye Mesa/T14, ambas torres, Vigilia y Círculo del Jardín.
 > 7. QA final de P8–P10: escalera visible del Puente, columnas y fachadas sin solapes accidentales. Las 45 conexiones siguen limpias; subida y regreso de P9 recorridos en Chrome.
 >
 > Detalles revisados:
@@ -160,9 +160,9 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
   El reloj se compara con el payload que escribió la UI, admitiendo avance normal y rechazando reinicios.
   Las 80 regresiones del recorrido pasan. La recarga real de B13 ya pasó con el reloj 1219→1219 y todos los campos completos
   iguales; falta la recarga del final (`campaign_b13_reload_audit.json`).
-- Última suite completa de integración: 2428/2428 sin fallos, omisiones ni cancelaciones, incluidos el arte
+- Última suite completa de integración: 2435/2435 sin fallos, omisiones ni cancelaciones, incluidos el arte
   aprobado, su UI, C059/C065, recargas, retornos B14/B15, PC y separación global de seguidores
-  (`suite_followers_final.log`, 32,0 s); foco de arte: 48/48.
+  y salida B17 (`suite_b17_exit_integrated.log`, 30,8 s); foco de arte: 48/48.
   Validador posterior a C059/C065: 272 mapas sin errores; 45/45 costuras limpias y cero incidencias de arte sin
   revisión. Las dos regresiones posteriores del tramo de entrada de B14 pasan en el foco de 80 pruebas.
 - Reintentos reales de B14 verificados: vuelta por Buceo tras perder con Eulalia y reintento local de Adela
@@ -179,7 +179,12 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 - B16 guardado por UI en Correos de Nexo (7,8): 100 células únicas, cinco Núcleos, F01–F08 y trece Tablillas.
   Saber/Sentir/Querer y Telar resueltos, descenso por ambas plantas, Azelf58 vencido con la Mochila sellada
   y dinero intacto, Forma Completa/Volar/Reconstruir y ambos tramos del puente. Las colecciones de B15 se
-  conservan (`campaign_b16_checkpoint_audit.json`). Sigue hacia P9; falta la recarga completa del final.
+  conservan (`campaign_b16_checkpoint_audit.json`).
+- B17 guardado por UI en Puente de Convergencia (20,1): Tabla Cielo, ambas torres y dobles ganados, Vigilia,
+  Círculo del Jardín/tres Piedras Lunares y entrada real de P9. Conserva 100 células únicas, cinco Núcleos y
+  ocho Fragmentos, con catorce Tablillas (`campaign_b17_checkpoint_audit.json`). La salida/reanudación usa
+  el warp vigente; siete regresiones y revisión independiente, guardadas en `ea276ad`.
+  P9 ya pasó Casia/Garrido/Vértice y está comprobando el Río. Falta la recarga completa del final.
 - Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
 ## 6. Menores

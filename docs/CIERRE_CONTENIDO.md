@@ -130,9 +130,9 @@ La aprobación anterior de frontales y tamaños tuvo revisión independiente sin
 
 ## Comprobaciones de integración
 
-La última suite completa de integración pasó **2428/2428**, sin fallos, saltos ni cancelaciones, incluidos el arte
+La última suite completa de integración pasó **2435/2435**, sin fallos, saltos ni cancelaciones, incluidos el arte
 aprobado, su UI, C059/C065, recargas, retornos B14/B15, PC y separación global de seguidores
-(`suite_followers_final.log`, 32,0 s). El último
+y salida B17 (`suite_b17_exit_integrated.log`, 30,8 s). El último
 validador posterior a ambos arreglos construyó 272 mapas sin errores: 31 avisos enumerados, ninguno de Mar/Talasa.
 Las 45 conexiones actuales pasan la revisión de costuras, incluidas las seis de esos dos mapas. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
@@ -159,7 +159,7 @@ Evidencia: `door_animation_report.md`, `door_final_coverage.log`, `door_inventor
 `door_chrome_phases_`. Los seis perfiles temporales anteriores permanecen en caché porque su borrado fue
 rechazado por la revisión automática («blocked by policy»); sus navegadores están cerrados.
 
-Evidencia local en `tools/cache/`: `suite_followers_final.log`, `follower_spacing_review.md`, `suite_b14_retry_integrated.log`, `suite_campaign_routes_integrated.log`, `suite_slot_reload_integrated.log`, `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
+Evidencia local en `tools/cache/`: `suite_b17_exit_integrated.log`, `suite_followers_final.log`, `follower_spacing_review.md`, `suite_b14_retry_integrated.log`, `suite_campaign_routes_integrated.log`, `suite_slot_reload_integrated.log`, `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y
 checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json`, `b14_follower_review.json`
 y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`, `progression_inventory_report.md` y sus trazas.
@@ -191,5 +191,11 @@ huida/captura y conservando 42576 de dinero. P8 restaurado y descendido por amba
 Volar, Reconstruir, Cadena Roja y los dos tramos del puente habilitados por su guion. El contraste independiente
 conserva identidad y colecciones de B15 (`campaign/campaign_b16_checkpoint_audit.json`); el alcance es el
 checkpoint y los combates observados, y no sustituye la comparación completa del payload del final.
-El recorrido continúa hacia P9. P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
+Después se guardó B17 por UI en Puente de Convergencia (20,1): 100 células únicas, cinco Núcleos, ocho
+Fragmentos y catorce Tablillas. Mesa/T14, ambas torres y sus dobles, Vigilia, Círculo/tres Piedras Lunares y
+reconstrucción de la Senda completos. La revisión conserva todas las colecciones de B16
+(`campaign/campaign_b17_checkpoint_audit.json`). La reanudación usa la llegada exacta del warp vertical de P9,
+sin repetir controles ya completados; dos fallos RED, siete regresiones GREEN, 28 pruebas de revisión y
+cobertura del helper 100 % líneas / 96,77 % ramas / 100 % funciones (`ea276ad`).
+El recorrido continúa en B18/P9. P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.
