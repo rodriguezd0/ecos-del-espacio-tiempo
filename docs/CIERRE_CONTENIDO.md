@@ -103,7 +103,13 @@ Correcciones verificadas:
   enfocadas pasan; el navegador ya ejecutó ambos tipos de regreso y venció a los tres. En B15, el conductor
   evita las escaleras falsas durante los trayectos y conserva el intento voluntario del puzzle: diez pruebas
   nuevas, revisión independiente y 21/23 líneas del cambio cubiertas (91,30 %). El fixture llega al mirador;
-  el recorrido continuo posterior sigue pendiente (`campaign_future_driver_review.md`).
+  el recorrido continuo posterior sigue pendiente (`campaign_future_driver_review.md`). El eco dispone de
+  reentrada por la escalera real y controles de derrota nueva, protección y dinero observado: 15/15 pruebas.
+  La captura física exige resultado caught, flag y posesión real en equipo/PC; cinco pruebas nuevas y módulo
+  con cobertura 100/100/100. El foco B14 pasa 20/20 (`campaign_b14_capture_root_review.log`). Cuatro pruebas
+  posteriores contrastan el evento de superficie del Arrecife y modelan el retorno/reanudación; el navegador
+  ya ejecutó la salida física (22,31) y llegó a tierra sin repetir las cinco recogidas del Fondo. Cobertura del
+  helper de retorno: 100 % líneas / 93,75 % ramas / 100 % funciones (`campaign_b14_return_root_review.log`).
 
 No quedan hallazgos críticos o altos de esta revisión. El autor aprobó las trece poses frontales nuevas, el kit
 M/F completo, los 29 personajes de campo y el atlas, y confirmó la regla de tamaños el 04-10-2026. D30 queda
@@ -120,8 +126,10 @@ La aprobación anterior de frontales y tamaños tuvo revisión independiente sin
 
 ## Comprobaciones de integración
 
-La última suite completa de integración pasó **2361/2361**, sin fallos, saltos ni cancelaciones, incluidos el arte
-aprobado, su UI, C059/C065, recargas y conductores B14/B15 (`suite_campaign_routes_integrated.log`, 37,8 s). El último
+La última suite completa de integración pasó **2373/2373**, sin fallos, saltos ni cancelaciones, incluidos el arte
+aprobado, su UI, C059/C065, recargas, reintentos/captura B14 y conductor B15 (`suite_b14_retry_integrated.log`, 40,0 s).
+Las cuatro pruebas de retorno B14 son posteriores y pasan por separado. La separación global de seguidores
+solicitada en X38 está en marcha y todavía no forma parte de esta comprobación integrada. El último
 validador posterior a ambos arreglos construyó 272 mapas sin errores: 31 avisos enumerados, ninguno de Mar/Talasa.
 Las 45 conexiones actuales pasan la revisión de costuras, incluidas las seis de esos dos mapas. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
@@ -144,7 +152,7 @@ Evidencia: `door_animation_report.md`, `door_final_coverage.log`, `door_inventor
 `door_chrome_phases_`. Los seis perfiles temporales anteriores permanecen en caché porque su borrado fue
 rechazado por la revisión automática («blocked by policy»); sus navegadores están cerrados.
 
-Evidencia local en `tools/cache/`: `suite_campaign_routes_integrated.log`, `suite_slot_reload_integrated.log`, `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
+Evidencia local en `tools/cache/`: `suite_b14_retry_integrated.log`, `suite_campaign_routes_integrated.log`, `suite_slot_reload_integrated.log`, `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y
 checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json`, `b14_follower_review.json`
 y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`, `progression_inventory_report.md` y sus trazas.
@@ -160,5 +168,10 @@ La ejecución continua ha guardado y recargado B13 en Caleta Sonda: 77 células,
 seis Fragmentos, Nadar y Buceo. Comparación independiente del payload y el estado recargado: todos los campos
 persistentes idénticos, reloj 1219→1219 y misma identidad QAut8uoab (`campaign/campaign_b13_reload_audit.json`).
 Talasa, Lumbre/fiesta, las tres coladas, respiraderos, jefa/Tabla Llama y el retorno marítimo están completos.
-El recorrido continúa en B14. P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
+Después se guardó B14 por UI en Caleta (9,28): 85 células únicas, cuatro Núcleos, siete Fragmentos y doce
+Tablillas. P7 restaurado, Bramaluna Alfa 58 capturada en cinco turnos y enviada al PC, ferri reanudado y las
+cinco células del Fondo recogidas con regreso. El contraste independiente de checkpoints conserva todas las
+colecciones de B13 y la identidad QAut8uoab (`campaign/campaign_b14_checkpoint_audit.json`); su alcance es el
+resumen y los combates registrados, sin sustituir la comparación completa del guardado final.
+El recorrido continúa en B15. P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.

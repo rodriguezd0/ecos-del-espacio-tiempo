@@ -28,13 +28,13 @@
 > 3. Arte humano y atlas aprobados por el autor el 04-10: trece poses de NPC, kit M/F completo, 29 personajes de campo e ilustración regional. Aprobación registrada por archivo, sin cambiar los PNG mostrados.
 > 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
 > 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
-> 6. Partida continua desde «Nueva partida»: B01–B13 recorridos y guardados por UI; B14 en marcha, con el mismo equipo, dinero y objetos obtenidos en juego. Último guardado: Caleta Sonda, 77 células, doce Tablillas, cuatro Núcleos y seis Fragmentos. Guardar/recargar/Continuar/Cargar conservó el GameState completo y el reloj exacto del archivo. P6, sus caídas sin daño y sus regresos están comprobados; Nadar y Buceo se habilitaron jugando y Togepi eclosionó caminando.
+> 6. Partida continua desde «Nueva partida»: B01–B14 recorridos y guardados por UI; B15 en marcha con los recursos obtenidos jugando. Último guardado: Caleta Sonda (9,28), 85 células, doce Tablillas, cuatro Núcleos y siete Fragmentos; Bramaluna Alfa 58 en el PC. La recarga real de B13 conservó el GameState completo y el reloj exacto del archivo. P6, sus caídas sin daño y sus regresos están comprobados; Nadar y Buceo se habilitaron jugando y Togepi eclosionó caminando. B14 incluye P7 restaurado, ferri activo y las cinco células del Fondo con retorno normal.
 > 7. QA final de P8–P10: escalera visible del Puente, columnas y fachadas sin solapes accidentales. Las 45 conexiones siguen limpias; subida y regreso de P9 recorridos en Chrome.
 >
-> Pendientes menores:
+> Detalles revisados:
 > - Solape en dobles corregido (3c0bafe): posiciones, sombras y efectos revisados en combate cooperativo real.
 > - Regla de tamaños del mapa confirmada por el autor el 04-10: se mantiene la actual para todas las especies (X37).
-> - Rocas de cueva: implican rehacer 3 puzles.
+> - Rocas de cueva: se conserva la excepción de los tres puzzles que usan su parte superior como suelo.
 
 Actualizado: 04-10-2026. En marcha: **partida continua hasta los créditos y revisión final de integración**.
 
@@ -160,16 +160,22 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
   El reloj se compara con el payload que escribió la UI, admitiendo avance normal y rechazando reinicios.
   Las 80 regresiones del recorrido pasan. La recarga real de B13 ya pasó con el reloj 1219→1219 y todos los campos completos
   iguales; falta la recarga del final (`campaign_b13_reload_audit.json`).
-- Última suite completa de integración: 2361/2361 sin fallos, omisiones ni cancelaciones, incluidos el arte
-  aprobado, su UI, C059/C065, recargas y conductores B14/B15 (`suite_campaign_routes_integrated.log`, 37,8 s); foco de arte: 48/48.
+- Última suite completa de integración: 2373/2373 sin fallos, omisiones ni cancelaciones, incluidos el arte
+  aprobado, su UI, C059/C065, recargas, reintentos/captura B14 y conductor B15 (`suite_b14_retry_integrated.log`, 40,0 s); foco de arte: 48/48.
   Validador posterior a C059/C065: 272 mapas sin errores; 45/45 costuras limpias y cero incidencias de arte sin
   revisión. Las dos regresiones posteriores del tramo de entrada de B14 pasan en el foco de 80 pruebas.
 - Reintentos reales de B14 verificados: vuelta por Buceo tras perder con Eulalia y reintento local de Adela
   después de la curación de su guion. Ocho pruebas enfocadas pasan. El conductor B15 respeta las escaleras falsas
   y conserva su intento voluntario; diez regresiones nuevas, revisión independiente y 91,30 % del cambio cubierto.
+- B14 guardado por UI: P7/F07, eco vencido y Bramaluna física 58 en PC, 85 células únicas y retorno del Fondo
+  por el evento real de superficie. Foco B14 20/20 más cuatro pruebas posteriores de retorno, con revisiones
+  independientes. El contraste de checkpoints conserva la identidad y las colecciones de B13
+  (`campaign_b14_checkpoint_audit.json`). La partida sigue en B15; la recarga completa del final aún falta.
 - Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
 ## 6. Menores
+- Separación global de seguidores en marcha (X38, pedido del autor el 04-10): alejar Zygarde y el Pokémon
+  acompañante según su huella visual, conservando los tamaños aprobados y el movimiento por el mapa.
 - Puertas normales terminadas: 36 variantes de gráfico y 56 accesos cerrados resueltos, incluidos Íker por guion y el Observatorio local de Boreal. Ocho transiciones en Chrome verifican curación, guardar/cargar y retornos; una revisión adicional conserva 24 fases visibles y cero errores. Los vanos abiertos y las puertas de puzzles mantienen su flujo.
 - Seguidor Zygarde en B14 comprobado: la regla de profundidad existente lo deja detrás del jugador. Chrome: 12 posiciones en tres capas, formas 10 % y 50 %, seis capturas y ningún error.
 - Gael B6 (B20): comprobado `megaRingName: 'el aro negro'` en su entrenador; también en B15.
