@@ -5,7 +5,8 @@ import {Driver18} from './e2e_b18_driver.mjs';
 import { ARRIVAL, BRIDGE, MOUTH, CAMP } from '../game/src/content/maps/b18/puente_layout.js';
 import { ROOM_PLACES, VESTIBULO, NUCLEO, SHORTCUT, ENTRY } from '../game/src/content/maps/b18/cruce_layout.js';
 import { F, V } from '../game/src/content/events/b18_common.js';
-import { solveAxisRoom, solveAxis } from '../game/src/world/axis/logic.js';
+import { solveAxis } from '../game/src/world/axis/logic.js';
+import {completeCruceRooms,recordCruceControls} from './e2e_campaign_b18_resume.mjs';
 
 const has = (s, f) => Boolean(s.flags[f]);
 const need = (cond, msg) => (cond ? null : msg);
@@ -49,7 +50,7 @@ async function puente(d) {
 // ───────────────────────────── Genesis ─────────────────────────────
 
 async function genesis(d) {
-  // Casia intercepta en la franja; la primera derrota es simulada (reintento curado en su casilla)
+  // Casia intercepta en la franja; las derrotas reales se reintentan con la cura del guion.
   await d.walkTo(20, 33, { stopWhen: (s) => has(s, F.casia), watch: [{ re: /sigue siendo un dato/, name: 'casia_intro', delay: 100 }] });
   await d.settle();
   const b = await d.battles();
@@ -82,24 +83,16 @@ async function genesis(d) {
 // ───────────────────────────── Cámara del Cruce ─────────────────────────────
 
 async function cruce(d) {
-  await d.walkTo(MOUTH.front.x, MOUTH.front.y);
-  await d.pushUntil('up', (s) => s.map === 'camara_cruce', 'subir a la Cámara del Cruce');
-  await d.settle();
-  await d.expectSaid(/Una sala de mármol plateado suspendida sobre el abismo/, 'la llegada a la Cámara');
-  await d.milestone('camara', (s) => need(has(s, F.chamberIn) && s.x === ENTRY.x && s.y === ENTRY.y, 'sin llegada a la Cámara'));
-  let mode = await d.axis();
-  const roomFlags = [null, F.room1, F.room2, F.room3];
-  for (const [i, place] of ROOM_PLACES.entries()) {
-    await d.walkTo(place.entry.x, place.entry.y);
-    const plan = solveAxisRoom(place.grid, { mode });
-    if (!plan) throw new Error(`${place.name}: sin solución con ${mode}`);
-    const end = await d.playRoom(place, plan, { ...place.grid.entry, mode });
-    mode = end.mode;
-    if (i === 0) await d.expectSaid(/El cristal vibra con la Cadena Roja/, 'el tutorial del primer cristal');
-    await d.milestone(`sala_${place.name}`, (s) => need(!roomFlags[i] || has(s, roomFlags[i]), `${place.name} sin superar`));
-    const next = ROOM_PLACES[i + 1]?.room || NUCLEO.room;
-    await d.pushUntil('up', inRect(next), `cruzar la puerta de ${place.name}`);
+  if((await d.snapState()).map==='puente_convergencia') {
+    await d.walkTo(MOUTH.front.x, MOUTH.front.y);
+    await d.pushUntil('up', (s) => s.map === 'camara_cruce', 'subir a la Cámara del Cruce');
+    await d.settle();
+    await d.expectSaid(/Una sala de mármol plateado suspendida sobre el abismo/, 'la llegada a la Cámara');
+    await d.milestone('camara', (s) => need(has(s, F.chamberIn) && s.x === ENTRY.x && s.y === ENTRY.y, 'sin llegada a la Cámara'));
   }
+  await recordCruceControls(d,'before');
+  try { await completeCruceRooms(d); }
+  catch(error) {await recordCruceControls(d,'failure');throw error;}
   await d.walkTo(NUCLEO.arrival.x, NUCLEO.arrival.y, { stopWhen: (s) => has(s, F.nucleus) });
   await d.settle();
   await d.expectSaid(/Una sala blanca partida en dos/, 'la llegada al núcleo');
