@@ -63,7 +63,7 @@ export const EXT2 = {
 };
 
 export const EXT3 = {
-  mansion_ladrillo: { src: [0, 271, 8, 13], layer: 2, door: [3, 10], tags: ['edificio', 'mansion'], desc: 'Mansión de ladrillo con hiedra (8×13; mansión quemada, escuela, casa señorial)' },
+  mansion_ladrillo: { src: [0, 271, 8, 13], layer: 2, door: [5, 10], tags: ['edificio', 'mansion'], desc: 'Mansión de ladrillo con hiedra (8×13; mansión quemada, escuela, casa señorial)' },
   losa_plaza: { src: [0, 303, 5, 3], layer: 1, tags: ['plaza', 'suelo'], desc: 'Losa de plaza de cantos con bordillo (5×3)' },
   farola_hierro: { src: [5, 303, 1, 5], layer: 2, solid: true, tags: ['mobiliario', 'luz'], desc: 'Farola de hierro (1×5)' },
   meseta_tierra: { src: [0, 325, 5, 5], layer: 1, solid: true, tags: ['mina', 'terraza'], desc: 'Meseta de tierra redondeada (5×5)' },

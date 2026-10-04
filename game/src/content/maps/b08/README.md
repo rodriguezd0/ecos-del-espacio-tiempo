@@ -37,7 +37,7 @@ flotante, grietas, Losa del Pulso 3×1, verja, vía, fósiles, entibos).
 | `ciudad_estrato` norte | x 26–30, y 0 | `ruta_6` (B07) | `north`, offset 13 ↔ Ruta 6 `south`, offset −13. `linkIfReady` (`links.js`); **activo** |
 | `ciudad_estrato` oeste | x 0, y 22–25 | `ruta_7` (B09a) | `west`, offset 6 ↔ Ruta 7 `east`, offset −6. **Activo**; el Paso del Derrumbe (en la Ruta 7) se despeja con `p4_restored` |
 | `ciudad_estrato` este | x 55, y 38–41 | `dunas_ceniza` | `east`, offset 18 ↔ Dunas `west` (x 0, y 20–23), offset −18. El resto del borde este de Estrato (filas 0–37 y 42–47) es roca, igual que el oeste de las Dunas enfrente: no hay otro cruce ni costura de hierba contra ceniza |
-| puertas de Estrato | estación (8,9) · Galena (19,7) · escuela (37,8) · casa norte (44,9) · Centro (8,21) · tienda (38,20) · Consorcio (9,40) · casa sur (19,39) | interiores | llegada sobre el felpudo (`ESTRATO_INTERIORS`); salida pulsando abajo → delante de la puerta |
+| puertas de Estrato | estación (8,9) · Galena (19,7) · escuela (39,8) · casa norte (44,9) · Centro (8,21) · tienda (38,20) · Consorcio (9,40) · casa sur (19,39) | interiores | llegada sobre el felpudo (`ESTRATO_INTERIORS`); salida pulsando abajo → delante de la puerta |
 | boca de la mina | (50,23), empujar desde (50,24) | `mina_galena` | (21,32) ↑; salida (21,33) → (50,25) |
 | montacargas | (21,5) desde (21,6) | `mina_galena_honda` | solo con `p4_restored` (antes, cascotes); escalera (14,4) → (21,6) |
 | boquete de las Dunas | (7,7) | `dunas_cueva` | (6,6) ↓; escalera (6,4) → (7,9) |

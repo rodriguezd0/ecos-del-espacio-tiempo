@@ -48,7 +48,7 @@ function streets(b) {
   const paths = [
     ...R(E.north.x0, 0, E.north.x1 - E.north.x0 + 1, 12), // camino de la Ruta 6
     ...R(4, 9, 42, 3), // calle alta
-    ...R(19, 7, 1, 2), ...R(37, 7, 1, 2), ...R(44, 9, 1, 1), // accesos de las casas
+    ...R(19, 7, 1, 2), ...R(E.buildings.escuela.door.x, 7, 1, 2), ...R(44, 9, 1, 1), // accesos de las casas
     ...R(E.north.x0, 15, 5, 2), // bajada a la plaza
     ...R(0, E.west.y0, 18, 4), // camino de la Ruta 7
     ...R(38, 21, 1, 2), ...R(34, 22, 6, 2), // tienda

@@ -63,6 +63,10 @@ Correcciones verificadas:
   guardadas tras la televisión recuperan carguero/créditos/despertar, según lo que falte. Once regresiones nuevas,
   35 pruebas enfocadas y once comprobaciones Chrome cubren el bloqueo y la carga desde el título. El guardado
   normal del final recuperado vuelve a cargar sin repetir créditos, llave ni huevo y conserva las capacidades.
+- La Escuela del Pico entra por el arco visible (39,8), con regreso a (39,9), en vez de activar la ventana con
+  hiedra. Cuatro regresiones nuevas contrastan el atlas real, el marcador y los tres felpudos; 51 pruebas enfocadas
+  pasan. Chrome comprueba la ventana y tres entradas/regresos: siete hitos y ningún error. Las tres costuras de
+  Estrato siguen limpias y el validador completo construye los 272 mapas sin errores.
 
 No quedan hallazgos críticos o altos de esta revisión. Arte D30 y decisiones del autor abiertas conservan su
 etiqueta provisional.
@@ -80,6 +84,9 @@ y evoluciones están cubiertas (100 % de esas líneas, sin atribuirlo a los mód
 Las 21 líneas de código añadidas/modificadas para F9 y la recuperación del epílogo también están cubiertas
 (100 % del cambio; el informe enfocado no representa la cobertura total de los dos módulos anteriores).
 Las hojas propias tienen generador reproducible y comprobación de dimensiones.
+El alcance de la escuela alcanza 99,15 % líneas / 100 % ramas / 88,89 % funciones; las coordenadas modificadas y el
+camino quedan cubiertos. Evidencia: `estrato_school_red.log`, `estrato_school_coverage.log`,
+`estrato_school_chrome_report.json`, `estrato_school_qa.md` y `estrato_school_validation.json`.
 
 Evidencia local en `tools/cache/`: `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y

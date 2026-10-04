@@ -30,7 +30,7 @@ export const ESTRATO = Object.freeze({
   buildings: Object.freeze({
     estacion: Object.freeze({ stamp: 'estacion_tren', x: 5, y: 1, door: Object.freeze({ x: 8, y: 9 }) }),
     galena: Object.freeze({ stamp: 'cabana_roja', x: 16, y: 2, door: Object.freeze({ x: 19, y: 7 }) }),
-    escuela: Object.freeze({ stamp: 'mansion_ladrillo', x: 34, y: -2, door: Object.freeze({ x: 37, y: 8 }) }),
+    escuela: Object.freeze({ stamp: 'mansion_ladrillo', x: 34, y: -2, door: Object.freeze({ x: 39, y: 8 }) }),
     casa_norte: Object.freeze({ stamp: 'casa_cupula', x: 42, y: 5, door: Object.freeze({ x: 44, y: 9 }) }),
     centro: Object.freeze({ stamp: 'centro_pokemon', x: 5, y: 13, door: Object.freeze({ x: 8, y: 21 }) }),
     tienda: Object.freeze({ stamp: 'casa_turquesa_grande', x: 35, y: 15, door: Object.freeze({ x: 38, y: 20 }) }),
