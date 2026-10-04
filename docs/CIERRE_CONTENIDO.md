@@ -6,6 +6,9 @@ arte humano está integrado.
 
 ## Requisitos y evidencia
 
+El contraste detallado de campaña, D21–D24, cada búsqueda de postgame, los DLC y los sistemas se registra en
+`REVISION_REQUISITOS.md`, con el estado separado de la partida continua.
+
 | Contenido | Requisitos contrastados con CAMPANA §8 | Evidencia |
 |---|---|---|
 | B22a/b/d/e | Capacidades de postgame, Red, legendarios, sueños, Paradojas, Bastión, revanchas y archivos de Alerce | README de cada bloque y recorridos `e2e_b22*.mjs`; implementados y guardados en de7afc5/0a3026e |
