@@ -6,6 +6,7 @@ import { EPI, gaelEggSpecies } from '../game/src/content/events/b21_epilogo.js';
 import { F, V } from '../game/src/content/events/b21_common.js';
 import { MONTAGE_SHOTS } from '../game/src/content/events/b21_cine.js';
 import { RESOLUTION_TEXT, BATTLE_TEXT, ZYGARDE_TEXT } from '../game/src/content/events/b21_texts.js';
+import {completeArceus} from './e2e_campaign_b21_retry.mjs';
 
 const need = (cond, msg) => (cond ? null : msg);
 const has = (s, f) => Boolean(s.flags[f]);
@@ -38,15 +39,15 @@ async function salto(d, { node }) {
 
 async function cumbre(d) {
   // «Todavía no»: la escena espera.
-  d.want = ['Todavía no'];
-  await d.walkTo(COLUMNA.question.x0 + 2, COLUMNA.question.y + 1, { face: 8 });
-  await d.step(8);
-  await d.settle({ watch: [{ name: 'zygarde_pregunta', re: /Antes de despertarlo/ }] });
-  await d.milestone('zygarde_espera', async (s) => need(has(s, F.zygardeAsked) && !has(s, F.zygardeJoined), 'la pregunta no esperó'));
+  if(!has(await d.snap(),F.zygardeJoined)) {
+    d.want = ['Todavía no'];
+    await d.walkTo(COLUMNA.question.x0 + 2, COLUMNA.question.y + 1, { face: 8 });
+    await d.step(8);
+    await d.settle({ watch: [{ name: 'zygarde_pregunta', re: /Antes de despertarlo/ }] });
+    await d.milestone('zygarde_espera', async (s) => need(has(s, F.zygardeAsked) && !has(s, F.zygardeJoined), 'la pregunta no esperó'));
+  }
   // Al altar: Zygarde vuelve a preguntar → «Sí» → el Arca (equipo lleno) → la Flauta → Arceus.
-  d.want = ['Sí', 'Sí', 'Reintentar fase'];
-  await d.walkTo(COLUMNA.flute.x, COLUMNA.flute.y, { face: 8 });
-  await d.interact({ timeout: 900000, watch: [
+  await completeArceus(d,{ timeout: 900000, watch: [
     { name: 'honor_ball', re: /Honor Ball/ },
     { name: 'zygarde_toca', re: /se acerca y la toca/ },
     { name: 'zygarde_equipo', re: /se ha unido a tu equipo/ },
