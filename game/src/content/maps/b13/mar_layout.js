@@ -101,7 +101,8 @@ export const TRAINERS = Object.freeze([
   { id: 'nadador_hugo', trainer: 'b13_nadador_hugo', name: 'Nadador Hugo', sprite: 'anil:nadador', x: 76, y: 14, dir: 4, sight: 4 },
   { id: 'pescador_ruben', trainer: 'b13_pescador_ruben', name: 'Pescador Rubén', sprite: 'anil:pescador', x: 90, y: 10, dir: 2, sight: 3 },
   { id: 'nadadora_paula', trainer: 'b13_nadadora_paula', name: 'Nadadora Paula', sprite: 'anil:nadadora', x: 100, y: 38, dir: 8, sight: 4 },
-  { id: 'marinero_ezequiel', trainer: 'b13_marinero_ezequiel', name: 'Marinero Ezequiel', sprite: 'anil:marinero', x: 137, y: 16, dir: 4, sight: 3 },
+  // Su acercamiento queda en la fila 15; la fila 16 conserva libre C065 tras combatir.
+  { id: 'marinero_ezequiel', trainer: 'b13_marinero_ezequiel', name: 'Marinero Ezequiel', sprite: 'anil:marinero', x: 135, y: 15, dir: 4, sight: 3 },
   { id: 'nadador_ivan', trainer: 'b13_nadador_ivan', name: 'Nadador Iván', sprite: 'anil:nadador', x: 160, y: 22, dir: 2, sight: 4 },
 ]);
 
