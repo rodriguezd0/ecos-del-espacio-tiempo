@@ -11,7 +11,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { GameState } from '../game/src/core/state.js';
 import { Battle, HeadlessBattleUI } from '../game/src/battle/core/index.js';
-import { createPokemon } from '../game/src/battle/core/pokemon.js';
+import { createPokemon, healed } from '../game/src/battle/core/pokemon.js';
 import { buildBattleConfig } from '../game/src/battle/scene/setup.js';
 import { storyApi } from '../game/src/content/story/api.js';
 import { crisisPhase } from '../game/src/content/story/crisis.js';
@@ -22,9 +22,9 @@ import { fightArceus, resolutionScene, restoreSnapshot } from '../game/src/conte
 import { captureZygarde, zygardeQuestion, createTeamZygarde, ZYGARDE_MOVES } from '../game/src/content/events/b21_zygarde.js';
 import { giveGaelEgg, gaelEggSpecies } from '../game/src/content/events/b21_epilogo.js';
 import { socketTablet } from '../game/src/content/events/b21_columna.js';
-import { RESOLUTION_TEXT, BATTLE_TEXT, EPILOGUE_TEXT } from '../game/src/content/events/b21_texts.js';
+import { RESOLUTION_TEXT, BATTLE_TEXT, EPILOGUE_TEXT, PHASE_TEXT } from '../game/src/content/events/b21_texts.js';
 import { F, V } from '../game/src/content/events/b21_common.js';
-import { SOCKETS, ARCEUS_SOCKET_KS } from '../game/src/content/maps/b21/layout.js';
+import { SOCKETS, ARCEUS_SOCKET_KS, COLUMNA } from '../game/src/content/maps/b21/layout.js';
 import { TABLETS } from '../game/src/content/story/tablets.js';
 
 const load = (f) => JSON.parse(fs.readFileSync(new URL(`../game/data/${f}`, import.meta.url), 'utf8'));
@@ -254,6 +254,54 @@ test('«Reintentar fase» devuelve equipo y objetos a la instantánea; «Retirar
   assert.ok(st.flag(F.arceusCaught) && st.flag(F.arceusDone));
   assert.ok(restoreSnapshot(st, { party: start, bag: { POTION: 9 } }));
   assert.equal(st.itemCount('POTION'), 9);
+});
+
+test('límite de reintentos: 99 derrotas retiran, curan y conservan la fase sin declarar victoria', async () => {
+  const party = [striker(), striker()];
+  party[0].hp = 0;
+  party[1].hp = 1;
+  party[1].status = 'PARALYSIS';
+  for (const p of party) for (const move of p.moves) move.pp = 0;
+  const st = playerState(party, { POTION: 3 });
+  st.setPosition('columna_lanza', 14, 9, 8);
+  st.setVar(V.phase, 1);
+  st.setFlag(F.arceusAwake);
+  st.setFlag(F.zygardeJoined);
+  const money = st.player.money;
+  const uids = st.party.map(p => p.uid);
+  const ctx = stubCtx(st);
+  let battles = 0, choices = 0, heals = 0;
+  ctx.scene.startBattle = async req => {
+    battles++;
+    assert.equal(req.wild.form, 7, 'cada intento retoma la fase Fantasma');
+    st.setParty(st.party.map(p => ({ ...p, hp: 0 })));
+    st.removeItem('POTION', 1);
+    return { outcome: 'lose', phase: { index: 0 } };
+  };
+  ctx.choice = async options => {
+    choices++;
+    assert.deepEqual(options, [...BATTLE_TEXT.options]);
+    return 0;
+  };
+  ctx.heal = () => { heals++; st.setParty(st.party.map(p => healed(db, p))); };
+
+  assert.equal(await fightArceus(ctx), 'retreat');
+  assert.equal(battles, 99);
+  assert.equal(choices, 99);
+  assert.equal(st.var(V.tries), 99);
+  assert.equal(heals, 1, 'el límite ejecuta la misma cura que Retirarse');
+  assert.deepEqual([ctx.player.x, ctx.player.y, ctx.player.direction],
+    [COLUMNA.retreat.x, COLUMNA.retreat.y, COLUMNA.retreat.dir]);
+  assert.deepEqual({ mapId: st.player.mapId, x: st.player.x, y: st.player.y, dir: st.player.dir },
+    { mapId: 'columna_lanza', ...COLUMNA.retreat });
+  assert.equal(st.var(V.phase), 1);
+  assert.equal(st.player.money, money);
+  assert.equal(st.itemCount('POTION'), 3, 'el último reintento conserva la mochila restaurada');
+  assert.deepEqual(st.party.map(p => p.uid), uids);
+  for (const p of st.party) assert.deepEqual(p, healed(db, p), 'PS, PP y estado curados');
+  assert.ok(ctx.said.some(l => l.text === BATTLE_TEXT.retreat));
+  assert.ok(ctx.said.some(l => l.text === BATTLE_TEXT.retreatWait(PHASE_TEXT[1].type)));
+  for (const flag of [F.arceusDone, F.arceusCaught, F.arceusFainted, F.gameCleared]) assert.equal(st.flag(flag), false);
 });
 
 // ───────────────────────────── Zygarde ─────────────────────────────

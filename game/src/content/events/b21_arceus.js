@@ -137,6 +137,7 @@ export async function fightArceus(ctx) {
     await retreat(ctx, reached);
     return 'retreat';
   }
+  await retreat(ctx, savedPhase(st));
   return 'retreat';
 }
 
