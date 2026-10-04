@@ -4,9 +4,10 @@ import { ARRIVAL, NPC, CAMP, PENA, DUEL, ARRIVAL_STRIP } from '../game/src/conte
 import { NICHE, ENTRY as TALLER_ENTRY } from '../game/src/content/maps/b19/taller_layout.js';
 import { ARRIVALS, GAP_W, GAP_ALCOVE, GAP_FINAL, UMBRAL, EXITS } from '../game/src/content/maps/b19/sima_layout.js';
 import { solutionSteps, spanDef } from '../game/src/content/events/b19_spans_logic.js';
+import {F} from '../game/src/content/events/b19_common.js';
+import {finishCasandra,casandraResultError} from './e2e_campaign_b19_retry.mjs';
 
 
-const RETRY=false;
 const has = (s, f) => Boolean(s.flags[f]);
 const need = (ok, msg) => (ok ? null : msg);
 
@@ -62,6 +63,7 @@ async function tramo2(d) {
 }
 
 async function tramo3(d) {
+ if(!has(await d.snapState(),F.span3)) {
   const S = solutionSteps(3);
   const start = spanDef(3).start;
   await d.walkTo(S.from[0], S.from[1], { face: 'up' });
@@ -79,22 +81,20 @@ async function tramo3(d) {
   ];
   await d.interact({ watch });
   await d.expectSaid(/Si el Rey tenía que abrirle la puerta a alguien/, 'el reto de Casandra');
-  if (RETRY) {
-    const s = await d.milestone('casandra_derrota', (st) => need(st.lost.includes('b19_casandra') && !has(st, 'b19_casandra_vencida') && st.x === DUEL.retry.x && st.y === DUEL.retry.y, `perdido ${st.lost} en (${st.x},${st.y})`));
-    void s;
-    const [sx, sy] = DUEL.strip[1];
-    await d.walkTo(sx, sy + 1, { face: 'up' });
-    await d.steps([8]);
   }
+  await finishCasandra(d);
   await d.expectSaid(/Las piedras le responden/, 'Casandra vencida');
-  await d.milestone('casandra_vencida', (s) => need(has(s, 'b19_casandra_vencida'), 'Casandra no ha sido vencida'));
+  await d.milestone('casandra_vencida',casandraResultError);
 }
 
 async function taller(d) {
-  const W = PENA.workshop;
-  await d.walkTo(W.front.x, W.front.y, { face: 'up' });
-  await d.exitTo('up', 'calzada_taller');
-  await d.expectSaid(/Aquí trabajó alguien durante mucho tiempo/, 'la llegada al taller');
+  const initial=await d.snapState();
+  if(initial.map==='calzada_rey') {
+    const W = PENA.workshop;
+    await d.walkTo(W.front.x, W.front.y, { face: 'up' });
+    await d.exitTo('up', 'calzada_taller');
+  } else if(initial.map!=='calzada_taller')throw Error(`taller desde otro mapa: ${initial.map}`);
+  await d.expectSaid(/^Una sala excavada en la roca de la Peña\./, 'la llegada al taller');
   await d.talk(NICHE.stand.x, NICHE.stand.y, 'up', { watch: [{ re: /El rey no murió en el abismo/, name: 'cronica_xv', delay: 200 }] });
   await d.expectSaid(/Se equivocó… y se quedó a arreglarlo/, 'Casandra ante la Crónica');
   const sal = await d.eval(() => window.__b19.items('SALAMENCITE'));
@@ -117,20 +117,32 @@ async function alfa(d) {
 }
 
 async function bajada(d) {
-  const B = PENA.bajada;
-  await d.walkTo(B.front.x, B.front.y, { face: 'up' });
-  await d.exitTo('up', 'sima_eje', { watch: [{ re: /Aquí se abrió todo/, name: 'sima', delay: 200 }] });
-  const G = GAP_FINAL.socket;
-  await d.walkTo(G.x + 1, G.y, { face: 'left' });
-  d.want.push('Sí');
-  await d.interact({ watch: [{ re: /encajan contra el Umbral/, name: 'ultimo_tramo', delay: 150 }] });
-  const [lx, ly] = UMBRAL.landing[1];
-  await d.walkTo(lx, ly);
-  await d.settle();
-  await d.expectSaid(/La Puerta de las Quince\. Detrás, el Origen\./, 'el Umbral');
+  const initial=await d.snapState();
+  if(!has(initial,F.tablet))throw Error('bajada sin Tabla Draco');
+  if(initial.map==='puerta_quince') {
+    await d.milestone('puerta_quince',s=>need(has(s,F.exit)&&has(s,F.finalGap),'entrada sin salida de la Calzada'));
+    return;
+  }
+  if(initial.map==='calzada_rey') {
+    const B = PENA.bajada;
+    await d.walkTo(B.front.x, B.front.y, { face: 'up' });
+    await d.exitTo('up', 'sima_eje', { watch: [{ re: /Nada bajo los pies más que roca y vacío/, name: 'sima', delay: 200 }] });
+  } else if(initial.map!=='sima_eje')throw Error(`bajada desde otro mapa: ${initial.map}`);
+  if(!has(await d.snapState(),F.finalGap)) {
+    const G = GAP_FINAL.socket;
+    await d.walkTo(G.x + 1, G.y, { face: 'left' });
+    d.want.push('Sí');
+    await d.interact({ watch: [{ re: /encajan contra el Umbral/, name: 'ultimo_tramo', delay: 150 }] });
+  }
+  if(!has(await d.snapState(),F.exit)) {
+    const [lx, ly] = UMBRAL.landing[1];
+    await d.walkTo(lx, ly);
+    await d.settle();
+  }
+  await d.expectSaid(/^Aquí termina la Calzada del Rey:/, 'el Umbral');
   await d.milestone('umbral', (s) => need(has(s, 'b19_calzada') && has(s, 'b19_sima_ultimo_tramo'), 'sin la salida b19_calzada'));
   const hasPuerta = await d.eval(() => Boolean(window.__map?.world?.current?.def?.warps?.some((w) => w.to === 'puerta_quince')));
-  if (!hasPuerta) { console.log('  (puerta_quince aún sin registrar: se omite la entrada)'); return; }
+  if (!hasPuerta) throw Error('Puerta de las Quince sin warp registrado en la Sima');
   await d.walkTo(UMBRAL.arrive.x, UMBRAL.arrive.y, { face: 'up' });
   await d.exitTo('up', 'puerta_quince');
   await d.milestone('puerta_quince', (s) => need(s.map === 'puerta_quince', `mapa ${s.map}`));
