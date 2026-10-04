@@ -10,6 +10,7 @@ import { loadMapDefinition } from '../content/maps/index.js';
 import { buildMap, createEntry, connectionOffset } from './mapLoader.js';
 import { loadBuilderLibrary } from './stampLibrary.js';
 import { World } from './world.js';
+import { DoorAnimation } from './doorAnimation.js';
 import { VisibleEncounters } from './visibleEncounters.js';
 import { runBattle, runWildBattle } from './battleFlow.js';
 import { followerTalk, swimHook } from './fieldScripts.js';
@@ -104,6 +105,7 @@ export default class MapScene extends Scene {
     this.uninstallDevKeys?.();
     this.uninstallDevMenu?.();
     this.net?.dispose();
+    this.doorAnimation?.dispose();
     this.runner.cancelAll();
     this.zygarde?.dispose();
     this.impossible?.dispose();
@@ -332,19 +334,29 @@ export default class MapScene extends Scene {
   }
 
   /** Warp con fundido. opts: { fade = true, door = false, frames = 16 } */
-  async transfer(mapId, x, y, dir = 2, { fade = true, door = false, frames = 16 } = {}) {
+  async transfer(mapId, x, y, dir = 2, { fade = true, door = false, frames = 16, doorSource = null, doorArrival = null } = {}) {
     this.transferring = true;
+    const animation = door || doorArrival ? new DoorAnimation(this, doorSource, mapId, doorArrival) : null;
+    if (animation) this.doorAnimation = animation;
     try {
       if (door) engine.audio?.playSE?.('Door enter');
+      await animation?.open();
+      if (animation?.cancelled) return;
       if (fade) await this.fx.fadeOut(frames);
+      if (animation?.cancelled) return;
+      animation?.clear();
       await this.enterMap(mapId, x, y, dir);
+      animation?.prepareArrival();
       if (door) engine.audio?.playSE?.('Door exit');
       if (fade) await this.fx.fadeIn(frames);
+      await animation?.close();
     } catch (err) {
       console.error(`Warp a ${mapId} fallido`, err);
       engine.reportError(new Error(`No se pudo entrar en el mapa "${mapId}": ${err.message}`));
       this.fx.fadeIn(1);
     } finally {
+      animation?.dispose();
+      if (this.doorAnimation === animation) this.doorAnimation = null;
       this.transferring = false;
     }
   }
@@ -451,7 +463,7 @@ export default class MapScene extends Scene {
   }
 
   doWarp(w) {
-    this.runScript(async (ctx) => { await ctx.warp(w.to, w.tx, w.ty, w.dir ?? this.world.player.direction, { door: Boolean(w.door) }); }, null, `warp→${w.to}`);
+    this.runScript(async (ctx) => { await ctx.warp(w.to, w.tx, w.ty, w.dir ?? this.world.player.direction, { door: Boolean(w.door), doorSource: { x: w.x, y: w.y } }); }, null, `warp→${w.to}`);
   }
 
   tickClock() {

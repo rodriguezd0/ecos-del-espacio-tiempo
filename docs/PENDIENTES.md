@@ -145,10 +145,11 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 - El guardado F9 espera a que termine la escena; las copias antiguas interrumpidas tras la televisión retoman
   créditos/despertar. Once regresiones nuevas, 35 pruebas enfocadas y once comprobaciones en Chrome sin errores;
   guardar/cargar el final recuperado conserva regalos únicos y capacidades.
-- Suite actual: 2221/2221 sin fallos ni omisiones; validador: 272 mapas, sin errores.
+- Suite integrada actual: 2287/2287 sin fallos, omisiones ni cancelaciones; validador: 272 mapas, sin errores.
 - Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
 ## 6. Menores
+- Puertas normales terminadas: 36 variantes de gráfico y 56 accesos cerrados resueltos, incluidos Íker por guion y el Observatorio local de Boreal. Ocho transiciones en Chrome verifican curación, guardar/cargar y retornos; una revisión adicional conserva 24 fases visibles y cero errores. Los vanos abiertos y las puertas de puzzles mantienen su flujo.
 - Seguidor Zygarde en B14 comprobado: la regla de profundidad existente lo deja detrás del jugador. Chrome: 12 posiciones en tres capas, formas 10 % y 50 %, seis capturas y ningún error.
 - Gael B6 (B20): comprobado `megaRingName: 'el aro negro'` en su entrenador; también en B15.
 

@@ -89,7 +89,8 @@ export async function returnToMnemos(ctx) {
   const raw = String(ctx.var(RETURN_VAR, '') || '');
   const [map, x, y, dir] = raw.split('|');
   if (map && mapRegistered(map) && Number.isFinite(Number(x)) && Number.isFinite(Number(y))) {
-    await ctx.warp(map, Number(x), Number(y), Number(dir) || 2);
+    const visual = ctx.map?.id === 'mnemos_casa_iker' ? { doorArrival: { x: Number(x), y: Number(y) - 1 } } : {};
+    await ctx.warp(map, Number(x), Number(y), Number(dir) || 2, visual);
     return;
   }
   const f = MNEMOS_FALLBACK;
@@ -106,7 +107,7 @@ export function ikerDoorEvent({ id = 'puerta_casa_iker', x, y } = {}) {
     id, x, y, trigger: 'touch',
     script: async (ctx) => {
       ctx.setVar(RETURN_VAR, returnValue(ctx.map.id, x, y + 1, 2));
-      await ctx.warp('mnemos_casa_iker', IKER.door.x, IKER.door.y, 8, { door: true });
+      await ctx.warp('mnemos_casa_iker', IKER.door.x, IKER.door.y, 8, { door: true, doorSource: { x, y } });
     },
   };
 }

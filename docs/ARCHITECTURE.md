@@ -304,6 +304,16 @@ ctx.bgm(nombre, opts) ctx.se(nombre) ctx.me(nombre) ctx.cry(especie, forma)
 ```
 Para cualquier otra cosa del estado: `ctx.state.<API §3>` (p. ej. `ctx.state.obtainPokedex()`, `ctx.state.addClue(id, texto)`).
 
+**Puertas del mapa** (`world/doorAnimation.js`, `render/doorPanel.js`): `MapScene.transfer` abre el panel antes
+del fundido y cierra el exterior al regresar. El panel se recorta del atlas original con máscaras revisadas por
+stamp e imagen; se dibuja temporalmente debajo del jugador y se libera al terminar, fallar o abandonar la escena.
+Los tiles, la pasabilidad y el guardado conservan sus datos. `doWarp` transmite la casilla de la puerta como
+`doorSource: { x, y }`; los accesos por guion pueden pasar ese metadato explícito. Un regreso por guion usa
+`doorArrival: { x, y }` cuando no tiene warp recíproco declarado, sin añadir sonidos ni cambiar el destino.
+Los vanos abiertos y las puertas con animación propia conservan su flujo. Inventario:
+`node tools/door_inventory.mjs`; revisión de fotogramas: `node tools/door_frames.mjs`; recorrido aislado:
+`node tools/e2e_door_animation.mjs`.
+
 ### Combates de guion (`content/common/bossBattle.js`)
 Guardianes, jefes, Genesis y Gael (CAMPANA §2.6, `docs/BALANCE.md`): perder **no** es derrota general. Módulo puro:
 ```js

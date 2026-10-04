@@ -115,13 +115,13 @@ en `tools/cache/b24_entrega.md`, trazas `e2e_b24_*.log` y checkpoints de `screen
 | Dobles: sprites propios separados, sombras y efectos | Disposición y combate cooperativo real | Verificado |
 | Cámara, árboles enteros, pasabilidad de flores/rocas y costuras | QA de mapas, validador y 45 conexiones | Verificado; rocas de tres puzzles conservan la excepción documentada |
 | Escuela de Estrato: arco, marcador y entrada/retorno alineados | Cuatro regresiones, 51 pruebas, siete hitos Chrome y tres costuras limpias | Verificado en 8689c3f |
-| Puertas normales cerradas: apertura/cierre sobre el panel original | Máscaras y raster, pruebas de limpieza/persistencia y Chrome en preparación | En curso: incluir accesos por guion y stamps locales |
+| Puertas normales cerradas: apertura/cierre sobre el panel original | 56 accesos/36 variantes resueltos, máscaras y raster; ocho transiciones Chrome, curación/recarga y 24 fases visibles | Verificado, incluidos guiones y stamps locales |
 | Seguidor B14, aro negro de Gael y Diario | Profundidad en tres capas/ambas formas; datos de B15/B20; pestañas y pruebas | Verificado |
 | F9 espera al jugador/guion; recuperación del final tras televisión | Once regresiones y once comprobaciones Chrome | Verificado en be63ae7 |
 | Protagonistas M/F: acciones, mochila, monturas y espaldas/lanzamientos | 51 pruebas/18 capturas; torso y dos lanzamientos revisados | Integrado; D30 provisional |
 | Trece poses de combate de NPC | 36 pruebas, 15 capturas y lámina comparativa | Integrado; aprobación artística consultada |
 | Escala de Pokémon del mapa, incluidos Onix/Yanma | Módulo y cuatro pruebas; regla actual consultada al autor | Implementada; decisión artística pendiente |
-| Suite completa sobre el resultado integrado | Último checkpoint: 2221/2221; los cambios posteriores pasan pruebas enfocadas | Nueva suite pendiente tras terminar puertas |
+| Suite completa sobre el resultado integrado | 2287/2287, sin fallos, omisiones ni cancelaciones; `suite_closure_integrated.log` | Verificado sobre puertas, escuela y conductores actuales |
 | Validador, costuras y QA sobre el resultado final | Último validador: 272 mapas/187 entrenadores/sin errores; Estrato 0/3 costuras defectuosas | Repetir al cierre si cambian mapas |
 | Guardado final desde UI y carga desde el título | Controlador preparado con comparación completa y habilitación del postgame | Pendiente al llegar a B21 |
 

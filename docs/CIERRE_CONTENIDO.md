@@ -70,13 +70,20 @@ Correcciones verificadas:
   hiedra. Cuatro regresiones nuevas contrastan el atlas real, el marcador y los tres felpudos; 51 pruebas enfocadas
   pasan. Chrome comprueba la ventana y tres entradas/regresos: siete hitos y ningún error. Las tres costuras de
   Estrato siguen limpias y el validador completo construye los 272 mapas sin errores.
+- Puertas: el panel se recorta del atlas original, abre antes del fundido y cierra al regresar. El inventario
+  contrasta 56 accesos cerrados de 36 variantes, incluidos Íker por evento, Aurora y la cúpula local de Boreal;
+  todos resuelven su máscara. La revisión de código y píxeles conserva marcos, ventanas, destinos y pasabilidad.
+  Chrome verifica ocho transiciones, curación y guardar/cargar por UI, sin errores. El monitor inicial produjo
+  capturas de fase negras; se corrigió el monitor y un ensayo adicional obtuvo 24 fases visibles de seis
+  transiciones. Se revisaron las imágenes de Alba, Caudal y Mnemos; el jugador queda sobre el panel y no
+  persisten recursos temporales.
 
 No quedan hallazgos críticos o altos de esta revisión. Arte D30 y decisiones del autor abiertas conservan su
 etiqueta provisional.
 
 ## Comprobaciones de integración
 
-La suite completa del checkpoint pasa **2221/2221**, sin fallos, saltos ni cancelaciones. El validador construyó
+La suite completa del resultado integrado pasa **2287/2287**, sin fallos, saltos ni cancelaciones. El validador construyó
 272 mapas y no dio errores. Las 45 conexiones actuales pasan la revisión de costuras. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
 suelo y los 13 obstáculos altos de los espejos. No hay árboles cortados, objetos sobre árboles ni costuras defectuosas.
@@ -90,8 +97,13 @@ Las hojas propias tienen generador reproducible y comprobación de dimensiones.
 El alcance de la escuela alcanza 99,15 % líneas / 100 % ramas / 88,89 % funciones; las coordenadas modificadas y el
 camino quedan cubiertos. Evidencia: `estrato_school_red.log`, `estrato_school_coverage.log`,
 `estrato_school_chrome_report.json`, `estrato_school_qa.md` y `estrato_school_validation.json`.
+Puertas: panel 95,92 % líneas / 92,86 % ramas / 100 % funciones; animación 100 % / 89,66 % / 100 %.
+Evidencia: `door_animation_report.md`, `door_final_coverage.log`, `door_inventory.json`,
+`door_chrome_report.json` y `door_chrome_phases_report.json`; las capturas válidas de fase llevan el prefijo
+`door_chrome_phases_`. Los seis perfiles temporales anteriores permanecen en caché porque su borrado fue
+rechazado por la revisión automática («blocked by policy»); sus navegadores están cerrados.
 
-Evidencia local en `tools/cache/`: `suite_closure_green.log`, `validate_closure.json`,
+Evidencia local en `tools/cache/`: `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y
 checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json`, `b14_follower_review.json`
 y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`, `progression_inventory_report.md` y sus trazas.

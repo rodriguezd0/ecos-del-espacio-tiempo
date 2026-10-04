@@ -16,7 +16,7 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | Movimiento en rejilla, correr, colisiones, terrain tags, salientes | ✅ | |
 | Eventos/NPC, disparadores, rutas de movimiento, condiciones | ✅ | |
 | Guiones async (ctx), cinemáticas, cámara | ✅ | Director de cinemáticas del prólogo |
-| Warps, puertas, conexiones entre mapas | ✅ | Animación de puertas pendiente |
+| Warps, puertas, conexiones entre mapas | ✅ | 56 accesos con panel cerrado animado; apertura, regreso y guardado/carga probados en Chrome |
 | Pokémon acompañante + Core en cadena (D06) | ✅ | |
 | Encuentros: modo clásico y visible (seleccionable) | ✅ | Biblia §15 |
 | Ciclo día/noche, descansar/dormir/esperar tormenta, fases de crisis del cielo | ✅ | `world/rest.js`, `content/story/crisis*` |

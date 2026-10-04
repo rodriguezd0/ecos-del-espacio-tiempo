@@ -136,7 +136,7 @@ async function flyWithAurora(ctx) {
   const { flyTransition } = await import('../../world/zygarde/actions.js');
   await flyTransition(ctx, { map: 'ciudad_nexo', x: NEXO_LANDING.x, y: NEXO_LANDING.y, dir: NEXO_LANDING.dir });
   await pause(ctx, 10);
-  await ctx.warp('nexo_correos', 4, 9, 8, { door: true });
+  await ctx.warp('nexo_correos', 4, 9, 8, { door: true, doorSource: NEXO.correos.door });
 }
 
 async function auroraTalk(ctx) {
