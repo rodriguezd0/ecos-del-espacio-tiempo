@@ -2,7 +2,7 @@
 
 Fuentes: `CAMPANA.md`, `DECISIONES.md`, `TABLILLAS.md`, `POKEDEX_DISTRIBUCION.md` y `COBERTURA.md`.
 El objetivo sigue activo. La campaña, el postgame y los dos DLC están implementados; la partida continua está
-en B12. Los bancos de bloque declaran sus preajustes de historia, equipo y recursos. La partida continua conserva
+en B13. Los bancos de bloque declaran sus preajustes de historia, equipo y recursos. La partida continua conserva
 el guardado creado desde el título, con sus recompensas, derrotas, dinero y objetos reales.
 
 ## Campaña y progresión
@@ -20,8 +20,8 @@ el guardado creado desde el título, con sus recompensas, derrotas, dinero y obj
 | B09b: Marisma, Nexo y Caleta | Bombas, lecturas, origen, T08 y accesos costeros | Guardado B09b |
 | B10: Memoria | Recuerdos, Suelo Olvidado, Dos Manos, glifos, Olvido y F05/Trepar | Guardado B10; Sinistea en PC |
 | B11: Neblino, Nilo, Íker y regreso a casa | Alarma/retorno, sigilo, T09/T10, huevo de Mamá y regresos por Trepar | Guardado B11: 52 células, diez Tablillas |
-| B12: Pilar Invertido | P6 de puzzles: Cara Vuelta → Mirada → Sumidero; caídas, anclas y regresos | En curso; restauración, F06, N3 y Nadar ya observados |
-| B13–B14: Talasa, Tizón y Antea | Bloques recorridos en bancos; capacidades acuáticas y P7 vertical | Pendiente en el mismo guardado |
+| B12: Pilar Invertido | P6 de puzzles: Cara Vuelta → Mirada → Sumidero; caídas, anclas y regresos | Guardado B12: 57 células, diez Tablillas, F06, N3 y Nadar |
+| B13–B14: Talasa, Tizón y Antea | Bloques recorridos en bancos; capacidades acuáticas y P7 vertical | B13 en curso en el mismo guardado; B14 pendiente |
 | B15–B16: Boreal y Alma | Buceo, Gael, P8: Uxie → Mesprit → Azelf/Telar | Pendiente en el mismo guardado |
 | B17–B18: Mesa y Cruce | T14, P9: puente → Cámara → Dialga/Palkia; elección y regresos | Pendiente en el mismo guardado |
 | B19–B20: Sima y Origen | P10: Senda → Cielo Interior → Gael/núcleo | Pendiente en el mismo guardado |

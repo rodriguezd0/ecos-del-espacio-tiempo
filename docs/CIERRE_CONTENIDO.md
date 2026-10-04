@@ -100,5 +100,7 @@ La recuperación del epílogo añade `epilogue_recovery_report.md`, `epilogue_re
 El conductor de la partida continua comprueba también el huevo del inicial real de Gael, su entrega única,
 el PC y la elección de P9 después de recargar; exige 100 células, cinco núcleos, diez Fragmentos y dieciocho
 Tablillas. Sus seis regresiones pasan con los guiones de regalo reales. Este tramo está preparado para B21;
-la ejecución continua ha guardado B11 y sigue en B12.
+la ejecución continua ha guardado B12 en Villa Alba y sigue en B13: 57 células, diez Tablillas, tres Núcleos,
+seis Fragmentos y Nadar. P6 conserva solo puzzles; se comprobaron sus caídas sin daño, anclas, puentes,
+cascadas y regresos antes y después de restaurarlo. Togepi eclosionó durante los desplazamientos reales.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.
