@@ -128,14 +128,20 @@ Gael, postgame y DLC), `docs/TABLILLAS.md` (T01–T15, museo, Crónica, Libreta)
 | X30 | Tamaño del Monte del Portal (DECIDIDO-DEV, B12) | `montana_portal` queda en **50×50** (el atlas de CAMPANA §1.4 decía 50×70): el mapa del prólogo se amplía 6 columnas al este (macizo con la repisa de la cascada y su gruta, poza mayor) sin mover coordenadas; crecer 20 filas obligaría a desplazar el prólogo o la llegada (17,48) desde el campamento del B11. La subida se completa con la Ruta 10 alta y el campamento (B11) | Biblia §4 (el lugar del prólogo, reconocible); CAMPANA §1.8 (producción) |
 | X31 | Calzada del Rey y Sima del Eje (DECIDIDO-DEV, B19) | Los Peregrinos cruzan «por su Calzada, a pie, o no se llega» (por eso nunca volaron a la Peña); Casandra rompe la regla y cruza con su Noivern al ver alzarse el último tramo, y su Noivern trajo años atrás la Salamencita del nido de la cima. Tramos de T15: piedras forzadas que aguantan un paso (hay que pisarlas todas y acabar junto a la aguja; reiniciables). `sima_eje`: sendero del oeste entre las bajadas de B17 (Metagrossita) y, al este, la Calzada que baja de la Peña hasta el Umbral; su último tramo solo se alza con la Tabla Draco. El Mirador de la Calzada se visita desde el P4 (Peregrinos esperando, sin piedras) | TABLILLAS T15 («estabilizar los tramos… en tres puntos», «la Libreta tiene el camino completo al fondo»); CAMPANA B19 y §1.4 |
 
+**X32 — Diseño de protagonistas** (TÉCNICO provisional D30; kit integrado el 03-10-2026): masculino de pelo
+castaño cobrizo, chaqueta teal y mochila; femenina de melena azul marino, trenza con goma verde, chaqueta clara y
+mochila roja. Ambos tienen las nueve hojas de acciones y combate, con proporciones de campo y píxeles completos
+verificados. El arte conserva su estado provisional hasta la aprobación del autor; detalles en `docs/arte.md` §9–10.
+
 **X33 — Multijugador online** (DECIDIDO-DEV y pedido del usuario, 25-09; función del juego, no de la historia):
 
 - **Salas:** con código de 4 caracteres, hasta 8 jugadores, desde «Online» en el menú de pausa.
 - **Combate 1 contra 1:** con niveles reales (decisión del usuario).
 - **Jugar en equipo** (corregido por el usuario el 26-09: «la idea es contra los entrenadores de la historia»): dos jugadores forman equipo. Cuando un entrenador de la historia reta a uno de ellos con el compañero en el mismo mapa, combaten los dos juntos contra él en un doble, con su equipo real. Cuenta para las dos partidas: experiencia, dinero, movimientos, evoluciones y entrenador derrotado. Los jefes con fases y los combates que ya son dobles siguen siendo individuales. El modo anterior contra dos entrenadores inventados se ha quitado.
-- **En ambos modos:** los equipos se curan en copia; no hay objetos, experiencia ni dinero, y la partida no cambia (perder no te devuelve al Centro Pokémon).
-- **Rendirse y desconexiones:** se puede rendir. Si el otro jugador se desconecta, en el 1 contra 1 ganas tú; en el doble en equipo pierden los dos.
-- **Pendientes pedidos por el usuario:** intercambios, chat y emotes.
+- **1 contra 1:** los equipos se curan en copia; no se gana experiencia ni dinero y perder conserva la partida.
+- **Historia en equipo:** cada dueño recibe experiencia, dinero, movimientos y evoluciones; el entrenador queda derrotado en ambas partidas. Si pierden, cada uno vuelve a su punto de cura. La Mochila queda cerrada en los combates online.
+- **Rendirse y desconexiones:** se puede rendir. Si el otro jugador se desconecta, en el 1 contra 1 ganas tú; en la historia en equipo el combate se interrumpe sin ganador.
+- **Intercambios, chat y emotes:** implementados y probados en dos navegadores.
 
 **X34 — Tono de Zygarde y células** (DECIDIDO (autor, 25-09-2026); prevalece sobre CAMPANA §2.2, §3.2 «voces» y
 B01 §4.8). Palabras del autor: «quiero que las mecánicas sean más ocultas, no que Zygarde te diga que vas a tener tal

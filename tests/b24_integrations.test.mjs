@@ -1,0 +1,21 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {GameState}from '../game/src/core/state.js';import{db as baseDb}from './battle_helpers.mjs';
+import items from '../game/data/items_axis.json' with{type:'json'};
+import{createPokemon}from '../game/src/battle/core/pokemon.js';import{normalizeDaycare,depositPokemon,stepDaycare,collectEgg,EGG_CHECK_STEPS}from '../game/src/world/daycare.js';
+import{addEggToParty,createEgg,stepPartyEggs,hatchReadyEggs}from '../game/src/world/eggs.js';import{activate}from '../game/src/content/events/b24_registry.js';
+import{observeStep}from '../game/src/content/events/b24_observers.js';
+const db={...baseDb,items:{...baseDb.items,...items}};globalThis.location??={search:''};
+const{createContext}=await import('../game/src/script/context.js');const{engine}=await import('../game/src/core/engine.js');
+test('B24: giveItem real acumula cinco engranajes y los objetos Crisol conservan identidad única',async()=>{const old={state:engine.state,data:engine.data};engine.state=GameState.create();engine.data=db;try{const c=createContext({world:{}});for(let n=0;n<5;n++)await c.giveItem('ANCIENTGEAR',1,{silent:true});assert.equal(engine.state.itemCount('ANCIENTGEAR'),5);for(let n=0;n<2;n++)await c.giveItem('CRUCIBLESTONE',1,{silent:true});assert.equal(engine.state.itemCount('CRUCIBLESTONE'),1);}finally{Object.assign(engine,old);}});
+test('B24: Phione procede de Manaphy eclosionado+Ditto en Guardería real; recoger el huevo registra el Hallazgo al caminar',async()=>{
+ const s=GameState.create();for(const f of['game_cleared','b21_fin','dlc2_registro_abierto'])s.setFlag(f);
+ activate(s,'phione');s.setFlag('dlc2_phione_confirmada');
+ addEggToParty(s,createEgg(db,'MANAPHY',{metMap:'b24_cuna_coral'}));const steps=s.party[0].eggSteps;for(let i=0;i<steps;i++)s.setParty(stepPartyEggs(s.party).party);
+ await hatchReadyEggs({state:s,db,say:async()=>{},confirm:async()=>false});assert.ok(s.data.dex.caught.MANAPHY);assert.ok(!s.party[0].egg);
+ let dc=depositPokemon(db,normalizeDaycare(s.daycare),s.removePartyMember(0));
+ dc=depositPokemon(db,dc,createPokemon(db,'DITTO',30));
+ for(let n=0;n<EGG_CHECK_STEPS;n++)dc=stepDaycare(db,dc,{rng:()=>0});
+ assert.ok(dc.eggReady);const got=collectEgg(db,dc,{rng:()=>0.5,metMap:'lumina_guarderia'});
+ assert.equal(got.egg.species,'PHIONE');assert.ok(got.egg.egg);addEggToParty(s,got.egg);s.setDaycare(got.daycare);
+ observeStep(s,{mapId:'lumina_guarderia',x:7,y:8});assert.ok(s.flag('dlc2_phione_hallazgo'));assert.ok(!s.data.dex.caught.PHIONE);
+});

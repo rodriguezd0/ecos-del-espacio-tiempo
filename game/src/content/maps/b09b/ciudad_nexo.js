@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Ciudad Nexo (docs/CAMPANA.md §1.3 y B09 paso 4): puerto y nudo de comunicaciones de Axis. Centro, tienda, estación de
 // tren (tras P4), Correos de Don Evaristo, astillero, faro, mercado, Aduana Vieja (cerrada hasta el DLC 2), el pescador
 // de la Caña Buena y el embarcadero de los ferris (parados por el «mar revuelto» hasta P7), con la plataforma del
@@ -40,5 +41,5 @@ export default {
     linkIfReady('ciudad_nexo', 'mar_del_sur'),
   ].filter(Boolean),
 
-  events: nexoEvents(),
+  events: withB24Events('ciudad_nexo', nexoEvents()),
 };

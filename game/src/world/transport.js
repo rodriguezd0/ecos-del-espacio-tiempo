@@ -12,7 +12,7 @@ export const TRAIN_UNLOCK_FLAG = 'p4_restored';
 export const FERRY_UNLOCK_FLAG = 'p7_restored';
 export const stationFlag = (id) => `train_station_${id}`;
 
-const stop = (id, name, map, arrival = null) => Object.freeze({ id, name, map, arrival });
+const stop = (id, name, map, arrival = null, requiredFlags = []) => Object.freeze({ id, name, map, arrival, requiredFlags: Object.freeze(requiredFlags) });
 
 export const TRAIN = Object.freeze({
   kind: 'train',
@@ -38,8 +38,11 @@ export const FERRY = Object.freeze({
     stop('nexo', 'Ciudad Nexo', 'ciudad_nexo', { x: 26, y: 40, dir: 2 }), // B09b: embarcadero (nexo_layout.js FERRY_ARRIVAL)
     stop('caleta', 'Caleta Sonda', 'caleta_sonda', { x: 10, y: 26, dir: 2 }), // B09b: embarcadero (caleta_layout.js FERRY_ARRIVAL)
     stop('boreal', 'Villa Boreal', 'villa_boreal', { x: 3, y: 28, dir: 6 }), // B15: embarcadero (layout_boreal.js ferry.arrival)
+    stop('almenara', 'Puerto Almenara', 'puerto_almenara', { x: 22, y: 34, dir: 8 }, ['game_cleared', 'b21_fin', 'dlc1_carta']),
+    stop('petalo', 'Isla Pétalo', 'b24_isla_petalo', { x: 13, y: 22, dir: 8 }, ['game_cleared', 'b21_fin', 'dlc2_registro_abierto', 'dlc2_shaymin_confirmada']),
+    stop('estandarte', 'Isla Estandarte', 'b24_isla_estandarte', { x: 13, y: 22, dir: 8 }, ['game_cleared', 'b21_fin', 'dlc2_registro_abierto', 'dlc2_victini_confirmada']),
   ]),
-  routes: Object.freeze([['nexo', 'caleta'], ['nexo', 'boreal']]),
+  routes: Object.freeze([['nexo', 'caleta'], ['nexo', 'boreal'], ['nexo', 'almenara'], ['nexo', 'petalo'], ['nexo', 'estandarte']]),
 });
 
 const TEXT = Object.freeze({
@@ -64,8 +67,9 @@ export function networkOpen(state, net) {
 
 /** ¿Está activa la estación? (redes con needsVisit: flag de estación o haber pisado su mapa). */
 export function stopActive(state, net, stopId) {
-  if (!net.needsVisit) return true;
   const s = stopOf(net, stopId);
+  if (s.requiredFlags?.some((flag) => !state.flag(flag))) return false;
+  if (!net.needsVisit) return true;
   return state.flag(stationFlag(s.id)) || (state.data.visited || []).includes(s.map);
 }
 

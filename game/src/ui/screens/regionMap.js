@@ -187,7 +187,7 @@ function drawCellLine(g, cells, w) {
 }
 
 // ---------------------------------------------------------------- escena
-class RegionMapScene extends ScreenScene {
+export class RegionMapScene extends ScreenScene {
   constructor(opts) {
     super();
     this.opts = opts;
@@ -220,8 +220,13 @@ class RegionMapScene extends ScreenScene {
 
   /** Destinos para saltar con L/R: en Vuelo los disponibles; si no, todas las poblaciones y zonas. */
   jumpTargets() {
-    const list = this.map.places.filter((p) => (this.opts.fly ? this.canFly(p) : p.kind !== 'route'));
-    return list.sort((a, b) => (a.y - b.y) || (a.x - b.x));
+    const list = this.map.places.filter((p) => this.opts.mode === 'select' || (this.opts.fly ? this.canFly(p) : p.kind !== 'route'));
+    const cells = new Set();
+    return list.sort((a, b) => (a.y - b.y) || (a.x - b.x)).filter((p) => {
+      const cell = `${p.x},${p.y}`;
+      if (cells.has(cell)) return false;
+      cells.add(cell); return true;
+    });
   }
 
   jump(dir) {
@@ -244,6 +249,12 @@ class RegionMapScene extends ScreenScene {
     if (inp.pressed('R') && this.jump(1)) moved = true;
     if (moved) sfx.cursor();
     if (inp.pressed('B')) { sfx.cancel(); this.finish(null); return; }
+    if (inp.pressed('A') && this.opts.mode === 'select') {
+      const place = pointAt(this.map, this.cx, this.cy);
+      if (place) { sfx.decision(); this.finish(place.id); }
+      else sfx.buzzer();
+      return;
+    }
     if (inp.pressed('A') && this.opts.fly) {
       this.busy = true;
       this.tryFly().catch((err) => engine.reportError(err)).finally(() => { this.busy = false; });
@@ -357,10 +368,11 @@ class RegionMapScene extends ScreenScene {
 
   drawTexts(g) {
     const p = pointAt(this.map, this.cx, this.cy);
-    const title = this.opts.fly ? '¿Adónde quieres ir?' : `Región de ${this.map.name}`;
+    const title = this.opts.mode === 'select' ? 'Marca el lugar que sospechas' : this.opts.fly ? '¿Adónde quieres ir?' : `Región de ${this.map.name}`;
     drawText(g, title, 24, 0, HEADER);
     drawText(g, p ? p.name : '', 488, 0, { ...HEADER, align: 'right' });
     let foot = p?.desc || '';
+    if (this.opts.mode === 'select') foot = `A: marcar · B: volver${foot ? ` · ${foot}` : ''}`;
     const pillars = p ? [...(p.pillars || (p.pillar ? [p.pillar] : [])), ...childPlaces(p.id, this.map).map((c) => c.pillar).filter(Boolean)] : [];
     if (pillars.length) foot = `${foot}${foot ? ' · ' : ''}${pillars.length > 1 ? 'Pilares' : 'Pilar'} ${pillars.join(' y ')}`;
     const ring = p ? this.rings.find((x) => x.placeId === p.id) : null;
@@ -378,7 +390,8 @@ class RegionMapScene extends ScreenScene {
 
 /**
  * Abre el mapa. opts: { fly: true } → id del lugar de Vuelo elegido o null · { marks: [...] } marcas extra
- * ({ mapId|placeId, kind, count, total }) · { mapData } atlas propio (pruebas).
+ * ({ mapId|placeId, kind, count, total }) · { mode: 'select' } → lugar marcado o null, sin viajar.
+ * { mapData } atlas propio (pruebas).
  */
 export async function open(opts = {}) {
   return openScene(new RegionMapScene(opts));

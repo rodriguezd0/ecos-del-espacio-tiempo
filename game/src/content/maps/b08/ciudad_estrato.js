@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Ciudad Estrato (docs/CAMPANA.md §1.3: «Ciudad minera en cañón escalonado», Exterior3, 56×48; N Ruta 6 · E Dunas de
 // Ceniza · O Ruta 7; Centro, tienda, Mina Galena, Escuela del Pico, oficinas del Consorcio, casa de Fermín, mercado de
 // minerales tras el P4 y estación). Construcción: ciudad_estrato_build.js · coordenadas: layout.js (ESTRATO) ·
@@ -43,5 +44,5 @@ export default {
   ],
 
   onEnter: estratoOnEnter,
-  events: estratoEvents(),
+  events: withB24Events('ciudad_estrato', estratoEvents()),
 };

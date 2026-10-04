@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Ruta 1 (B01 §4.8; docs/CAMPANA.md §1.4 y «B01 — ajustes DECIDIDO-DEV») — bosque y claros hacia el sur
 // desde Villa Alba: hierba alta, arroyo con puente de troncos, salientes, estanque en el claro del este,
 // 3 entrenadores, objetos, las primeras Células de Zygarde (§2.3), los topógrafos del Consorcio, el mirador
@@ -156,12 +157,12 @@ export default {
     ...[linkIfReady('villa_zaguan'), linkIfReady('ruta_10')].filter(Boolean),
   ],
 
-  events: [
+  events: withB24Events('ruta_1', [
     ...ruta1Events({
       southRow: H - 1, pathX0: 13, pathX1: 16,
       zaguanOpen: HAS_ZAGUAN, westOpen: HAS_RUTA_10,
       westCrossing: WEST_CROSSING, lookout: LOOKOUT, survey: SURVEY,
     }),
     ...(mapRegistered('cerro_alba') ? cerroAccessEvents() : []),
-  ],
+  ]),
 };

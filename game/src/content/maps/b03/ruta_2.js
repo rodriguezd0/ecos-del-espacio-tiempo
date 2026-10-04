@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Ruta 2 (docs/CAMPANA.md §1.4 y B03): pradera, estanque y puentes entre Villa Zaguán (norte, B02) y Ciudad
 // Caudal (sur). Tileset 1 (Exterior1). Prados con un cercado de Wooloo, dos arroyos con puentes de tablones,
 // el estanque (Caña Vieja; Nadar en la etapa F), el alto de la rampa de grava (Correr) con su mirador, el
@@ -165,8 +166,8 @@ export default {
     ...[linkIfReady('ruta_2', 'villa_zaguan')].filter(Boolean),
   ],
 
-  events: [
+  events: withB24Events('ruta_2', [
     ...ruta2Events({ zaguanOpen: HAS_ZAGUAN, pathX: PATH_X, pond: POND, hill: HILL, pasture: PASTURE, honeyTree: HONEY_TREE }),
     ...ruta2BridgeGate(BRIDGES[0]),
-  ],
+  ]),
 };

@@ -27,7 +27,7 @@ function build(b) {
   b.paint('nieve', cells(25, 12, 7, 4));
   b.paint('mancha_hielo', cells(26, 8, 5, 4));
   for (const [s, x, y] of [
-    ['roca_grande_hielo', 23, 11], ['roca_grande_hielo', 31, 12], ['roca_nevada', 24, 16], ['gota_cristal', 24, 6],
+    ['roca_grande_hielo', 23, 11], ['roca_grande_hielo', 31, 12], ['roca_nevada', 24, 16],
     ['gota_cristal', 32, 6], ['roca_musgo_hielo', 23, 7], ['copo_nieve', 29, 17], ['montones_nieve', 26, 17],
     ['roca_peque_hielo', 31, 16], ['cristales', 25, 6],
   ]) b.stamp(s, x, y);

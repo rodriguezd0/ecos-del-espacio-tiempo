@@ -525,8 +525,8 @@ Manaphy y Phione siguen en el DLC 2. Las 7 Paradojas de hierro quedan en el post
 - **Evoluciones fuera de la Pokédex de Axis** que permiten los datos de Añil: Scyther + Piedra Noche → Kleavor; Eevee +
   Peluca Regia / Pluma Eólica → Royaleon / Cefireon. Decisión TÉCNICA: Peluca Regia y Pluma Eólica no se distribuyen;
   la Piedra Noche avisa antes de usarse en Scyther y Kleavor no cuenta para la Pokédex regional.
-- **Fallo del conversor (TÉCNICO, pendiente de arreglar):** `tools/extract_data.mjs` (vía `list()` de
-  `tools/lib/pbs.mjs`) descarta los campos vacíos de `Evolutions`, así que en `species.json` se pierden o desalinean las
-  evoluciones cuyo parámetro va vacío (`Happiness`, `Trade`): GOLBAT, BUNEARY, CHANSEY, CLEFFA, PICHU, MUNCHLAX, RIOLU,
-  AZURILL, TOGEPI, PAWMO (sin evolución) y KADABRA, GRAVELER, MACHOKE, HAUNTER, GURDURR, EEVEE (una entrada perdida o
-  desplazada). Hay que conservar los vacíos al trocear en tripletas. Esta distribución asume los métodos del PBS crudo.
+- **Conversor corregido:** `tools/extract_data.mjs` conserva los campos vacíos de `Evolutions` al trocear en
+  tripletas; `Happiness` y `Trade` usan `null` como parámetro y los métodos siguientes conservan su posición.
+- **Catálogo regional corregido (04-10-2026, e717e01):** el generador comparte `buildAxisDex` con
+  `tools/axis_dex_source.mjs`; el JSON y la UI incluyen las 425 especies reconciliadas. Las entradas 1–412 conservan
+  su número y las 13 incorporaciones ocupan 413–425. `tests/axis_dex.test.mjs` comprueba catálogo, generación y lista.

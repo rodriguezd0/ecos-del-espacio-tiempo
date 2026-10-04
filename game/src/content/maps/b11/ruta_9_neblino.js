@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Ruta 9 y Bosque Neblino (docs/CAMPANA.md §1.4: «Bosque lila de cristales», 50×60, tileset 7, S Mnemos ·
 // N Ruta 10, BGM PrismaBosqueArcoiris, fondo BosqueLila; «niebla del olvido en bucle hasta P5»). Tras el P5 queda
 // una bruma ligera (niebla del mapa) y un tono lila; antes, la niebla espesa devuelve al lindero
@@ -34,5 +35,5 @@ export default {
     ...(MNEMOS ? [MNEMOS] : []),
   ],
 
-  events: neblinoEvents({ mnemosOpen: Boolean(MNEMOS) }),
+  events: withB24Events('ruta_9_neblino', neblinoEvents({ mnemosOpen: Boolean(MNEMOS) })),
 };

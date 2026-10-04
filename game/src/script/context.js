@@ -109,6 +109,7 @@ export function createContext(scene, event = null) {
       const r = await scene.startBattle(config);
       return r.outcome;
     },
+    battleResult: (config) => scene.startBattle(config),
     async wildBattle(enc) {
       const r = await scene.startWildBattle(enc);
       return r.outcome;

@@ -29,7 +29,7 @@ export function megaFormFor(db, pkmn) {
   if (!pkmn || !pkmn.heldItem) return 0;
   const sp = db.species[pkmn.species];
   if (!sp || !sp.forms) return 0;
-  if ((sp.flags || []).includes('cantMegaEvolve')) return 0;
+  if ((speciesData(db, pkmn.species, pkmn.form).flags || []).includes('cantMegaEvolve')) return 0;
   if (isMegaPokemon(db, pkmn)) return 0;
   for (const [form, data] of Object.entries(sp.forms)) {
     if (data.megaStone && data.megaStone === pkmn.heldItem) return Number(form);

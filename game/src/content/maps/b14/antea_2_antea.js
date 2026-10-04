@@ -4,5 +4,6 @@
 import { roomDef } from './antea_defs.js';
 import { buildAntea2 } from './antea_2_build.js';
 import { sala2AnteaEvents, placeFausto } from '../../events/b14_sala2.js';
+import { withB22cEvents } from '../../events/b22c_maps.js';
 
-export default roomDef(2, 'antea', { build: buildAntea2, events: sala2AnteaEvents(), onEnter: placeFausto });
+export default roomDef(2, 'antea', { build: buildAntea2, events: withB22cEvents('antea_2_antea', sala2AnteaEvents()), onEnter: placeFausto });

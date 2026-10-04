@@ -3,6 +3,7 @@
 // bajo el que se hunde el Archivo Hondo (P5). Hasta el P5 la «niebla del olvido» baja del bosque: los vecinos olvidan
 // nombres y el camino del norte (Ruta 9) da vueltas sobre sí mismo. Salidas: S Ruta 8 / Marisma (B09) · N Ruta 9 (B11).
 // Tileset 9. Construcción en mnemos_build.js; eventos en content/events/b10_mnemos*.js.
+import { withB24Events } from '../../events/b24_maps.js';
 import { W, H, buildMnemos, MNEMOS_BRUSHES } from './mnemos_build.js';
 import { BUILDINGS, INTERIOR_ENTRIES, FLY_POINT, START } from './mnemos_layout.js';
 import { linkIfReady } from './pending_links.js';
@@ -44,5 +45,5 @@ export default {
   connections: [linkIfReady('ruta_8_marisma'), linkIfReady('ruta_9_neblino')].filter(Boolean),
 
   onEnter: mnemosOnEnter,
-  events: mnemosEvents(),
+  events: withB24Events('aldea_mnemos', mnemosEvents()),
 };

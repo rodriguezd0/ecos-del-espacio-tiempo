@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Ruinas de Antea · Sala 2 «Calle de los Pescadores» · presente sumergido (docs/CAMPANA.md B14). Tileset 15, Buceo.
 // Del aljibe sale una corriente mientras su compuerta siga abierta en Antea; cerrada, el aljibe es una bolsa de aire
 // y lleva a la boca de la sala 3. Geometría: antea_2_build.js · eventos: content/events/b14_sala2.js.
@@ -19,5 +20,5 @@ export default roomDef(2, 'presente', {
     { x: R.south.door.x, y: R.south.door.y, to: roomMap(1, 'presente'), tx: R1.north.arrival.x, ty: R1.north.arrival.y, dir: R1.north.arrival.dir },
     { x: R.north.door.x, y: R.north.door.y, to: roomMap(3, 'presente'), tx: R3.south.arrival.x, ty: R3.south.arrival.y, dir: R3.south.arrival.dir },
   ],
-  events: sala2PresenteEvents(),
+  events: withB24Events('antea_2_presente', sala2PresenteEvents()),
 });

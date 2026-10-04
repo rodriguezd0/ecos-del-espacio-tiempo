@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 import { withB22bEvents } from '../../events/b22b_maps.js';
 // Garganta del Albo (docs/CAMPANA.md B04 y §1.4: desfiladero con cascadas; tileset 1, 40×40; S Ruta 3, Pilar de
 // la Corriente al norte). Balizas del Consorcio con sus técnicos, esclusa de Leandro, molino abandonado, Poza y
@@ -111,5 +112,5 @@ export default {
     { x: GRUTA.warp.x, y: GRUTA.warp.y, to: 'gruta_albo', tx: GRUTA_EXIT.arrive.x, ty: GRUTA_EXIT.arrive.y, dir: GRUTA_EXIT.arrive.dir, dirTrigger: GRUTA.warp.dirTrigger },
   ],
   connections: [{ dir: 'south', to: 'ruta_3', offset: 8 }],
-  events: withB22bEvents('garganta_albo', gargantaEvents()),
+  events: withB24Events('garganta_albo', withB22bEvents('garganta_albo', gargantaEvents())),
 };

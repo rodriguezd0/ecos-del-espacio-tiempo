@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Cerro del Alba (docs/CAMPANA.md §1.4: «Cornisa y cima sobre Villa Alba», tileset 1, 24×30, desde la Ruta 1 con
 // Trepar; §2.3 C054 en la cornisa; brasero de Ho-Oh en el postgame). Se sube desde el mirador del nordeste de la
 // Ruta 1 (raíces del muro este, content/events/b11_cerro.js); abajo, la base; una pared de raíces lleva a la cornisa
@@ -6,6 +7,7 @@ import { zoneDefaults } from '../../services/zones.js';
 import { CERRO } from './layout.js';
 import { rect, raggedForest, decorate } from './paint.js';
 import { cerroEvents } from '../../events/b11_cerro.js';
+import { withB22cEvents } from '../../events/b22c_maps.js';
 
 const C = CERRO;
 
@@ -66,5 +68,5 @@ export default {
   battleback: 'Monte',
   start: { ...C.entry },
   build,
-  events: cerroEvents(),
+  events: withB24Events('cerro_alba', withB22cEvents('cerro_alba', cerroEvents())),
 };

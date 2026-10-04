@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Astillero de Ciudad Nexo (docs/CAMPANA.md §1.3 «astillero»; POKEDEX §7.7: Scizorita en el astillero). Nave del
 // Interior1 de Añil (`central_almacen`) con carpinteros de ribera. Tileset 4.
 import { BUILDINGS, INTERIOR_ENTRIES } from './nexo_layout.js';
@@ -27,7 +28,7 @@ export default {
 
   warps: EXIT_TILES.map((x) => ({ x, y: 19, dirTrigger: 2, to: 'ciudad_nexo', tx: OUT.x, ty: OUT.y + 1, dir: 2, door: true })),
 
-  events: [
+  events: withB24Events('nexo_astillero', [
     {
       id: 'carpintera', x: 17, y: 10, name: SPEAKER.shipwright, sprite: SPRITE.workerF, dir: 4, move: 'look', trigger: 'action',
       script: (ctx) => lines(ctx, SPEAKER.shipwright, [
@@ -44,5 +45,5 @@ export default {
     },
     { id: 'megapiedra_scizorita', type: 'item', x: 21, y: 15, item: 'SCIZORITE' },
     examine('caja_herramientas', 4, 9, 'Cajas de herramientas de carpintero: gubias, mazos, calafates… y un frasco de brea.', { solid: true }),
-  ],
+  ]),
 };

@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Los Trastos de Lúmina (CAMPANA §1.3 «tienda de trastos» y B09 «Rotom de noche»; POKEDEX §7.4 objetos de
 // intercambio). Tele vieja en la pared del fondo: de noche sale un Rotom (regalo). Tileset 4, 15×12.
 import { smallInterior } from './lumina_small.js';
@@ -20,9 +21,9 @@ export default smallInterior({
     b.rect(null, 8, 4, 5, 3, 'alfombra_beige');
     b.stamp('papelera', 1, 9);
   },
-  events: [
+  events: withB24Events('lumina_trastos', [
     ...junkShopEvents(),
     examine('nevera_trastos', 5, 5, 'Una nevera antigua. Dentro solo hay tornillos, ordenados por tamaños.', { solid: true }),
     examine('vitrina_trastos', 7, 5, 'Relojes parados, radios sin botones y una lámpara con forma de Pokémon que nadie sabe identificar.', { solid: true }),
-  ],
+  ]),
 });

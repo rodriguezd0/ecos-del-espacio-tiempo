@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Museo de las Eras, planta baja (TABLILLAS §4.6; CAMPANA B09): sala de exposiciones completa de Interior1
 // (museo_sala: vitrinas, fósiles acordonados, mostrador, máquina de revivir y ordenadores), escalera a la galería y
 // escalera del personal al sótano. Coordenadas: museo_layout.js · eventos: content/events/b09a_museo.js y b09a_t06.js.
@@ -42,7 +43,7 @@ export default {
     { x: H.stairsUp.x, y: H.stairsUp.y, to: 'lumina_museo_galeria', tx: GALLERY.fromHall.x, ty: GALLERY.fromHall.y, dir: GALLERY.fromHall.dir },
   ],
 
-  events: [
+  events: withB24Events('lumina_museo', [
     ...museumHallEvents(),
     // Escalera del personal: la tapa el vigilante hasta la noche de T06; después baja al sótano.
     {
@@ -58,5 +59,5 @@ export default {
         await ctx.say('El museo está cerrado por la noche. Horario: de 8:00 a 20:00.');
         await ctx.warp('ciudad_lumina', OUT.x, OUT.y, 2);
       } },
-  ],
+  ]),
 };

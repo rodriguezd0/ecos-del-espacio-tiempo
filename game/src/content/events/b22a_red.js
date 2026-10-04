@@ -21,7 +21,8 @@ export function nodeKnown(state, node) {
 
 /** Destinos del Salto desde el nodo `here` (los demás nodos conocidos, en el orden fijo de la Red). Puro. */
 export function redDestinations(state, here) {
-  return RED_NODES.filter((n) => n.id !== here && nodeKnown(state, n));
+  return RED_NODES.filter((n) => n.id !== here && nodeKnown(state, n)
+    && !(n.id === 'laberinto' && state.flag('dlc1_nodo_robado') && !state.flag('dlc1_nodo_devuelto')));
 }
 
 /** Salto de un nodo a otro con la cinemática de B21 (Forma 10 % a propósito, montura, llegada en Forma Completa). */

@@ -36,6 +36,8 @@ import { buildBorderPattern } from './borderFill.js'; // exterior del mapa con p
 import { nearestFreeSpot } from './waterAccess.js';
 import { eggStep } from './eggs.js'; // B11: pasos de los huevos del equipo y eclosión
 import { daycareStep } from './daycare.js'; // guardería: contador del huevo de la pareja depositada
+import { observeStep } from '../content/events/b24_observers.js';
+import { isMounted } from './zygarde/mount.js';
 import { PanoramaLayer } from '../render/panorama.js'; // B12: fondo de mapa (vacío del Mundo Distorsión)
 import { ImpossibleField } from './impossible/field.js'; // B12: espacio imposible (vacío, anclas, puentes)
 import { MapNetSync } from '../net/mapSync.js'; // multijugador: otros jugadores de la sala online
@@ -129,7 +131,11 @@ export default class MapScene extends Scene {
       },
       fieldAnim: (kind, ch, x, y) => this.playFieldAnim(kind, ch, x, y),
       mapChanged: (next, prev, off) => this.onConnectionCrossed(next, prev, off),
-      stepTaken: (p) => { this.state.setPosition(this.world.map.id, p.x, p.y, p.direction); eggStep(this); daycareStep(this); },
+      stepTaken: (p) => {
+        this.state.setPosition(this.world.map.id, p.x, p.y, p.direction);
+        if (observeStep(this.state, { mapId: this.world.map.id, x: p.x, y: p.y, running: Boolean(p.canRun?.()), mounted: isMounted(this.world) })) this.world.requestRefresh?.();
+        eggStep(this); daycareStep(this);
+      },
       repelExpired: () => this.runScript(repelWoreOff, null, 'repelente'),
     };
   }

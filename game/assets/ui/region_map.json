@@ -19,6 +19,9 @@
   "villa_boreal": [408, 88],
   "mesa_vientos": [440, 136],
   "bastion_axis": [424, 296],
+  "almenara": [472, 296],
+  "isla_petalo": [392, 312],
+  "isla_estandarte": [440, 312],
   "ruta_1": [168, 152],
   "ruta_2": [168, 184],
   "ruta_3": [136, 200],
@@ -146,6 +149,27 @@
    "xy": [424, 296],
    "cell": [26, 18],
    "mapIds": ["bastion_axis"]
+  },
+  "almenara": {
+   "name": "Península de Almenara",
+   "kind": "post",
+   "xy": [472, 296],
+   "cell": [29, 18],
+   "mapIds": ["puerto_almenara", "almenara_centro", "ruta_a1", "ruta_a2", "oasis_vaso", "monte_candil", "el_crisol", "torre_crisol"]
+  },
+  "isla_petalo": {
+   "name": "Isla Pétalo",
+   "kind": "post",
+   "xy": [392, 312],
+   "cell": [24, 19],
+   "mapIds": ["b24_isla_petalo"]
+  },
+  "isla_estandarte": {
+   "name": "Isla Estandarte",
+   "kind": "post",
+   "xy": [440, 312],
+   "cell": [27, 19],
+   "mapIds": ["b24_isla_estandarte"]
   },
   "ruta_1": {
    "name": "Ruta 1",
@@ -500,6 +524,9 @@
   ["estacion_talasa", "volcan_tizon"],
   ["volcan_tizon", "bastion_axis"],
   ["villa_boreal", "mar_boreal"],
-  ["mar_boreal", "instalacion_cierzo"]
+  ["mar_boreal", "instalacion_cierzo"],
+  ["ciudad_nexo", "almenara"],
+  ["ciudad_nexo", "isla_petalo"],
+  ["ciudad_nexo", "isla_estandarte"]
  ]
 }

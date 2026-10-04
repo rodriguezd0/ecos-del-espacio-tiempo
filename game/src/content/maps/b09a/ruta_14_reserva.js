@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Ruta 14 y Reserva del Delta (docs/CAMPANA.md §1.4 y B09 parte A; TABLILLAS T07): delta tropical. Tileset 6
 // (ExteriorSafari), 60×60. N Ciudad Lúmina · S Ciudad Nexo (B09b). La Reserva está cerrada por un enjambre hasta que
 // Iván (Centro de Lúmina) abre la pista T07; tras T07 reabre entera. Coordenadas: ruta_14_layout.js · construcción:
@@ -29,5 +30,5 @@ export default {
     ...[linkIfReady('ruta_14_reserva', 'ciudad_nexo')].filter(Boolean),
   ],
 
-  events: reservaEvents(OPEN),
+  events: withB24Events('ruta_14_reserva', reservaEvents(OPEN)),
 };

@@ -29,6 +29,31 @@ export const MAP_GROUPS = Object.freeze([
   G('villa_boreal', 'Villa Boreal', 'Emociones', 'snow', ['villa_boreal'], ['boreal_']),
   G('mesa_vientos', 'Mesa de los Vientos', 'viento', null, ['mesa_vientos'], ['mesa_vientos_']),
   G('bastion_axis', 'Bastión Axis', 'Torre Batalla', null, ['bastion_axis'], ['bastion_']),
+  G('almenara', 'Península de Almenara', 'Azul Tema', 'Playa', [
+    ['puerto_almenara', { name: 'Puerto Almenara' }], ['almenara_centro', { name: 'Centro Pokémon de Almenara' }],
+    ['ruta_a1', { name: 'Ruta A1' }], ['ruta_a2', { name: 'Ruta A2', battleback: 'Desierto' }],
+    ['oasis_vaso', { name: 'Oasis del Vaso', battleback: 'Desierto' }], ['monte_candil', { name: 'Monte Candil', bgm: 'Amenaza', battleback: 'Monte' }],
+    ['el_crisol', { name: 'El Crisol', bgm: 'GuaridaRocket', battleback: 'BaseVillano' }], ['torre_crisol', { name: 'Torre del Crisol', bgm: 'Amenaza', battleback: 'BaseVillano' }],
+  ]),
+  G('ciudad_nexo', 'Registro de Expediciones', null, null, [
+    ['b24_aduana_vieja', { name: 'Aduana Vieja' }],
+  ]),
+  G('isla_petalo', 'Isla Pétalo', null, 'PraderaFlores', ['b24_isla_petalo']),
+  G('isla_estandarte', 'Isla Estandarte', null, 'Playa', ['b24_isla_estandarte']),
+  G('ruta_9_neblino', 'Bosque Neblino', null, 'BosqueLila', [
+    ['b24_santuario_neblino', { name: 'Santuario del Neblino' }], ['b24_claro_justicia', { name: 'Claro de la Justicia' }],
+  ]),
+  G('cerro_del_alba', 'Cráter del Lucero', null, null, ['b24_crater_lucero',
+    ['b24_ultra_cristal', { name: 'Ultrazona Cristal' }], ['b24_ultra_selva', { name: 'Ultrazona Selva' }],
+    ['b24_ultra_tormenta', { name: 'Ultrazona Tormenta' }], ['b24_ultra_cielo', { name: 'Ultrazona Cielo Alto' }],
+    ['b24_ultra_abismo', { name: 'Ultrazona Abismo' }], ['b24_ultra_fortaleza', { name: 'Ultrazona Fortaleza' }], ['b24_ultra_veneno', { name: 'Ultrazona Veneno' }],
+  ]),
+  G('arrecife_eco', 'Cuna de Coral', null, 'Sub', ['b24_cuna_coral']),
+  G('canteria_solano', 'Apuntalamientos de la Cantería', null, 'Cueva', ['b24_canteria_justicia']),
+  G('dunas_ceniza', 'Cueva de las Dunas', null, 'Cueva', ['b24_cueva_dunas']),
+  G('ciudad_estrato', 'Galería de Diamante', null, 'Cueva', ['b24_mina_diamante']),
+  G('volcan_tizon', 'Termas de Tizón', null, 'Cueva', ['b24_termas_tizon']),
+  G('sima_eje', 'Sala de los dos Ideales', null, 'Espacio', ['b24_dos_ideales']),
 
   // ── Rutas y zonas (§1.4) ────────────────────────────────────────────────────────────────────
   G('ruta_1', 'Ruta 1', 'Ruta 1', 'Bosque', ['ruta_1']),
@@ -67,6 +92,10 @@ export const MAP_GROUPS = Object.freeze([
   G('mar_del_sur', 'Mar del Sur', 'Azul Tema', 'water', ['mar_del_sur',
     ['carguero', { name: 'Carguero', bgm: 'Barco' }]]), // B21: escena del epílogo (Vértice deja Axis por mar)
   G('mar_del_sur', 'Fondo del Mar del Sur', 'Emociones', 'Sub', ['fondo_mar_sur']),
+  G('estacion_talasa', 'Sima Marina', 'Cueva', 'Sub', ['sima_marina']),
+  G('mar_del_sur', 'Fosa Abisal', 'Cueva', 'Sub', ['fosa_abisal']),
+  G('volcan_tizon', 'Veta Magmática', 'MansionQuemada', 'Volcan', ['veta_magmatica']),
+  G('cumbre_azur', 'Balcón del Cielo', 'Transicion', 'CimaNevada', ['balcon_cielo']),
   G('islote_lumbre', 'Islote Lumbre', 'Pokeflauta', null, ['islote_lumbre'], ['lumbre_']), // lumbre_gruta (B13)
   G('volcan_tizon', 'Volcán Tizón', 'MansionQuemada', 'Volcan', ['volcan_tizon'], ['volcan_tizon_', 'tizon_']),
   G('estacion_talasa', 'Estación Talasa', 'GuaridaRocket', 'BaseVillano', ['estacion_talasa', ['ruinas_talasa', { name: 'Ruinas de Talasa' }]], ['estacion_talasa_', 'talasa_']),

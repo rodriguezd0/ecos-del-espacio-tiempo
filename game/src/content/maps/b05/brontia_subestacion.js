@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Subestación de Villa Brontia (T03): sala de cuadros con el tablero de empalmes en el suelo, la palanca general,
 // el esquema en la pared y la operaria. Tileset 4 (Interior1). Eventos en content/events/b05_t03_station.js.
 import { STATION, stationEvents } from '../../events/b05_t03_station.js';
@@ -36,10 +37,10 @@ export default {
   // Felpudo de 2 casillas (salida_lab): x 9–10.
   warps: [S.door.x, S.door.x + 1].map((x) => ({ x, y: S.door.y, dirTrigger: 2, to: 'villa_brontia', tx: OUT.x, ty: OUT.y + 1, dir: 2, door: true })),
 
-  events: [
+  events: withB24Events('brontia_subestacion', [
     ...[S.door.x, S.door.x + 1].map((x) => ({ id: `flecha_${x}`, x, y: S.door.y + 1, sprite: 'FlechaSalida', dir: 8, through: true, stepAnime: true, shadow: false })),
     ...stationEvents(),
     examine('transformador', 2, 10, 'Un transformador viejo. Una etiqueta dice: «Reserva de la línea del pararrayos».', { solid: true }),
     examine('estanteria', 16, 6, 'Fusibles, bobinas de cable y un manual de la subestación lleno de anotaciones.', { solid: true }),
-  ],
+  ]),
 };

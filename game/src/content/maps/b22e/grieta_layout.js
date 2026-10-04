@@ -203,9 +203,9 @@ export const ITEMS = Object.freeze([
 export const PROPS = Object.freeze([
   // rellano
   ['pino', 16, 47], ['arbol', 30, 51], ['roca_gris', 19, 52], ['roca_gris', 28, 46], ['brotes', 18, 50],
-  ['flores_blancas', 20, 49], ['brotes', 31, 53], ['lupinos', 27, 52], ['tocon', 21, 53],
+  ['flores_blancas', 20, 49], ['brotes', 32, 52], ['lupinos', 27, 52], ['tocon', 21, 53],
   // explanada
-  ['pino', 33, 26], ['arbol', 14, 26], ['roca_gris', 32, 20], ['brotes', 20, 20], ['flores_blancas', 17, 27],
+  ['brotes', 33, 27], ['brotes', 14, 27], ['roca_gris', 32, 20], ['brotes', 20, 20], ['flores_blancas', 17, 27],
   ['flores_rosas', 31, 27], ['arbustos', 26, 27], ['brotes', 29, 28], ['troncos', 31, 23],
   // cuenca
   ['arbol', 2, 7], ['pino', 12, 5], ['flores_blancas', 5, 15], ['flores_rosas', 13, 9], ['brotes', 3, 12],

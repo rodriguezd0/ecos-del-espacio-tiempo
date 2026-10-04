@@ -158,6 +158,8 @@ Object.assign(Battle.prototype, {
     this.pbCommonAnimation('MegaEvolution', b);
     makeMega(this.db, b.pokemon);
     b.form = b.pokemon.form;
+    (this.megaEvolved ||= []).push({ species: b.species, form: b.form, side: idx & 1,
+      owner: this.pbGetOwnerIndexFromBattlerIndex(idx), partyIndex: b.pokemonIndex });
     b.pbUpdate(true);
     this.queueEvent('changeForm', b.view());
     this.pbCommonAnimation('MegaEvolution2', b);

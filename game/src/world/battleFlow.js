@@ -6,6 +6,7 @@ import { applyBattleResult, caughtList, finalizeBattleResult, storeCaught, white
 import { createPokemon, healed } from '../battle/core/pokemon.js';
 import { ui } from '../ui/api.js';
 import { isNightHour } from '../render/dayNight.js';
+import { observeBattle } from '../content/events/b24_observers.js';
 
 const WILD_ANIMS = { day: ['snakeSquares', 'diagonalBubbleTL', 'diagonalBubbleBR', 'risingSplash'], night: ['snakeSquares', 'diagonalBubbleBR', 'diagonalBubbleBR', 'risingSplash'] };
 const TRAINER_ANIMS = { day: ['spinBall', 'bars', 'shrinkingPieces', 'risingSplash'], night: ['spinBall', 'mosaic', 'shrinkingPieces', 'risingSplash'] };
@@ -92,6 +93,8 @@ export async function runBattle(scene, config = {}) {
     applyBattleResult(state, result);
     for (const p of caughtList(result)) storeCaught(state, p);
   }
+  if (observeBattle(state, { mapId: def.id, type: full.type, outcome: result.outcome,
+    opponentSpecies: (opponent.party || []).map((p) => p.species), exhibition: Boolean(config.exhibition) })) scene.world.requestRefresh?.();
   audio?.resumeBGM?.(20);
   scene.world.encounters.reset();
   scene.fx.clearTransition();

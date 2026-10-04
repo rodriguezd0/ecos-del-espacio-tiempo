@@ -44,11 +44,11 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | Libreta: pistas (2–3 abiertas), Profecía (Unown), Crónica, Tablillas | ✅ | Pestañas Diario/Células en corrección |
 | Secuencia «Pilar restaurado» (Fragmento, verso, efecto local) | ✅ | `ctx.story.restorePillar` |
 | Kit de Pilar con tinte por Pilar | ✅ | Arte provisional |
-| Cordón Unión (evolución por intercambio en solitario) | 🟨 | Objeto en Añil; venta en Lúmina (B09) |
+| Cordón Unión (evolución por intercambio en solitario) | ✅ | Venta en Lúmina (B09), evolución implementada |
 | Huevos y eclosión | ✅ | `world/eggs.js` (B11: huevo de Togepi) |
 | Guardería y crianza (Phione, Lazo Destino, movimientos huevo) | ✅ | `world/daycare.js` + `daycareEvent`; guardería de Lúmina abierta tras T06 (X29) |
 | Validador de contenido y E2E por bloque | ✅ | `tools/validate_content.mjs`, `tools/e2e_*.mjs` |
-| Cooperativo / intercambio / PvP | ⬜ | Opcional; nunca requisito (biblia §15) |
+| Cooperativo / intercambio / PvP | ✅ | Salas, historia en equipo, PvP, intercambios, chat y emotes; pruebas con dos motores y dos Chrome |
 
 ## Capítulos y escenas (juego base) — guion en `docs/CAMPANA.md`
 
@@ -69,9 +69,10 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | B19–B20 | Calzada del Rey / P10 Origen (Trío de las Nubes, Gael, Flauta) | ✅ E2E + verificación |
 | B21 | Columna Lanza: Salto, captura voluntaria de Zygarde, Arceus 3 fases, epílogo | ✅ E2E + verificación |
 | Tablillas | 15 arcos T01–T15 (museo T06) repartidos en B03–B19 | ✅ con sus bloques |
-| Partida continua | De «Nueva partida» a los créditos sin preajustes (curva de niveles, dinero, banderas) | ⬜ tras el postgame y los DLC |
-| B22 | Postgame del juego base (búsquedas legendarias) | 🟨 B22a/b/d/e probados con capturas y retornos reales; B22c pendiente |
-| B23 / B24 | DLC 1 «Almenara» (Gael, Hoopa, Mega Zygarde) / DLC 2 Registro de Expediciones | ⬜ |
+| Partida continua | De «Nueva partida» a los créditos sin preajustes (curva de niveles, dinero, banderas) | 🟨 B01–B03 recorridos con la misma partida; sigue hacia P2 |
+| B22 | Postgame del juego base (búsquedas legendarias) | ✅ a–e recorridos en Chrome con capturas y retornos reales |
+| B23 | DLC 1 «Almenara» (Gael, Hoopa, Mega Zygarde) | ✅ 13 hitos, 9 combates reales; derrota/reintento, sellado, captura opcional y final abierto |
+| B24 | DLC 2 Registro de Expediciones | ✅ 30/30 Hallazgos, 47 combates reales, siete Ultrazonas, Naganadel/Necrozma y ambas hipótesis insulares |
 
 ## Personajes (arte provisional D30 en `game/assets/characters`)
 
@@ -84,7 +85,7 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | Agente Olmedo, Mamá, Lía, vecinos, niños | ✅ provisional | |
 | Guardianes: Casilda, Leandro, Abril, Fermín, Olvido | ✅ provisional | Charset + frontal |
 | Genesis: Vértice, Casia, Garrido, técnicos/investigadores | ✅ provisional | Sin verde Zygarde |
-| Curador/personal del museo, NPC del DLC 2 | ⬜ | Con sus bloques |
+| Curador/personal del museo, NPC del DLC 2 | ✅ provisional | Personal integrado; Sabela usa el charset científico de Añil, pendiente de aprobación D30 |
 | Zygarde Core + 4 núcleos | ✅ | Core propio; núcleos por guion |
 
 ## Legendarios con función narrativa
@@ -94,8 +95,9 @@ Bramaluna Alfa = ROARINGMOON (P7) · Tornadus/Thundurus/Landorus (P10) · Arceus
 
 ## Especies
 
-Pokédex de Axis: 425 entradas (412 del inventario + 13 reconciliaciones, D28 DECIDIDO-DEV). Distribución por zonas en
-`docs/POKEDEX_DISTRIBUCION.md`; se implementa con cada bloque.
+Pokédex de Axis: 425 entradas (412 del inventario + 13 reconciliaciones, D28 DECIDIDO-DEV). Catálogo y generador
+corregidos (e717e01), con numeración anterior conservada y las 13 especies visibles en la lista. Distribución por
+zonas en `docs/POKEDEX_DISTRIBUCION.md`; auditoría final de captura, regalos, crianza y evolución en marcha.
 
 ## Objetos clave
 
@@ -106,8 +108,8 @@ Pokédex de Axis: 425 entradas (412 del inventario + 13 reconciliaciones, D28 DE
 | Tablillas ×18 (17 de tipo + Legendaria; sin BLANKPLATE) | ✅ sistema; entrega por arco |
 | Libreta de pistas, Arca de Zygarde | ✅ sistema; entrega en B02 |
 | Clave Glífica, Hebras, Cadena Roja, Llave del fondo, Atrapasueños, Piedra Magma, Piedra Crisol, Engranajes | ✅ datos (`items_axis.json`) |
-| Mega Aro + megapiedras | ⬜ con sus bloques |
-| Cordón Unión | ⬜ B09 |
+| Mega Aro + megapiedras | ✅ B07 y búsquedas del postgame; Zygardita en Almenara |
+| Cordón Unión | ✅ B09 |
 
 ## TODO de integración entre bloques (Bloque 1)
 
@@ -117,6 +119,6 @@ esté registrado hay un aviso neutro; al crearlo y ejecutar `node tools/gen_regi
 | Estado | Enlace | Bloque | Qué falta |
 |---|---|---|---|
 | ✅ | Ruta 1 → **Ruta 10** (cruce oeste, tramo bajo; C007) | B11 | Crear `ruta_10` con su salida este en y 20–21 y conexión `east` a `ruta_1` con offset 4. Hasta entonces: «El camino del oeste está cortado por un desprendimiento.» |
-| 🟨 | Ruta 1 → **Villa Zaguán** (salida sur) | B02 | Crear `villa_zaguan` con su camino norte en x 18–21 y conexión `north` a `ruta_1` con offset 5. |
-| ✅ | Ruta 1 → **Cerro del Alba** (cornisa, Trepar) | B11/postgame | Hecho en B11: raíces en el mirador (24,7) → `cerro_alba` (C054); Ho-Oh en el brasero queda para el postgame. |
+| ✅ | Ruta 1 → **Villa Zaguán** (salida sur) | B02 | Conexión implementada, costura limpia y recorrida desde Nueva partida. |
+| ✅ | Ruta 1 → **Cerro del Alba** (cornisa, Trepar) | B11/postgame | Raíces en el mirador (24,7) → `cerro_alba` (C054); encuentro de Ho-Oh implementado y capturado en B22c. |
 | ✅ | Monte del Portal: C050, C051 y C076 | B12 | Hecho en B12: `montana_portal` ampliado en su sitio a 50×50 (se conserva la llegada (17,48) del campamento); C050 (26,46), C051 (17,21), C076 (39,41, Nadar). |

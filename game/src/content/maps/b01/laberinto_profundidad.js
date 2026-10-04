@@ -5,6 +5,7 @@
 import { stealthEvents, SAFE_SPOT } from '../../events/b01_north_stealth.js';
 import { coreChamberEvents } from '../../events/b01_north_core.js';
 import { labyrinthNodeEvents } from '../../events/b22a_red.js';
+import { withAlmenaraNode } from '../../events/b23_intro.js';
 import { layoutHedges, paintHedges } from './laberinto_setos.js';
 
 const W = 40;
@@ -139,6 +140,6 @@ export default {
   events: [
     ...stealthEvents(),
     ...coreChamberEvents(CHAMBER),
-    ...labyrinthNodeEvents(),
+    ...withAlmenaraNode(labyrinthNodeEvents()),
   ],
 };

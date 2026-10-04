@@ -47,9 +47,9 @@ const TERRAIN = [
   '~...........ooo....^^^^^:::::~', // 14 Ciudad Lúmina · Sima del Eje · Calzada del Rey · Ruta 6
   '~..fffff...........^^^^::::::~', // 15 Mirador Sur · Cantería Solano · Cerro Plomo (P4)
   '~..fffff..............:::::::~', // 16 Ruta 14 · Ruta 7 · Ciudad Estrato · Dunas de Ceniza
-  '~........~~...~~~~.~~..~~~:~~~', // 17 Ruta 15 · Ciudad Nexo · costa sur
-  '~...~~~~~~~~~~~~~~~~v~~~~~i~~~', // 18 Caleta Sonda · Mar del Sur · Volcán Tizón · Bastión Axis
-  '~~r~i~~~~~~~~~i~~~~~~~~~~~~~~~', // 19 Arrecife del Eco (P7) · Islote Lumbre · Estación Talasa
+  '~........~~...~~~~.~~..~~~:~~.', // 17 Ruta 15 · Ciudad Nexo · costa sur · Almenara oriental
+  '~...~~~~~~~~~~~~~~~~v~~~~~i~~:', // 18 Caleta Sonda · Mar del Sur · Volcán Tizón · Bastión Axis · Almenara
+  '~~r~i~~~~~~~~~i~~~~~~~~~i~~i~~', // 19 Arrecife, Lumbre, Talasa, Pétalo y Estandarte
 ];
 
 const P = (id, name, kind, x, y, links, extra = {}) => ({ id, name, kind, x, y, links, ...extra });
@@ -73,7 +73,7 @@ const RAW_PLACES = [
     { fly: true, desc: 'Capital cultural' }),
   P('aldea_mnemos', 'Aldea Mnemos', 'town', 2, 10, [['ruta_8_marisma', 'SE'], ['ruta_9_neblino', 'N'], ['archivo_hondo', null]],
     { fly: true, desc: 'Aldea de bambú, cerezos y archivos' }),
-  P('ciudad_nexo', 'Ciudad Nexo', 'town', 5, 17, [['ruta_14_reserva', 'N'], ['ruta_15', 'O'], ['mar_del_sur', 'SE']],
+  P('ciudad_nexo', 'Ciudad Nexo', 'town', 5, 17, [['ruta_14_reserva', 'N'], ['ruta_15', 'O'], ['mar_del_sur', 'SE'], ['almenara', null], ['isla_petalo', null], ['isla_estandarte', null]],
     { fly: true, desc: 'Puerto y nudo de comunicaciones' }),
   P('caleta_sonda', 'Caleta Sonda', 'town', 1, 18, [['ruta_15', 'E'], ['arrecife_eco', 'SO'], ['mar_del_sur', null]],
     { fly: true, desc: 'Pueblo de pescadores y buzos' }),
@@ -84,6 +84,12 @@ const RAW_PLACES = [
     { fly: true, flyUnlock: true, desc: 'Comunidad aislada sobre una mesa rocosa' }),
   P('bastion_axis', 'Bastión Axis', 'post', 26, 18, [['mar_del_sur', null]],
     { fly: true, desc: 'Fortaleza costera convertida en instalación de combate' }),
+  P('almenara', 'Península de Almenara', 'post', 29, 18, [['ciudad_nexo', null]],
+    { desc: 'Puerto, palmeral y salinas al este de Axis; ferri desde Ciudad Nexo' }),
+  P('isla_petalo', 'Isla Pétalo', 'post', 24, 19, [['ciudad_nexo', null]],
+    { desc: 'Isla de flores; expedición en ferri desde Ciudad Nexo' }),
+  P('isla_estandarte', 'Isla Estandarte', 'post', 27, 19, [['ciudad_nexo', null]],
+    { desc: 'Isla del antiguo estandarte; expedición en ferri desde Ciudad Nexo' }),
 
   // ── Rutas y zonas (§1.4) ───────────────────────────────────────────────────────────────────
   P('ruta_1', 'Ruta 1', 'route', 10, 9, [['villa_alba', 'N'], ['villa_zaguan', 'S'], ['ruta_10', 'O'], ['cerro_del_alba', 'E']],
@@ -167,7 +173,7 @@ const ROADS = [
 const SEA_ROADS = [
   ['caleta_sonda', 'arrecife_eco'], ['ciudad_nexo', 'islote_lumbre'], ['islote_lumbre', 'estacion_talasa'],
   ['estacion_talasa', 'volcan_tizon'], ['volcan_tizon', 'bastion_axis'], ['villa_boreal', 'mar_boreal'],
-  ['mar_boreal', 'instalacion_cierzo'],
+  ['mar_boreal', 'instalacion_cierzo'], ['ciudad_nexo', 'almenara'], ['ciudad_nexo', 'isla_petalo'], ['ciudad_nexo', 'isla_estandarte'],
 ];
 
 /**

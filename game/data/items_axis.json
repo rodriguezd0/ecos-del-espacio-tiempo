@@ -72,8 +72,8 @@
     "description": "Piedra antigua que se quiebra al invocar a uno de los dos ideales."
   },
   "ANCIENTGEAR": {
-    "id": "ANCIENTGEAR", "name": "Engranaje antiguo", "namePlural": "Engranajes antiguos", "pocket": 8, "price": 0,
-    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "METALCOAT",
+    "id": "ANCIENTGEAR", "name": "Engranaje antiguo", "namePlural": "Engranajes antiguos", "pocket": 1, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": [], "icon": "METALCOAT",
     "description": "Pieza de una máquina de otra época. Parece encajar con otras iguales."
   },
   "ZYGARDECUBE": {
@@ -105,6 +105,11 @@
     "fieldUse": "Direct", "battleUse": null, "flags": ["KeyItem"],
     "note": "Repartir Exp moderno (gen 6+, CAMPANA B03 «desactivable»): objeto clave; se activa/desactiva desde la Mochila (ui/logic/expShare.js). En Añil es equipable (bolsillo 1).",
     "description": "Los Pokémon del equipo que no combaten reciben la mitad de la Exp. Se activa o desactiva al usarlo."
+  },
+  "CRUCIBLEFRAGMENTS": {
+    "id": "CRUCIBLEFRAGMENTS", "name": "Fragmentos Crisol", "namePlural": "Fragmentos Crisol", "pocket": 8, "price": 0,
+    "fieldUse": null, "battleUse": null, "flags": ["KeyItem"], "icon": "STARPIECE",
+    "description": "Fragmentos de una Piedra Crisol. La Forja de Tizón puede reunirlos para despertar el otro ideal."
   },
   "SCOLIPITE": {
     "id": "SCOLIPITE", "name": "Scolipedita", "namePlural": "Scolipeditas", "pocket": 6, "price": 100000, "sellPrice": 50000,

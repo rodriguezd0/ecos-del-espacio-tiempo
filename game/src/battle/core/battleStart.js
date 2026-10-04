@@ -315,6 +315,7 @@ Object.assign(Battle.prototype, {
       seen: [...this.seen],
       defeated: [...this.defeated],
       phase: { ...this.phaseState },
+      megaEvolutions: (this.megaEvolved || []).map((m) => ({ ...m })),
       blackedOut: Boolean(this.blackedOut),
       log: [...this.log],
     };

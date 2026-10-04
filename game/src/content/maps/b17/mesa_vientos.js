@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Mesa de los Vientos (docs/CAMPANA.md §1.3: comunidad aislada sobre una mesa rocosa, 40×40, tileset 1, «Solo por
 // Vuelo», cuidadores de Altaria que curan, BGM viento; TABLILLAS T14; POKEDEX_DISTRIBUCION «Mesa de los Vientos»).
 // Sin conexiones ni caminos: se llega con Vuelo cuando el acertijo del sobre la desbloquea (regionMapData: flyUnlock).
@@ -33,5 +34,5 @@ export default {
     { x: door.x, y: door.y, to: 'mesa_vientos_casa', tx: E.x, ty: E.y, dir: 8, door: true },
   ],
 
-  events: mesaEvents(),
+  events: withB24Events('mesa_vientos', mesaEvents()),
 };

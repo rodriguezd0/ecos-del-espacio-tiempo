@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Villa Brontia (B05; docs/CAMPANA.md §1.3 y «B05 — Interludio 2»): pueblo de meseta con molinos y campanario, a
 // oscuras desde que el Consorcio se quedó con el «mantenimiento» del Parque Eólico. Centro, tienda, posada (con
 // «descansar hasta tormenta»), campanario de Sixto (T03), subestación, casa de Abril, corrales de Wooloo y estación
@@ -47,5 +48,5 @@ export default {
   ],
 
   onEnter: brontiaOnEnter,
-  events: withB22bHints(brontiaEvents()),
+  events: withB24Events('villa_brontia', withB22bHints(brontiaEvents())),
 };

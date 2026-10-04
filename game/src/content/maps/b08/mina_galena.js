@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Mina Galena (docs/CAMPANA.md B08; §1.3 «Ciudad Estrato: … Mina Galena»; Cueva1, tierra): la mina de la familia
 // Galena bajo Estrato. Vestíbulo con los mineros; galería principal; al oeste la veta de cristal (C036); al este el
 // pozo lateral del Consorcio (dos técnicos) que baja hasta la perforadora de Garrido; al norte el montacargas de la
@@ -69,5 +70,5 @@ export default {
   build,
   warps: [{ x: MINA.exit.warp.x, y: MINA.exit.warp.y, to: 'ciudad_estrato', tx: ESTRATO.mine.front.x, ty: ESTRATO.mine.front.y, dir: 2 }],
   onEnter: minaOnEnter,
-  events: withB22bHints([...minaEvents(), ...railEvents(), ...b22dMinaEvents()]),
+  events: withB24Events('mina_galena', withB22bHints([...minaEvents(), ...railEvents(), ...b22dMinaEvents()])),
 };

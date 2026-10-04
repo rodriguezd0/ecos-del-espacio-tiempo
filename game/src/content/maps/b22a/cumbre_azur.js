@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Cumbre Azur (docs/CAMPANA.md §1.4 «Cumbre Azur, Columna Lanza · Cima sobre las nubes · Vuelo y Senda del Lazo
 // (post)»; B22 «Senda del Lazo abierta con el Anclaje espacial»): con el nudo del tramo alto anclado, la Senda del Lazo
 // sube por encima del mar de nubes hasta el dintel de los Custodios, bajo la columna de luz, y por él a Columna Lanza.
@@ -8,6 +9,7 @@ import { CUMBRE as C } from './layout.js';
 import { NORTH_PIECES } from '../b15/pieces.js';
 import { buildCumbre } from './cumbre_build.js';
 import { cumbreEvents, cumbreWarps } from '../../events/b22a_senda.js';
+import { withB22cEvents } from '../../events/b22c_maps.js';
 
 export default {
   id: 'cumbre_azur',
@@ -27,5 +29,5 @@ export default {
   ...NORTH_PIECES,
   build: buildCumbre,
   warps: cumbreWarps(),
-  events: cumbreEvents(),
+  events: withB24Events('cumbre_azur', withB22cEvents('cumbre_azur', cumbreEvents())),
 };

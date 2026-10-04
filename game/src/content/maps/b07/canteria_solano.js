@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 import { withB22bEvents } from '../../events/b22b_maps.js';
 // Galerías de la Cantería Solano (docs/CAMPANA.md «B07»: `canteria_solano` 5 + 2, «galerías estratificadas»; el
 // exterior de la cantera —bancales, herrería, patio— está en la Ruta 6, tileset 5). Cueva1 (tileset 2), 60×16:
@@ -76,5 +77,5 @@ export default {
   })(),
 
   onEnter: galeriasOnEnter,
-  events: withB22bEvents('canteria_solano', galeriasEvents()),
+  events: withB24Events('canteria_solano', withB22bEvents('canteria_solano', galeriasEvents())),
 };

@@ -5,6 +5,7 @@ import { HONDA, MINA } from './layout.js';
 import { caveKit, cells } from './cave_kit.js';
 import { MINA_HONDA } from '../../encounters/b08.js';
 import { F, OBJ, SPEAKER, SPRITE } from '../../events/b08_common.js';
+import { withB22cEvents } from '../../events/b22c_maps.js';
 
 const kit = caveKit('_arcilla');
 const R = HONDA.room;
@@ -37,7 +38,7 @@ export default {
     if (ctx.flag(F.honda)) return;
     ctx.setFlag(F.honda); // Zygarde habla muy poco (autor, 25-09-2026): sin comentario del Core al llegar.
   },
-  events: [
+  events: withB22cEvents('mina_galena_honda', [
     ...[[8, 9, 0], [9, 13, 1], [14, 8, 2], [21, 13, 3], [12, 18, 1], [24, 18, 0]].map(([x, y, v]) => ({
       id: `fosil_${x}_${y}`, x, y, sprite: OBJ.fossil, dir: 2, pattern: v, directionFix: true, walkAnime: false, shadow: false, solid: true, trigger: 'action',
       script: async (ctx) => { await ctx.say('Huesos fosilizados incrustados en la roca. Los mineros los dejan donde están: dicen que la galería los ha devuelto.'); },
@@ -52,5 +53,5 @@ export default {
     { id: 'objeto_honda_1', type: 'item', x: 24, y: 9, item: 'STEELIXITE' },
     { id: 'objeto_honda_2', type: 'item', x: 6, y: 18, item: 'NUGGET' },
     { id: 'objeto_honda_3', type: 'item', x: 19, y: 17, item: 'MAXREVIVE', hidden: true },
-  ],
+  ]),
 };

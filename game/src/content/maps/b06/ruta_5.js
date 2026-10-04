@@ -1,3 +1,4 @@
+import { withB24Events, withB24Build } from '../../events/b24_maps.js';
 import { withB22bEvents } from '../../events/b22b_maps.js';
 // Ruta 5 (docs/CAMPANA.md §1.4: meseta ventosa, 60×40, tileset 1, O Villa Brontia · E Meseta del Impulso, BGM
 // viento, Embestida por los troncos). Construcción en ./ruta_5_build.js; eventos en content/events/b06_ruta5.js.
@@ -23,12 +24,12 @@ export default {
   start: { x: R.start.x, y: R.start.y, dir: R.start.dir },
   encounters: RUTA_5,
 
-  build: buildRuta5,
+  build: withB24Build('ruta_5', buildRuta5),
 
   connections: [
     { dir: 'east', to: 'meseta_impulso', offset: -9 },
     ...(BRONTIA ? [BRONTIA] : []),
   ],
 
-  events: withB22bEvents('ruta_5', ruta5Events({ brontiaOpen: mapRegistered('villa_brontia') })),
+  events: withB24Events('ruta_5', withB22bEvents('ruta_5', ruta5Events({ brontiaOpen: mapRegistered('villa_brontia') }))),
 };

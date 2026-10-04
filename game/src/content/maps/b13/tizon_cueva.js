@@ -6,6 +6,7 @@ import { W, H, FLOORS, EXITS, START } from './tizon_cueva_layout.js';
 import { ROOMS, ROOM_IDS } from '../../events/b13_lava_logic.js';
 import { TIZON_CUEVA } from '../../encounters/b13.js';
 import { caveEvents, caveWarps, caveOnEnter } from '../../events/b13_tizon_cueva.js';
+import { withB22cEvents } from '../../events/b22c_maps.js';
 
 /** Rocas del vestíbulo (las galerías solo llevan las rocas de sus reglas, para que el puzle sea el de la lógica). */
 const DECOR = Object.freeze([['roca_grande_volcan', 33, 41], ['roca_peque_volcan', 26, 42], ['matojo_cueva_volcan', 32, 45]]);
@@ -34,5 +35,5 @@ export default {
   },
   warps: caveWarps(),
   onEnter: caveOnEnter,
-  events: caveEvents(),
+  events: withB22cEvents('tizon_cueva', caveEvents()),
 };

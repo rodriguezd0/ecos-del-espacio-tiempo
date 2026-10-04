@@ -30,12 +30,13 @@ export function isKeyItem(item) {
 }
 
 /**
- * Objetos que no se pueden tirar ni vender: los objetos clave y las Tablillas de la historia
+ * Objetos que no se pueden tirar ni vender: objetos clave, reliquias únicas y Tablillas de la historia
  * (content/story/tablets.js; en Añil son tablas normales, con precio, del bolsillo Objetos).
  */
 export function isProtectedItem(item) {
   if (!item) return false;
-  return isKeyItem(item) || Boolean(tabletById(item.id));
+  return isKeyItem(item) || Boolean(tabletById(item.id))
+    || ['BLUEORB', 'REDORB', 'SOULDEW', 'GRISEOUSORB', 'ADAMANTORB', 'LUSTROUSORB', 'ZYGARDITE', 'ANCIENTGEAR'].includes(item.id);
 }
 
 /** ¿Se puede tirar desde la Mochila? */

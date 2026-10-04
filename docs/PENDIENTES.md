@@ -25,17 +25,17 @@
 > Después:
 > 1. P6 terminado: solo puzzles, sin Pokémon ni Guardianes.
 > 2. P7–P10 terminados con el reparto confirmado por el creador el 03-10: puzzles, combates reales, pisos, regresos y migración de guardados probados en Chrome.
-> 3. Arte.
-> 4. Postgame B22: a, b, d y e implementados y probados; c pendiente.
-> 5. DLC B23 y B24.
-> 6. Partida completa.
+> 3. Arte humano integrado; pendiente el pase visual final y la aprobación del autor (D30).
+> 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
+> 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
+> 6. Partida continua desde «Nueva partida»: B01–B03 recorridos con el mismo guardado, equipo, dinero y objetos obtenidos en juego.
 >
 > Pendientes menores:
-> - En los dobles, los Pokémon del propio bando salen solapados.
+> - Solape en dobles corregido (3c0bafe): posiciones, sombras y efectos revisados en combate cooperativo real.
 > - El creador tiene que confirmar la regla de tamaño de los Pokémon en el mapa (afecta a unas 140 especies).
 > - Rocas de cueva: implican rehacer 3 puzles.
 
-Actualizado: 03-10-2026. En marcha: **B22c, Almenara y Expediciones**; después cierre visual y recorrido completo.
+Actualizado: 04-10-2026. En marcha: **auditoría de obtención, revisión visual y partida continua hasta los créditos**.
 
 ## Objetivo activo: terminar el juego completo
 
@@ -46,9 +46,9 @@ La rama de pausa se revisa por módulos; sus versiones antiguas de mapas no sust
 |---|---|---|
 | Campaña B01–B21 | Implementada; los diez Pilares verticales terminados y probados | Recorrido continuo sin saltos de progresión, final y carga del epílogo |
 | Arte humano | Acciones de protagonistas M/F integradas y probadas | Pase visual de poses y NPC de combate; sin recortes ni solapes |
-| B22, postgame base | B22a/b/d/e implementados y recorridos en Chrome; B22c pendiente | B22c: Lugia, Ho-Oh, Kyogre, Groudon, Rayquaza, Latias y Latios; integración y auditoría final |
-| B23, Almenara | Pendiente | D1-01…05, Gael, Hoopa, Zygardita y Mega Zygarde; final abierto |
-| B24, Expediciones | Pendiente | Sabela, tres expediciones activas, cuatro oleadas y todos los hallazgos de CAMPANA §8 |
+| B22, postgame base | a–e implementados y recorridos en Chrome; B22c incluye siete capturas y sus retornos | Auditoría final de requisitos e integración |
+| B23, Almenara | D1-01…05 terminadas; derrota/reintento de Gael, Mega Zygarde, sellado, captura opcional y regreso real probados | Revisión visual y suite de integración |
+| B24, Expediciones | 30/30 Hallazgos recorridos en Chrome; siete Ultrazonas, Naganadel, Necrozma y ambas hipótesis insulares probados | Auditoría final de obtención e integración |
 | Sistemas y balance | Base jugable y multijugador terminado | Guardados y migraciones, crianza/evoluciones, captura, viajes, economía y combates dobles |
 | Cierre | Pendiente | Suite completa sin fallos, validador, costuras/QA, pruebas reales y auditoría de requisitos |
 
@@ -60,7 +60,7 @@ Los criterios de cierre se contrastan con CAMPANA, DECISIONES, TABLILLAS, POKEDE
 - Fase 2 HECHA: combate 1 contra 1 (niveles reales) y juego en equipo contra los entrenadores reales de la historia.
 - Fase 3 HECHA: intercambios, chat de texto y emotes. También: Online desde la pantalla de título, pantalla de
   título renovada y partidas guardadas en el disco del servidor (carpeta `saves/`).
-- Revisar: en combates dobles, los Pokémon del propio bando se ven solapados.
+- Solape en dobles corregido: el espacio de ambos sprites se calcula con todos sus fotogramas, y sombras y efectos siguen sus posiciones.
 
 ## 1. Trabajo apartado (rama)
 El trabajo a medias de arte y postgame está en `wip-pausa-25-09`; no hay ningún stash.
@@ -133,10 +133,11 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
 - **Sprites de combate de NPC/entrenadores** en estilo BW (pase de arte).
 - **Core y célula de Zygarde:** ya son los sprites originales del creador (hecho, f5c89f2).
 
-## 5. Contenido restante
-- Postgame B22a–e: `scratchpad/ecos_bloques.js` + `wave_f_args.json` (run wf_f4c72cc4-f59).
-- DLC B23 «Almenara» + B24 «Registro de Expediciones»: `wave_g_args.json`.
-- Partida continua completa y pasada de balance.
+## 5. Cierre del contenido
+- B22a–e y B23 «Almenara» implementados y recorridos; documentación junto a sus mapas y herramientas `e2e_b22*.mjs` / `e2e_b23.mjs`.
+- B24 «Registro de Expediciones» implementado y recorrido con 30/30 Hallazgos (`e2e_b24.mjs`).
+- Catálogo de la Pokédex corregido a 425 entradas; generador y numeración anterior verificados (e717e01). Auditoría de obtención en marcha.
+- Partida continua completa y pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión.
 
 ## 6. Menores
 - El seguidor Zygarde a veces aparece encima del jugador en las capas de eco (B14).

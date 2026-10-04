@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Calzada del Rey (docs/CAMPANA.md B19 y §1.4: «brazo este de la Sima»; TABLILLAS.md T15). Tileset 1 (Exterior1 + kit
 // exterior de Pilar), 48×62; el taller del Rey es un interior de Cueva1 (calzada_taller). S Ruta 7 (B09a: conexión
 // north con offset 58) · la Puerta de la Bajada lleva a la Sima del Eje (sima_eje). Por el vacío asoma el panorama del
@@ -45,10 +46,10 @@ export default {
     ctx.requestRefresh?.();
   },
 
-  events: [
+  events: withB24Events('calzada_rey', [
     ...campAllEvents(),
     ...trainerEvents(TRAINERS),
     ...spanEvents({ onRebuilt: onSpanRebuilt }),
     ...penaAllEvents(),
-  ],
+  ]),
 };

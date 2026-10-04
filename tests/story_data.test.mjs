@@ -163,5 +163,9 @@ test('transporte: tren con 5 estaciones tras P4 y ferris Nexo ↔ Caleta / Borea
   assert.equal(FERRY.unlockFlag, 'p7_restored');
   const ids = FERRY.stops.map((s) => s.id);
   for (const [a, b] of FERRY.routes) assert.ok(ids.includes(a) && ids.includes(b));
-  assert.deepEqual(FERRY.routes, [['nexo', 'caleta'], ['nexo', 'boreal']]);
+  assert.deepEqual(FERRY.routes.filter((r) => r.includes('caleta') || r.includes('boreal')), [['nexo', 'caleta'], ['nexo', 'boreal']]);
+  for (const id of ['almenara', 'petalo', 'estandarte']) {
+    assert.ok(FERRY.routes.some((r) => r.includes('nexo') && r.includes(id)), id);
+    assert.ok(FERRY.stops.find((s) => s.id === id).requiredFlags.includes('b21_fin'), id);
+  }
 });

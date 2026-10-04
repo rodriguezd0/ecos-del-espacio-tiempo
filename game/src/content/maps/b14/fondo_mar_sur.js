@@ -10,6 +10,7 @@ import { FONDO, ARRECIFE } from './layout.js';
 import { TONES } from '../../events/b14_common.js';
 import { FONDO_MAR_SUR } from '../../encounters/b14.js';
 import { fondoEvents, surfaceReady } from '../../events/b14_fondo.js';
+import { withB22cEvents } from '../../events/b22c_maps.js';
 
 /** Superficie equivalente (B13, world/zygarde/dive.js#surfacePoint): solo bajo los haces de luz (agua abierta). */
 const surface = () => (surfaceReady()
@@ -32,5 +33,5 @@ export default {
   start: { x: 2, y: 23, dir: 6 },
   build: buildFondo,
   connections: [{ dir: 'west', to: 'arrecife_eco', offset: FONDO.west.y0 - ARRECIFE.east.y0 }],
-  events: fondoEvents(),
+  events: withB22cEvents('fondo_mar_sur', fondoEvents()),
 };

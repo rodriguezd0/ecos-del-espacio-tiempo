@@ -26,6 +26,9 @@ export const PLACES = {
   villa_boreal: [25, 5, 'Villa Boreal', 'town', { mapIds: ['villa_boreal'] }],
   mesa_vientos: [27, 8, 'Mesa de los Vientos', 'town', { mapIds: ['mesa_vientos'], flyOnly: true }],
   bastion_axis: [26, 18, 'Bastión Axis', 'post', { mapIds: ['bastion_axis'] }],
+  almenara: [29, 18, 'Península de Almenara', 'post', { mapIds: ['puerto_almenara', 'almenara_centro', 'ruta_a1', 'ruta_a2', 'oasis_vaso', 'monte_candil', 'el_crisol', 'torre_crisol'] }],
+  isla_petalo: [24, 19, 'Isla Pétalo', 'post', { mapIds: ['b24_isla_petalo'] }],
+  isla_estandarte: [27, 19, 'Isla Estandarte', 'post', { mapIds: ['b24_isla_estandarte'] }],
   // Rutas (el punto marca su tramo central; la línea se dibuja entre lugares).
   ruta_1: [10, 9, 'Ruta 1', 'route', { mapIds: ['ruta_1'] }],
   ruta_2: [10, 11, 'Ruta 2', 'route', { mapIds: ['ruta_2'] }],
@@ -97,7 +100,7 @@ export const PATHS = [
 export const SEA_PATHS = [
   ['caleta_sonda', 'arrecife_eco'], ['ciudad_nexo', 'islote_lumbre'], ['islote_lumbre', 'estacion_talasa'],
   ['estacion_talasa', 'volcan_tizon'], ['volcan_tizon', 'bastion_axis'], ['villa_boreal', 'mar_boreal'],
-  ['mar_boreal', 'instalacion_cierzo'],
+  ['mar_boreal', 'instalacion_cierzo'], ['ciudad_nexo', 'almenara'], ['ciudad_nexo', 'isla_petalo'], ['ciudad_nexo', 'isla_estandarte'],
 ];
 
 // ───────────────────────── Geografía (espacio 480×320) ─────────────────────────
@@ -108,7 +111,8 @@ export const MAINLAND = [
   // Fiordo del Mar Boreal (entra desde el norte hasta el Paso del Norte).
   [326, 12], [332, 60], [340, 98], [352, 108], [370, 100], [388, 86], [386, 56], [380, 12],
   [410, 10], [450, 12], [472, 22], [474, 60], [466, 100], [476, 140], [470, 180], [474, 220], [466, 250],
-  [470, 272], [440, 280], [400, 276], [360, 282], [320, 276], [280, 280], [240, 276], [200, 284], [160, 278],
+  [470, 272], [478, 286], [478, 304], [454, 310], [450, 288], // Península oriental de Almenara
+  [440, 280], [400, 276], [360, 282], [320, 276], [280, 280], [240, 276], [200, 284], [160, 278],
   [122, 282], [104, 290], [84, 290], [60, 296], [40, 302], [24, 308], [10, 304], [8, 270], [12, 230], [6, 190],
   [10, 150], [6, 110], [10, 70],
 ];
@@ -118,6 +122,8 @@ export const ISLANDS = [
   [72, 310, 9, 6], // Islote Lumbre (sector oeste, frente a Caleta)
   [328, 298, 15, 11], // Volcán Tizón
   [424, 294, 16, 9], // Bastión Axis (fortaleza costera)
+  [392, 312, 10, 5], // Isla Pétalo
+  [440, 312, 8, 4], // Isla Estandarte
   [38, 316, 7, 3], // bajío del Arrecife del Eco
 ];
 

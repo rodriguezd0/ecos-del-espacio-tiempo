@@ -1,3 +1,4 @@
+import { withB24Events, withB24Build } from '../../events/b24_maps.js';
 import { withB22bEvents } from '../../events/b22b_maps.js';
 // Ruta 11 (docs/CAMPANA.md §1.4: «Vertiente nevada», 30×70, tileset 1, S Villa Brontia · N Paso del Norte, BGM
 // PrismaRuta2, fondo snow; hielo-eco hasta P7, que cierra Villa Brontia en su borde norte). Primera entrada: los restos
@@ -25,12 +26,12 @@ export default {
   stormWeather: ['blizzard', 6],
   ...NORTH_PIECES,
 
-  build: buildRuta11,
+  build: withB24Build('ruta_11', buildRuta11),
 
   connections: [
     { dir: 'south', to: 'villa_brontia', offset: R.south.offset },
     ...internal('north', 'paso_del_norte', R.north.offset),
   ],
 
-  events: withB22bEvents('ruta_11', ruta11Events()),
+  events: withB24Events('ruta_11', withB22bEvents('ruta_11', ruta11Events())),
 };

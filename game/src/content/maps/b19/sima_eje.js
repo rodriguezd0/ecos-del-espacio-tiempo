@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Sima del Eje (docs/CAMPANA.md §1.4: «Abismo central · 1 + 2 + 8 · N Senda del Mirador (Caudal) · S Mirador Sur
 // (Lúmina) · E Calzada del Rey · Amenaza · Reconstrucción»; B19: la Calzada del Rey termina en la entrada de la Puerta
 // de las Quince). Tileset 1, 40×56. Por el vacío asoma el panorama del abismo (shader `sima`, B18). Coordenadas:
@@ -39,5 +40,5 @@ export default {
     ...puertaWarps(),
   ],
 
-  events: simaEvents(),
+  events: withB24Events('sima_eje', simaEvents()),
 };

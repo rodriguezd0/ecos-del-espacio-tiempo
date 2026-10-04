@@ -291,6 +291,7 @@ await ctx.camera.pan(x, y, frames)   await ctx.camera.reset(frames)   ctx.camera
 // mapas y combates
 await ctx.warp(mapId, x, y, dir, { fade: true, door: false, frames: 16 })
 await ctx.battle({ trainer: 'id' } | { type: 'trainer', opponent: { name, party } } | { wild: { species, level } }, …) → 'win'|'lose'|'run'|'caught'|'forfeit'
+await ctx.battleResult(config) → resultado completo, incluidas megaEvolutions (especie, forma, bando, dueño, posición de equipo)
 await ctx.wildBattle({ species, level, form, shiny })
 // estado (setFlag/setVar/setSelfSwitch refrescan las páginas de los eventos)
 ctx.flag(k) ctx.setFlag(k, v) ctx.var(k, def) ctx.setVar(k, v) ctx.selfSwitch('A', obj) ctx.setSelfSwitch('A', v, obj)
@@ -1241,3 +1242,31 @@ pausa (con el recordatorio «F9: modo desarrollador» bajo el recuadro de hora).
   en el mapa (teletransporte, salto de bloque) vuelve como acción `{ type: 'dev', label, run(ctx) }` que MapScene
   ejecuta como guion (registrada con `registerFieldAction('dev')`, sirve también desde el menú de pausa).
 - `GameState` añade `clearVar`, `removeCell`, `removeCore`, `removeFragment`, `removeTablet` (sustituyen la lista).
+
+## 25. Postgame y DLC
+
+B22 conserva las capacidades y los objetos de la campaña; sus encuentros usan el motor salvaje normal y regresos
+permanentes. B22c añade Sima Marina, Fosa Abisal, Veta Magmática y Balcón del Cielo. Los decoradores de eventos
+mantienen los mapas originales y sus páginas. Las reliquias de encuentros únicos pueden equiparse, pero no venderse
+ni descartarse; los Engranajes mantienen su cantidad para la reparación de Magearna.
+
+Almenara (`events/b23_*.js`, `maps/b23`) se abre después del epílogo y la carta de Alerce. Los pasos de la misión
+persisten en flags; las entradas comprueban los requisitos y las salidas permanecen abiertas. `ctx.battleResult()`
+devuelve el resultado completo, incluido `megaEvolutions`: especie, forma, bando, dueño e índice en el equipo al
+megaevolucionar. Hoopa comprueba la Mega Zygarde del jugador en ese combate, aunque al terminar haya recuperado su
+forma. Los reintentos usan `rest_count`; las capturas conservan el Pokémon creado por el motor y su identidad.
+
+El Registro de Expediciones (`events/b24_*.js`, `maps/b24/expeditions.json`) mantiene Rumor → Indicio → Hallazgo y
+un máximo de tres expediciones activas. Las hipótesis usan `openRegionMap({ mode: 'select' })`, que devuelve un lugar
+o `null`; no exige visita previa ni inicia un viaje. El selector recorre coordenadas distintas aunque varios lugares
+compartan posición. Almenara, Isla Pétalo e Isla del Estandarte tienen lugares propios en el atlas.
+
+`MapScene.stepTaken` llama a `observeStep` con el paso y la montura reales. `battleFlow` llama a `observeBattle`
+después de aplicar el resultado y registrar las capturas. Ambos son síncronos, serializan sus contadores en el estado
+y excluyen las exhibiciones. Las paradas del ferri añaden `requiredFlags`: Almenara exige la carta; las dos islas,
+sus hipótesis confirmadas. No se altera la disponibilidad de las rutas anteriores.
+
+Guías de mapas, decisiones técnicas y arte provisional D30: los README de `maps/b22c`, `maps/b23` y `maps/b24`.
+Recorridos Chrome: `tools/e2e_b22c.mjs`, `tools/e2e_b23.mjs`, `tools/e2e_b24.mjs`. Preparan bancos aislados y después
+ejecutan pasos, menús, combates, capturas, evoluciones y crianza reales. `tools/e2e_campaign.mjs` comprueba además la
+progresión continua desde Nueva partida, con el guardado y los recursos obtenidos jugando.

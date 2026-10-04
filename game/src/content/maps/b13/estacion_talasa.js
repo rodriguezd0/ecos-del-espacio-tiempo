@@ -1,3 +1,4 @@
+import { withB24Events } from '../../events/b24_maps.js';
 // Estación Talasa (docs/CAMPANA.md B13, §1.4: plataforma de investigación de Genesis; tileset 5 + interiores en 4,
 // GuaridaRocket, fondo BaseVillano). Cuelga del borde sur del Mar del Sur. Asalto con Alerce: control, invernadero,
 // pasarela, torre de dirección (foto y tarjeta) y laboratorio del tanque (N4). Coordenadas en talasa_layout.js;
@@ -30,5 +31,5 @@ export default {
   // El laboratorio no tiene warp: su puerta es un evento (sellada hasta tener la tarjeta de dirección).
   warps: Object.values(BUILDINGS).filter((bd) => bd.to !== 'talasa_laboratorio' && Object.hasOwn(MAPS, bd.to)).map(door),
   connections: Object.hasOwn(MAPS, SEA_LINK.to) ? [{ dir: 'north', to: SEA_LINK.to, offset: SEA_LINK.offset }] : [],
-  events: [...talasaEvents(), ...talasaRuinsEvents()],
+  events: withB24Events('estacion_talasa', [...talasaEvents(), ...talasaRuinsEvents()]),
 };

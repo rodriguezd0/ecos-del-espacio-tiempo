@@ -5,6 +5,7 @@ import { exitWarps, exitArrowEvents } from '../../services/interior.js';
 import { BUILDINGS, INTERIOR_ENTRIES } from './caleta_layout.js';
 import { F, SPEAKER, SPRITE, lines, examine } from '../../events/b09b_common.js';
 import { ramonB13, lighthouseEvents } from '../../events/b13_caleta.js';
+import { withB22cHints } from '../../events/b22c_hints.js';
 
 const E = INTERIOR_ENTRIES.caleta_faro;
 const OUT = BUILDINGS.faro.door;
@@ -55,11 +56,11 @@ export default {
 
   warps: exitWarps(E.x, E.y, { map: 'caleta_sonda', x: OUT.x, y: OUT.y + 1, dir: 2 }),
 
-  events: [
+  events: withB22cHints([
     ...exitArrowEvents(E.x, E.y + 1),
     { id: 'ramon', x: 4, y: 5, name: SPEAKER.ramon, sprite: SPRITE.ramon, dir: 2, move: 'look', script: ramonTalk },
     examine('libro_faro', 2, 3,'El libro del faro. La última anotación: «Luces en el islote. Otra vez. Sin barcas cerca».', { solid: true }),
     examine('catalejo_sonda', 5, 3, 'Por la ventana se ve el islote de enfrente. De día, solo árboles en flor.', { solid: true }),
     ...lighthouseEvents(), // B13: Lucía, de vuelta en casa
-  ],
+  ]),
 };
