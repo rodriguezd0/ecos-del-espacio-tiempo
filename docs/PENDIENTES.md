@@ -160,10 +160,13 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
   El reloj se compara con el payload que escribió la UI, admitiendo avance normal y rechazando reinicios.
   Las 80 regresiones del recorrido pasan. La recarga real de B13 ya pasó con el reloj 1219→1219 y todos los campos completos
   iguales; falta la recarga del final (`campaign_b13_reload_audit.json`).
-- Última suite completa de integración: 2344/2344 sin fallos, omisiones ni cancelaciones, incluidos el arte
-  aprobado, su UI, C059/C065 y conductores de recarga (`suite_slot_reload_integrated.log`); foco de arte: 48/48.
+- Última suite completa de integración: 2361/2361 sin fallos, omisiones ni cancelaciones, incluidos el arte
+  aprobado, su UI, C059/C065, recargas y conductores B14/B15 (`suite_campaign_routes_integrated.log`, 37,8 s); foco de arte: 48/48.
   Validador posterior a C059/C065: 272 mapas sin errores; 45/45 costuras limpias y cero incidencias de arte sin
   revisión. Las dos regresiones posteriores del tramo de entrada de B14 pasan en el foco de 80 pruebas.
+- Reintentos reales de B14 verificados: vuelta por Buceo tras perder con Eulalia y reintento local de Adela
+  después de la curación de su guion. Ocho pruebas enfocadas pasan. El conductor B15 respeta las escaleras falsas
+  y conserva su intento voluntario; diez regresiones nuevas, revisión independiente y 91,30 % del cambio cubierto.
 - Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
 ## 6. Menores

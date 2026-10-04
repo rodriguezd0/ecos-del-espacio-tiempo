@@ -126,7 +126,7 @@ en `tools/cache/b24_entrega.md`, trazas `e2e_b24_*.log` y checkpoints de `screen
 | Elenco propio de campo, incluido Vértice líder | Lámina de 29 charsets; hashes originales y aprobación registrada por archivo/alias | Aprobado por el autor el 04-10-2026 |
 | Ilustración del atlas de Axis | Imagen mostrada y aprobada; JSON/generador con fecha, PNG idénticos y 56 lugares conservados | Aprobado por el autor el 04-10-2026 |
 | Escala de Pokémon del mapa, incluidos Onix/Yanma | Módulo y cuatro pruebas; el autor elige mantener la regla actual | Confirmado por el autor el 04-10-2026 (X37) |
-| Suite completa sobre el resultado integrado | 2344/2344, sin fallos, omisiones ni cancelaciones; `suite_slot_reload_integrated.log` | Arte aprobado/UI, C059/C065 y recargas verificados; foco posterior del recorrido 80/80 |
+| Suite completa sobre el resultado integrado | 2361/2361, sin fallos, omisiones ni cancelaciones; `suite_campaign_routes_integrated.log`, 37,8 s | Arte aprobado/UI, C059/C065, recargas y conductores B14/B15 verificados |
 | Validador, costuras y QA sobre el resultado final | Tras C059/C065: 272 mapas/187 entrenadores/sin errores; 45/45 costuras limpias, seis locales; `trainer_contact_final_checks_report.md` | Sin nuevas incidencias; 31 avisos enumerados y cero mapas de arte sin revisar |
 | Guardado final desde UI y carga desde el título | Controlador preparado con comparación completa y habilitación del postgame | Pendiente al llegar a B21 |
 | Guardado intermedio desde UI y carga desde el título | B13: rawslot/after completos idénticos, reloj 1219→1219; `campaign_b13_reload_audit.json` | Verificado en la misma partida QAut8uoab |

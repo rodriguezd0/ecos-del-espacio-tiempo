@@ -98,6 +98,12 @@ Correcciones verificadas:
   el reloj después de la escritura. La revisión independiente confirmó estas correcciones; las regresiones
   del recorrido pasan: 80/80, incluidas las dos regresiones posteriores del tramo Caleta→Buceo de B14
   (`campaign_b14_stage_green.log`; la cobertura de recarga está en `campaign_slot_clock_green.log`).
+- B14 reintenta tras una derrota nueva: regreso normal desde el Centro por Buceo o reintento local cuando
+  el guion permite perder y cura al equipo. Exige victorias reales de Rufino, Eulalia y Adela. Las ocho pruebas
+  enfocadas pasan; el navegador ya ejecutó ambos tipos de regreso y venció a los tres. En B15, el conductor
+  evita las escaleras falsas durante los trayectos y conserva el intento voluntario del puzzle: diez pruebas
+  nuevas, revisión independiente y 21/23 líneas del cambio cubiertas (91,30 %). El fixture llega al mirador;
+  el recorrido continuo posterior sigue pendiente (`campaign_future_driver_review.md`).
 
 No quedan hallazgos críticos o altos de esta revisión. El autor aprobó las trece poses frontales nuevas, el kit
 M/F completo, los 29 personajes de campo y el atlas, y confirmó la regla de tamaños el 04-10-2026. D30 queda
@@ -114,8 +120,8 @@ La aprobación anterior de frontales y tamaños tuvo revisión independiente sin
 
 ## Comprobaciones de integración
 
-La última suite completa de integración pasó **2344/2344**, sin fallos, saltos ni cancelaciones, incluidos el arte
-aprobado, su UI, C059/C065 y los conductores de recarga (`suite_slot_reload_integrated.log`, 41,1 s). El último
+La última suite completa de integración pasó **2361/2361**, sin fallos, saltos ni cancelaciones, incluidos el arte
+aprobado, su UI, C059/C065, recargas y conductores B14/B15 (`suite_campaign_routes_integrated.log`, 37,8 s). El último
 validador posterior a ambos arreglos construyó 272 mapas sin errores: 31 avisos enumerados, ninguno de Mar/Talasa.
 Las 45 conexiones actuales pasan la revisión de costuras, incluidas las seis de esos dos mapas. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
@@ -138,7 +144,7 @@ Evidencia: `door_animation_report.md`, `door_final_coverage.log`, `door_inventor
 `door_chrome_phases_`. Los seis perfiles temporales anteriores permanecen en caché porque su borrado fue
 rechazado por la revisión automática («blocked by policy»); sus navegadores están cerrados.
 
-Evidencia local en `tools/cache/`: `suite_slot_reload_integrated.log`, `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
+Evidencia local en `tools/cache/`: `suite_campaign_routes_integrated.log`, `suite_slot_reload_integrated.log`, `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y
 checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json`, `b14_follower_review.json`
 y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`, `progression_inventory_report.md` y sus trazas.
