@@ -7,6 +7,7 @@ import { CIRCLE_POINTS, DANCE_ORDER } from '../game/src/content/events/b17_circu
 import { parseRoom, solveRoom } from '../game/src/content/events/b17_torres_logic.js';
 import { VIGIL } from '../game/src/content/events/b17_vigilia.js';
 import { F, V } from '../game/src/content/events/b17_common.js';
+import {finishSendaExit,P9_ENTRY} from './e2e_campaign_b17_return.mjs';
 
 const has = (s, f) => Boolean(s.flags[f]);
 const need = (cond, msg) => (cond ? null : msg);
@@ -159,21 +160,9 @@ async function vigilia(d) {
 // ───────────────────────────── Senda del Mirador (salida) ─────────────────────────────
 
 async function senda(d) {
-  const sock = SENDA.GAP.sockets[0];
-  await d.walkTo(sock.x, sock.y - 1, { face: 'down' });
-  await d.interact();
-  await d.until((s) => has(s, F.sendaGap), { timeout: 20000, what: 'reconstruir el tramo derrumbado' });
-  await d.settle();
-  await d.milestone('tramo', (s) => need(has(s, F.sendaGap), 'sin tramo'));
-  const b = SENDA.BRIDGE;
-  await d.walkTo(b.x0 + 2, b.y1 - 1, { stopWhen: (s) => s.map !== 'senda_mirador' });
-  await d.milestone('salida', (s) => need(has(s, F.vigil) && s.map === 'senda_mirador' && s.y === b.y1 - 1, `en ${s.map} (${s.x},${s.y})`));
-  // B18 engancha su Puente por el borde sur: se cruza si su mapa está registrado (si no, el aviso neutro del tablero).
-  const puente = await d.eval(async () => Object.hasOwn((await import('/src/content/maps/index.js')).MAPS, 'puente_convergencia'));
-  if (puente) {
-    await d.pushUntil('down', (s) => s.map === 'puente_convergencia', 'cruzar al Puente de la Convergencia (B18)');
-    await d.milestone('puente_b18', (s) => need(s.map === 'puente_convergencia', `en ${s.map}`));
-  }
+  const s=await d.snapState();
+  if(!['senda_mirador',P9_ENTRY.to].includes(s.map))await d.travel('senda_mirador');
+  await finishSendaExit(d);
 }
 
 // ───────────────────────────── Círculo del Jardín (Villa Alba) ─────────────────────────────
@@ -218,5 +207,5 @@ export async function runB17(d){
  viento:async d=>{await d.travel('senda_mirador');await viento(d);},
  vigilia:async d=>{await d.travel('ciudad_caudal');await vigilia(d);},
  circulo:async d=>{await d.travel('casa_prota_1f');await d.talk('mama');await circulo(d);},
- senda:async d=>{await d.travel('senda_mirador');await senda(d);}});
+ senda});
 }
