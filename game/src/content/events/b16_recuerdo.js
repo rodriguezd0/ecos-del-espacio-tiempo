@@ -8,7 +8,7 @@
 // Fases (var b16_recuerdo_fase): 0 laboratorio · 1 esperar · 2 explanada · 3 esperar fuera · 4 aljibe.
 import { F, SPEAKER, SPRITE, lines, eventById, placePlayer, pause } from './b16_common.js';
 import { LAB, ESPLANADA, ALJIBE, MIRROR_KEYS } from '../maps/b16/recuerdo_layout.js';
-import { SENTIR } from '../maps/b16/santuario_layout.js';
+import { SENTIR, P8_MAPS } from '../maps/b16/santuario_layout.js';
 import { setRiding } from '../../world/zygarde/mount.js';
 
 export const PHASE_VAR = 'b16_recuerdo_fase';
@@ -241,7 +241,7 @@ async function touchAljibe(ctx) {
   ctx.setVar(PHASE_VAR, 5);
   await restorePlayer(ctx);
   const a = SENTIR.mesprit.arrive;
-  await ctx.warp('santuario_alma', a.x, a.y, 8, { fade: false });
+  await ctx.warp(P8_MAPS[2], a.x, a.y, 8, { fade: false });
   await ctx.fade('in', 40);
 }
 

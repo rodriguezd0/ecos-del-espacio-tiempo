@@ -24,7 +24,7 @@
 >
 > Después:
 > 1. P6 terminado: solo puzzles, sin Pokémon ni Guardianes.
-> 2. P7–P10 con el reparto confirmado por el creador el 03-10.
+> 2. P7–P10 terminados con el reparto confirmado por el creador el 03-10: puzzles, combates reales, pisos, regresos y migración de guardados probados en Chrome.
 > 3. Arte.
 > 4. Postgame B22: a, b, d y e implementados y probados; c pendiente.
 > 5. DLC B23 y B24.
@@ -35,7 +35,7 @@
 > - El creador tiene que confirmar la regla de tamaño de los Pokémon en el mapa (afecta a unas 140 especies).
 > - Rocas de cueva: implican rehacer 3 puzles.
 
-Actualizado: 03-10-2026. En marcha: **P7–P10, arte y postgame**, después DLC y recorrido completo.
+Actualizado: 03-10-2026. En marcha: **B22c, Almenara y Expediciones**; después cierre visual y recorrido completo.
 
 ## Objetivo activo: terminar el juego completo
 
@@ -44,7 +44,7 @@ La rama de pausa se revisa por módulos; sus versiones antiguas de mapas no sust
 
 | Frente | Estado al reanudar | Verificación necesaria |
 |---|---|---|
-| Campaña B01–B21 | Implementada; P1–P6 verticales terminados | P7–P10, recorrido continuo sin saltos de progresión, final y carga del epílogo |
+| Campaña B01–B21 | Implementada; los diez Pilares verticales terminados y probados | Recorrido continuo sin saltos de progresión, final y carga del epílogo |
 | Arte humano | Acciones de protagonistas M/F integradas y probadas | Pase visual de poses y NPC de combate; sin recortes ni solapes |
 | B22, postgame base | B22a/b/d/e implementados y recorridos en Chrome; B22c pendiente | B22c: Lugia, Ho-Oh, Kyogre, Groudon, Rayquaza, Latias y Latios; integración y auditoría final |
 | B23, Almenara | Pendiente | D1-01…05, Gael, Hoopa, Zygardita y Mega Zygarde; final abierto |

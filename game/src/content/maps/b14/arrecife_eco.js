@@ -6,13 +6,12 @@
 import { zoneDefaults } from '../../services/zones.js';
 import { buildArrecife } from './arrecife_build.js';
 import { CAVE_BRUSHES } from './paint.js';
-import { ARRECIFE, ROOMS, roomMap } from './layout.js';
+import { ARRECIFE, ANTEA_BASE } from './layout.js';
 import { TONES } from '../../events/b14_common.js';
 import { ARRECIFE_ECO } from '../../encounters/b14.js';
-import { arrecifeEvents } from '../../events/b14_arrecife.js';
+import { arrecifeEvents, arrecifeOnEnter, redirectArrecifeArrival } from '../../events/b14_arrecife.js';
 
 const A = ARRECIFE;
-const R1 = ROOMS[1];
 
 export default {
   id: 'arrecife_eco',
@@ -25,13 +24,15 @@ export default {
   dark: { amount: 0.8 },
   tone: TONES.presente,
   noFollower: true,
-  underwater: { shallow: [[A.arrival.x - 2, A.arrival.y - 2, 5, 3], [A.gate.arrival.x - 2, 5, 5, 3]] },
+  underwater: { shallow: [[A.arrival.x - 2, A.arrival.y - 2, 5, 3], [A.gate.arrival.x - 2, A.gate.arrival.y - 1, 5, 3]] },
   encounters: ARRECIFE_ECO,
   start: { x: A.arrival.x, y: A.arrival.y, dir: A.arrival.dir },
   build: buildArrecife,
   warps: [
-    { x: A.gate.door.x, y: A.gate.door.y, to: roomMap(1, 'presente'), tx: R1.south.arrival.x, ty: R1.south.arrival.y, dir: R1.south.arrival.dir },
+    { x: A.gate.door.x, y: A.gate.door.y, to: 'antea_base', tx: ANTEA_BASE.arrival.x, ty: ANTEA_BASE.arrival.y, dir: ANTEA_BASE.arrival.dir },
   ],
   connections: [{ dir: 'east', to: 'fondo_mar_sur', offset: A.east.y0 - 20 }],
   events: arrecifeEvents(),
+  redirectArrival: redirectArrecifeArrival,
+  onEnter: arrecifeOnEnter,
 };

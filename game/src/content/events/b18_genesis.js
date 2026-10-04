@@ -27,27 +27,23 @@ export const GENESIS_TEXT = Object.freeze({
 
 // ─────────────────────────────── Alerce entre combate y combate ───────────────────────────────
 
-/** Alerce se acerca desde el borde (fundido), ofrece curar y vuelve a su sitio. */
+/** Alerce camina desde el borde, ofrece curar y vuelve a su sitio. */
 async function alerceOffers(ctx, flag, intro) {
   ctx.setFlag(flag);
   ctx.world?.refreshEvents?.();
   const al = [eventById(ctx, 'alerce_borde'), eventById(ctx, 'alerce_boca')].find((e) => e?.page) || null;
   const home = al ? { x: al.x, y: al.y, dir: al.direction } : null;
   if (al) {
-    await ctx.fade('out', 10);
     const spot = freeSpotNearPlayer(ctx, [al]);
-    if (spot) al.moveTo(spot.x, spot.y);
+    if (spot) await walkTo(ctx, al, spot.x, spot.y, { speed: 4 });
     ctx.turnToPlayer(al);
     ctx.face('player', ctx.directionTo(ctx.player, al));
-    await ctx.fade('in', 10);
   }
   await ctx.say(intro, { speaker: SPEAKER.alerce });
   await alerceHeal(ctx);
   if (al && home) {
-    await ctx.fade('out', 10);
-    al.moveTo(home.x, home.y);
+    await walkTo(ctx, al, home.x, home.y, { speed: 4 });
     al.direction = home.dir;
-    await ctx.fade('in', 10);
   }
 }
 
@@ -441,6 +437,10 @@ function techEvent(id, trainer, pos, sprite, speaker, intro, after) {
 
 function machineEvents() {
   return [
+    ...[[19, 40], [20, 40], [21, 40], [19, 41], [21, 41], [19, 42], [21, 42]].map(([x, y]) => ({
+      id: `marco_escalera_${x}_${y}`, x, y, noOver: true, solid: true, trigger: 'action',
+      script: async (ctx) => { await ctx.say('La escalinata de piedra asciende a la Cámara del Cruce.'); },
+    })),
     {
       id: 'resonador', x: RESONATOR.x, y: RESONATOR.y, name: 'Resonador Sintético',
       pages: [

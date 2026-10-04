@@ -151,11 +151,10 @@ test('Puente: la boca de la Cámara, sellada hasta la irrupción; el vallado sur
     assert.equal(after.map.playerPassable(x, after.map.height - 1, 2, {}), southDeck, `borde sur del Puente (${x})`);
     if (southDeck) assert.ok(sur.map.playerPassable(x, 0, 8, {}), `el Mirador Sur no sigue el tablero en x ${x}`);
   }
-  const link = (def, to) => (def.connections || []).find((c) => c.to === to);
-  assert.deepEqual(link(after.def, 'senda_mirador'), { dir: 'north', to: 'senda_mirador', offset: 0 });
-  assert.deepEqual(link(after.def, 'mirador_sur'), { dir: 'south', to: 'mirador_sur', offset: 0 });
-  assert.equal(link(senda.def, 'puente_convergencia')?.dir, 'south');
-  assert.equal(link(sur.def, 'puente_convergencia')?.dir, 'north');
+  assert.equal(after.def.warps.find((w) => w.y === 0 && w.dirTrigger === 8)?.to, 'senda_mirador');
+  assert.equal(after.def.warps.find((w) => w.y === 59 && w.dirTrigger === 2)?.to, 'mirador_sur');
+  assert.ok(senda.def.warps.some((w) => w.to === 'puente_convergencia'));
+  assert.ok(sur.def.warps.some((w) => w.to === 'puente_convergencia'));
 });
 
 // ───────────────────────────── BFS de estados (Cámara del Cruce) ─────────────────────────────
@@ -292,24 +291,24 @@ test('Cámara: de la llegada al núcleo por las tres salas en orden; sin Dialga 
   const g = await cruceGraph([F.scene, F.chamberIn]);
   const all = g.reach();
   assert.ok(all.seen.size >= 800, `grafo de estados demasiado pequeño (${all.seen.size}): el BFS no recorre las salas`);
-  assert.ok(all.has(NUCLEO.coreFront.x, NUCLEO.coreFront.y), 'el núcleo no se alcanza');
+  assert.ok(canUse(all, CRUCE.gate.warp.x, CRUCE.gate.warp.y), 'la subida al núcleo no se alcanza');
   assert.ok(!reachesRoom(g.reach({ forbid: [AXIS_TIME] }), CAIDA.room), 'se sale del vestíbulo sin tensar hacia Dialga');
   const noSpace = g.reach({ forbid: [AXIS_SPACE] });
   assert.ok(reachesRoom(noSpace, CAIDA.room) && !reachesRoom(noSpace, RIO.room), 'la Sala de la Caída se supera sin Palkia (o no se llega)');
   // Cada puerta es obligatoria: sin ella no se llega a la sala siguiente ni al núcleo
-  const chain = [[VESTIBULO, CAIDA.room], [CAIDA, RIO.room], [RIO, CRUCE.room], [CRUCE, NUCLEO.room]];
+  const chain = [[VESTIBULO, CAIDA.room], [CAIDA, RIO.room], [RIO, CRUCE.room]];
   for (const [from, rect] of chain) {
     const cut = g.reach({ cut: [from.gate.warp] });
     assert.ok(!reachesRoom(cut, rect), `se llega a la sala siguiente sin la puerta de ${from.name}`);
-    assert.ok(!cut.has(NUCLEO.coreFront.x, NUCLEO.coreFront.y), `se llega al núcleo sin la puerta de ${from.name}`);
+    assert.ok(!canUse(cut, CRUCE.gate.warp.x, CRUCE.gate.warp.y), `se llega a la subida al núcleo sin la puerta de ${from.name}`);
   }
   assert.deepEqual(deadStates(all, g.home), [], 'estados de la Cámara sin vuelta a la llegada');
   // Nada fuera de las salas (el abismo no se pisa)
-  const rects = [...ROOM_PLACES.map((pl) => pl.room), NUCLEO.room];
+  const rects = ROOM_PLACES.map((pl) => pl.room);
   for (const k of all.cells) { const [x, y] = k.split(',').map(Number); assert.ok(rects.some((rc) => inRect(rc, x, y)), `(${x},${y}) fuera de las salas`); }
 });
 
-test('Cámara: cristales, objetos, estela, Dialga, Palkia, el núcleo y la placa se alcanzan', async () => {
+test('Cámara: cristales, objetos, estela y subida al núcleo se alcanzan', async () => {
   const g = await cruceGraph([F.scene, F.chamberIn]);
   const r = g.reach();
   for (const place of ROOM_PLACES) {
@@ -317,22 +316,35 @@ test('Cámara: cristales, objetos, estela, Dialga, Palkia, el núcleo y la placa
     for (const o of place.grid.items) assert.ok(canUse(r, place.ox + o.x, place.oy + o.y), `${place.name}: objeto (${o.x},${o.y}) inalcanzable`);
   }
   assert.ok(canUse(r, STELE.x, STELE.y + 1), 'la estela del vestíbulo no se lee');
-  for (const c of [NUCLEO.dialga, NUCLEO.palkia, NUCLEO.core, NUCLEO.orb, NUCLEO.bound]) assert.ok(canUse(r, c.x, c.y), `(${c.x},${c.y}) del núcleo inalcanzable`);
-  assert.ok(canUse(r, NUCLEO.inscription.x, NUCLEO.inscription.y + 1), 'la placa del núcleo no se lee');
+  assert.ok(canUse(r, CRUCE.gate.warp.x, CRUCE.gate.warp.y), 'la subida al núcleo no se alcanza');
   // Con el eje atado, el orbe (sólido) sigue alcanzable y el núcleo tiene vuelta
   const bound = await cruceGraph([F.scene, F.chamberIn, F.nucleus, F.bound], { p9_choice: 'DIALGA' });
-  assert.ok(bound.t.w.events.find((e) => e.id === 'orbe_no_elegido')?.page, 'el orbe no está tras atar el eje');
   const rb = bound.reach();
-  assert.ok(canUse(rb, NUCLEO.orb.x, NUCLEO.orb.y));
+  assert.ok(canUse(rb, SHORTCUT.warp.x, SHORTCUT.warp.y));
   assert.deepEqual(deadStates(rb, bound.home), []);
 });
 
 test('Cámara: el atajo del vestíbulo lleva al núcleo solo tras verlo; la escalinata del núcleo baja junto al atajo', async () => {
   const before = await cruceGraph([F.scene, F.chamberIn]);
-  assert.ok(!before.reach({ forbid: [AXIS_SPACE] }).has(NUCLEO.coreFront.x, NUCLEO.coreFront.y), 'el atajo está abierto antes de ver el núcleo');
+  assert.ok(!canUse(before.reach({ forbid: [AXIS_SPACE] }), CRUCE.gate.warp.x, CRUCE.gate.warp.y), 'se supera el Cruce sin Palkia');
   const after = await cruceGraph([F.scene, F.chamberIn, F.nucleus]);
   const r = after.reach({ forbid: [AXIS_SPACE] });
-  assert.ok(r.has(NUCLEO.coreFront.x, NUCLEO.coreFront.y), 'con el núcleo visto, el atajo no lleva al núcleo');
+  assert.ok(canUse(r, SHORTCUT.warp.x, SHORTCUT.warp.y), 'con el núcleo visto, el atajo no se alcanza');
+  assert.equal(after.t.def.warps.find((w) => w.x === SHORTCUT.warp.x && w.y === SHORTCUT.warp.y)?.to, 'camara_cruce_nucleo');
   assert.ok(r.has(SHORTCUT.front.x, SHORTCUT.front.y));
   assert.deepEqual(deadStates(after.reach(), after.home), [], 'estados sin vuelta con el atajo abierto');
+});
+
+test('Núcleo (tercera planta): legendarios, orbe, inscripción y bajada alcanzables, antes/después de restaurar', async () => {
+  for (const flags of [[F.scene], [F.scene, F.nucleus, F.bound, F.restored]]) {
+    const t = await fieldWorld('camara_cruce_nucleo', { flags, vars: { p9_choice: 'DIALGA' } });
+    const start = [NUCLEO.stairs.arrive.x, NUCLEO.stairs.arrive.y];
+    const r = bfs(t, start);
+    for (const c of [NUCLEO.dialga, NUCLEO.palkia, NUCLEO.core, NUCLEO.orb, NUCLEO.bound, NUCLEO.inscription]) {
+      assert.ok(canUse(r, c.x, c.y), `núcleo (${c.x},${c.y}) inalcanzable`);
+    }
+    for (const p of NUCLEO.stairs.exits) assert.ok(r.has(p.x, p.y), 'no se baja al vestíbulo');
+    assert.deepEqual(dead(r, start), []);
+    if (flags.includes(F.bound)) assert.ok(t.w.events.find((e) => e.id === 'orbe_no_elegido')?.page);
+  }
 });

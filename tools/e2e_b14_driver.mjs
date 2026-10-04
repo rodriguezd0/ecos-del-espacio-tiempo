@@ -13,13 +13,14 @@ const TAP_SCENES = ['MessageScene', 'VerseScene', 'TravelScene', 'ObtainScene', 
 const DIVE_LOW = 3;
 
 export class Driver {
-  constructor(page, errors, { outDir, root, prefix = 'e2e_b14', loseOnce = [], leadMoves = null }) {
+  constructor(page, errors, { outDir, root, prefix = 'e2e_b14', loseOnce = [], leadMoves = null, captureReal = false }) {
     this.page = page;
     this.errors = errors;
     this.outDir = outDir;
     this.root = root;
     this.prefix = prefix;
     this.loseOnce = loseOnce;
+    this.captureReal = captureReal;
     /** Movimientos del primer Pokémon al cargar (el piloto automático usa el primero de daño). */
     this.leadMoves = leadMoves;
     this.shots = 0;
@@ -312,7 +313,7 @@ export class Driver {
   async goto(url) {
     await this.page.goto(url, { waitUntil: 'load' });
     await installHelpers(this.page);
-    await installB14Helpers(this.page, { loseOnce: this.loseOnce });
+    await installB14Helpers(this.page, { loseOnce: this.loseOnce, captureReal: this.captureReal });
     await this.until((s) => s.top === 'MapScene' && s.ready, { timeout: 30000, what: 'el mapa de arranque' });
     if (this.leadMoves) {
       const ok = await this.eval((ids) => window.__b14.setMoves(0, ids), this.leadMoves);

@@ -96,7 +96,7 @@ const EXTERIOR_KIT = {
 };
 
 export const EXTRA_LAYOUTS = {
-  Cueva1: { row: 624, rows: 27, pieces: KIT },
+  Cueva1: { row: 624, rows: 28, pieces: { ...KIT, pilar_torre: [0, 18] } },
   InteriorTorre: { row: 593, rows: 32, pieces: KIT },
   InteriorLiga: { row: 593, rows: 32, pieces: KIT },
   ExteriorBosqueCeleste: { row: 699, rows: 25, pieces: { ...EXTERIOR_KIT, pilar_torre: [0, 15] } },

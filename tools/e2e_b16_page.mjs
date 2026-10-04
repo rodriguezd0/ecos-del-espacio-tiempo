@@ -1,19 +1,21 @@
 // Ayudantes del recorrido E2E del Bloque 16 que se instalan DENTRO de la página (window.__b16), además de los de
 // tools/e2e_b01_page.mjs (window.__e2e): piloto de combate (entrenadores y legendarios: luchar; salvajes: huir; una
-// derrota simulada por etiqueta, p. ej. «azelf»), registro de los combates (reglas: huida, captura, Mochila sellada),
+// derrota real con un equipo débil por etiqueta, p. ej. «azelf»), registro de los combates (reglas y resultado),
 // estado (variables, objetos, Fragmentos, pistas, Zygarde, controles en espejo, ritual del Telar), posiciones de
 // eventos, orillas para nadar, tierra más cercana, células añadidas a mano (variante sin células) y Vuelo con el
 // destino elegido (el mapa regional se sustituye por la elección; el resto del Vuelo es el del juego).
 
 export async function installB16Helpers(page, { loseOnce = [] } = {}) {
   await page.evaluate(async (lose) => {
-    const [{ engine }, api, clues, hito, water] = await Promise.all([
+    const [{ engine }, api, clues, hito, water, pokemon] = await Promise.all([
       import('/src/core/engine.js'), import('/src/battle/api.js'), import('/src/content/story/clueLogic.js'),
       import('/src/content/events/b16_hito.js'), import('/src/world/waterAccess.js'),
+      import('/src/battle/core/pokemon.js'),
     ]);
     const pending = new Set(lose);
     const lost = [];
     const battles = [];
+    let lossTeam = null;
     const map = () => window.__map;
     const DV = { 2: [0, 1], 4: [-1, 0], 6: [1, 0], 8: [0, -1] };
     const key = (x, y) => `${x},${y}`;
@@ -26,18 +28,32 @@ export async function installB16Helpers(page, { loseOnce = [] } = {}) {
 
     api.installBattle(async (cfg) => {
       const tag = battleTag(cfg);
-      battles.push({
+      const record = {
         tag, type: cfg.type, species: cfg.wild?.species ?? null, level: cfg.wild?.level ?? null, moves: cfg.wild?.moves ?? null,
         shiny: cfg.wild?.shiny ?? null, canRun: cfg.rules?.canRun ?? null, canCatch: cfg.rules?.canCatch ?? null,
         sealedBag: cfg.rules?.sealedBag ?? null, canLose: Boolean(cfg.canLose ?? cfg.rules?.canLose), noMoneyLoss: Boolean(cfg.rules?.noMoneyLoss),
-      });
-      if (tag && pending.has(tag)) {
+      };
+      battles.push(record);
+      const trialLoss = tag && pending.has(tag);
+      const originalTeam = trialLoss ? lossTeam : null;
+      if (trialLoss) {
         pending.delete(tag);
-        lost.push(tag);
-        return { outcome: 'lose', stored: true };
+        if (!originalTeam) throw new Error('Falta preparar el equipo débil antes de copiar la petición de combate');
       }
       const legendary = cfg.type === 'wild' && (cfg.canLose || cfg.rules?.canRun === false);
-      return api.startBattle({ ...cfg, auto: cfg.type === 'wild' && !legendary ? 'run' : 'fight' });
+      const moneyBefore = engine.state.player.money;
+      try {
+        const result = await api.startBattle({ ...cfg, auto: cfg.type === 'wild' && !legendary ? 'run' : 'fight' });
+        Object.assign(record, { outcome: result?.outcome, turns: result?.turns, moneyBefore, moneyAfter: engine.state.player.money });
+        if (trialLoss) {
+          if (result?.outcome !== 'lose') throw new Error(`El equipo débil no perdió contra ${tag}`);
+          lost.push(tag);
+        }
+        return result;
+      } finally {
+        // bossBattle cura el equipo original al tramitar la derrota, antes del siguiente intento.
+        if (originalTeam) { engine.state.setParty(originalTeam); lossTeam = null; }
+      }
     });
 
     // Agua en la que se nada según el juego (no cuenta el puente de hielo, que se pisa a pie).
@@ -124,6 +140,11 @@ export async function installB16Helpers(page, { loseOnce = [] } = {}) {
     const eventOf = (id) => map()?.world?.events?.find((e) => e.id === id) || null;
 
     window.__b16 = {
+      realLossTeam: () => {
+        lossTeam = engine.state.party;
+        const weak = pokemon.createPokemon(engine.data, 'MAGIKARP', 1, { moves: ['SPLASH'], rng: () => 0.5 });
+        engine.state.setParty([{ ...weak, hp: 1 }]);
+      },
       lost,
       battles,
       shoreFor,

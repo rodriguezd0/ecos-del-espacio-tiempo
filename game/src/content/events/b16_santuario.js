@@ -5,7 +5,7 @@ import { F, SPEAKER, OBJ, TRIO_COLORS, when, examine, frame, hasAllThreads, paus
 import { PATIO, TELAR } from '../maps/b16/santuario_layout.js';
 
 export const PATIO_TEXT = Object.freeze({
-  voices: 'Tres voces suenan a la vez, sin eco, desde las tres puertas del norte.',
+  voices: 'Tres voces suenan a la vez, sin eco, desde las alturas de la columna.',
   seal: 'En el centro del patio, un hexágono de piedra con tres huecos: uno dorado, uno rosa y uno azul.',
   sealAfter: (n) => (n ? `El hexágono tiene ${n === 1 ? 'un hueco encendido' : `${n} huecos encendidos`}. Faltan los demás.` : 'Un hexágono de piedra con tres huecos apagados: uno dorado, uno rosa y uno azul.'),
   sealOpens: 'Las tres Hebras brillan en tu Mochila y los tres huecos se encienden a la vez. El hexágono se abre hacia arriba en una escalera de luz.',
@@ -20,7 +20,7 @@ async function introScene(ctx) {
   await ctx.say('Quien entra aquí trae lo que ha visto. Veremos si lo recuerda.', { speaker: SPEAKER.uxie });
   await ctx.say('Y lo que ha sentido. Y lo que otros sintieron a su lado.', { speaker: SPEAKER.mesprit });
   await ctx.say('Y lo que quiere, aunque el viento sople en contra.', { speaker: SPEAKER.azelf });
-  await ctx.say(PATIO_TEXT.seal); // Zygarde habla muy poco (autor, 25-09-2026).
+  await ctx.say('Tres pisos: Saber, Sentir y Querer. El Telar del Alma espera en el tercero, detrás de un sello con tres huecos.');
 }
 
 async function openSeal(ctx) {
@@ -59,7 +59,7 @@ function sealEvent() {
         },
       })),
       {
-        when: (s) => s.flag(F.telarOpen), sprite: OBJ.seal, ...frame(4), solid: true, trigger: 'action',
+        when: (s) => s.flag(F.telarOpen) || s.flag(F.restored), sprite: OBJ.seal, ...frame(4), solid: true, trigger: 'action',
         glow: { name: 'softLight', radius: 70, intensity: 0.45, pulse: 0.4, color: [255, 214, 228] },
         script: async (ctx) => {
           await ctx.say(PATIO_TEXT.sealOpen);

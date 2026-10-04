@@ -166,11 +166,11 @@ function gateEvent() {
   const G = CIELO.gate;
   const to = LINKS.cieloToTerraza;
   return {
-    id: 'cielo_arco', x: G.x, y: G.y, name: 'Arco de luz',
+    id: 'cielo_arco', x: G.x, y: G.y, name: 'Escalinata superior',
     pages: [
       { solid: true, trigger: 'action', script: async (ctx) => { await ctx.say(CIELO_TEXT.gateShut); } },
       {
-        when: (s) => s.flag(F.trio), sprite: OBJ.portal, dir: 2, directionFix: true, walkAnime: false, stepAnime: true, through: true,
+        when: (s) => s.flag(F.trio), through: true,
         trigger: 'touch', glow: { name: 'softLight', radius: 60, intensity: 0.6, pulse: 0.4, color: [255, 220, 130] },
         script: async (ctx) => {
           ctx.se('PRSFX- Teleport', { volume: 60 });
@@ -185,8 +185,8 @@ function backEvent() {
   const B = CIELO.back;
   const to = LINKS.cieloToSenda;
   return {
-    id: 'cielo_vuelta', x: B.x, y: B.y, name: 'Grieta',
-    sprite: OBJ.portal, dir: 2, directionFix: true, walkAnime: false, stepAnime: true, through: true, trigger: 'touch',
+    id: 'cielo_vuelta', x: B.x, y: B.y, name: 'Escalinata de vuelta',
+    through: true, trigger: 'touch',
     script: async (ctx) => { await ctx.warp(to.map, to.x, to.y, to.dir, { fade: true, frames: 16 }); },
   };
 }

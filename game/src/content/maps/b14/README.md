@@ -7,6 +7,12 @@ Encuentros: `docs/POKEDEX_DISTRIBUCION.md` §7.3 («Fondo del Mar del Sur», «A
 **Fuente única de coordenadas:** `layout.js`. Estado de entrada: `b13_talasa`, `zyg_core_4`, `zyg_dive` (capacidad
 `dive`). Salida: `p7_restored` (+ Fragmento F07, `verse_7`, pista T13).
 
+**P7 vertical (reparto confirmado el 03-10):** columna de piedra visible en el arrecife; piso 1, ruinas de Antea
+(`antea_base`); piso 2, las cuatro salas y sus diez capas temporales originales; piso 3, Bramaluna Alfa y núcleo
+(`fosa_eco`). Las épocas, patrullas, objetos y células conservan sus mapas, coordenadas y estado. Las escaleras
+permiten salir y volver antes y después de restaurar. Un guardado junto a la antigua puerta del arrecife se
+recoloca delante de la columna, sin adelantar a Adela ni cambiar los flags.
+
 ## Mapas
 
 | id | Archivo(s) | Tamaño | TS | Notas |
@@ -14,7 +20,8 @@ Encuentros: `docs/POKEDEX_DISTRIBUCION.md` §7.3 («Fondo del Mar del Sur», «A
 | `arrecife_eco` | `arrecife_eco.js` + `arrecife_build.js` | 44×36 | 15 | Submarino (burbuja, oscuridad .8). Muralla hundida con la Puerta de Antea (norte), draga de Genesis, campana de dragado (oeste), corales, cajas «ANTEA — Catalogado», 4 respiraderos, 2 buceadores |
 | `arrecife_campana` | `arrecife_campana.js` + `campana_build.js` | 17×13 | 4 | Interior de la campana de dragado (laboratorio de Genesis): 2 técnicos, la jefa Adela, consola |
 | `fondo_mar_sur` | `fondo_mar_sur.js` + `fondo_build.js` | 180×50 | 15 | Fondo del Mar del Sur con las **mismas coordenadas** que `mar_del_sur` (B13, 190×50: el fondo cubre x 0–179; desde x 171, la Fosa Abisal bajo el sector este). Praderas de algas someras (no gastan burbuja), 13 respiraderos, 6 haces de luz (= los remolinos de B13), C077–C081; la raíz de roca del Islote Lumbre al pie del borde sur (x 21–41, bajo el islote de la superficie) |
-| `antea_{1,2}_{presente,antea}` | `antea_N_<capa>.js` + `antea_N_build.js` | 32×24 | 15 / 7 | Salas 1 (Plaza de la Caracola) y 2 (Calle de los Pescadores): presente sumergido ↔ Antea seca |
+| `antea_base` | `antea_base.js` + `antea_base_build.js` | 27×25 | 15 | Piso 1: vestigios de la ciudad, estelas y escalera a las capas |
+| `antea_{1,2}_{presente,antea}` | `antea_N_<capa>.js` + `antea_N_build.js` | 32×24 | 15 / 7 | Piso 2, salas 1 (Plaza de la Caracola) y 2 (Calle de los Pescadores): presente sumergido ↔ Antea seca |
 | `antea_{3,4}_{presente,antea,primigenia}` | ídem | 32×26 | 15 / 2 / 7 | Salas 3 (Barrio Alto) y 4 (Puerta de la Fosa): presente ↔ Antea (templo) ↔ era primigenia (selva, Bramaluna) |
 | `fosa_eco` | `fosa_eco.js` + `fosa_build.js` | 30×26 | 15 | Cámara del núcleo: nido de la Bramaluna, núcleo del Pilar, estela T13, corriente ascendente tras el P7 |
 
@@ -34,10 +41,11 @@ luz y la Bramaluna Alfa (seguidor de Añil ×1,5).
 | `arrecife_eco` superficie | (22,31) + A | `caleta_sonda` | (4,28) |
 | `arrecife_eco` escotilla de la campana | (8,13) (pisar) | `arrecife_campana` | (8,10) ↑ |
 | `arrecife_campana` felpudo | (8–9,10) ↓ | `arrecife_eco` | (8,14) ↓ |
-| `arrecife_eco` Puerta de Antea | (22,3) | `antea_1_presente` | (16,21) ↑ — tapada por el cabezal de la draga hasta `b14_draga_apartada` |
+| `arrecife_eco` Puerta de Antea | (22,13) | `antea_base` | (13,21) ↑ — tapada por el cabezal de la draga hasta `b14_draga_apartada` |
+| `antea_base` escalera norte / sur | (13,5) / (13,22) | `antea_1_presente` / `arrecife_eco` | (16,21) ↑ / (22,14) ↓ |
 | `arrecife_eco` borde este | x 43, y 14–20 | `fondo_mar_sur` | borde oeste y 20–26 (conexión, desfase 6) |
 | `fondo_mar_sur` haces de luz | (20,8) (52,20) (76,30) (110,12) (138,36) (150,10) + A | `mar_del_sur` (B13) | misma (x, y); son los remolinos de B13 (`mar_layout.js#WHIRLPOOLS`), que bajan aquí con `dive` del mapa |
-| `antea_1_presente` boca sur / norte | (16,22) / (16,3) | `arrecife_eco` / `antea_2_presente` | (22,5) ↓ / (16,21) ↑ — la norte, tapada por la estatua caída hasta `b14_estatua = 1` |
+| `antea_1_presente` boca sur / norte | (16,22) / (16,3) | `antea_base` / `antea_2_presente` | (13,6) ↓ / (16,21) ↑ — la norte, tapada por la estatua caída hasta `b14_estatua = 1` |
 | `antea_2_presente` sur / norte | (16,22) / (16,3) | `antea_1_presente` / `antea_3_presente` | (16,5) ↓ / (16,23) ↑ — la norte, tras el aljibe (corriente hasta `b14_compuerta`) |
 | `antea_3_presente` sur / norte | (16,24) / (16,3) | `antea_2_presente` / `antea_4_presente` | (16,5) ↓ / (16,23) ↑ — la norte está en la terraza alta |
 | `antea_3_antea` norte ↔ `antea_4_antea` sur | (16,3) / (16,24) | — | (16,23) ↑ / (16,5) ↓ |
@@ -70,7 +78,7 @@ al jugador: rugido, embestida de una casilla, fundido y **vuelta a la última ca
 |---|---|---|---|
 | Tobías (monedas de las mareas), Carmela (Fausto no ha vuelto), Zygarde; **Real de cobre** | Caleta Sonda, playa (vigilante en paralelo: en tierra y quieto) | capacidad `dive`, sin Fausto ni P7 | `b14_caleta_intro`, `b14_tobias_moneda` (si la escena no llegó a verse, Tobías da la moneda al hablarle) |
 | Llegada al arrecife | (22,30) | | `b14_arrecife_llegada` |
-| La draga tapa la puerta (pista del Core: la campana) | cabezal (22,5) | | `b14_draga_vista` |
+| La draga tapa la puerta (pista del Core: la campana) | cabezal (22,14) | | `b14_draga_vista` |
 | Técnicos Rufino y Eulalia; **jefa Adela** (combate de guion sin pérdida; planos de la corona, «Al doctor le interesa…», el chico de la caleta) | campana | hasta el P7 | `b14_jefa_vencida`, `b14_draga_apartada` |
 | Entrada en las ruinas; tutorial de la caracola; primer eco / primera era primigenia | salas | | `b14_antea_entrada`, `b14_caracola_tuto`, `b14_primer_eco`, `b14_primigenia_vista` |
 | Fausto despierta y vuelve solo a Caleta (Real de plata) | sala 2 (Antea) | rutina en orden | `b14_fausto_despierto`, `b14_fausto_real` |
@@ -116,6 +124,8 @@ de la Fosa se desvanecen.
 
 ## Pruebas
 
+- `node --test tests/b14_vertical.test.mjs` — tres pisos, acceso con la draga, ascenso y retorno, guardados anteriores,
+  núcleo sin atajos y conservación del nido y de la corriente ascendente.
 - `node --test tests/b14_reach.test.mjs` — BFS por mapa y capa con la pasabilidad real: la Puerta de Antea, la boca
   norte de la sala 1, el aljibe, la terraza, la Fosa y el núcleo no se pueden saltar; sin casillas trampa; células,
   objetos, entrenadores, respiraderos y haces alcanzables; sigilo posible con la patrulla real (BFS en el tiempo).
@@ -128,6 +138,8 @@ de la Fosa se desvanecen.
   se perdían pulsaciones), y cura al equipo antes de la jefa Adela (el piloto no usa objetos). Su equipo va a nivel
   84–85: el piloto solo usa su primer movimiento de daño y, a nivel 72, el Magneton de Rufino o el equipo de Adela lo
   tumbaban a veces. El equilibrio real (tramo ~51) se valora jugando a mano.
+  La derrota del eco usa un Magikarp de prueba y se resuelve en el motor; comprueba la cura y el dinero conservado.
+  La Bramaluna real se captura con una Master Ball consumida de la mochila y queda en el equipo o PC.
 - URL de entrada (servidor en :8080):
   `/?scene=map&map=caleta_sonda&x=12&y=20&dir=2&party=AZUMARILL:72,TOGEKISS:70,TORTERRA:70&flags=p1_restored,p2_restored,p3_restored,p4_restored,p5_restored,p6_restored,zyg_10,zyg_50,zyg_core_2,zyg_core_3,zyg_core_4,zyg_dive,b13_talasa,b13_dive_resonance&zygarde=run,ram,terrain,climb,swim,detect,dive&zcells=76&zcores=4&fragments=6&core=1&noenc=1&debug`.
   Salas sueltas: `map=antea_3_primigenia&x=16&y=19&dir=8` (+ `flags=…,b14_draga_apartada,b14_caracola_tuto`),

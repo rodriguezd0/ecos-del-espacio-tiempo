@@ -5,11 +5,10 @@
 import { zoneDefaults } from '../../services/zones.js';
 import { W, H, SOUTH, ARRIVAL, DECK } from './mirador_layout.js';
 import { buildMirador } from './mirador_build.js';
-import { mapRegistered } from './links.js';
 import { SIMA_PANORAMA } from '../../events/b17_common.js';
 import { miradorEvents } from '../../events/b17_mirador.js';
-import { miradorGrietaEvents } from '../../events/b22e_grieta.js';
 import { descentWarps } from '../b19/links.js'; // B19: warp al final de la bajada hacia la Sima del Eje
+import { miradorGrietaEvents } from '../../events/b22e_grieta.js';
 
 export default {
   id: 'mirador_sur',
@@ -27,12 +26,13 @@ export default {
   build: buildMirador,
 
   // B19 (aditivo): el final de la bajada (x 3–4, y 0, pulsando arriba) lleva a la Sima del Eje (content/maps/b19/links.js).
-  warps: descentWarps('mirador_sur'),
+  warps: [
+    ...descentWarps('mirador_sur'),
+    ...Array.from({ length: DECK.north.x1 - DECK.north.x0 + 1 }, (_, i) => ({ x: DECK.north.x0 + i, y: 0, dirTrigger: 8, to: 'puente_convergencia', tx: DECK.north.x0 + i, ty: 58, dir: 8 })),
+  ],
 
   connections: [
     { dir: 'south', to: 'ciudad_lumina', offset: SOUTH.offset },
-    // B18: el estribo sigue en el Puente de la Convergencia (su camino sur x 19–21 = x 19–21 de aquí).
-    ...(mapRegistered('puente_convergencia') ? [{ dir: 'north', to: 'puente_convergencia', offset: DECK.north.offset }] : []),
   ],
 
   events: [...miradorEvents(), ...miradorGrietaEvents()],

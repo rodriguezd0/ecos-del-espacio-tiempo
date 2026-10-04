@@ -3,13 +3,22 @@
 CAMPANA B16 (D17). Entrada: `b15_n5`, `zyg_core_5`, Nadar y `p7_restored` (nivel ~57). Salida: `p8_restored`,
 `zyg_complete` (con 100 células), Fragmento 8, verso VIII, Cadena Roja (`REDCHAIN`), pista T14.
 
+**P8 vertical (reparto confirmado el 03-10):** columna de piedra visible en el islote; piso 1, Uxie y Saber;
+piso 2, Mesprit y Sentir; piso 3, Azelf, Querer y el Telar. Las escaleras quedan abiertas para volver a cualquier
+prueba sin perder su progreso. Los puzzles conservan coordenadas, IDs y flags; el Telar exige las tres Hebras.
+Un guardado del santuario antiguo se lleva a la planta correspondiente según su sala, conservando respuesta a
+Mesprit, células y recogidas. Las páginas de captura del postgame (B22a) continúan en cada planta; sus reflejos
+solo aparecen en las salas de espejos del segundo piso.
+
 ## Mapas
 
 | id | tileset | tamaño | qué es |
 |---|---|---|---|
 | `lagos_alma` | 1 (Exterior1 + nieve + kit exterior de Pilar) | 60×60 | Tres lagos glaciares (Saber O, Querer N con cascada, Sentir E con islote) bajo un acantilado nevado (`terraza_nevada`), islote del santuario, puente de bloques de hielo con bordillo (`hielo_losas` + `hielo_borde`, losas de Ciudad Añil), mirador de las auroras, refugio, campamento de Genesis. El sendero sur acaba nevado para enlazar con la calle de Boreal. Tono y música `VinculoSupremo`. |
 | `lagos_refugio` | 4 (Interior1) | 13×11 | Refugio de los observadores: literas (descanso con cura, `restSpotEvent`), aparato de radio, cuadernos, observador. |
-| `santuario_alma` | 11 (InteriorTorre + kit de Pilar, `pilarTone('P8')` rosa pálido) | 77×62 | Patio central (alfombra en cruz hacia los tres dinteles) + Ala del Saber (4 salas de enlosado antiguo) + Ala del Sentir (5 salas) + Ala del Querer (2 salas) + Telar; cámaras del trío con alfombra de su color. Salas sobre la oscuridad enlazadas por dinteles (warps al empujar) y escalinatas (warps por dirección). `escapeRope: false`. |
+| `santuario_alma` | 11 (InteriorTorre + kit de Pilar, `pilarTone('P8')` rosa pálido) | 77×62 | Piso 1: rellano de entrada y Saber (glifos, lógica y Uxie). Conserva el ID histórico y migra partidas de las otras alas. |
+| `santuario_alma_sentir` | 11 | 77×62 | Piso 2: rellano, tres espejos, recuerdo de Gael y Mesprit. |
+| `santuario_alma_querer` | 11 | 77×62 | Piso 3: rellano, viento, Azelf, sello y Telar. |
 | `santuario_alma_recuerdo` | 11 | 58×18 | El último espejo: tres estampas del día de Gael (laboratorio, explanada del Umbral, aljibe). `mirrorControls: true`, `noCore`, `noFollower`. |
 
 Coordenadas: `lagos_layout.js`, `santuario_layout.js`, `recuerdo_layout.js` (fuente única del mapa, los eventos, las
@@ -21,10 +30,12 @@ pruebas y el E2E). Construcción: `*_build.js`. Eventos: `content/events/b16_*.j
 | desde | casilla | a | notas |
 |---|---|---|---|
 | `lagos_alma` sur | x 12–15, y 59 | `villa_boreal` (B15) norte x 20–23 | Conexión `south`, offset −8 (Boreal: `north`, offset 8, `b15/links.js`). Activa: ambos mapas registrados. Si faltara Boreal, `pending_links.js` la quita y los eventos `borde_sur_*` cierran con aviso neutro. |
-| `lagos_alma` boca del santuario | empujar arriba en (28,19)/(29,19) | `santuario_alma` (40,57) | Solo se llega al islote nadando (G12) hasta reconstruir el puente. |
-| `santuario_alma` escalinata del patio | (39–41,58) pulsando abajo | `lagos_alma` (28,24) | Al salir tras el P8 se dispara el hito. |
+| `lagos_alma` puerta de la columna | (28,19) | `santuario_alma` (40,57) | Solo se llega al islote nadando (G12) hasta reconstruir el puente. |
+| `santuario_alma` escalera norte | (40,48) | `santuario_alma_sentir` (40,57) | Regreso por (39–41,58) → primer piso (40,49). |
+| `santuario_alma_sentir` escalera norte | (48,48) | `santuario_alma_querer` (40,57) | Regreso por (39–41,58) → segundo piso (48,49). |
+| `santuario_alma` escalinata de salida | (39–41,58), al pisarla | `lagos_alma` (28,24) | Al salir tras el P8 se dispara el hito. |
 | `lagos_alma` puerta del refugio | (39,49) | `lagos_refugio` (6,9) | Vuelta a (39,50). |
-| `santuario_alma` ↔ `santuario_alma_recuerdo` | gran espejo (50–52,3) | laboratorio (9,12) | Se vuelve al tocar el aljibe → cámara de Mesprit (51,22). |
+| `santuario_alma_sentir` ↔ `santuario_alma_recuerdo` | gran espejo (50–52,3) | laboratorio (9,12) | Se vuelve al tocar el aljibe → segundo piso, cámara de Mesprit (51,22). |
 
 ## Secuencia y flags (`content/events/b16_common.js`)
 
@@ -39,7 +50,7 @@ pruebas y el E2E). Construcción: `*_build.js`. Eventos: `content/events/b16_*.j
 | Hito (salida) | `b16_hito_escena`, `b16_puente_roto`, `b16_puente_a`, `b16_puente_b`, `b16_hito` (+ `b16_hito_parcial` si faltaban células), `b16_radio`, `b16_genesis_registro` (**B17**: Genesis se va con lo que registró desde fuera), `b16_vinculo`, `b16_vuelo_aviso`, `zyg_complete`, `zyg_rebuild_tutorial` |
 | T14 (Correos de Nexo, B09b) | `b16_t14_carta` + `openClue('T14')`. Tras el hito, la observadora de los lagos da el recado de Don Evaristo (llegó con el ferri de Nexo) mientras no se haya abierto la pista |
 
-Las tres alas se hacen en cualquier orden; el hexágono del patio abre el Telar con las tres Hebras (flags). El ritual
+Las tres alas se hacen en cualquier orden; el hexágono del tercer piso abre el Telar con las tres Hebras (flags). El ritual
 retira las Hebras y da la Cadena Roja. El cielo se rompe al salir (fase 3 forzada durante la escena y luego derivada de
 `p8_restored`). Al último espejo se entra desmontado del 10 % (`dismountForMemory`, también en el `onEnter` del
 recuerdo): montado, la sincronización de la montura devolvía al jugador su aspecto y no el de Gael.
@@ -50,9 +61,9 @@ recuerdo): montado, la sincronización de la montura devolvía al jugador su asp
 |---|---|---|---|
 | C095 | `cell_lagos_1` | `lagos_alma` (51,23), islote del Sentir | Nadar |
 | C097 | `cell_alma_1` | `santuario_alma` (11,4) | paso obligado hacia las puertas |
-| C098 | `cell_alma_2` | (29,32) | paso obligado hacia el último espejo |
-| C099 | `cell_alma_3` | (67,4) | repisa de arriba del viento |
-| C100 | `cell_alma_4` | (51,37) | única casilla desde la que se usa el Telar (antes del núcleo) |
+| C098 | `cell_alma_2` | `santuario_alma_sentir` (29,32) | paso obligado hacia el último espejo |
+| C099 | `cell_alma_3` | `santuario_alma_querer` (67,4) | repisa de arriba del viento |
+| C100 | `cell_alma_4` | `santuario_alma_querer` (51,37) | única casilla desde la que se usa el Telar (antes del núcleo) |
 
 Objetos: Lagos `ULTRABALL`×3 (5,52), `FULLRESTORE` oculto (54,52), `MAXREVIVE` (24,29), `PPUP` (36,6), `NEVERMELTICE`
 (8,23), `DUSKBALL`×2 (34,51); santuario `MAXELIXIR` (20,12), `RARECANDY` (14,52), `MAXREVIVE` (56,24), `FULLRESTORE`
@@ -72,16 +83,20 @@ Base `B` = `party=GARCHOMP:80,LUCARIO:76&fragments=7&noenc=1&core=1&zygarde=run,
 
 - Llegada: `/?scene=map&map=lagos_alma&x=13&y=57&dir=8&` + `B`
 - Patio: `/?scene=map&map=santuario_alma&x=40&y=57&dir=8&` + `B` (añadir `,b16_llegada` a `flags`)
-- Saber / Sentir / Querer: `x=32` / `x=40` / `x=48`, `y=49`, `dir=8` en `santuario_alma`
+- Saber / Sentir / Querer: `x=32` / `x=40` / `x=48`, `y=49`, `dir=8` en `santuario_alma` / `santuario_alma_sentir` / `santuario_alma_querer`
 - Recuerdo de Gael: `/?scene=map&map=santuario_alma_recuerdo&x=9&y=12&dir=8&` + `B`
-- Telar: `x=40&y=54` en el patio con `b16_hebra_saber,b16_hebra_sentir,b16_hebra_querer` en `flags`
+- Telar: `x=40&y=54` en el rellano de `santuario_alma_querer` con `b16_hebra_saber,b16_hebra_sentir,b16_hebra_querer` en `flags`
 - Hito (Forma Completa): `x=40&y=57&dir=2` en el patio con `zcells=100` y `p8_restored,b16_telar,b16_telar_abierto` en `flags` (bajar la escalinata); variante sin células: `zcells=94`
 - T14: `/?scene=map&map=nexo_correos&x=4&y=8&dir=8&` + `B` con `p8_restored` (hablar desde (7,8) mirando a la derecha)
 
-Comprobaciones: `node --test tests/b16_content.test.mjs tests/b16_reach.test.mjs`, `node tools/validate_content.mjs`,
+Comprobaciones: `node --test tests/b16_content.test.mjs tests/b16_reach.test.mjs tests/b16_vertical.test.mjs`, `node tools/validate_content.mjs`,
 `node tools/preview_map.mjs santuario_alma --pass`. Recorrido completo: `node tools/e2e_b16.mjs [--from=<tramo>]
 [--only=<tramo>] [--to=<tramo>] [--no-retry]` con tramos `lagos saber sentir querer telar hito vuelo variante evaristo`
-(capturas `tools/cache/screens/e2e_b16_*`, transcripción `e2e_b16_dialogos.txt`).
+(capturas `tools/cache/screens/e2e_b16_*`, transcripción `e2e_b16_dialogos.txt`). Incluye escaleras reales entre los
+tres pisos y descenso al exterior tras restaurar; la derrota de Azelf se juega con un Magikarp de prueba y verifica
+dinero conservado, contador de intentos y posterior victoria real.
+`node tools/e2e_p7_p8_vertical.mjs` verifica guardados del antiguo santuario y de la puerta de Antea, ascenso y
+retorno tras restaurar y reentrada al Telar desde un guardado sin flag del sello.
 
 ## Coordinación
 

@@ -4,12 +4,12 @@
 // la envejece: coral y óxido). Llegada y salida por el remolino de Caleta Sonda; paso al Fondo del Mar del Sur por el
 // este. Módulo puro salvo los guiones.
 import { ARRECIFE, CALETA, ROOMS, roomMap } from '../maps/b14/layout.js';
-import { F, OBJ, SPRITE, lines } from './b14_common.js';
+import { F, OBJ, SPRITE, lines, placePlayer } from './b14_common.js';
 import { ventEvents, itemEvents, bigSprite } from './b14_antea_common.js';
 import { coralEvents, crateEvents } from '../maps/b14/paint.js';
 
 const A = ARRECIFE;
-const aside = (s) => Boolean(s?.flag(F.dredgeAside));
+const aside = (s) => Boolean(s?.flag(F.dredgeAside) || s?.flag(F.restored));
 const restored = (s) => Boolean(s?.flag(F.restored));
 
 export const ARRECIFE_TEXT = Object.freeze({
@@ -22,9 +22,23 @@ export const ARRECIFE_TEXT = Object.freeze({
   bellDark: 'La campana de dragado, a oscuras. Nadie la maneja ya.',
   crates: ['Cajas selladas con una etiqueta: «ANTEA — Catalogado». Dentro suena algo metálico.'],
   cratesEmpty: 'Una caja vacía. Solo queda la etiqueta: «ANTEA — Catalogado».',
-  gate: 'La Puerta de Antea: un arco de piedra en la muralla hundida. Por dentro se oye… música de mercado.',
+  gate: 'La Puerta de Antea está al pie de una columna de piedra que se pierde hacia arriba. Por dentro se oye… música de mercado.',
   column: 'Una columna caída, más antigua que cualquier cosa de Caleta. Tiene glifos gastados.',
 });
+
+/** Se aplica antes de buscar suelo libre, mientras aún se conserva la posición del guardado antiguo. */
+export function redirectArrecifeArrival({ x, y, state }) {
+  const door = A.gate.door;
+  if (!Number.isInteger(x) || !Number.isInteger(y) || x < door.x - 3 || x > door.x + 3 || y < door.y - 9 || y >= door.y) return null;
+  const target = aside(state) ? A.gate.arrival : { x: A.dredge.x, y: A.dredge.y + 1, dir: 8 };
+  return { map: 'arrecife_eco', ...target };
+}
+
+/** Compatibilidad con llamadas directas al guion de entrada. */
+export async function arrecifeOnEnter(ctx) {
+  const target = redirectArrecifeArrival({ x: ctx.player.x, y: ctx.player.y, state: ctx.state });
+  if (target) await placePlayer(ctx, target);
+}
 
 function dredgeEvents() {
   const head = A.dredge;

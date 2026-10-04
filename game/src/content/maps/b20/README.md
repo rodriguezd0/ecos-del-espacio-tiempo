@@ -4,6 +4,24 @@ CAMPANA B20 (D19, D20; §6.3–6.4 Gael). Entrada: `b19_calzada`, nueve Fragment
 y la Forma Completa (`zyg_complete` / capacidad `rebuild`); la Flauta NO hace falta. Salida: `p10_restored`,
 `b20_flute` (Flauta Azur, `AZUREFLUTE`), verso X, falsa calma (fase de crisis 4 derivada de `p10_restored`).
 
+## Tres plantas (X36, reparto confirmado 03-10)
+
+La columna `pilar_torre` se alza en la Sima del Eje, detrás del Umbral: centro 18, puerta 37, llegada exterior
+(18,38). La Puerta de las Quince conserva nichos, requisitos y el camino proyectado. Los mapas llevan `pillar.floor`:
+
+| planta | salas |
+|---|---|
+| 1 | Puerta de las Quince y los nueve tramos de la Senda del Origen, incluidas orientación girada, eco y fondo. |
+| 2 | Cielo Interior: Tornadus, Thundurus y Landorus. |
+| 3 | Terraza del Último Sello (Gael) y la sala del Núcleo del Origen. |
+
+Las bocas entre plantas se dibujan como escalinatas del kit común. Los retornos llegan fuera de sus disparadores:
+Cielo → Senda 9 (12,4), Terraza → Cielo (15,3), Núcleo → Terraza (12,5). Gael camina hasta la estela y baja por la
+escalinata antes de desaparecer. Se conservan todos los IDs, coordenadas de guardado, flags y switches; no hace falta
+migrar de mapa al cargar. El nodo del Origen sigue en (10,12), con su Salto de B21 y la Red B22a.
+
+Esta **Senda del Origen** pertenece al P10. La Senda del Lazo de B15 y su acceso postgame a Cumbre Azur se conservan.
+
 ## Mapas
 
 | id | tileset | tamaño | qué es |
@@ -51,8 +69,8 @@ y su remolino (`T7.wellDive`, (11,5); a un lado para no tapar la oferta de nadar
 | `puerta_quince` claridad sur | (16,33) | `sima_eje` en `def.puertaQuinceArrival` (18,38) ↓ | `b20_puerta.js#toSima` (import dinámico; si faltara el mapa, texto neutro). |
 | `puerta_quince` boca de la Senda | (16,2) | `senda_origen_1` (12,16) ↑ | Tras `b20_camino`. |
 | tramo n boca norte / claridad sur | (12,2) / (12,17) | tramo n+1 (12,16) / tramo n−1 (12,4) | El 6 llega en (11,14) y se sale en (11,3). |
-| `senda_origen_9` boca norte | (12,2) | `cielo_interior` (15,51) ↑ | Vuelta por la grieta (15,52) → (12,4). |
-| `cielo_interior` arco | (15,2), tras `b20_trio` | `terraza_ultimo_sello` (12,21) ↑ | Vuelta desde (12,22) → (15,3) ↓. |
+| `senda_origen_9` escalera | (12,2) | `cielo_interior` (15,51) ↑ | Vuelta por la escalera (15,52) → (12,4). |
+| `cielo_interior` escalera superior | (15,2), tras `b20_trio` | `terraza_ultimo_sello` (12,21) ↑ | Vuelta desde (12,22) → (15,3) ↓. |
 | `terraza_ultimo_sello` dintel | (12,3), tras `b20_gael_b6` | `nucleo_origen` (10,22) ↑ | Vuelta pulsando ↓ en (10,23) → (12,5). |
 | `nucleo_origen` sello del suelo | (10,12) | — | **B21** cuelga el Salto de Convergencia con `registerOriginNode(fn)` (import en `nucleo_origen.js`). |
 
@@ -92,9 +110,9 @@ Base `B` = `party=GARCHOMP:100,METAGROSS:100,LUCARIO:98,TORTERRA:98,STARAPTOR:96
 - Variantes: `vars=…,b16_mesprit_respuesta:culpa|permiso` (línea de Gael), `flags=…,b17_torre_viento` (línea de Landorus);
   «Yo respondo por ella» con una partida de protagonista chica (lo cubren las pruebas de contenido para los dos géneros).
 
-Comprobaciones: `node --test tests/b20_content.test.mjs tests/b20_reach.test.mjs`, `node tools/validate_content.mjs`,
+Comprobaciones: `node --test tests/b20_content.test.mjs tests/b20_reach.test.mjs tests/b20_vertical.test.mjs`, `node tools/validate_content.mjs`,
 `node tools/preview_map.mjs senda_origen_9 --pass`. Recorrido completo: `node tools/e2e_b20.mjs [--from=<tramo>]
-[--only=<tramo>] [--to=<tramo>] [--no-retry]` con tramos `puerta t1 … t9 cielo terraza nucleo` (capturas
+[--only=<tramo>] [--to=<tramo>] [--no-retry]` con tramos `exterior puerta t1 … t9 cielo terraza nucleo` (capturas
 `tools/cache/screens/e2e_b20_*`, transcripción `e2e_b20_dialogos.txt`; derrota simulada contra Thundurus y Gael).
 
 ## Coordinación

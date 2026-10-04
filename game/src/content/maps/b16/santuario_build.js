@@ -2,9 +2,10 @@
 // Salas solemnes (`sala_<color>`) sobre la oscuridad: el blanco del patio, el dorado del Saber y del Telar, el morado
 // del Sentir y el azul del Querer. Puertas = dintel con el hueco negro en la pared; escalinatas de bajada con el marco
 // abierto. Módulo puro: solo pinta tiles (los eventos están en content/events/b16_*.js).
-import { PATIO, SABER, SENTIR, QUERER, TELAR, floorTop, floorBottom, mirrorCell } from './santuario_layout.js';
+import { PATIO, SABER, SENTIR, QUERER, TELAR, P8_UP, floorTop, floorBottom, mirrorCell } from './santuario_layout.js';
 import { MIRROR_ROOMS, ROOM_H, MIRROR_X } from '../../events/b16_mirror_logic.js';
 import { WALLS as WIND_WALLS, LEDGES, CORRIDOR_W } from '../../events/b16_wind_logic.js';
+import { buildPilarHall } from '../../stamps/pilarVertical.js';
 
 const VOID = 384; // negro (bloquea)
 
@@ -56,14 +57,13 @@ function obstacles(b, list) {
   for (const [l, x, y, id] of bases) b.set(l, x, y, id);
 }
 
-function paintPatio(b) {
+function paintPatio(b, floor) {
   const P = PATIO;
-  room(b, P.room, 'sala_blanco');
+  buildPilarHall(b, { floor: { x: P.room.x, y: floorTop(P.room), w: P.room.w, h: P.room.h - 3 }, up: P8_UP[floor], down: { x: 40, y: 58 } });
   // Camino de alfombra desde la escalinata hasta el hexágono sellado y, en cruz, hasta cada dintel
   b.paint('alfombra_rombos', [...cells(39, 49, 3, 7), ...cells(31, 50, 19, 3), ...cells(31, 49, 3, 1), ...cells(47, 49, 3, 1)]);
-  b.stamp('pilar_camara_nucleo', P.dais.x, P.dais.y);
-  stairs(b, P.exit, P.room);
-  for (const g of Object.values(P.gates)) gate(b, g);
+  if (floor === 3) b.stamp('pilar_camara_nucleo', P.dais.x, P.dais.y);
+  gate(b, floor === 1 ? P.gates.saber : floor === 2 ? P.gates.sentir : P.gates.querer);
   b.stamp('pilar_manantial', P.spring.x, P.spring.y);
   // Estatuas en los extremos, columnas junto a los dinteles, glifos y aristas en el suelo
   for (const [x, y] of P.statues) b.stamp('estatua_busto', x, y - 2);
@@ -198,11 +198,11 @@ function cells(x, y, w, h) {
   return out;
 }
 
-export function buildSantuario(b) {
-  b.fill(0, 'vacio');
-  paintPatio(b);
-  paintSaber(b);
-  paintSentir(b);
-  paintQuerer(b);
-  paintTelar(b);
+export function buildSantuarioFloor(b, floor) {
+  paintPatio(b, floor);
+  if (floor === 1) paintSaber(b);
+  if (floor === 2) paintSentir(b);
+  if (floor === 3) { paintQuerer(b); paintTelar(b); }
 }
+
+export const buildSantuario = (b) => buildSantuarioFloor(b, 1);

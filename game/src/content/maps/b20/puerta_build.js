@@ -34,6 +34,9 @@ export function buildPuerta(b) {
   // Bocas: la Senda (norte) y la claridad hacia la Sima (sur)
   b.stamp('boca_norte_gris', P.exit.x - 1, 0);
   b.stamp('salida_luz_sur_gris', P.back.x - 1, P.back.y - 1);
+  // La claridad es una salida: abrir la roca y el musgo inferior del stamp solo en su pasillo central.
+  b.set(1, P.back.x, P.back.y, b.get(1, P.arrive.x, P.arrive.y));
+  b.set(2, P.back.x, P.back.y, 0);
   b.stamp('pilar_placa_unown', P.stele.x, P.stele.y);
   // Piezas del kit: monolitos y columnas que enmarcan la Puerta, aristas y restos
   const reserved = around([

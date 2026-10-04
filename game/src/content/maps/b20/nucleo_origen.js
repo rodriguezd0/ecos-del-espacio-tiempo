@@ -37,6 +37,7 @@ const back = LINKS.nucleoToTerraza;
 export default {
   id: 'nucleo_origen',
   name: 'Núcleo del Origen',
+  pillar: { id: 'P10', floor: 3 },
   tileset: 8,
   width: NUCLEO.w,
   height: NUCLEO.h,

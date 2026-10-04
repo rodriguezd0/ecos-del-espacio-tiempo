@@ -3,6 +3,7 @@
 // salida de luz hacia la sala 4. Los helechos y las raíces del eco son eventos (desaparecen tras el P7). Módulo PURO.
 import { FOSA } from './layout.js';
 import { rect, placeFree, cellSet } from './paint.js';
+import { buildPilarHall } from '../../stamps/pilarVertical.js';
 
 export function reservedFosa() {
   const out = [...rect(12, 9, 18, 15), ...rect(13, 4, 17, 8)];
@@ -12,16 +13,13 @@ export function reservedFosa() {
 }
 
 export function buildFosa(b) {
-  b.fill(null, 'vacio');
-  b.rect(null, 3, 5, 24, 19, 'sala_gris');
+  buildPilarHall(b, {
+    floor: { x: 3, y: 5, w: 24, h: 19 },
+    down: { x: FOSA.door.x, y: FOSA.door.y - 1 }, pedestal: FOSA.core,
+  });
   const res = reservedFosa();
-  // Terrazas de roca que encajonan la cámara (la fosa se estrecha hacia el nido).
-  b.paint('macizo_gris', [...rect(3, 5, 9, 9), ...rect(21, 5, 26, 9), ...rect(3, 20, 7, 23), ...rect(24, 20, 26, 23)]);
-  // Suelo: limo alrededor, enlosado antiguo bajo el núcleo y el camino desde la entrada.
-  b.paint('mancha_gris', [...rect(10, 5, 20, 8), ...rect(5, 11, 10, 18), ...rect(20, 11, 25, 18)]);
-  b.paint('pilar_enlosado', [...rect(11, 9, 19, 16), ...rect(14, 17, 16, 23)]);
-  b.stamp('pilar_camara_nucleo', FOSA.chamber.x, FOSA.chamber.y);
-  b.stamp('salida_luz_sur_gris', FOSA.door.x - 1, 23);
+  // El agua dejó limo entre las losas; el recinto sigue la columna de los otros pisos.
+  b.paint('mancha_gris', [...rect(10, 5, 20, 8), ...rect(5, 11, 8, 16), ...rect(22, 11, 24, 16)]);
   // Nido: anillo de piedras rotas y restos.
   for (const [n, x, y] of [['roca_musgo_gris', 11, 5], ['roca_musgo_gris', 18, 5], ['musgo_rocas', 13, 4], ['musgo_rocas', 16, 4], ['roca_peque_gris', 12, 7], ['roca_peque_gris', 18, 7]]) b.stamp(n, x, y);
   // Columnas del recinto y aristas del eco.

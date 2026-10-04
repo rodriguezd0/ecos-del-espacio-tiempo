@@ -41,7 +41,8 @@ export function pilarTone(pilar, intensity = 1) {
 const kitNames = (image) => Object.keys(EXTRA_LAYOUTS[image].pieces).filter((n) => n.startsWith('pilar_'));
 
 /** Nombres del kit completo (tilesets 2, 8, 11, 12–15). */
-export const PILAR_KIT = Object.freeze(kitNames('Cueva1'));
+export const PILAR_KIT = Object.freeze(kitNames('Cueva1').filter((name) =>
+  Object.hasOwn(EXTRA_LAYOUTS.InteriorLiga.pieces, name) && Object.hasOwn(EXTRA_LAYOUTS.InteriorTorre.pieces, name)));
 /** Subconjunto exterior del kit (tilesets 1 y 7). */
 export const PILAR_KIT_EXTERIOR = Object.freeze(kitNames('ExteriorBosqueCeleste'));
 /** Tilesets con kit completo / exterior. */

@@ -184,16 +184,16 @@ export const FOSA = Object.freeze({
 export const ARRECIFE = Object.freeze({
   w: 44, h: 36,
   arrival: P(22, 31, 8), // desde el remolino de Caleta Sonda (y salida a la superficie en la misma casilla)
-  gate: Object.freeze({ door: P(22, 3), arrival: P(22, 5, 2) }), // Puerta de Antea → antea_1_presente
+  gate: Object.freeze({ door: P(22, 13), arrival: P(22, 14, 2) }), // Columna de Antea → primer piso
   /** Cabezal de la draga de Genesis: tapa la puerta hasta que la jefa lo aparta. */
-  dredge: P(22, 5), dredgeBlock: Object.freeze([[21, 5], [23, 5], [21, 4], [23, 4]]), // encajado en la boca
+  dredge: P(22, 14), dredgeBlock: Object.freeze([[21, 14], [23, 14], [21, 13], [23, 13]]), // encajado en la boca
   dredgeAside: P(28, 8), dredgeAsideBlock: Object.freeze([[27, 7], [28, 7], [29, 7], [27, 8], [29, 8]]),
   /** Campana de dragado de Genesis (exterior) y su escotilla. */
   bell: P(8, 12), bellBlock: Object.freeze([[7, 11], [8, 11], [9, 11], [7, 12], [9, 12]]),
   hatch: P(8, 13),
   /** Paso al Fondo del Mar del Sur por el borde este (filas 14–20). */
   east: Object.freeze({ x: 43, y0: 14, y1: 20 }),
-  vents: Object.freeze([P(12, 21), P(33, 27), P(22, 12), P(36, 15)]),
+  vents: Object.freeze([P(12, 21), P(33, 27), P(22, 16), P(36, 15)]),
   /** Decorado con evento (el constructor no pone roca encima): corales [x, y, fila], cajas [x, y, abierta?], columna. */
   corals: Object.freeze([
     [6, 15, 2], [5, 17, 4], [11, 23, 6], [16, 25, 8], [24, 28, 2], [27, 29, 4], [31, 27, 6], [38, 24, 8], [39, 13, 2],
@@ -210,6 +210,13 @@ export const ARRECIFE = Object.freeze({
     { id: 'objeto_arrecife_perla_grande', x: 10, y: 31, item: 'BIGPEARL', hidden: true },
     { id: 'objeto_arrecife_concha', x: 18, y: 27, item: 'SHOALSHELL' },
   ]),
+});
+
+/** Primer piso de la columna: vestigios de Antea, antes de las capas del tiempo. */
+export const ANTEA_BASE = Object.freeze({
+  w: 27, h: 25,
+  down: P(13, 22), arrival: P(13, 21, 8),
+  up: P(13, 5), returnFromLayers: P(13, 6, 2),
 });
 
 // ─────────────────────────────── Campana de dragado (interior de Genesis) ───────────────────────────────

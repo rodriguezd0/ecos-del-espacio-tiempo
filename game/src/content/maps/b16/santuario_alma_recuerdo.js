@@ -9,6 +9,7 @@ import { recuerdoEvents, recuerdoOnEnter } from '../../events/b16_recuerdo.js';
 export default {
   id: 'santuario_alma_recuerdo',
   name: 'Pilar del Alma',
+  pillar: { id: 'P8', floor: 2 },
   tileset: 11,
   width: W,
   height: H,

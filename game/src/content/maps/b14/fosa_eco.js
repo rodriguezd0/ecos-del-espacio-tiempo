@@ -14,6 +14,7 @@ const R4 = ROOMS[4];
 export default {
   id: 'fosa_eco',
   name: 'Pilar de los Ecos',
+  pillar: { id: 'P7', floor: 3 },
   tileset: 15,
   width: FOSA.w,
   height: FOSA.h,

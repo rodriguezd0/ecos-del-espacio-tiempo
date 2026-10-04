@@ -1,8 +1,9 @@
 // Tramos del recorrido E2E del Bloque 16 (tools/e2e_b16.mjs): URL de entrada de cada uno y lo que se juega. Las
 // coordenadas y las soluciones salen de los mismos módulos puros que usa el juego (layouts y reglas de las alas).
 import {
-  PATIO, SABER, SENTIR, QUERER, TELAR, floorTop,
+  PATIO, SABER, SENTIR, QUERER, TELAR, P8_MAPS, P8_UP, floorTop,
 } from '../game/src/content/maps/b16/santuario_layout.js';
+import { legacySantuarioFloor } from '../game/src/content/events/b16_vertical.js';
 import { ARRIVAL, BRIDGE, CELL_LAGOS, SANCTUARY } from '../game/src/content/maps/b16/lagos_layout.js';
 import { LAB, ESPLANADA, ALJIBE } from '../game/src/content/maps/b16/recuerdo_layout.js';
 import { RELIEF_ORDER, roundExit, roundVariant } from '../game/src/content/events/b16_saber_logic.js';
@@ -40,13 +41,14 @@ const entry = (stage, over = {}) => new URLSearchParams({
   zygarde: 'run,ram,terrain,climb,swim,detect,dive', zcells: '96', zcores: '5', ...over,
   flags: [BASE_FLAGS, flagsUpTo(stage), over.flags].filter(Boolean).join(','),
 });
-const front = (g) => ({ map: 'santuario_alma', x: String(g.front.x), y: String(g.front.y), dir: '8' });
+const gateFloor = (g) => g === PATIO.gates.saber ? 1 : g === PATIO.gates.sentir ? 2 : 3;
+const front = (g) => ({ map: P8_MAPS[gateFloor(g)], x: String(g.front.x), y: String(g.front.y), dir: '8' });
 const STARTS = {
   lagos: () => entry('lagos', { map: 'lagos_alma', x: String(ARRIVAL.x), y: String(ARRIVAL.y), dir: '8', zcells: '94' }),
   saber: () => entry('saber', front(PATIO.gates.saber)),
   sentir: () => entry('sentir', front(PATIO.gates.sentir)),
   querer: () => entry('querer', front(PATIO.gates.querer)),
-  telar: () => entry('telar', { map: 'santuario_alma', x: String(PATIO.seal.x), y: String(PATIO.seal.y + 1), dir: '8' }),
+  telar: () => entry('telar', { map: P8_MAPS[3], x: String(PATIO.seal.x), y: String(PATIO.seal.y + 1), dir: '8' }),
   hito: () => entry('hito', { map: 'santuario_alma', x: String(PATIO.exit.arrive.x), y: String(PATIO.exit.arrive.y), dir: '2', fragments: '8', zcells: '100' }),
   vuelo: () => entry('hito', {
     map: 'lagos_alma', x: '28', y: '43', dir: '2', fragments: '8', zcells: '100', zygarde: 'run,ram,terrain,climb,swim,detect,dive,fly,rebuild', zform: 'complete',
@@ -109,8 +111,27 @@ async function lagos(d) {
 
 // ───────────────────────────── Ala del Saber ─────────────────────────────
 
-const inRoom = (room) => (s) => s.map === 'santuario_alma' && s.x >= room.x && s.x < room.x + room.w && s.y >= room.y && s.y < room.y + room.h;
-const atFront = (g) => (s) => s.map === 'santuario_alma' && s.x === g.front.x && s.y === g.front.y;
+const inRoom = (room, floor = null) => (s) => s.map === P8_MAPS[floor || legacySantuarioFloor(room.x + Math.floor(room.w / 2), room.y + Math.floor(room.h / 2))] && s.x >= room.x && s.x < room.x + room.w && s.y >= room.y && s.y < room.y + room.h;
+const atFront = (g) => (s) => s.map === P8_MAPS[gateFloor(g)] && s.x === g.front.x && s.y === g.front.y;
+
+/** Escaleras reales entre alturas; cada llegada queda fuera del paso de retorno. */
+async function toFloor(d, target) {
+  let s = await d.snapState();
+  while (s.map !== P8_MAPS[target]) {
+    const floor = Number(Object.keys(P8_MAPS).find((f) => P8_MAPS[f] === s.map));
+    if (!floor) throw new Error(`No está en una planta del Pilar: ${s.map}`);
+    if (floor < target) {
+      const up = P8_UP[floor];
+      await d.walkTo(up.x, up.y + 1);
+      await d.exitTo('up', P8_MAPS[floor + 1]);
+    } else {
+      await d.walkTo(PATIO.exit.arrive.x, PATIO.exit.arrive.y);
+      await d.exitTo('down', P8_MAPS[floor - 1]);
+    }
+    await d.settle(); s = await d.snapState();
+    await d.milestone(`p8_piso${Object.keys(P8_MAPS).find((f) => P8_MAPS[f] === s.map)}`);
+  }
+}
 
 /**
  * Camina hasta la casilla delante de un dintel y empuja hasta entrar en `room`. Con el equipo lento, la tecla del
@@ -262,6 +283,7 @@ async function recuerdo(d) {
 }
 
 async function sentir(d) {
+  await toFloor(d, 2);
   const [m1, m2, m3] = SENTIR.mirrors;
   await enterGate(d, PATIO.gates.sentir, m1.room);
   await d.expectSaid(/Atrápame con tu reflejo/, 'a Mesprit');
@@ -282,7 +304,7 @@ async function sentir(d) {
   await recuerdo(d);
   await d.expectSaid(/Él oyó lo mismo que tú/, 'a Mesprit tras el recuerdo');
   const thread = await items(d, 'EMOTIONTHREAD');
-  await d.milestone('hebra_sentir', (s) => need(s.map === 'santuario_alma' && has(s, F.sentir) && s.vars[V.answer] === 'lejos' && thread === 1 && !s.mirror, `respuesta ${s.vars[V.answer]}, hebra ${thread}, mapa ${s.map}`));
+  await d.milestone('hebra_sentir', (s) => need(s.map === P8_MAPS[2] && has(s, F.sentir) && s.vars[V.answer] === 'lejos' && thread === 1 && !s.mirror, `respuesta ${s.vars[V.answer]}, hebra ${thread}, mapa ${s.map}`));
   const ex = SENTIR.mesprit.entry.exits[1];
   await d.leave(ex.x, ex.y, 'down', atFront(PATIO.gates.sentir), 'volver al patio');
 }
@@ -290,6 +312,7 @@ async function sentir(d) {
 // ───────────────────────────── Ala del Querer ─────────────────────────────
 
 async function querer(d) {
+  await toFloor(d, 3);
   const Wd = QUERER.wind;
   await enterGate(d, PATIO.gates.querer, Wd.room);
   await d.expectSaid(/Quien se para, vuelve atrás/, 'a Azelf');
@@ -314,6 +337,7 @@ async function querer(d) {
   }
   await d.milestone('c099_viento', (s) => need(has(s, F.wind) && s.cells.includes('cell_alma_3'), `viento ${has(s, F.wind)}, C099 ${s.cells.includes('cell_alma_3')}`));
   await d.pushUntil('up', inRoom(QUERER.azelf.room), 'subir a la cámara de Azelf');
+  if (d.retry) await d.eval(() => window.__b16.realLossTeam());
   await d.faceEvent('azelf');
   await d.interact({ watch: [{ re: /queda sellada durante el combate/, name: 'azelf_sello', delay: 150 }, { scene: 'BattleScene', name: 'azelf_combate', delay: 4000 }] });
   await d.expectSaid(/No podrás usar ningún objeto/, 'el sello de la Mochila');
@@ -323,7 +347,8 @@ async function querer(d) {
   await d.milestone('hebra_querer', (s) => {
     const b = log[log.length - 1];
     if (!b || b.level !== 58 || b.canRun !== false || b.canCatch !== false || !/sello de Azelf/.test(b.sealedBag || '') || !b.canLose || !b.noMoneyLoss) return `combate: ${JSON.stringify(b)}`;
-    if (d.retry && (log.length !== 2 || !s.lost.includes('azelf'))) return `reintentos: ${log.length}`;
+    if (d.retry && (log.length < 2 || !s.lost.includes('azelf') || log.slice(0, -1).some((r) => r.outcome !== 'lose' || r.moneyBefore !== r.moneyAfter || !Number.isInteger(r.turns)) || s.vars[V.azelfTries] !== log.length - 1)) return `reintentos: ${JSON.stringify(log)}`;
+    if (b.outcome !== 'win') return `Azelf sin victoria real: ${JSON.stringify(b)}`;
     return need(has(s, F.querer) && thread === 1, `hebra ${thread}`);
   });
   const ex = QUERER.azelf.entry.exits[1];
@@ -333,6 +358,7 @@ async function querer(d) {
 // ───────────────────────────── Telar ─────────────────────────────
 
 async function telar(d) {
+  await toFloor(d, 3);
   await d.faceEvent('sello_telar');
   await d.interact({ watch: [{ re: /escalera de luz/, name: 'hexagono', delay: 200 }] });
   await d.until((s) => inRoom(TELAR.room)(s) && !s.busy, { what: 'el Telar' });
@@ -359,12 +385,13 @@ async function telar(d) {
     `P8 ${has(s, F.restored)}, ${JSON.stringify(st)}, hebras tejidas ${s.vars[V.weaves]}`));
   await d.expectSaid(/Desde fuera del santuario llega un crujido largo/, 'el crujido de fuera');
   const ex = TELAR.entry.exits[1];
-  await d.leave(ex.x, ex.y, 'down', inRoom(PATIO.room), 'bajar al patio');
+  await d.leave(ex.x, ex.y, 'down', inRoom(PATIO.room, 3), 'bajar al rellano');
 }
 
 // ───────────────────────────── Hito de la Forma Completa ─────────────────────────────
 
 async function hito(d) {
+  await toFloor(d, 1);
   const ex = PATIO.exit.exits[1];
   const toLakes = (s) => s.map === 'lagos_alma';
   await d.leave(ex.x, ex.y, 'down', toLakes, 'salir a los lagos', {

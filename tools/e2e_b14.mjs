@@ -11,8 +11,8 @@
 //   sala3     caracola de tres capas · era primigenia · una embestida de la Bramaluna a propósito (vuelta a la caracola)
 //             · brote y helecho con sigilo · raíz en Antea · C083 en la terraza del presente
 //   sala4     C084 · corriente de la Fosa · brote y helecho con sigilo · raíz y aliviadero en Antea · boca en calma
-//   fosa      la Bramaluna del eco: derrota simulada (manantial de la sala 4) y victoria (captura desactivada) · núcleo:
-//             Fragmento 7, verso VII, T13 · la Bramaluna real (nivel 58) · corriente ascendente a Caleta Sonda
+//   fosa      Bramaluna eco: derrota real, cura en el manantial y victoria (captura desactivada) · núcleo:
+//             Fragmento 7, verso VII, T13 · captura normal de Bramaluna real · corriente a Caleta Sonda
 //   regreso   escena final en la playa (mareas, Fausto, ferri, el norte) · Fausto y Carmela · cartel del ferri
 //   fondo     arrecife → Fondo del Mar del Sur por el este · C079, C080, C077, C078, C081 (con respiraderos)
 // Capturas en tools/cache/screens/e2e_b14_<nn>_<hito>.png y transcripción en e2e_b14_dialogos.txt.
@@ -106,7 +106,7 @@ async function arrecife(d) {
   await d.milestone('arrecife', (s) => need(s.dive && s.map === 'arrecife_eco', 'sin burbuja de buceo'));
   await d.faceEvent('buceador_casimiro');
   await d.interact({ watch: [{ scene: 'BattleScene', name: 'buceador', delay: 2500 }] });
-  await d.walkTo(22, 6, { face: 'up' });
+  await d.walkTo(22, 15, { face: 'up' });
   await d.interact();
   await d.expectSaid(/cabezal de una draga enorme/, 'la draga');
   await d.expectSaid(/se pierde hacia el oeste, hasta una campana/, 'la pista de la campana');
@@ -133,9 +133,18 @@ async function arrecife(d) {
   await d.walkTo(8, 10);
   await d.exitTo('down', 'arrecife_eco');
   const aside = await d.eval(() => [window.__b14.eventAlive('draga_cabezal'), window.__b14.eventAlive('draga_apartada')]);
-  await d.walkTo(22, 5);
+  await d.walkTo(22, 14);
   await d.milestone('puerta_antea', () => need(!aside[0] && aside[1], `cabezal ${aside}`));
+  await d.exitTo('up', 'antea_base');
+  await d.milestone('p7_piso1_ruinas', (s) => need(s.map === 'antea_base' && !s.dive, 'sin primer piso de ruinas'));
+  // Se baja y se vuelve a subir antes de resolver ningún puzzle.
+  await d.walkTo(13, 21);
+  await d.exitTo('down', 'arrecife_eco');
+  await d.walkTo(22, 14);
+  await d.exitTo('up', 'antea_base');
+  await d.walkTo(13, 6);
   await d.exitTo('up', 'antea_1_presente');
+  await d.milestone('p7_piso2_capas', (s) => need(s.map === 'antea_1_presente', 'sin segundo piso'));
 }
 
 async function sala1(d) {
@@ -269,10 +278,15 @@ async function fosa(d) {
   await d.settle();
   const inFosa = (s) => s.map !== 'fosa_eco' || has(s, 'b14_bramaluna_eco');
   if (RETRY) {
+    const moneyBefore = await d.eval(() => window.__b14.money());
+    await d.eval(() => window.__b14.realLossTeam());
     await d.walkTo(15, 16, { stopWhen: inFosa });
     await d.settle();
     await d.expectSaid(/Has tenido que retirarte/, 'la derrota sin pérdida');
-    await d.milestone('eco_derrota', (s) => need(s.map === 'antea_4_presente' && s.x === 21 && s.y === 11 && s.lost.includes('bramaluna_eco'), `tras perder en ${s.map} (${s.x},${s.y})`));
+    await d.expectSaid(/Magikarp se debilitó/, 'el debilitamiento real del equipo de prueba');
+    const loss = await d.eval(() => ({ battle: window.__b14.battles.at(-1), health: window.__b14.health(), money: window.__b14.money() }));
+    await d.milestone('eco_derrota', (s) => need(s.map === 'antea_4_presente' && s.x === 21 && s.y === 11 && loss.battle.outcome === 'lose' && Number.isInteger(loss.battle.turns) && loss.money === moneyBefore && loss.health.every((p) => p.hp === p.maxHP), `tras perder en ${s.map} (${s.x},${s.y}): ${JSON.stringify(loss)}`));
+    await d.eval(() => window.__b14.restoreTeam());
     await d.walkTo(16, 5);
     await d.exitTo('up', 'fosa_eco');
   }
@@ -295,7 +309,8 @@ async function fosa(d) {
   await d.faceEvent('bramaluna_real');
   await d.interact({ watch: [{ scene: 'BattleScene', name: 'bramaluna_real', delay: 4000 }] });
   const real = await d.eval(() => window.__b14.battles.filter((b) => b.tag === 'bramaluna_real').pop());
-  await d.milestone('bramaluna_real', () => need(real && real.level === 58 && real.alpha && !real.catchRule, `combate real: ${JSON.stringify(real)}`));
+  const captured = await d.eval(() => window.__b14.captured().includes('ROARINGMOON'));
+  await d.milestone('bramaluna_real', () => need(real && real.level === 58 && real.alpha && !real.catchRule && real.outcome === 'caught' && captured, `captura real: ${JSON.stringify(real)}`));
   await d.walkTo(24, 19);
   await d.interact();
   await d.until((s) => s.map === 'caleta_sonda' && s.ready, { timeout: 15000, what: 'subir a Caleta Sonda' });
@@ -362,7 +377,7 @@ async function main() {
     page.on('console', (msg) => { if (msg.type() === 'error') errors.push(`[error] ${msg.text()}`); });
     page.on('response', (res) => { if (res.status() >= 400) errors.push(`[http ${res.status()}] ${res.url()}`); });
     d = new Driver(page, errors, {
-      outDir: OUT, root: ROOT, loseOnce: RETRY ? ['bramaluna_eco'] : [],
+      outDir: OUT, root: ROOT, captureReal: true,
       // Azumarill con Carantoña delante: el piloto automático usa siempre el primer movimiento de daño.
       leadMoves: ['PLAYROUGH', 'AQUATAIL', 'ICEPUNCH', 'SUPERPOWER'],
     });

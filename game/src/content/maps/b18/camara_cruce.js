@@ -9,8 +9,8 @@ import { pilarTone } from '../../stamps/pilar.js';
 import { axisTone, cachedAxis } from '../../../world/axis/logic.js';
 import { W, H, ENTRY } from './cruce_layout.js';
 import { buildCruce } from './cruce_build.js';
-import { cruceEvents, cruceWarps, cruceEnter } from '../../events/b18_cruce.js';
-import { nucleoEvents } from '../../events/b18_nucleo.js';
+import { cruceEvents, cruceWarps, cruceEnter, roomAt } from '../../events/b18_cruce.js';
+import { CORE_MAP } from './vertical_layout.js';
 import { CAMARA_CRUCE } from '../../encounters/b18.js';
 
 const BASE_TONE = pilarTone('P9');
@@ -19,6 +19,7 @@ export default {
   id: 'camara_cruce',
   ...zoneDefaults('camara_cruce'),
   name: 'Cámara del Cruce',
+  pillar: { id: 'P9', floor: 2 },
   tileset: 8,
   width: W,
   height: H,
@@ -36,6 +37,8 @@ export default {
   encounters: CAMARA_CRUCE,
   build: buildCruce,
   warps: cruceWarps(),
-  events: [...cruceEvents(), ...nucleoEvents()],
+  events: cruceEvents(),
+  // MapScene resuelve este destino ANTES de nearestFreeSpot: el antiguo núcleo ya no está en esta planta.
+  redirectArrival({ x, y, dir }) { return roomAt(x, y) === 'nucleo' ? { map: CORE_MAP, x, y, dir } : null; },
   onEnter: cruceEnter,
 };

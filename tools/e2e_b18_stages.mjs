@@ -10,7 +10,7 @@ const has = (s, f) => Boolean(s.flags[f]);
 const need = (cond, msg) => (cond ? null : msg);
 const vars = (d) => d.eval(() => window.__b16.vars());
 const items = (d, id) => d.eval((i) => window.__b16.items(i), id);
-const inRect = (r) => (s) => s.map === 'camara_cruce' && s.x >= r.x && s.x < r.x + r.w && s.y >= r.y && s.y < r.y + r.h;
+const inRect = (r) => (s) => s.map === (r === NUCLEO.room ? 'camara_cruce_nucleo' : 'camara_cruce') && s.x >= r.x && s.x < r.x + r.w && s.y >= r.y && s.y < r.y + r.h;
 
 // ───────────────────────────── Estado de entrada (CAMPANA B18: b17_vigilia, Cadena Roja, Reconstrucción) ─────────
 
@@ -37,19 +37,39 @@ const CHAMBER_FLAGS = [F.chamberIn, F.tutorial, F.room1, F.room2, F.room3];
 const BOUND_FLAGS = [F.nucleus, F.verse, F.bound, F.restored, F.tempered, F.inscription, F.orb];
 
 const STARTS = {
+  exterior: () => entry({ map: 'senda_mirador', x: '20', y: '37', dir: '2', flags: 'b17_senda_tramo' }),
   puente: () => entry({ map: 'puente_convergencia', ...pos(ARRIVAL, 2) }),
   genesis: () => entry({ map: 'puente_convergencia', x: '20', y: '29', dir: '2', flags: BRIDGE_FLAGS.join(',') }),
   cruce: () => entry({ map: 'puente_convergencia', ...pos(MOUTH.front, 8), flags: SCENE_FLAGS.join(',') }),
-  nucleo: () => entry({ map: 'camara_cruce', ...pos(NUCLEO.stairs.arrive, 8), vars: 'cadena_eje:time', flags: [...SCENE_FLAGS, ...CHAMBER_FLAGS].join(',') }),
+  nucleo: () => entry({ map: 'camara_cruce_nucleo', ...pos(NUCLEO.stairs.arrive, 8), vars: 'cadena_eje:time', flags: [...SCENE_FLAGS, ...CHAMBER_FLAGS].join(',') }),
   reaparece: () => entry({
     map: 'puente_convergencia', ...pos(CAMP.healPoint, 8), fragments: '9',
     vars: `cadena_eje:time,${V.choice}:DIALGA,${V.chosenRest}:0`, flags: [...SCENE_FLAGS, ...CHAMBER_FLAGS, ...BOUND_FLAGS].join(','),
   }),
+  guardado_postgame: () => entry({
+    map: 'camara_cruce', ...pos(NUCLEO.coreFront, 8), fragments: '9',
+    vars: `cadena_eje:time,${V.choice}:PALKIA,${V.chosenRest}:4,${V.restCount}:5`,
+    flags: [...SCENE_FLAGS, ...CHAMBER_FLAGS, ...BOUND_FLAGS, F.farewell, 'game_cleared', 'b21_fin'].join(','),
+  }),
 };
 export const startUrl = (stage) => STARTS[stage]();
-export const ORDER = ['puente', 'genesis', 'cruce', 'nucleo', 'reaparece'];
+export const ORDER = ['exterior', 'puente', 'genesis', 'cruce', 'nucleo', 'reaparece', 'guardado_postgame'];
 /** Tramos que cargan su propia URL aunque se venga del anterior. */
-export const FRESH = new Set(['reaparece']);
+export const FRESH = new Set(['reaparece', 'guardado_postgame']);
+
+async function exterior(d) {
+  await d.walkTo(25, 38);
+  await d.walkTo(25, 49);
+  await d.walkTo(20, 49);
+  await d.shot('columna_exterior');
+  await d.pushUntil('up', (s) => s.map === 'puente_convergencia', 'entrar por la columna visible');
+  await d.settle();
+  await d.walkTo(20, 0);
+  await d.pushUntil('up', (s) => s.map === 'senda_mirador', 'salir de la primera planta');
+  await d.milestone('columna_regreso', (s) => need(s.x === 20 && s.y === 49, 'la salida rebota sobre el warp exterior'));
+  await d.pushUntil('up', (s) => s.map === 'puente_convergencia', 'volver a entrar al Pilar');
+  await d.settle();
+}
 
 // ───────────────────────────── Puente: llegada y Reconstrucción ─────────────────────────────
 
@@ -130,6 +150,14 @@ async function cruce(d) {
   await d.settle();
   await d.expectSaid(/Una sala blanca partida en dos/, 'la llegada al núcleo');
   await d.milestone('nucleo', (s) => need(has(s, F.nucleus), 'el núcleo no queda visto'));
+  await coreReturn(d, 'regreso_antes_restaurar');
+}
+
+async function coreReturn(d, name) {
+  await d.walkTo(NUCLEO.stairs.arrive.x, NUCLEO.stairs.exits[1].y);
+  await d.pushUntil('down', (s) => s.map === 'camara_cruce', 'bajar de la tercera a la segunda planta');
+  await d.milestone(name, (s) => need(s.x === SHORTCUT.front.x && s.y === SHORTCUT.front.y, 'llegada sobre un warp o fuera del vestíbulo'));
+  await shortcut(d);
 }
 
 /** Del vestíbulo al núcleo por el atajo (con el eje que haya; el solucionador dice cómo cruzar los escombros). */
@@ -216,6 +244,41 @@ async function reaparece(d) {
       `sin captura: ${JSON.stringify({ caught: v[V.caught], b, where })}`);
   });
   if (await d.eval(() => window.__b16.eventAlive('elegido_reaparece'))) throw new Error('Dialga sigue en el núcleo tras capturarlo');
+  await coreReturn(d, 'regreso_despues_restaurar');
+  await miradorReturn(d);
 }
 
-export const STAGES = { puente, genesis, cruce, nucleo, reaparece };
+async function miradorReturn(d) {
+  await d.walkTo(NUCLEO.stairs.arrive.x, NUCLEO.stairs.exits[1].y);
+  await d.pushUntil('down', (s) => s.map === 'camara_cruce', 'bajar al vestíbulo');
+  const mode = await d.axis();
+  const now = await d.snapState();
+  const from = { x: now.x - VESTIBULO.ox, y: now.y - VESTIBULO.oy, mode };
+  const goal = VESTIBULO.grid.entry;
+  const plan = solveAxis(VESTIBULO.grid, from, (x, y) => x === goal.x && y === goal.y);
+  if (!plan) throw new Error('sin regreso del atajo a la entrada del vestíbulo');
+  await d.playRoom(VESTIBULO, plan, from);
+  await d.walkTo(ENTRY.x, ENTRY.y);
+  await d.pushUntil('down', (s) => s.map === 'puente_convergencia', 'bajar a la primera planta');
+  await d.walkTo(20, 59);
+  await d.pushUntil('down', (s) => s.map === 'mirador_sur', 'salir al Mirador Sur');
+  await d.milestone('mirador_sur', (s) => need(s.x === 20 && s.y === 1, 'salida sur incorrecta'));
+  await d.pushUntil('up', (s) => s.map === 'puente_convergencia', 'volver desde el Mirador Sur');
+  await d.walkTo(20, 0);
+  await d.pushUntil('up', (s) => s.map === 'senda_mirador', 'cruzar desde el Sur al Norte');
+  await d.milestone('miradores_conectados', (s) => need(s.x === 20 && s.y === 49, 'no se vuelve a la columna norte'));
+}
+
+async function guardado_postgame(d) {
+  await d.settle();
+  await d.milestone('guardado_antiguo', async (s) => {
+    const v = await vars(d);
+    return need(s.map === 'camara_cruce_nucleo' && s.x === 48 && s.y === 10 && v[V.choice] === 'PALKIA'
+      && v[V.chosenRest] === 4 && v[V.restCount] === 5 && has(s, F.orb), 'migración del núcleo antiguo incorrecta');
+  });
+  if (!(await d.eval(() => window.__b16.eventAlive('elegido_reaparece')))) throw new Error('el elegido pendiente se pierde al migrar');
+  await miradorReturn(d);
+  await d.milestone('retorno_postgame', (s) => need(has(s, 'game_cleared') && has(s, 'b21_fin'), 'se altera el postgame al cruzar el Pilar'));
+}
+
+export const STAGES = { exterior, puente, genesis, cruce, nucleo, reaparece, guardado_postgame };

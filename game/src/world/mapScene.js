@@ -155,6 +155,14 @@ export default class MapScene extends Scene {
   /** Entra en un mapa (warp o inicio): sustituye mapa, coloca jugador/seguidor y cámara. */
   async enterMap(id, x, y, dir) {
     const entry = await this.loadEntry(id);
+    // Migraciones de pisos: conservar las coordenadas guardadas antes de buscar una casilla libre.
+    const arrival = entry.def.redirectArrival?.({ x, y, dir, state: this.state });
+    if (arrival) {
+      if (arrival.map && arrival.map !== id) return this.enterMap(arrival.map, arrival.x, arrival.y, arrival.dir);
+      x = arrival.x ?? x;
+      y = arrival.y ?? y;
+      dir = arrival.dir ?? dir;
+    }
     this.visible.clear();
     this.worldView.clearMaps();
     this.world.setCurrent(entry);

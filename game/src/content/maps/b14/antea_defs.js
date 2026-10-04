@@ -39,6 +39,7 @@ export function roomDef(room, era, { build, events = [], warps = [], shallow = [
   const def = {
     id: roomMap(room, era),
     name: 'Pilar de los Ecos',
+    pillar: { id: 'P7', floor: 2 },
     width: R.w,
     height: R.h,
     ...ERA_DEFAULTS[kind](),

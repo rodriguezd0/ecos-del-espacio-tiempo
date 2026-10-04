@@ -24,7 +24,7 @@ export const FOSA_TEXT = Object.freeze({
   coreCold: 'El núcleo guarda un calor tranquilo. El eco de la fosa se ha calmado.',
   tides: 'Un rumor de mareas recorre la fosa… y se aquieta, como una respiración que por fin se acompasa.',
   north: 'Muy lejos, al norte, algo helado se afloja. Como un nudo que se deshace.',
-  dredge: 'Arriba, en el arrecife, algo metálico cruje y se queda en silencio.',
+  dredge: 'En el arrecife, algo metálico cruje y se queda en silencio.',
   faustoFreed: 'En la calle de los pescadores del eco, una figura se desvanece: el eco suelta a Fausto.',
   t13: 'Bajo el verso hay otra inscripción, más pequeña. La lees sin ayuda: «La decimotercera tabla espera en el hielo más viejo.»',
   real: 'Algo se mueve en el nido. La Bramaluna sigue ahí… pero ya no es un eco. Respira de verdad.',

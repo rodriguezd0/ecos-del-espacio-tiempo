@@ -6,9 +6,9 @@
 // Coordenadas en puente_layout.js; pintado en puente_build.js; eventos en content/events/b18_puente.js (rellano,
 // Reconstrucción, Alerce) y b18_genesis.js (Casia, Garrido, Vértice y la irrupción de Dialga y Palkia).
 import { zoneDefaults } from '../../services/zones.js';
-import { W, H, ARRIVAL, MOUTH, ENCOUNTER_ZONES } from './puente_layout.js';
+import { W, H, ARRIVAL, MOUTH, ENCOUNTER_ZONES, NORTH_EXIT, SOUTH_EXIT } from './puente_layout.js';
 import { buildPuente, PUENTE_BRUSHES, PUENTE_STAMPS } from './puente_build.js';
-import { linkIfReady } from './pending_links.js';
+import { EXTERIOR } from './vertical_layout.js';
 import { puenteEvents } from '../../events/b18_puente.js';
 import { genesisEvents } from '../../events/b18_genesis.js';
 import { PUENTE_CONVERGENCIA } from '../../encounters/b18.js';
@@ -21,10 +21,11 @@ export default {
   id: 'puente_convergencia',
   ...zoneDefaults('puente_convergencia'),
   name: 'Puente de la Convergencia',
+  pillar: { id: 'P9', floor: 1 },
   tileset: 1,
   width: W,
   height: H,
-  outdoor: true,
+  outdoor: false,
   bgm: 'Amenaza',
   battleback: 'Espacio',
   seed: 1809,
@@ -36,10 +37,12 @@ export default {
   encounterZones: ENCOUNTER_ZONES.map((z) => ({ ...z, encounters: PUENTE_CONVERGENCIA })),
   build: buildPuente,
   warps: [
+    ...Array.from({ length: NORTH_EXIT.x1 - NORTH_EXIT.x0 + 1 }, (_, i) => ({ x: NORTH_EXIT.x0 + i, y: 0, dirTrigger: 8, to: 'senda_mirador', tx: EXTERIOR.arrive.x, ty: EXTERIOR.arrive.y, dir: 2 })),
+    ...Array.from({ length: SOUTH_EXIT.x1 - SOUTH_EXIT.x0 + 1 }, (_, i) => ({ x: SOUTH_EXIT.x0 + i, y: SOUTH_EXIT.y, dirTrigger: 2, to: 'mirador_sur', tx: SOUTH_EXIT.x0 + i, ty: 1, dir: 2 })),
     // La boca de la Cámara del Cruce (la sella la Cadena Sintética hasta la escena de Vértice)
     { x: MOUTH.warp.x, y: MOUTH.warp.y, to: 'camara_cruce', tx: CRUCE_ENTRY.x, ty: CRUCE_ENTRY.y, dir: 8 },
   ],
   // Extremos del tablero: Senda del Mirador (norte) y Mirador Sur (sur), de B17 (offset 0 en los dos sentidos)
-  connections: [linkIfReady('senda_mirador'), linkIfReady('mirador_sur')].filter(Boolean),
+  connections: [],
   events: [...puenteEvents(), ...genesisEvents()],
 };

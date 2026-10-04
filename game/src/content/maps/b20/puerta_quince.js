@@ -11,6 +11,7 @@ import { pilarTone } from '../../stamps/pilar.js';
 export default {
   id: 'puerta_quince',
   name: 'Puerta de las Quince',
+  pillar: { id: 'P10', floor: 1 },
   tileset: 2,
   width: PUERTA.w,
   height: PUERTA.h,

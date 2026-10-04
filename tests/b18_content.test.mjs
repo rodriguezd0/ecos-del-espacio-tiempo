@@ -93,7 +93,7 @@ test('Cámara: el mapa pinta cada sala como su ASCII en los tres ejes (vacío, e
 });
 
 test('Núcleo: Dialga al oeste y Palkia al este del núcleo; el elegido baja delante; orbe e inscripción en su sitio', async () => {
-  const { map, w } = await fieldWorld('camara_cruce');
+  const { map, w } = await fieldWorld('camara_cruce_nucleo');
   const ev = (id) => w.events.find((e) => e.id === id);
   assert.deepEqual([ev('dialga_nucleo').x, ev('dialga_nucleo').y], [NUCLEO.dialga.x, NUCLEO.dialga.y]);
   assert.deepEqual([ev('palkia_nucleo').x, ev('palkia_nucleo').y], [NUCLEO.palkia.x, NUCLEO.palkia.y]);

@@ -18,6 +18,19 @@ const ANIL_TILESETS = new URL('../Pokemon Anil V4.13/Graphics/Tilesets/', import
 const byPos = (writes) => new Map(writes.map((w) => [`${w.x},${w.y},${w.layer}`, w.id]));
 const tid = (x, y) => FIRST_REGULAR_TILE + y * 8 + x;
 
+test('la columna de Antea existe en TS15 y mantiene una puerta pasable entre dos bases sólidas', async () => {
+  const lib = await loadStampLibrary(15), tower = lib.stamps.pilar_torre;
+  assert.ok(tower, 'P7 necesita una columna completa en Cueva1');
+  assert.equal(tower.w, 7); assert.equal(tower.h, 10);
+  const writes = stampWrites(tower, 0, 0);
+  for (const x of [0, 1, 2, 4, 5, 6]) {
+    const t = writes.find((w) => w.x === x && w.y === 9);
+    assert.equal(tilesets[15].passages[t.id] & 15, 15);
+  }
+  const door = writes.find((w) => w.x === 3 && w.y === 9);
+  assert.equal(tilesets[15].passages[door.id] & 15, 0);
+});
+
 test('kit de Pilar: los 12 elementos de X23 existen con el mismo nombre en todos los tilesets de Pilar', async () => {
   const required = ['pilar_monolito', 'pilar_dintel', 'pilar_canal', 'pilar_placa_unown', 'pilar_pedestal', 'pilar_columna_quebrada',
     'pilar_escalinata', 'pilar_camara_nucleo', 'pilar_zocalo', 'pilar_losa_eco', 'pilar_arista', 'pilar_manantial'];

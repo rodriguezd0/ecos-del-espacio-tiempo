@@ -138,7 +138,12 @@ add('boreal', 1, 'villa_boreal', 'Villa Boreal', 'H', [{ where: 'Tejado del Obse
 add('escarcha', 1, 'gruta_escarcha', 'Gruta Escarcha', 'H', ['Lago helado']);
 add('lagos', 1, 'lagos_alma', 'Lagos del Alma', 'H', ['Islote del Lago del Sentir']);
 add('mar_boreal', 1, 'mar_boreal', 'Mar Boreal', 'H', ['Témpano']);
-add('alma', 1, 'santuario_alma', 'Pilar del Alma', 'H', ['Ala del Saber', 'Ala del Sentir', 'Ala del Querer', 'Telar del Alma'], { required: true });
+add('alma', 1, 'santuario_alma', 'Pilar del Alma', 'H', [
+  'Ala del Saber',
+  { where: 'Ala del Sentir', map: 'santuario_alma_sentir' },
+  { where: 'Ala del Querer', map: 'santuario_alma_querer' },
+  { where: 'Telar del Alma', map: 'santuario_alma_querer' },
+], { required: true });
 
 if (cells.length !== TOTAL_CELLS) throw new Error(`Registro de células: se esperaban ${TOTAL_CELLS} y hay ${cells.length}`);
 

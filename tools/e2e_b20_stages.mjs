@@ -8,6 +8,7 @@ import { STONES, stonePresses, corridorPath, corridorLedge, doorExit, facetRoom6
 import { solveAxis } from '../game/src/world/axis/logic.js';
 import { CAMPAIGN_TABLETS } from '../game/src/content/story/tablets.js';
 import { facetMasks } from '../game/src/world/impossible/logic.js';
+import { F as F19 } from '../game/src/content/events/b19_common.js';
 
 const has = (s, f) => Boolean(s.flags[f]);
 const need = (cond, msg) => (cond ? null : msg);
@@ -28,7 +29,7 @@ const AFTER = {
   cielo: [F.skyArrival, F.tornadus, F.thundurus, F.landorus, F.trio],
   terraza: [F.gaelHeal, F.gaelB6, F.gaelTalk, F.gaelGone],
 };
-export const ORDER = ['puerta', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 'cielo', 'terraza', 'nucleo'];
+export const ORDER = ['exterior', 'puerta', 't1', 't2', 't3', 't4', 't5', 't6', 't7', 't8', 't9', 'cielo', 'terraza', 'nucleo'];
 const flagsUpTo = (stage) => {
   const i = ORDER.indexOf(stage);
   const done = ORDER.slice(0, i);
@@ -44,6 +45,7 @@ const entry = (stage, over = {}) => new URLSearchParams({
 });
 const at = (map, p) => ({ map, x: String(p.x), y: String(p.y), dir: String(p.dir ?? 8) });
 const STARTS = {
+  exterior: () => entry('exterior', { map: 'sima_eje', x: '18', y: '38', dir: '8', tablets: '14', flags: [F19.simaIntro, F19.exit].join(',') }),
   puerta: () => entry('puerta', at('puerta_quince', PUERTA.arrive)),
   t1: () => entry('t1', at(tramoId(1), ARRIVE)), t2: () => entry('t2', at(tramoId(2), ARRIVE)), t3: () => entry('t3', at(tramoId(3), ARRIVE)),
   t4: () => entry('t4', at(tramoId(4), ARRIVE)), t5: () => entry('t5', at(tramoId(5), ARRIVE)), t6: () => entry('t6', at(tramoId(6), T6.arrive)),
@@ -57,6 +59,17 @@ export const startUrl = (stage) => STARTS[stage]();
 export const ENTRY_KEY_ITEMS = ['GLYPHKEY', 'REDCHAIN', 'CLUENOTEBOOK', 'ZYGARDECUBE'];
 
 const inMap = (id) => (s) => s.map === id;
+
+async function exterior(d) {
+  await d.shot('columna_exterior');
+  await d.pushUntil('up', inMap('puerta_quince'), 'entrar al Pilar del Origen por la columna');
+  await d.settle();
+  await d.walkTo(PUERTA.back.x, PUERTA.back.y, { stopWhen: inMap('sima_eje') });
+  await d.settle();
+  await d.milestone('columna_regreso', (s) => need(s.map === 'sima_eje' && s.x === 18 && s.y === 38, 'la vuelta desde Puerta Quince rebota'));
+  await d.pushUntil('up', inMap('puerta_quince'), 'volver a entrar a Puerta Quince');
+  await d.settle();
+}
 
 async function exitNorth(d, next) {
   await d.walkTo(EXIT_STAND.x, EXIT_STAND.y, { stopWhen: inMap(next) });
@@ -297,6 +310,10 @@ async function t9(d) {
   await d.expectSaid(/Aquí termina el camino que grabamos/, 'el mensaje de los Custodios');
   await d.milestone('t9_custodios', (s) => need(has(s, F.custodios) && has(s, 'verse_10'), 'sin verso X'));
   await exitNorth(d, 'cielo_interior');
+  await d.settle();
+  await d.walkTo(CIELO.back.x, CIELO.back.y, { stopWhen: inMap(tramoId(9)) });
+  await d.milestone('regreso_planta2_antes_trio', (s) => need(s.map === tramoId(9) && s.x === EXIT_STAND.x && s.y === EXIT_STAND.y, 'la escalera de vuelta no llega a la Senda'));
+  await exitNorth(d, 'cielo_interior');
 }
 
 // ───────────────────────────── Cielo Interior ─────────────────────────────
@@ -336,6 +353,11 @@ async function cielo(d) {
   await d.milestone('cielo_trio', (s) => need(has(s, F.trio) && s.vars[V.trioAnswer] === 'zygarde', `respuesta ${s.vars[V.trioAnswer]}`));
   await d.walkTo(CIELO.gate.x, CIELO.gate.y, { stopWhen: inMap('terraza_ultimo_sello') });
   await d.until((s) => s.map === 'terraza_ultimo_sello' && s.ready, { timeout: 15000, what: 'la Terraza' });
+  await d.walkTo(TERRAZA.back.x, TERRAZA.back.y);
+  await d.pushUntil('down', inMap('cielo_interior'), 'bajar de la tercera planta antes de Gael');
+  await d.milestone('regreso_planta3_antes_gael', (s) => need(s.x === CIELO.gateStand.x && s.y === CIELO.gateStand.y, 'el regreso cae sobre el arco'));
+  await d.walkTo(CIELO.gate.x, CIELO.gate.y, { stopWhen: inMap('terraza_ultimo_sello') });
+  await d.until((s) => s.map === 'terraza_ultimo_sello' && s.ready, { timeout: 15000, what: 'volver a la Terraza' });
 }
 
 // ───────────────────────────── Terraza y Núcleo ─────────────────────────────
@@ -368,7 +390,13 @@ async function nucleo(d) {
   const crisis = await d.eval(() => window.__b20.crisis());
   await d.expectSaid(/X\. Dos partirán del mismo alba/, 'la profecía entera');
   await d.milestone('nucleo_flauta', (s) => need(has(s, 'p10_restored') && has(s, F.flute) && flute && crisis === 4, `flauta ${flute}, crisis ${crisis}`));
+  await d.walkTo(NUCLEO.back.x, NUCLEO.back.y);
+  await d.pushUntil('down', inMap('terraza_ultimo_sello'), 'volver del núcleo a Gael');
+  await d.walkTo(TERRAZA.back.x, TERRAZA.back.y);
+  await d.pushUntil('down', inMap('cielo_interior'), 'bajar del último sello al Cielo');
+  await d.walkTo(CIELO.back.x, CIELO.back.y, { stopWhen: inMap(tramoId(9)) });
+  await d.milestone('regreso_tres_plantas_restauradas', (s) => need(s.map === tramoId(9) && has(s, F.restored) && has(s, F.flute), 'el regreso pierde la Flauta o la restauración'));
 }
 
-export const STAGES = { puerta, t1, t2, t3, t4, t5, t6, t7, t8, t9, cielo, terraza, nucleo };
+export const STAGES = { exterior, puerta, t1, t2, t3, t4, t5, t6, t7, t8, t9, cielo, terraza, nucleo };
 export { corridorLedge };

@@ -18,7 +18,8 @@ import { buildMapNode } from '../tools/lib/map_node.mjs';
 import {
   ARRIVAL, SANCTUARY, BRIDGE, CELL_LAGOS, LAGOS_ITEMS, NPC, REFUGIO, EXITS, ISLAND,
 } from '../game/src/content/maps/b16/lagos_layout.js';
-import { PATIO, SABER, SENTIR, QUERER, TELAR, ENTRY, SANTUARIO_ITEMS, floorTop } from '../game/src/content/maps/b16/santuario_layout.js';
+import { PATIO, SABER, SENTIR, QUERER, TELAR, ENTRY, P8_MAPS, SANTUARIO_ITEMS, floorTop } from '../game/src/content/maps/b16/santuario_layout.js';
+import { santuarioItemFloor } from '../game/src/content/events/b16_vertical.js';
 import { LAB, ESPLANADA, ALJIBE } from '../game/src/content/maps/b16/recuerdo_layout.js';
 import { F } from '../game/src/content/events/b16_common.js';
 
@@ -181,32 +182,32 @@ const inRoom = (r, room) => {
   for (let y = floorTop(room); y < room.y + room.h; y++) for (let x = room.x; x < room.x + room.w; x++) if (r.has(x, y)) return true;
   return false;
 };
-const sant = (flags = []) => world('santuario_alma', { flags: [F.sanctuaryIntro, ...flags] });
+const sant = (flags = [], floor = 1) => world(P8_MAPS[floor], { flags: [F.sanctuaryIntro, ...flags] });
 
-test('Santuario: del patio se llega a las tres alas; la sala de puertas del Saber solo tras los glifos', async () => {
+test('Santuario: del rellano de cada piso se llega a su ala; la sala de puertas del Saber solo tras los glifos', async () => {
   const s = await sant();
   const r = bfs(s, HOME);
   assert.ok(inRoom(r, SABER.glyphRoom.room), 'la sala de los glifos no se alcanza');
-  assert.ok(inRoom(r, SENTIR.mirrors[0].room), 'el primer espejo no se alcanza');
-  assert.ok(inRoom(r, QUERER.wind.room), 'el pasillo del viento no se alcanza');
+  assert.ok(inRoom(bfs(await sant([], 2), HOME), SENTIR.mirrors[0].room), 'el primer espejo no se alcanza');
+  assert.ok(inRoom(bfs(await sant([], 3), HOME), QUERER.wind.room), 'el pasillo del viento no se alcanza');
   assert.ok(!inRoom(r, SABER.doors3.room), 'se llega a las tres puertas sin colocar los glifos');
   assert.ok(inRoom(bfs(await sant([F.glyphs]), HOME), SABER.doors3.room), 'con los glifos, la sala de tres puertas sigue cerrada');
   // Las rondas de cuatro puertas, la cámara de Uxie y el Telar solo se alcanzan por guion (puertas y hexágono)
   const all = bfs(await sant([F.glyphs, F.mirror1, F.mirror2, F.mirror3, F.telarOpen]), HOME);
   assert.ok(!inRoom(all, SABER.doors4.room), 'la sala de cuatro puertas se alcanza sin acertar una puerta');
   assert.ok(!inRoom(all, SABER.uxie.room), 'la cámara de Uxie se alcanza sin acertar las puertas');
-  assert.ok(!inRoom(all, TELAR.room), 'el Telar se alcanza sin el hexágono del patio');
+  assert.ok(!inRoom(bfs(await sant([F.telarOpen], 3), HOME), TELAR.room), 'el Telar se alcanza sin examinar el hexágono');
 });
 
 test('Santuario: cada espejo cierra la puerta hasta atrapar a Mesprit; C098 está en el paso al último espejo', async () => {
   const [m1, m2, m3] = SENTIR.mirrors;
-  const none = bfs(await sant(), HOME);
+  const none = bfs(await sant([], 2), HOME);
   assert.ok(!inRoom(none, m2.room), 'se llega al segundo espejo sin el primero');
-  const one = bfs(await sant([F.mirror1]), HOME);
+  const one = bfs(await sant([F.mirror1], 2), HOME);
   assert.ok(inRoom(one, m2.room) && !inRoom(one, m3.room), 'el segundo espejo no abre en su momento');
-  const two = bfs(await sant([F.mirror1, F.mirror2]), HOME);
+  const two = bfs(await sant([F.mirror1, F.mirror2], 2), HOME);
   assert.ok(inRoom(two, m3.room) && !inRoom(two, SENTIR.lastMirror.room), 'el tercer espejo no abre en su momento');
-  const three = await sant([F.mirror1, F.mirror2, F.mirror3]);
+  const three = await sant([F.mirror1, F.mirror2, F.mirror3], 2);
   const r = bfs(three, HOME);
   assert.ok(inRoom(r, SENTIR.lastMirror.room), 'el último espejo no se alcanza');
   assert.ok(!inRoom(bfs(three, HOME, { block: [[SENTIR.cell.x, SENTIR.cell.y]] }), SENTIR.lastMirror.room), 'se llega al último espejo sin pasar por C098');
@@ -219,16 +220,20 @@ test('Santuario: cada espejo cierra la puerta hasta atrapar a Mesprit; C098 est�
 test('Santuario: C097 y C099 están en pasos obligados; el viento no corta el camino a Azelf', async () => {
   const s = await sant([F.glyphs]);
   assert.ok(!inRoom(bfs(s, HOME, { block: [[SABER.cell.x, SABER.cell.y]] }), SABER.doors3.room), 'se llega a las puertas sin pasar por C097');
-  const r = bfs(s, HOME);
+  const wind = await sant([], 3);
+  const r = bfs(wind, HOME);
   assert.ok(r.has(QUERER.wind.cell.x, QUERER.wind.cell.y), 'la repisa de arriba (C099) no se alcanza');
   assert.ok(inRoom(r, QUERER.azelf.room), 'la cámara de Azelf no se alcanza por el pasillo');
-  assert.ok(!inRoom(bfs(s, HOME, { block: [[QUERER.wind.cell.x, QUERER.wind.cell.y]] }), QUERER.azelf.room), 'se llega a Azelf sin pasar por C099');
-  const az = s.w.events.find((e) => e.id === 'azelf');
+  assert.ok(!inRoom(bfs(wind, HOME, { block: [[QUERER.wind.cell.x, QUERER.wind.cell.y]] }), QUERER.azelf.room), 'se llega a Azelf sin pasar por C099');
+  const az = wind.w.events.find((e) => e.id === 'azelf');
   assert.ok(canUse(r, az.x, az.y), 'Azelf no se alcanza');
 });
 
 test('Santuario: el Telar solo se alcanza desde (51,37), donde está C100; todo tiene vuelta al patio', async () => {
-  const s = await sant([F.glyphs, F.mirror1, F.mirror2, F.mirror3, F.telarOpen]);
+  const flags = [F.glyphs, F.mirror1, F.mirror2, F.mirror3, F.telarOpen];
+  const s = await sant(flags, 3);
+  const saber = await sant(flags, 1);
+  const sentir = await sant(flags, 2);
   const fromTelar = bfs(s, [TELAR.entry.arrive.x, TELAR.entry.arrive.y]);
   const L = TELAR.loom;
   const around = [[L.x, L.y + 1], [L.x - 1, L.y], [L.x + 1, L.y], [L.x, L.y - 1]].filter(([x, y]) => fromTelar.has(x, y));
@@ -236,19 +241,24 @@ test('Santuario: el Telar solo se alcanza desde (51,37), donde está C100; todo 
   assert.ok(fromTelar.has(HOME[0], HOME[1]), 'desde el Telar no se vuelve al patio');
   const all = bfs(s, HOME);
   assert.deepEqual(dead(all, HOME), [], 'casillas del santuario sin vuelta al patio');
+  const byFloor = {
+    1: [bfs(saber, HOME), bfs(saber, [SABER.uxie.entry.arrive.x, SABER.uxie.entry.arrive.y])],
+    2: [bfs(sentir, HOME), bfs(sentir, [SENTIR.mesprit.arrive.x, SENTIR.mesprit.arrive.y])],
+    3: [all, fromTelar],
+  };
   for (const it of SANTUARIO_ITEMS) {
-    const reach = [all, fromTelar, bfs(s, [SABER.uxie.entry.arrive.x, SABER.uxie.entry.arrive.y]), bfs(s, [SENTIR.mesprit.arrive.x, SENTIR.mesprit.arrive.y])];
+    const reach = byFloor[santuarioItemFloor(it)];
     assert.ok(reach.some((r) => canUse(r, it.x, it.y)), `${it.id} en (${it.x},${it.y}) inalcanzable`);
   }
   // Uxie, las puertas de las rondas y Mesprit se alcanzan desde sus llegadas por guion
-  const uxie = bfs(s, [SABER.uxie.entry.arrive.x, SABER.uxie.entry.arrive.y]);
+  const uxie = bfs(saber, [SABER.uxie.entry.arrive.x, SABER.uxie.entry.arrive.y]);
   assert.ok(canUse(uxie, SABER.uxie.uxie.x, SABER.uxie.uxie.y), 'Uxie inalcanzable');
   for (const k of ['doors3', 'doors4']) {
-    const rr = bfs(s, [SABER[k].entry.arrive.x, SABER[k].entry.arrive.y]);
+    const rr = bfs(saber, [SABER[k].entry.arrive.x, SABER[k].entry.arrive.y]);
     for (const d of SABER[k].doors) assert.ok(canUse(rr, d.x, d.y), `puerta ${k} (${d.x},${d.y}) inalcanzable`);
     assert.ok(rr.has(PATIO.gates.saber.front.x, PATIO.gates.saber.front.y), `${k}: sin vuelta al patio`);
   }
-  const mes = bfs(s, [SENTIR.mesprit.arrive.x, SENTIR.mesprit.arrive.y]);
+  const mes = bfs(sentir, [SENTIR.mesprit.arrive.x, SENTIR.mesprit.arrive.y]);
   assert.ok(canUse(mes, SENTIR.mesprit.mesprit.x, SENTIR.mesprit.mesprit.y) && mes.has(HOME[0], HOME[1]), 'Mesprit inalcanzable o sin vuelta');
 });
 

@@ -4,6 +4,7 @@ import {
   W, H, ISLAND, SANCTUARY, BRIDGE, bridgeCells, waterCells, SENTIR_ISLET, SABER_ISLET, CLIFF_N, WATERFALL, PATH,
   MIRADOR, REFUGIO, CAMP, GRASS, rect, roundRect, NORTH_LEDGE,
 } from './lagos_layout.js';
+import { paintPillarExterior } from '../../stamps/pilarVertical.js';
 
 /** Pieza de terraza nevada: ID de la terraza de hierba + 503 filas (4024). */
 const SN = (id) => id + 4024;
@@ -16,6 +17,7 @@ const SN = (id) => id + 4024;
 export const LAGOS_BRUSHES = Object.freeze({
   bosque_nevado: { forest: { trees: [[0, 563]], size: [2, 6], period: [2, 4] }, layer: 2, trunkLayer: 1, desc: 'Pinar nevado' },
   hielo_losas: { grid: [[5564, 5565], [5572, 5573]], layer: 2, desc: 'Bloques de hielo del puente' },
+  pilar_acceso: { grid: [[5564, 5565], [5572, 5573]], layer: 1, desc: 'Losas de piedra ante la columna' },
   /**
    * Acantilado nevado del norte: la terraza de muros finos con nieve de Exterior1 (las piezas de la `terraza` de hierba
    * desplazadas 503 filas, +4024 en el ID; las mismas que usa B15 en el Lago Viejo de Boreal).
@@ -121,19 +123,20 @@ function paintForest(b) {
 
 function paintIsland(b) {
   const S = SANCTUARY;
-  const r = S.rock;
-  b.blob(null, rect(r.x, r.y, r.x + r.w - 1, r.y + r.h - 1), 'acantilado');
-  b.stamp('boquete', S.boquete.x, S.boquete.y);
-  b.stamp('pilar_dintel', S.dintel.x, S.dintel.y);
+  // Columna de tres pisos sobre el islote. La roca bajo las piezas altas cierra el paso por detrás.
+  b.blob(null, rect(25, 10, 31, 18), 'acantilado');
+  b.paint('pilar_acceso', rect(25, 18, 31, 20));
+  b.paint('pilar_acceso', rect(27, 20, 29, 24));
+  paintPillarExterior(b, { centerX: 28, doorY: 19 });
   b.stamp('estrado', S.plaza.x, S.plaza.y);
   b.stamp('pilar_losa_eco', 27, 27);
   b.stamp('pilar_placa_unown', S.stele.x, S.stele.y);
   // monolitos y columnas del recinto; en lo alto de la roca, aristas y un monolito caído
   for (const [s, x, y] of [
-    ['pilar_monolito', 23, 21], ['pilar_monolito', 31, 20], ['pilar_columna', 24, 25], ['pilar_columna', 31, 26],
+    ['pilar_monolito', 23, 21], ['pilar_columna', 24, 25], ['pilar_columna', 31, 26],
     ['pilar_columna_quebrada', 36, 23], ['pilar_columna_quebrada', 23, 28], ['pilar_glifo', 26, 24], ['pilar_glifo_2', 30, 30],
-    ['pilar_monolito', 28, 13], ['lupinos', 33, 30], ['flores_blancas', 36, 25], ['flores_rosas', 24, 23],
-    ['flores_blancas', 35, 20], ['macizo_flores', 32, 16], ['lupinos', 25, 14],
+    ['lupinos', 33, 30], ['flores_blancas', 36, 25], ['flores_rosas', 24, 23],
+    ['flores_blancas', 35, 20], ['macizo_flores', 32, 16],
   ]) b.stamp(s, x, y);
   // islotes de los lagos laterales
   b.stamp('pilar_columna_quebrada', SABER_ISLET.x0, SABER_ISLET.y0);

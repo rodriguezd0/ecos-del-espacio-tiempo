@@ -34,7 +34,7 @@ export const SANCTUARY = Object.freeze({
   rock: Object.freeze({ x: 25, y: 14, w: 11, h: 7 }),
   boquete: Object.freeze({ x: 27, y: 18 }),
   dintel: Object.freeze({ x: 26, y: 21 }),
-  warps: Object.freeze([Object.freeze({ x: 28, y: 19 }), Object.freeze({ x: 29, y: 19 })]),
+  warps: Object.freeze([Object.freeze({ x: 28, y: 19 })]),
   out: P(28, 24, 2), // llegada al salir del santuario (bajo el dintel)
   plaza: Object.freeze({ x: 25, y: 25 }), // estrado 6×6
   stele: Object.freeze({ x: 33, y: 23 }), // pilar_placa_unown 2×2 (se lee desde abajo)

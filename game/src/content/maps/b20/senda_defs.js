@@ -21,6 +21,7 @@ export function tramoDef(n, { build, events = [], onEnter = null, tileset = 2, w
   return {
     id: id || tramoId(n),
     name: 'Senda del Origen',
+    pillar: { id: 'P10', floor: 1 },
     tileset,
     width: TRAMO_W,
     height: TRAMO_H,

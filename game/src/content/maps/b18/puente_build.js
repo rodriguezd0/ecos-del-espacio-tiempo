@@ -76,7 +76,10 @@ function paintPlatform(b) {
   b.stamp('pilar_losa_eco', 22, y0 + 16);
   for (const [x, y] of [[18, y0 + 7], [22, y0 + 8], [14, y0 + 15], [27, y0 + 4]]) b.stamp('pilar_arista', x, y - 1);
   // La boca de la Cámara del Cruce (se entra desde el sur)
-  b.stamp('boca_camara', MOUTH.x0, MOUTH.y0);
+  // Escalinata ascendente entre las plantas 1 y 2. El marco conserva un acceso único por el sello central.
+  b.stamp('pilar_escalinata', MOUTH.warp.x - 1, MOUTH.warp.y - 1);
+  for (const x of [MOUTH.warp.x - 1, MOUTH.warp.x + 1]) b.stamp('pilar_columna', x, MOUTH.warp.y - 2);
+  for (const x of [MOUTH.warp.x - 1, MOUTH.warp.x, MOUTH.warp.x + 1]) b.stamp('pilar_columna', x, MOUTH.warp.y - 3);
   // Material de Genesis alrededor del Resonador
   b.stamp('sonda_genesis', 23, y0 + 12);
   b.stamp('perforadora_genesis', 14, y0 + 17);

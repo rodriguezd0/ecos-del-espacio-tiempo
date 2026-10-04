@@ -10,6 +10,7 @@ import { simaEdgeWarps } from './links.js';
 import { SIMA_CAVE } from '../../encounters/b19.js';
 import { MUSIC } from '../../events/b19_common.js';
 import { simaEvents, puertaWarps } from '../../events/b19_sima.js';
+import { paintOriginExterior } from '../b20/vertical_build.js';
 
 export default {
   id: 'sima_eje',
@@ -28,7 +29,7 @@ export default {
   panorama: { shader: 'sima', parallax: 0.35 },
   encounterZones: ENCOUNTER_RECTS.map((r) => ({ ...r, encounters: { cave: SIMA_CAVE } })),
 
-  build: buildSima,
+  build(b) { buildSima(b); paintOriginExterior(b); },
 
   warps: [
     // Puerta de la Bajada: se sube a la Peña del Rey empujando contra la boca de la roca.

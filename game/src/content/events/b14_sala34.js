@@ -30,10 +30,10 @@ export const SALA34_TEXT = Object.freeze({
   rootPetrified: 'Una raíz petrificada sube por el muro y se parte a media altura. En el eco estaba entera.',
   lever: 'Una palanca de bronce con una inscripción: «ALIVIADERO». Abre o cierra el paso del mar hacia la Fosa.',
   leverAsk: '¿Bajar la palanca?',
-  leverDone: 'La palanca baja con un chasquido. Abajo, el rumor del agua que corría hacia la Fosa se apaga.',
+  leverDone: 'La palanca baja con un chasquido. Al otro lado, el rumor del agua que corría hacia la Fosa se apaga.',
   leverClosed: 'La palanca está bajada. El aliviadero, cerrado.',
   fosaCurrent: 'De la boca de la Fosa sale una corriente que te arrastra hacia atrás.',
-  fosaGate: 'La Puerta de la Fosa: bronce macizo, sellado con plomo. En esta época nadie baja ahí.',
+  fosaGate: 'La Puerta de la Fosa: bronce macizo, sellado con plomo. En esta época nadie sube ahí.',
   pit: 'Una sima inundada, oscura y fría. Del fondo sube un rumor, como una respiración.',
 });
 
@@ -202,7 +202,7 @@ function leverEvent() {
 }
 
 const ECHO4 = Object.freeze({
-  priest: ['El aliviadero lleva el agua del mar hasta la Fosa. Si se cierra, la escalera queda seca…', '…pero nadie baja ahí. Nadie. Lo que duerme abajo no es asunto nuestro.'],
+  priest: ['El aliviadero lleva el agua del mar hasta la Fosa. Si se cierra, la escalera queda seca…', '…pero nadie sube ahí. Nadie. Lo que duerme en lo alto no es asunto nuestro.'],
   acolyte: ['El balcón del aliviadero solo tiene escalera por dentro del templo. Y la llave la guarda el sacerdote.'],
 });
 

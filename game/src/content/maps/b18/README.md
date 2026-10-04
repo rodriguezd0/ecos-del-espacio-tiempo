@@ -4,12 +4,29 @@ CAMPANA B18 (D18). Entrada: `b17_vigilia`, Cadena Roja (`REDCHAIN`) y Reconstruc
 Salida: **`p9_restored`**, var **`p9_choice`** (`DIALGA` | `PALKIA`) y var **`p9_chosen_caught`** (true/false); la
 Cadena Roja se conserva «templada» (`b18_cadena_templada`) y la pista T15 queda abierta. Nivel ~66.
 
+## Tres plantas (X36, reparto confirmado 03-10)
+
+La columna exterior de siete por diez casillas está en `senda_mirador` (centro 20, puerta 48). El rellano permite
+rodearla; el cordón policial cubre también sus lados hasta la Vigilia. Todos los interiores llevan `pillar.floor`:
+
+| planta | mapa | contenido |
+|---|---|---|
+| 1 | `puente_convergencia` | Puente, Reconstrucción, Casia, Garrido, Vértice y la escena de Genesis. |
+| 2 | `camara_cruce` | Vestíbulo y los tres puzzles de ejes. |
+| 3 | `camara_cruce_nucleo` | Dialga/Palkia, elección, Fragmento 9, orbe e inscripción. |
+
+La planta del puente conserva toda su geometría. `camara_cruce_nucleo` conserva las coordenadas del núcleo anterior.
+`camara_cruce.redirectArrival` reconoce un guardado antiguo allí **antes** de buscar una casilla libre y lo lleva a
+la planta 3; `cruceEnter` conserva sus switches. Elección, descansos, captura, recompensas y flags no cambian.
+Perder contra el elegido devuelve a la entrada de la planta 2 (10,13), curado y con la elección fijada.
+
 ## Mapas
 
 | id | tileset | tamaño | qué es |
 |---|---|---|---|
-| `puente_convergencia` | 1 (Exterior1 + kit exterior de Pilar) | 40×60 | Tramo central del Puente sobre la Sima del Eje (el estribo norte está en `senda_mirador` y el sur en `mirador_sur`, de B17). Tablero x 18–22; Rellano de los Custodios (y 5–12: campamento de Alerce con tienda, hoguera y catalejo, buhonera, estela); tres huecos del tramo central (y 19–20, 24–25, 29–30) con dos estribos sueltos; plataforma octogonal del Cruce (y 31–51) con la boca de la Cámara, el Resonador Sintético, la Cadena Sintética, monolitos y el aerodeslizador; tramo sur con losas y pasarela de tablones de Genesis (y 52–59). BGM `Amenaza`, fondo `Espacio`, `voidBlocks`; panorama de la Sima de B17 (`SIMA_PANORAMA`, el mismo que la Senda y el Mirador Sur: el abismo no cambia al cruzar los bordes). |
-| `camara_cruce` | 8 (InteriorLiga + kit común de Pilar, tinte plata) | 58×42 | Cámara del Cruce: cinco salas que flotan sobre el abismo (casillas sin tiles + panorama `sima`): Vestíbulo → (1) Sala de la Caída → (2) Sala del Río → (3) Sala del Cruce → Núcleo. BGM `Transicion`, `cave`, Cuerda Huida permitida, tono plata + desplazamiento del eje tensado. |
+| `puente_convergencia` | 1 (Exterior1 + kit de Pilar) | 40×60 | Planta 1 interior: tablero x 18–22, campamento de Alerce, tres huecos, plataforma de Genesis y escalinata del Cruce. Conserva el panorama de la Sima, el fondo `Espacio` y todas sus coordenadas. Sus extremos salen por warps a la Senda y al Mirador Sur. |
+| `camara_cruce` | 8 (InteriorLiga + kit común de Pilar, tinte plata) | 58×42 | Planta 2: Vestíbulo → Caída → Río → Cruce. Salas suspendidas sobre la Sima, BGM `Transicion`, Cuerda Huida y tensión de ejes. El Cruce y el atajo suben al núcleo. |
+| `camara_cruce_nucleo` | 8 (mismo kit y tinte) | 58×42 | Planta 3: sala del núcleo en su rectángulo original, con Dialga/Palkia y las recompensas. La escalinata sur baja al vestíbulo. |
 
 Coordenadas: `puente_layout.js`, `cruce_layout.js` (fuente única del mapa, los eventos, las pruebas y el E2E); salas
 ASCII en `content/events/b18_cruce_rooms.js`. Construcción: `puente_build.js`, `cruce_build.js`. Eventos:
@@ -21,12 +38,15 @@ ASCII en `content/events/b18_cruce_rooms.js`. Construcción: `puente_build.js`, 
 
 | desde | casilla | a | notas |
 |---|---|---|---|
-| `puente_convergencia` norte | x 18–22, y 0 | `senda_mirador` (B17) sur x 18–22 | `north`, offset 0 (B17 declara la inversa). Conexión condicionada a `mapRegistered` (`pending_links.js`). |
-| `puente_convergencia` sur | x 19–21, y 59 | `mirador_sur` (B17) norte x 19–21 | `south`, offset 0. Vallado de Genesis en (18..22, 53) hasta `p9_restored` (tras la escena, precintado por la policía), igual que la barrera de obra de B17 en (19..21, 14): con el P9 el Puente cruza la Sima entera. |
+| `senda_mirador` columna | (20,48) | `puente_convergencia` (20,1) | Entrada a la planta 1. |
+| `puente_convergencia` norte | x 18–22, y 0 pulsando arriba | `senda_mirador` (20,49) | Warp de salida, fuera de la puerta. |
+| `puente_convergencia` sur | x 19–21, y 59 pulsando abajo | `mirador_sur` (B17), misma x, y 1 | Warp de salida. Vallado de Genesis en (18..22,53) y barrera de B17 hasta `p9_restored`. |
+| `mirador_sur` norte | x 19–21, y 0 pulsando arriba | `puente_convergencia`, misma x, y 58 | Conserva el paso entre ambos Miradores y los eventos de Grieta postgame. |
 | `puente_convergencia` boca (20,41) | empujar hacia arriba desde (20,43) | `camara_cruce` (10,13) | Sellada por la Cadena Sintética (evento en (20,42)) hasta `b18_irrupcion`. |
 | `camara_cruce` escalinata del vestíbulo | x 9–11, y 14 pulsando abajo | `puente_convergencia` (20,43) | |
-| salas | dintel de cada sala (warp en el hueco, se empuja desde la casilla X) | escalinata de la sala siguiente | Vestíbulo (7,4) → Caída (10,36); Caída (8,23) → Río (28,16); Río (24,4) → Cruce (28,38); Cruce (27,23) → Núcleo (48,18). Cada escalinata baja a la X de la sala anterior. |
-| atajo | vestíbulo (13,4) | núcleo (48,18) | Sellado (`atajo_sellado`) hasta `b18_nucleo_visto`; la escalinata del núcleo baja a (13,5). |
+| salas | dintel de cada sala (warp en el hueco, se empuja desde la casilla X) | escalinata de la sala siguiente | Vestíbulo (7,4) → Caída (10,36); Caída (8,23) → Río (28,16); Río (24,4) → Cruce (28,38). Cruce (27,23) sube a `camara_cruce_nucleo` (48,18). |
+| atajo | vestíbulo (13,4) | `camara_cruce_nucleo` (48,18) | Sellado (`atajo_sellado`) hasta `b18_nucleo_visto`. |
+| núcleo, escalinata sur | x 47–49, y 19 pulsando abajo | `camara_cruce` (13,5) | Regreso al vestíbulo, fuera del warp del atajo. |
 
 ## Secuencia y flags (`content/events/b18_common.js`)
 
@@ -47,7 +67,7 @@ ASCII en `content/events/b18_cruce_rooms.js`. Construcción: `puente_build.js`, 
 | Victoria (captura o derrota): eje atado, `restorePillar(9)` (Fragmento 9), el no elegido se va y deja su orbe, Cadena templada, relojes y Sima, inscripción → T15 | `b18_eje_atado`, **`p9_restored`**, `b18_cadena_templada`, `b18_inscripcion` (+ `openClue('T15')`) |
 | Debilitado sin capturar: reaparece junto al núcleo tras descansar (var `rest_count` > `b18_elegido_descanso`), tantas veces como haga falta | `b18_elegido_descanso`; captura → `p9_chosen_caught` = true |
 | Orbe del no elegido (Dialga elegido → `LUSTROUSORB` Lustresfera; Palkia elegido → `ADAMANTORB` Diamansfera) | `b18_orbe` |
-| Despedida en el Puente (Alerce y Olmedo: relojes sincronizados, la Sima ya no se abre); si se vuelve por otro lado (campamento, Senda) se acercan con un fundido | `b18_despedida` |
+| Despedida en el Puente (Alerce y Olmedo: relojes sincronizados, la Sima ya no se abre); si se vuelve por otro lado (campamento, Senda) Alerce se acerca andando y vuelve a su posición | `b18_despedida` |
 | Con la Tabla Draco (B19, `b19_tablilla`) Alerce espera en la Calzada del Rey: Alerce, Olmedo y el agente dejan el Puente (la despedida ya no salta) | — |
 
 ## Cámara del Cruce: tensión de ejes (`src/world/axis`, docs/ARCHITECTURE.md §22)
@@ -92,12 +112,12 @@ Base `B` = `party=GARCHOMP:90,METAGROSS:88,TYRANITAR:88,LUCARIO:88&fragments=8&n
   `,b18_llegada,b18_tramo_1,b18_tramo_2,b18_tramo_3,b18_puente_entero` a `flags`
 - Boca de la Cámara (tras la escena): `…&map=puente_convergencia&x=20&y=43&dir=8&` + `B` añadiendo los anteriores y
   `,b18_casia,b18_garrido,b18_vertice,b18_resonador_roto,b18_irrupcion,b18_gael,b18_vertice_huye,b18_cuaderno,b18_detenidos,b18_escena`
-- Núcleo: `…&map=camara_cruce&x=48&y=18&dir=8&` + lo anterior con `,b18_camara_llegada,b18_cristal_tutorial,b18_sala_1,b18_sala_2,b18_sala_3` y `vars=cadena_eje:time`
+- Núcleo: `…&map=camara_cruce_nucleo&x=48&y=18&dir=8&` + lo anterior con `,b18_camara_llegada,b18_cristal_tutorial,b18_sala_1,b18_sala_2,b18_sala_3` y `vars=cadena_eje:time`
 - Una sala suelta: `…&map=camara_cruce&x=10&y=36&dir=8&` (Caída), `x=28&y=16` (Río), `x=28&y=38` (Cruce)
 
 Comprobaciones: `node --test tests/b18_axis.test.mjs tests/b18_content.test.mjs tests/b18_scenes.test.mjs
-tests/b18_reach.test.mjs`, `node tools/validate_content.mjs`. Recorrido completo: `node tools/e2e_b18.mjs
-[--from=<tramo>] [--only=<tramo>] [--to=<tramo>] [--no-retry]`, tramos `puente genesis cruce nucleo reaparece`
+tests/b18_reach.test.mjs tests/b18_vertical.test.mjs`, `node tools/validate_content.mjs`. Recorrido completo: `node tools/e2e_b18.mjs
+[--from=<tramo>] [--only=<tramo>] [--to=<tramo>] [--no-retry]`, tramos `exterior puente genesis cruce nucleo reaparece guardado_postgame`
 (capturas `tools/cache/screens/e2e_b18_*`, transcripción `e2e_b18_dialogos.txt`). En la Cámara el E2E juega cada sala con
 el plan del solucionador y comprueba tras cada acción que el jugador está en la casilla y con el eje que dicen las reglas.
 
@@ -106,7 +126,7 @@ el plan del solucionador y comprueba tras cada acción que el jugador está en l
 - Cambios mínimos y aditivos fuera del bloque: `world/gameMap.js` (`voidBlocks` + `isVoid`), `world/eventTypes.js`
   (registra `AXIS_EVENT_TYPES`), `render/panorama.js` (shader `sima`). Nuevo y genérico: `world/axis/*` (B20 ya lo usa en
   el tramo 9 de la Senda del Origen con su variable `b20_t9_eje`).
-- B17: los tableros casan con offset 0 en los dos sentidos y comparten el panorama de la Sima. Las dos barreras del
+- B17: los extremos del tablero se conectan por warps y conservan los dos sentidos. Las dos barreras del
   tramo sur (el vallado de B18 y la barrera del estribo de B17) se abren con `p9_restored`. El anillo del Mirador Sur
   (B17, (23,2)) es, según Alerce en la llegada, el colector de las torres; el resonador que usa Vértice está en la
   plataforma. Sugerencia para B17 (su carpeta): el anillo sigue zumbando hasta `p9_restored`; tras
@@ -121,5 +141,5 @@ el plan del solucionador y comprueba tras cada acción que el jugador está en l
   epílogo—, «…Ese chico…»), el cierre de Alerce, textos
   de la Cámara (estelas, cristales, tutorial, rótulos de las salas, atajo), del núcleo (elección, aviso de captura,
   retirada del no elegido, «una promesa», Cadena templada) y la despedida (relojes sincronizados).
-- Pendiente: reencuentro con el elegido y su orbe en Columna Lanza (B21/B22); si el autor quiere otra música para el
+- El reencuentro en Columna Lanza se integra mediante B22a, conservando elección y orbe. Si el autor quiere otra música para el
   combate del elegido, `MUSIC.legendary` en `b18_common.js`.

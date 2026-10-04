@@ -1,9 +1,9 @@
-// Coordenadas del Santuario del Alma (B16, Pilar del Alma; docs/CAMPANA.md B16 y §1.5: «Centro y 3 alas»). Un solo
-// mapa de tileset 11 (InteriorTorre) con salas solemnes (brush `sala_<color>`: pared de mármol, suelo de baldosa y
+// Coordenadas históricas del Santuario del Alma (B16, Pilar del Alma; reparto vertical confirmado el 03-10).
+// Tres plantas de tileset 11 (InteriorTorre) con salas solemnes (brush `sala_<color>`: pared de mármol, suelo de baldosa y
 // marco) y el kit común de Pilar, con el tinte rosa pálido del P8. Las salas flotan en la oscuridad y se enlazan por
 // puertas en la pared (warps que se activan empujando contra el hueco del dintel) y escalinatas de bajada:
-//   Patio central (blanco): tres dinteles en la pared norte — Saber (izquierda), Sentir (centro), Querer (derecha) —,
-//     el hexágono sellado del Telar en el centro, el manantial y la escalinata de salida a los Lagos.
+//   Rellano de cada piso: su dintel del norte, el manantial, escaleras de subida y retorno;
+//     el hexágono sellado del Telar queda en el tercer piso. Las alas conservan su geometría original.
 //   Ala del Saber (dorado, columna izquierda): Glifos → Tres puertas → Cuatro puertas → Cámara de Uxie.
 //   Ala del Sentir (morado): Espejo 1 → Espejo 2 → Espejo 3 → Último espejo (recuerdo de Gael) → Cámara de Mesprit.
 //   Ala del Querer (azul, columna derecha): Pasillo del viento → Cámara de Azelf.
@@ -187,6 +187,10 @@ export const TELAR = Object.freeze({
 
 /** Llegada desde los Lagos (al pie de la escalinata del patio) y salida hacia ellos. */
 export const ENTRY = Object.freeze({ arrive: PATIO.exit.arrive });
+
+/** Tres pisos; las coordenadas de los puzzles mantienen las del santuario original. */
+export const P8_MAPS = Object.freeze({ 1: 'santuario_alma', 2: 'santuario_alma_sentir', 3: 'santuario_alma_querer' });
+export const P8_UP = Object.freeze({ 1: P(40, 48), 2: P(48, 48) });
 
 /** Objetos del santuario (casillas de suelo alcanzables a su tiempo). */
 export const SANTUARIO_ITEMS = Object.freeze([

@@ -5,6 +5,7 @@
 // borde del abismo). Las puertas del norte son dinteles con el hueco negro; las escalinatas bajan a la sala anterior.
 // Módulo puro: solo pinta tiles (los eventos están en content/events/b18_cruce.js y b18_nucleo.js).
 import { ROOM_PLACES, NUCLEO, SHORTCUT } from './cruce_layout.js';
+import { buildPilarHall } from '../../stamps/pilarVertical.js';
 
 const VOID_BLACK = 384; // negro del marco y de los huecos de las puertas (bloquea)
 
@@ -113,5 +114,13 @@ function paintNucleo(b) {
 export function buildCruce(b) {
   for (const r of ROOM_PLACES) paintRoom(b, r);
   gate(b, SHORTCUT);
+}
+
+export function buildCruceNucleo(b) {
+  buildPilarHall(b, { floor: { x: NUCLEO.room.x, y: NUCLEO.floorTop, w: NUCLEO.room.w, h: NUCLEO.floorBottom - NUCLEO.floorTop + 1 } });
+  // El núcleo conserva su decoración y sus pasillos: no añadir bases en casillas de guardados antiguos.
+  for (let y = NUCLEO.room.y; y < NUCLEO.room.y + NUCLEO.room.h; y++) {
+    for (let x = NUCLEO.room.x; x < NUCLEO.room.x + NUCLEO.room.w; x++) b.set(2, x, y, 0);
+  }
   paintNucleo(b);
 }

@@ -8,6 +8,7 @@ import { paintPlatform, raggedIsland, union, rectSet, floatingDebris } from '../
 import { cieloEvents, cieloOnEnter } from '../../events/b20_cielo.js';
 import { MUSIC } from '../../events/b20_common.js';
 import { pilarTone } from '../../stamps/pilar.js';
+import { paintOriginStair } from './vertical_build.js';
 
 const key = (x, y) => `${x},${y}`;
 
@@ -55,11 +56,14 @@ export function buildCielo(b) {
   };
   for (const [name, x, y, w, h] of deco) if (fits(x, y, w, h)) b.stamp(name, x, y);
   floatingDebris(b, [[2, 4, 2], [26, 12, 3], [3, 30, 2], [26, 40, 2], [4, 50, 2], [25, 52, 2], [2, 18, 3]]);
+  paintOriginStair(b, CIELO.back);
+  paintOriginStair(b, CIELO.gate);
 }
 
 export default {
   id: 'cielo_interior',
   name: 'Cielo Interior',
+  pillar: { id: 'P10', floor: 2 },
   tileset: 2,
   width: CIELO.w,
   height: CIELO.h,

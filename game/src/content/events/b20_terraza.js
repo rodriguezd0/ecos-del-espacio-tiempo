@@ -82,7 +82,7 @@ async function talkScene(ctx) {
   await lines(ctx, G, [TERRAZA_TEXT.come]);
   if (g) {
     const s = T.gaelStele;
-    await ctx.move(g, stepsTo(g, s.x, s.y), { through: true });
+    await ctx.move(g, stepsTo(g, s.x, s.y), { through: false });
     ctx.face(g, 'up');
   }
   await ctx.movePlayerTo(T.steleStand.x, T.steleStand.y, { through: true });
@@ -106,7 +106,7 @@ async function talkScene(ctx) {
   ctx.setFlag(F.gaelTalk);
   await pause(ctx, 20);
   await ctx.say(TERRAZA_TEXT.leaves);
-  if (g) await ctx.move(g, [{ speed: 3 }, ...leaveRoute(g)], { through: true });
+  if (g) await ctx.move(g, [{ speed: 3 }, ...leaveRoute(g)], { through: false });
   ctx.setFlag(F.gaelGone);
   ctx.requestRefresh();
 }

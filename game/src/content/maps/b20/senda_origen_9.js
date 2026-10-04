@@ -7,9 +7,11 @@ import { tramoDef, tramoTone } from './senda_defs.js';
 import { buildTramo9 } from './senda_build.js';
 import { tramo9Events, tramo9Enter } from '../../events/b20_tramos_c.js';
 import { axisTone, cachedAxis } from '../../../world/axis/logic.js';
+import { EXIT_TOP } from './layout.js';
+import { paintOriginStair } from './vertical_build.js';
 
 const BASE_TONE = tramoTone(9);
-const base = tramoDef(9, { build: buildTramo9, events: tramo9Events(), voidBlocks: true });
+const base = tramoDef(9, { build(b) { buildTramo9(b); paintOriginStair(b, EXIT_TOP); }, events: tramo9Events(), voidBlocks: true });
 const enter = base.onEnter;
 // El eje de la caché se sincroniza ANTES de las líneas de entrada (el tono lo lee cada fotograma)
 const def = { ...base, onEnter: async (ctx) => { tramo9Enter(ctx); await enter(ctx); } };

@@ -228,7 +228,7 @@ test('Cámara: cada sala queda superada al pisar su salida; el atajo del vestíb
 // ───────────────────────────── Núcleo ─────────────────────────────
 
 async function nucleo(state = entryState()) {
-  const t = await fieldWorld('camara_cruce', { state, flags: [F.scene, F.chamberIn, F.room1, F.room2, F.room3] });
+  const t = await fieldWorld('camara_cruce_nucleo', { state, flags: [F.scene, F.chamberIn, F.room1, F.room2, F.room3] });
   t.p.moveTo(NUCLEO.arrival.x, NUCLEO.arrival.y);
   await runEvent(fieldCtx(t), `nucleo_llegada_${NUCLEO.arrival.x}`);
   assert.ok(t.state.flag(F.nucleus), 'la llegada al núcleo no queda vista');
@@ -301,7 +301,7 @@ test('Núcleo: en otra visita, la revancha usa el elegido que reaparece (el del 
   const s = t.state;
   await runEvent(fieldCtx(t, { choices: [1, 0], battles: ['win'] }), 'nucleo_p9');
   s.setVar(V.restCount, Number(s.var(V.restCount, 0)) + 1);
-  const again = await fieldWorld('camara_cruce', { state: s }); // nueva visita: los eventos se crean de nuevo
+  const again = await fieldWorld('camara_cruce_nucleo', { state: s }); // nueva visita: los eventos se crean de nuevo
   again.p.moveTo(NUCLEO.bound.x, NUCLEO.bound.y + 1);
   await runEvent(fieldCtx(again, { battles: ['caught'] }), 'elegido_reaparece');
   const ghost = again.w.events.find((e) => e.id === 'palkia_nucleo');

@@ -10,7 +10,7 @@
 // la Cámara con el equipo curado (helper común bossBattle) y la elección se conserva.
 import {
   F, V, SPEAKER, SPRITE, OBJ, MUSIC, CHOICES, ORB_OF_UNCHOSEN, OTHER, SILVER, when, lines, eventById, pause,
-  objectPage, chosenWaiting,
+  objectPage, chosenWaiting, walkTo,
 } from './b18_common.js';
 import { NUCLEO, ENTRY } from '../maps/b18/cruce_layout.js';
 import { P9_LEGENDS } from '../encounters/b18.js';
@@ -117,17 +117,13 @@ async function fightChosen(ctx, choice) {
   const ev = [choice === CHOICES.DIALGA ? 'dialga_nucleo' : 'palkia_nucleo', 'elegido_reaparece']
     .map((id) => eventById(ctx, id)).find((e) => e?.page) || null;
   if (ev && (ev.x !== NUCLEO.bound.x || ev.y !== NUCLEO.bound.y)) {
-    ev.through = true;
-    const route = [];
-    for (let i = 0; i < Math.abs(NUCLEO.bound.x - ev.x); i++) route.push(NUCLEO.bound.x > ev.x ? 'right' : 'left');
-    for (let i = 0; i < Math.abs(NUCLEO.bound.y - ev.y); i++) route.push(NUCLEO.bound.y > ev.y ? 'down' : 'up');
-    await ctx.move(ev, route, { speed: 4, through: true });
+    await walkTo(ctx, ev, NUCLEO.bound.x, NUCLEO.bound.y, { speed: 4 });
     ctx.face(ev, 'down');
   }
   await ctx.say(NUCLEO_TEXT.chainRule(NAMES[choice]));
   if (!ctx.flag(F.bound)) await ctx.say(NUCLEO_TEXT.optional);
   ctx.cry(choice);
-  return bossBattle(ctx, boundRequest(choice), { x: ENTRY.x, y: ENTRY.y, dir: ENTRY.dir }, {
+  return bossBattle(ctx, boundRequest(choice), { map: 'camara_cruce', x: ENTRY.x, y: ENTRY.y, dir: ENTRY.dir }, {
     loseText: NUCLEO_TEXT.lose,
     onLose: (c) => c.setVar(V.defeats, Number(c.var(V.defeats, 0)) + 1),
   });

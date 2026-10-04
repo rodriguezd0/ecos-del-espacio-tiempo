@@ -4,13 +4,13 @@
 // content/events/b17_senda.js y b17_torres.js · encuentros: content/encounters/b17.js. B18 la usa como entrada y
 // añade de forma aditiva su tramo final desde el extremo del tablero (README del bloque).
 import { zoneDefaults } from '../../services/zones.js';
-import { W, H, NORTH, ARRIVAL, SIMA_ZONE, BRIDGE } from './senda_layout.js';
+import { W, H, NORTH, ARRIVAL, SIMA_ZONE } from './senda_layout.js';
 import { buildSenda, SENDA_BRUSHES } from './senda_build.js';
-import { mapRegistered } from './links.js';
 import { SIMA_PANORAMA } from '../../events/b17_common.js';
 import { SIMA_RIM } from '../../encounters/b17.js';
 import { sendaEvents } from '../../events/b17_senda.js';
 import { descentWarps } from '../b19/links.js'; // B19: warp al final de la bajada hacia la Sima del Eje
+import { buildP9Exterior, p9ExteriorWarps, p9NorthCordons } from '../b18/vertical_layout.js';
 
 export default {
   id: 'senda_mirador',
@@ -29,16 +29,14 @@ export default {
   panorama: SIMA_PANORAMA,
   encounterZones: [{ ...SIMA_ZONE, encounters: SIMA_RIM }],
 
-  build: buildSenda,
+  build(b) { buildSenda(b); buildP9Exterior(b); },
 
   // B19 (aditivo): el final de la bajada (x 11–12, y 49, pulsando abajo) lleva a la Sima del Eje (content/maps/b19/links.js).
-  warps: descentWarps('senda_mirador'),
+  warps: [...descentWarps('senda_mirador'), ...p9ExteriorWarps()],
 
   connections: [
     { dir: 'north', to: 'ciudad_caudal', offset: NORTH.offset },
-    // B18: el tablero sigue en el Puente de la Convergencia (su camino norte x 18–22 = x 18–22 de aquí).
-    ...(mapRegistered('puente_convergencia') ? [{ dir: 'south', to: 'puente_convergencia', offset: BRIDGE.south.offset }] : []),
   ],
 
-  events: sendaEvents(),
+  events: [...sendaEvents(), ...p9NorthCordons()],
 };

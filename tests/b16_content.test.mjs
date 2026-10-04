@@ -20,7 +20,7 @@ import { feebasDay, feebasTiles, FEEBAS_TILE_COUNT } from '../game/src/content/e
 import { LAGOS_ALMA, LAGO_SENTIR, SANTUARIO_ALMA, AZELF_TRIAL, FEEBAS_SPOT } from '../game/src/content/encounters/b16.js';
 import { JOURNAL_ENTRIES } from '../game/src/content/story/journal.js';
 import { cellsOnMap } from '../game/src/content/zygarde/cells.js';
-import { SENTIR, QUERER, SABER, TELAR, mirrorCell, windCell, floorTop } from '../game/src/content/maps/b16/santuario_layout.js';
+import { SENTIR, QUERER, SABER, TELAR, P8_MAPS, mirrorCell, windCell, floorTop } from '../game/src/content/maps/b16/santuario_layout.js';
 import { SENTIR_ZONE, waterCells, BRIDGE } from '../game/src/content/maps/b16/lagos_layout.js';
 import { F, V, MESPRIT_ANSWERS } from '../game/src/content/events/b16_common.js';
 import { azelfRequest } from '../game/src/content/events/b16_querer.js';
@@ -93,7 +93,7 @@ test('Mesprit: tres salas de espejos resolubles, cada vez más largas, sin atajo
 });
 
 test('Mesprit: el mapa pinta los obstáculos de cada sala donde dice la rejilla', async () => {
-  const { entry } = await buildMapNode('santuario_alma');
+  const { entry } = await buildMapNode(P8_MAPS[2]);
   const map = entry.map;
   for (const m of SENTIR.mirrors) {
     const room = MIRROR_ROOMS[m.n - 1];
@@ -207,9 +207,9 @@ test('Pesca por casilla: Feebas con la Caña Buena solo en sus casillas; Superca
 test('Células: C095 en los Lagos y C097–C100 (una por ala y otra en el Telar) en el santuario', async () => {
   const lagos = (await buildMapNode('lagos_alma')).def.events.filter((e) => e.type === 'zygardeCell');
   assert.deepEqual(lagos.map((e) => e.cell), cellsOnMap('lagos_alma').map((c) => c.key));
-  const sant = (await buildMapNode('santuario_alma')).def.events.filter((e) => e.type === 'zygardeCell');
+  const sant = (await Promise.all(Object.values(P8_MAPS).map(buildMapNode))).flatMap((b) => b.def.events.filter((e) => e.type === 'zygardeCell'));
   assert.deepEqual(sant.map((e) => e.cell), ['cell_alma_1', 'cell_alma_2', 'cell_alma_3', 'cell_alma_4']);
-  assert.deepEqual(cellsOnMap('santuario_alma').map((c) => c.id), ['C097', 'C098', 'C099', 'C100']);
+  assert.deepEqual(Object.values(P8_MAPS).flatMap((id) => cellsOnMap(id).map((c) => c.id)), ['C097', 'C098', 'C099', 'C100']);
   const at = (k) => sant.find((e) => e.cell === k);
   assert.deepEqual([at('cell_alma_1').x, at('cell_alma_1').y], [SABER.cell.x, SABER.cell.y]);
   assert.deepEqual([at('cell_alma_2').x, at('cell_alma_2').y], [SENTIR.cell.x, SENTIR.cell.y]);
@@ -267,9 +267,10 @@ function stubCtx(state, { choice = 0 } = {}) {
 async function runTelar(state) {
   state.setFlag(F.saber); state.setFlag(F.sentir); state.setFlag(F.querer); state.setFlag(F.telarOpen);
   for (const id of ['KNOWLEDGETHREAD', 'EMOTIONTHREAD', 'WILLTHREAD']) state.addKeyItem(id);
-  const def = (await buildMapNode('santuario_alma')).def;
+  const def = (await buildMapNode(P8_MAPS[3])).def;
   const loom = def.events.find((e) => e.id === 'telar_alma');
   const ctx = stubCtx(state);
+  ctx.map = { id: P8_MAPS[3] };
   await loom.pages[1].script(ctx);
   return ctx;
 }
@@ -339,7 +340,7 @@ test('Hito sin todas las células: sostiene a medias, los vecinos cruzan y «Me 
 });
 
 test('Mesprit: las tres respuestas se guardan en la variable que usa B20', async () => {
-  const def = (await buildMapNode('santuario_alma')).def;
+  const def = (await buildMapNode(P8_MAPS[2])).def;
   const ev = def.events.find((e) => e.id === 'mesprit_pregunta');
   for (const [i, a] of MESPRIT_ANSWERS.entries()) {
     const s = entryState(96);

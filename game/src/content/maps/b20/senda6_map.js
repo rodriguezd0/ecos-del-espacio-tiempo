@@ -59,6 +59,7 @@ export function senda6Def(orient) {
   return {
     id,
     name: 'Senda del Origen',
+    pillar: { id: 'P10', floor: 1 },
     tileset: 2,
     width: m.width,
     height: m.height,

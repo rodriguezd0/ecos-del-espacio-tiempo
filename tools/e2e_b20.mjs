@@ -31,7 +31,7 @@ const CHROME = [
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
   'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',
 ].find((p) => fs.existsSync(p));
-const FROM = arg('from', 'puerta');
+const FROM = arg('from', ORDER[0]);
 const ONLY = arg('only', '');
 const TO = arg('to', '');
 if (!ORDER.includes(FROM)) throw new Error(`--from desconocido: ${FROM} (${ORDER.join(', ')})`);

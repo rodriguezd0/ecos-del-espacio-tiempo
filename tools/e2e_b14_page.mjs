@@ -5,8 +5,8 @@
 // Caleta Sonda (empezar a nadar / volver a tierra), respiradero más cercano y el planificador de sigilo contra la
 // Bramaluna Alfa (BFS en el tiempo con su patrulla determinista: b14_bramaluna.js#patrolAt).
 
-export async function installB14Helpers(page, { loseOnce = [] } = {}) {
-  await page.evaluate(async (lose) => {
+export async function installB14Helpers(page, { loseOnce = [], captureReal = false } = {}) {
+  await page.evaluate(async ({ lose, captureReal }) => {
     const [{ engine }, api, bram, stealth, pkmn] = await Promise.all([
       import('/src/core/engine.js'), import('/src/battle/api.js'),
       import('/src/content/events/b14_bramaluna.js'), import('/src/content/events/b01_north_stealth.js'),
@@ -18,6 +18,17 @@ export async function installB14Helpers(page, { loseOnce = [] } = {}) {
     const map = () => window.__map;
     const DV = { 2: [0, 1], 4: [-1, 0], 6: [1, 0], 8: [0, -1] };
     const key = (x, y) => `${x},${y}`;
+    let originalTeam = null;
+    if (captureReal) {
+      // El motor consume una Ball normal de la mochila y aplica la captura a la partida.
+      engine.state.addItem('MASTERBALL', 1);
+      const { Autopilot } = await import('/src/battle/scene/autopilot.js');
+      const originalItem = Autopilot.prototype.item;
+      Autopilot.prototype.item = function (battler, ctx) {
+        const ball = this.mode === 'ball' && ctx.bag.find((it) => it.id === 'MASTERBALL');
+        return ball ? { item: ball.id, target: battler.partyIndex, move: -1 } : originalItem.call(this, battler, ctx);
+      };
+    }
 
     /** Etiqueta de un combate: id del entrenador o la Bramaluna (eco con captura desactivada / real). */
     function battleTag(cfg) {
@@ -30,18 +41,22 @@ export async function installB14Helpers(page, { loseOnce = [] } = {}) {
       const tag = battleTag(cfg);
       let catchRule = null;
       try { catchRule = typeof cfg.rules?.catchCondition === 'function' ? cfg.rules.catchCondition() : null; } catch (err) { catchRule = { error: String(err) }; }
-      battles.push({
+      const record = {
         tag, type: cfg.type, species: cfg.wild?.species ?? null, level: cfg.wild?.level ?? null, alpha: Boolean(cfg.wild?.alpha),
         ability: cfg.wild?.ability ?? null, item: cfg.wild?.heldItem ?? cfg.wild?.item ?? null, moves: cfg.wild?.moves ?? null,
         canRun: cfg.rules?.canRun ?? null, canLose: Boolean(cfg.canLose ?? cfg.rules?.canLose), catchRule,
-      });
+      };
+      battles.push(record);
       if (tag && pending.has(tag)) {
         pending.delete(tag);
         lost.push(tag);
         return { outcome: 'lose', stored: true };
       }
       const alpha = cfg.type === 'wild' && cfg.wild?.alpha;
-      return api.startBattle({ ...cfg, auto: cfg.type === 'wild' && !alpha ? 'run' : 'fight' });
+      const auto = captureReal && tag === 'bramaluna_real' ? 'ball' : cfg.type === 'wild' && !alpha ? 'run' : 'fight';
+      const result = await api.startBattle({ ...cfg, auto });
+      Object.assign(record, { outcome: result?.outcome, turns: result?.turns, stored: result?.stored });
+      return result;
     });
 
     // ── Sigilo: casillas que ve la Bramaluna en cada estado (con la pasabilidad real del mapa) ──
@@ -211,7 +226,20 @@ export async function installB14Helpers(page, { loseOnce = [] } = {}) {
       items: (id) => engine.state?.itemCount?.(id) ?? 0,
       hasClue: (id) => Boolean(engine.state?.hasClue?.(id)),
       fragments: () => [...(engine.state?.data?.fragments || [])],
-      money: () => engine.state?.money ?? engine.state?.data?.money ?? null,
+      money: () => engine.state?.player?.money ?? null,
+      captured: () => [...engine.state.party, ...engine.state.boxes.flat()].filter(Boolean).map((p) => p.species),
+      health: () => engine.state.party.map((p) => ({ hp: p.hp, maxHP: pkmn.maxHP(engine.data, p) })),
+      realLossTeam: () => {
+        originalTeam = engine.state.party;
+        const weak = pkmn.createPokemon(engine.data, 'MAGIKARP', 1, { moves: ['SPLASH'], rng: () => 0.5 });
+        engine.state.setParty([{ ...weak, hp: 1 }]);
+        return true;
+      },
+      restoreTeam: () => {
+        if (!originalTeam) throw new Error('No hay equipo anterior al intento de derrota');
+        engine.state.setParty(originalTeam.map((p) => pkmn.healed(engine.data, p)));
+        originalTeam = null;
+      },
       choiceItems: () => [...(engine.scenes.top?.items || [])].map((i) => (typeof i === 'string' ? i : i?.label ?? i?.text ?? String(i))),
       /** La ventana de elección ya existe (ChoiceScene#enter es asíncrono: antes, las teclas se pierden). */
       choiceReady: () => Boolean(engine.scenes.top?.win),
@@ -245,5 +273,5 @@ export async function installB14Helpers(page, { loseOnce = [] } = {}) {
         return moves.map((m) => m.id);
       },
     };
-  }, loseOnce);
+  }, { lose: loseOnce, captureReal });
 }

@@ -8,7 +8,7 @@
 //   sentir    tres salas de espejos (reflejo invertido; capturas con emociones) · C098 · el último espejo: se controla a
 //             Gael con los controles en espejo (laboratorio, explanada, aljibe) · «¿Qué le dirías?» · Hebra del Sentir
 //   querer    parar en el pasillo del viento (vuelta a la repisa) · C099 · Azelf nivel 58 con la Mochila sellada: una
-//             derrota simulada (reintento inmediato) y la victoria · Hebra del Querer
+//             derrota real con un Magikarp débil (reintento inmediato) y la victoria · Hebra del Querer
 //   telar     el hexágono se abre · C100 · ritual de tres pulsaciones (una pulsación a destiempo) · Cadena Roja · P8
 //   hito      el cielo se rompe · Forma Completa (Vuelo y Reconstrucción) · el jugador alza el hueco B (tutorial) · radio
 //             de los Guardianes · Genesis se marcha · el puente se cruza a pie · Marta y su Snorunt

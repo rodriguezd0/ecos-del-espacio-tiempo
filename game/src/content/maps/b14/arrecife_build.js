@@ -6,6 +6,7 @@ import { ARRECIFE } from './layout.js';
 import { rect, placeFree, cellSet, key } from './paint.js';
 import { blob, roughRocks } from './fondo_build.js';
 import { cellHash } from '../../../world/mapBuilder.js';
+import { paintPillarExterior } from '../../stamps/pilarVertical.js';
 
 const A = ARRECIFE;
 const GRIS = 402;
@@ -61,13 +62,14 @@ export function buildArrecife(b) {
   // Explanada ante la muralla: losas hundidas de Antea.
   const plaza = rect(17, 5, 27, 11).filter(([x, y]) => res.has(key(x, y)) || cellHash(x, y, 17) > 0.35);
   b.paint('pilar_enlosado', plaza);
-  b.stamp('boca_norte_gris', A.gate.door.x - 1, 1);
-  for (const x of [19, 25]) b.stamp('pilar_columna', x, 3);
+  // La columna ocupa roca sólida: sus pisos altos se dibujan por encima del personaje.
+  b.paint('macizo_gris', rect(A.gate.door.x - 3, A.gate.door.y - 9, A.gate.door.x + 3, A.gate.door.y - 1));
+  paintPillarExterior(b, { centerX: A.gate.door.x, doorY: A.gate.door.y });
   for (const [x, y] of [[17, 8], [27, 8], [12, 21], [30, 14]]) b.stamp('pilar_columna_quebrada', x, y);
   b.stamp('pilar_monolito', 28, 5);
-  b.stamp('pilar_losa_eco', 20, 10);
+  b.stamp('pilar_losa_eco', 17, 11);
   // Manguera de succión de la draga: tubo oscuro sobre el lecho, de la campana hacia la puerta.
-  for (const x of [11, 14, 17]) b.stamp('tronco_h_gris', x, 13);
+  for (const x of [11, 14]) b.stamp('tronco_h_gris', x, 13);
   const free = (x, y) => x >= 3 && x <= 43 && y >= 5 && y <= 32 && !isMacizo(b, x, y) && !b.get(2, x, y);
   placeFree(b, [
     ['matojo_cueva_gris', 4, 11, 2, 2], ['matojo_cueva_gris', 5, 20, 2, 2], ['matojo_cueva_gris', 11, 28, 2, 2],

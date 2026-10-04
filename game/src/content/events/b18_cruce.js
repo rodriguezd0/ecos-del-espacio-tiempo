@@ -9,11 +9,12 @@ import { VESTIBULO, CAIDA, RIO, CRUCE, NUCLEO, SHORTCUT, ROOM_PLACES } from '../
 import { MOUTH } from '../maps/b18/puente_layout.js';
 import { axisRoomEvents } from '../../world/axis/roomEvents.js';
 import { syncAxis } from '../../world/axis/actions.js';
+import { CORE_MAP } from '../maps/b18/vertical_layout.js';
 
 export const CRUCE_TEXT = Object.freeze({
   arrive: [
     'Una sala de mármol plateado suspendida sobre el abismo. Del techo se desprenden piedras que caen hacia el fondo de la Sima.',
-    'Más abajo retumban dos rugidos que no se ponen de acuerdo.',
+    'Más arriba retumban dos rugidos que no se ponen de acuerdo.',
   ],
   stele: 'Una estela de los Custodios. La Clave Glífica traduce: «Tira hacia el que detiene, y lo que cae se quedará. Tira hacia el que pliega, y lo lejano se acercará.»',
   sealed: 'Una puerta de piedra sellada. En el dintel, un hexágono apagado. Al otro lado se oyen dos rugidos.',
@@ -84,10 +85,9 @@ export function cruceWarps() {
     ...stairWarps(RIO, toFront(CAIDA)),
     gateWarp(RIO, CRUCE.stairs.arrive),
     ...stairWarps(CRUCE, toFront(RIO)),
-    gateWarp(CRUCE, NUCLEO.stairs.arrive),
-    // El núcleo baja directamente al vestíbulo (junto al atajo), y el atajo sube al núcleo cuando ya se ha visto
-    ...NUCLEO.stairs.exits.map((e) => ({ x: e.x, y: e.y, dirTrigger: 2, to: 'camara_cruce', tx: SHORTCUT.front.x, ty: SHORTCUT.front.y, dir: 2 })),
-    { x: SHORTCUT.warp.x, y: SHORTCUT.warp.y, to: 'camara_cruce', tx: NUCLEO.stairs.arrive.x, ty: NUCLEO.stairs.arrive.y, dir: 8 },
+    { ...gateWarp(CRUCE, NUCLEO.stairs.arrive), to: CORE_MAP },
+    // El núcleo está arriba; al conocerlo, el atajo evita repetir los tres puzzles.
+    { x: SHORTCUT.warp.x, y: SHORTCUT.warp.y, to: CORE_MAP, tx: NUCLEO.stairs.arrive.x, ty: NUCLEO.stairs.arrive.y, dir: 8 },
   ];
 }
 
@@ -110,6 +110,22 @@ let lastRoom = null;
 export async function cruceEnter(ctx) {
   syncAxis(ctx);
   const room = roomAt(ctx.player.x, ctx.player.y);
+  if (room === 'nucleo') {
+    // Las partidas anteriores guardaban esta sala dentro del mapa del puzzle. Mantener coordenadas y switches
+    // permite continuar incluso entre la elección, el KO, la restauración y la recogida del orbe.
+    const prefix = 'camara_cruce:';
+    for (const [key, value] of Object.entries(ctx.state.data.selfSwitches)) {
+      if (!key.startsWith(prefix) || !value) continue;
+      const [, id, letter] = key.split(':');
+      if (/^(dialga_nucleo|palkia_nucleo|nucleo_|orbe_no_elegido|elegido_reaparece|placa_nucleo)/.test(id)) {
+        ctx.state.setSelfSwitch(CORE_MAP, id, letter, true);
+      }
+    }
+    if (ctx.map.id === 'camara_cruce') {
+      await ctx.warp(CORE_MAP, ctx.player.x, ctx.player.y, ctx.player.direction, { fade: false });
+      return;
+    }
+  }
   const name = room === 'nucleo' ? 'Núcleo del Cruce' : ROOM_NAMES[room];
   if (room && room !== lastRoom && name) ctx.ui?.showLocation?.(name);
   lastRoom = room;

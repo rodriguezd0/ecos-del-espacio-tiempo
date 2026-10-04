@@ -6,6 +6,7 @@ import { TERRAZA } from './layout.js';
 import { terrazaEvents, terrazaWarps } from '../../events/b20_terraza.js';
 import { MUSIC } from '../../events/b20_common.js';
 import { pilarTone } from '../../stamps/pilar.js';
+import { paintOriginStair } from './vertical_build.js';
 
 const T = TERRAZA;
 const cells = (r) => {
@@ -35,11 +36,13 @@ export function buildTerraza(b) {
   b.stamp('pilar_arista_grande', 18, 16);
   b.stamp('pilar_columna_quebrada', 7, 9);
   for (const [x, y] of [[8, 13], [17, 10]]) b.stamp('pilar_glifo', x, y);
+  paintOriginStair(b, T.back);
 }
 
 export default {
   id: 'terraza_ultimo_sello',
   name: 'Terraza del Último Sello',
+  pillar: { id: 'P10', floor: 3 },
   tileset: 8,
   width: T.w,
   height: T.h,
