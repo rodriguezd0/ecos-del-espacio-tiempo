@@ -1,6 +1,7 @@
 import {refreshDriver} from './e2e_campaign_refresh.mjs';
 import {installB09aObserver} from './e2e_campaign_b09a_page.mjs';
 import {collectLandCells} from './e2e_campaign_cells.mjs';
+import {GALLERY} from '../game/src/content/maps/b09a/museo_layout.js';
 
 const RETRY=false;
 const pick = (label) => (s) => { const i = s.choices.findIndex((c) => c === label || c.startsWith(label)); return i < 0 ? 0 : i; };
@@ -197,8 +198,19 @@ async function gifts(d) {
 
 // ───────────────────────────── Principal ─────────────────────────────
 
+async function salida(d) {
+  const s=await d.snap(),room=GALLERY.cronicas;
+  if(s.map==='lumina_museo_galeria'&&s.x>=room.room[0]) {
+    await d.pushTo(room.door.x,room.door.y,'down',room.back.x,room.back.y);
+  }
+  if((await d.snap()).map==='lumina_museo_galeria') {
+    await d.push(GALLERY.fromHall.x,GALLERY.fromHall.y,'left','lumina_museo');
+  }
+  await d.travel('ciudad_lumina');await d.travel('ruta_8_marisma');
+}
+
 export async function runB09a(d){await refreshDriver(d);await installB09aObserver(d.page);await d.stages('B09a',{
  opcionales:async d=>{await collectLandCells(d,['cell_dunas_2','cell_ruta_6_1']);await d.travel('ruta_7');},
  ruta7,gala,gaelB3,t07,
  celulas:async d=>{await collectLandCells(d,['cell_lumina_1','cell_reserva_1']);await d.travel('ciudad_lumina');},
- t06,gifts});await d.travel('ciudad_lumina'); await d.travel('ruta_8_marisma');}
+ t06,gifts,salida});}

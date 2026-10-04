@@ -7,7 +7,7 @@ import * as MAR from '../game/src/content/maps/b13/mar_layout.js';
 import * as TAL from '../game/src/content/maps/b13/talasa_layout.js';
 import * as CL from '../game/src/content/maps/b09b/caleta_layout.js';
 import {collectWaterCells} from './e2e_campaign_cells.mjs';
-import {collectEasternSea} from './e2e_campaign_sea.mjs';
+import {collectEasternSea,returnToCaleta} from './e2e_campaign_sea.mjs';
 export async function runB13(d){
  await refreshDriver(d); await installB13Observer(d.page);
  d.snapState=()=>d.eval(()=>({...window.__campaign.snap(),party:window.__b13.party()}));
@@ -31,6 +31,6 @@ export async function runB13(d){
   await swimAcross(d,link.offset+TAL.JETTY.x+1,MAR.H-1,'down','estacion_talasa');
   await d.swimTo(TAL.JETTY.x+1,TAL.JETTY.y);
   await buceo(d);await caleta(d);
- },lumbre,marEste:collectEasternSea,tizon:d=>tizon(d,{retry:false})});
+ },lumbre,marEste:collectEasternSea,tizon:d=>tizon(d,{retry:false}),regresoCosta:returnToCaleta});
  for(const method of ['walkTo','startSwim','swimTo','tap','quickPos','expectNotSaid','snapState'])delete d[method];
 }
