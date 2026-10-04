@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Cerro Plomo (docs/CAMPANA.md B08; §1.5 Pilar de la Masa: Cueva1 + kit, tinte plomo): las galerías de la familia
 // Galena bajo el cerro de las Dunas de Ceniza. Abajo, la galería de entrada (vieja explotación: vigas, vía, vagoneta y
 // faroles); en medio, la verja de los Galena; arriba, la antesala del Pilar (enlosado, monolitos) con la boca de la
@@ -58,10 +59,10 @@ export default {
     { x: CERRO.exit.warp.x, y: CERRO.exit.warp.y, to: 'dunas_ceniza', tx: DUNAS.cerro.front.x, ty: DUNAS.cerro.front.y, dir: 2 },
   ],
   onEnter: cerroOnEnter,
-  events: [
+  events: withB22bEvents('cerro_plomo', [
     ...cerroEvents(),
     // Vagoneta y vía de la vieja explotación.
     { id: 'vagoneta_cerro', x: 16, y: 22, sprite: OBJ.cart, dir: 4, directionFix: true, walkAnime: false, solid: true, trigger: 'action', script: async (ctx) => { await ctx.say('Una vagoneta oxidada, vacía. En el fondo, polvo gris de plomo.'); } },
     ...[13, 14, 15].map((x) => ({ id: `via_cerro_${x}`, x, y: 22, sprite: OBJ.rail, dir: 2, pattern: 0, directionFix: true, walkAnime: false, shadow: false, through: true })),
-  ],
+  ]),
 };

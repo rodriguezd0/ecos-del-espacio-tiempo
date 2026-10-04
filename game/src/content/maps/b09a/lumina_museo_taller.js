@@ -6,6 +6,7 @@ import { BASEMENT, HALL } from './museo_layout.js';
 import { SPOTS } from './lumina_layout.js';
 import { exitArrowEvents } from '../../services/interior.js';
 import { basementEvents } from '../../events/b09a_t06.js';
+import { b22dTallerEvents } from '../../events/b22d_registeel.js';
 
 const B = BASEMENT;
 
@@ -52,5 +53,6 @@ export default {
   events: [
     ...exitArrowEvents(B.dockExit[0].x, B.dockExit[0].y + 1).slice(1),
     ...basementEvents(),
+    ...b22dTallerEvents(),
   ],
 };

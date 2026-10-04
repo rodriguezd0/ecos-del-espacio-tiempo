@@ -23,10 +23,10 @@
 > - Prueba cooperativa reproducible: rival generado con semilla, igual que equipos y decisiones.
 >
 > Después:
-> 1. P6: solo puzzles, sin Pokémon ni Guardianes.
+> 1. P6 terminado: solo puzzles, sin Pokémon ni Guardianes.
 > 2. P7–P10 con el reparto confirmado por el creador el 03-10.
 > 3. Arte.
-> 4. Postgame B22 (a medias en la rama `wip-pausa-25-09`).
+> 4. Postgame B22: a, b, d y e implementados y probados; c pendiente.
 > 5. DLC B23 y B24.
 > 6. Partida completa.
 >
@@ -46,7 +46,7 @@ La rama de pausa se revisa por módulos; sus versiones antiguas de mapas no sust
 |---|---|---|
 | Campaña B01–B21 | Implementada; P1–P6 verticales terminados | P7–P10, recorrido continuo sin saltos de progresión, final y carga del epílogo |
 | Arte humano | Acciones de protagonistas M/F integradas y probadas | Pase visual de poses y NPC de combate; sin recortes ni solapes |
-| B22, postgame base | B22a terminado; B22b/d/e en implementación; B22c pendiente | Encuentros de CAMPANA §8, condiciones, captura, descanso, acceso y regreso en solitario |
+| B22, postgame base | B22a/b/d/e implementados y recorridos en Chrome; B22c pendiente | B22c: Lugia, Ho-Oh, Kyogre, Groudon, Rayquaza, Latias y Latios; integración y auditoría final |
 | B23, Almenara | Pendiente | D1-01…05, Gael, Hoopa, Zygardita y Mega Zygarde; final abierto |
 | B24, Expediciones | Pendiente | Sabela, tres expediciones activas, cuatro oleadas y todos los hallazgos de CAMPANA §8 |
 | Sistemas y balance | Base jugable y multijugador terminado | Guardados y migraciones, crianza/evoluciones, captura, viajes, economía y combates dobles |

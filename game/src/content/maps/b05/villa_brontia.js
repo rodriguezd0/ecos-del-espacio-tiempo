@@ -7,6 +7,7 @@ import { W, H, buildBrontia } from './villa_brontia_build.js';
 import { BUILDINGS, INTERIOR_ENTRIES, FLY_POINT, EXITS, TOWER } from './villa_brontia_layout.js';
 import { R4_TO_BRONTIA, linkIfReady } from './links.js';
 import { brontiaEvents } from '../../events/b05_brontia.js';
+import { withB22bHints } from '../../events/b22b_hints.js';
 import { brontiaOnEnter } from '../../events/b05_brontia_night.js';
 import { VILLA_BRONTIA } from '../../encounters/b05.js';
 
@@ -46,5 +47,5 @@ export default {
   ],
 
   onEnter: brontiaOnEnter,
-  events: brontiaEvents(),
+  events: withB22bHints(brontiaEvents()),
 };

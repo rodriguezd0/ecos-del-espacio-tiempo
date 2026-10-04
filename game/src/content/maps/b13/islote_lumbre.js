@@ -7,6 +7,7 @@ import { W, H, SEA_LINK, START } from './lumbre_layout.js';
 import { buildLumbre } from './lumbre_build.js';
 import { ISLOTE_LUMBRE } from '../../encounters/b13.js';
 import { lumbreEvents } from '../../events/b13_lumbre.js';
+import { lumbreEvents as cresseliaEvents } from '../../events/b22d_suenos.js';
 
 export default {
   id: 'islote_lumbre',
@@ -20,5 +21,5 @@ export default {
   encounters: ISLOTE_LUMBRE,
   build: buildLumbre,
   connections: Object.hasOwn(MAPS, SEA_LINK.to) ? [{ dir: 'north', to: SEA_LINK.to, offset: SEA_LINK.offset }] : [],
-  events: lumbreEvents(),
+  events: [...lumbreEvents(), ...cresseliaEvents()],
 };

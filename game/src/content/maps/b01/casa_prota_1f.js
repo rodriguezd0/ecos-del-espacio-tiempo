@@ -7,6 +7,7 @@ import { STAIRS_ARRIVAL as UPSTAIRS_ARRIVAL } from './casa_prota_2f.js';
 import { b11HomeEvents } from '../../events/b11_home.js'; // B11: Mamá entrega el huevo de Togepi
 import { b17HomeEvents } from '../../events/b17_circulo.js'; // B17: Mamá cuenta lo de los Clefairy (tras el P8)
 import { b21CasaEvents } from '../../events/b21_epilogo.js'; // B21: la tele, el carguero y los créditos
+import { withDreamMom } from '../../events/b22d_suenos.js';
 
 const ENTRY = INTERIOR_ENTRIES.casa_prota_1f;
 const DOOR_X = ENTRY.x;
@@ -60,7 +61,7 @@ export default {
 
   events: [
     ...exitArrows([DOOR_X - 1, DOOR_X, DOOR_X + 1], MAT_Y + 1),
-    momEvent({ x: 4, y: 5, dir: 2 }),
+    withDreamMom(momEvent({ x: 4, y: 5, dir: 2 })),
     ...examineRect('fregadero', 1, 5, 2, 1, 'El fregadero está impecable.'),
     ...examineRect('nevera', 3, 5, 1, 1, 'La nevera está bien surtida.'),
     ...examineRect('vitrina', 5, 5, 2, 1, 'La vitrina guarda la vajilla buena, la de las visitas.'),

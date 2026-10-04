@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Ruta 4 (B05; docs/CAMPANA.md §1.4 y «B05 — Interludio 2») — vega inundable al este de Ciudad Caudal y subida
 // a la meseta de Villa Brontia. El vado está anegado hasta que se restaura el Pilar de la Corriente (p2_restored,
 // lo pone B04). Hierba alta, charcas, casa de labranza, cinco entrenadores (nv 18–22), la roca de tutorial de
@@ -28,5 +29,5 @@ export default {
     ...[linkIfReady('ruta_4', 'ciudad_caudal')].filter(Boolean),
   ],
 
-  events: ruta4Events(),
+  events: withB22bEvents('ruta_4', ruta4Events()),
 };

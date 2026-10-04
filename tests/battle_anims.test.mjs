@@ -2,6 +2,7 @@
 // (Beat Up) «tira unas bolitas en vez del puño» (25-09-2026). Ahora cada movimiento usa su animación de Añil.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { animationSheetFile } from '../game/src/battle/scene/fx/anilAnimCore.js';
 import fs from 'node:fs';
 import {
   findMoveAnimDetails, findMoveAnimation, expandCel, animFrameAt, cellRect, placeCel, lineTransform, celOrder,
@@ -12,6 +13,13 @@ import { compactCel, convertAnimation, buildIndex } from '../tools/lib/anilAnims
 const load = (f) => JSON.parse(fs.readFileSync(new URL(`../game/data/${f}`, import.meta.url)));
 const index = load('anims/index.json');
 const moves = load('moves.json');
+
+test('el fondo original ausente de Premonición se resuelve a la hoja oscura existente de Añil', () => {
+  const file = animationSheetFile('PRAS- Darkness BG');
+  assert.ok(fs.existsSync(new URL(`../Pokemon Anil V4.13/Graphics/Animations/${file}`, import.meta.url)));
+  assert.equal(animationSheetFile('PRAS- Darkness BG.png'), file);
+  assert.equal(animationSheetFile('PRAS- Strike.png'), 'PRAS- Strike.png');
+});
 
 test('Paliza usa la animación de Añil con puños (PRAS- Strike, celda 1)', () => {
   const found = findMoveAnimation(index, moves.BEATUP, 0);

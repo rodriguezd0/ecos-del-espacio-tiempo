@@ -8,6 +8,7 @@ import { W, H, SEA_LINK, BUILDINGS, INTERIOR_ENTRIES, START } from './talasa_lay
 import { buildTalasa } from './talasa_build.js';
 import { ESTACION_TALASA } from '../../encounters/b13.js';
 import { talasaEvents } from '../../events/b13_talasa.js';
+import { talasaRuinsEvents } from '../../events/b22e_rooms.js';
 
 const door = (bd) => {
   const e = INTERIOR_ENTRIES[bd.to];
@@ -29,5 +30,5 @@ export default {
   // El laboratorio no tiene warp: su puerta es un evento (sellada hasta tener la tarjeta de dirección).
   warps: Object.values(BUILDINGS).filter((bd) => bd.to !== 'talasa_laboratorio' && Object.hasOwn(MAPS, bd.to)).map(door),
   connections: Object.hasOwn(MAPS, SEA_LINK.to) ? [{ dir: 'north', to: SEA_LINK.to, offset: SEA_LINK.offset }] : [],
-  events: talasaEvents(),
+  events: [...talasaEvents(), ...talasaRuinsEvents()],
 };

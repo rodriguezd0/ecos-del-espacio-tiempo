@@ -7,6 +7,9 @@ import { W, H, SEA_LINK, MINE, BUILDINGS, HOUSE_ENTRY, START } from './tizon_lay
 import { buildTizon } from './tizon_build.js';
 import { VOLCAN_TIZON } from '../../encounters/b13.js';
 import { tizonEvents } from '../../events/b13_tizon.js';
+import { withHeatranForge } from '../../events/b22d_heatran.js';
+import { withB22bHints } from '../../events/b22b_hints.js';
+import { withB22bEvents } from '../../events/b22b_maps.js';
 
 const b = BUILDINGS.brasa;
 
@@ -25,5 +28,5 @@ export default {
     { x: b.door.x, y: b.door.y, to: b.to, tx: HOUSE_ENTRY.x, ty: HOUSE_ENTRY.y, dir: 8, door: true },
   ],
   connections: Object.hasOwn(MAPS, SEA_LINK.to) ? [{ dir: 'west', to: SEA_LINK.to, offset: SEA_LINK.offset }] : [],
-  events: tizonEvents(),
+  events: withB22bEvents('volcan_tizon', withB22bHints(withHeatranForge(tizonEvents()))),
 };

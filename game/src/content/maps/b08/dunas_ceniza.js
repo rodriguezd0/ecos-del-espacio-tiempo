@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Dunas de Ceniza (docs/CAMPANA.md §1.4: «Desierto gris con el Cerro Plomo», ExteriorSafari, 60×50; O Estrato;
 // Terreno complicado). Llanura de ceniza gris con mesas de roca rojiza, matorrales y una cresta de norte a sur que
 // solo se cruza por tres vados de ceniza honda. Al este, el macizo del Cerro Plomo con la boca de la galería de los
@@ -99,5 +100,5 @@ export default {
     { x: D.cerro.door.x, y: D.cerro.door.y, to: 'cerro_plomo', tx: CERRO.exit.arrive.x, ty: CERRO.exit.arrive.y, dir: 8, door: true },
   ],
   connections: [{ dir: 'west', to: 'ciudad_estrato', offset: -ESTRATO_TO_DUNAS }],
-  events: dunasEvents(),
+  events: withB22bEvents('dunas_ceniza', dunasEvents()),
 };

@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Parque Eólico, ocupado por Genesis (docs/CAMPANA.md B06; §1.4: Meseta del Impulso, interior tileset 4; fondo de
 // combate Central, música GuaridaRocket mientras dura la ocupación). Dos salas del Interior1 de Añil: el almacén de
 // la entrada (contenedores, bidones, conos: la «infiltración breve» con dos técnicos) y la sala del Colector, con
@@ -38,5 +39,5 @@ export default {
     if (ctx.flag(F.colector)) ctx.bgm(ctx.flag(F.restored) ? 'viento' : 'Amenaza');
   },
 
-  events: parqueEvents(),
+  events: withB22bEvents('parque_eolico', parqueEvents()),
 };

@@ -70,7 +70,7 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | B21 | Columna Lanza: Salto, captura voluntaria de Zygarde, Arceus 3 fases, epílogo | ✅ E2E + verificación |
 | Tablillas | 15 arcos T01–T15 (museo T06) repartidos en B03–B19 | ✅ con sus bloques |
 | Partida continua | De «Nueva partida» a los créditos sin preajustes (curva de niveles, dinero, banderas) | ⬜ tras el postgame y los DLC |
-| B22 | Postgame del juego base (búsquedas legendarias) | ⬜ |
+| B22 | Postgame del juego base (búsquedas legendarias) | 🟨 B22a/b/d/e probados con capturas y retornos reales; B22c pendiente |
 | B23 / B24 | DLC 1 «Almenara» (Gael, Hoopa, Mega Zygarde) / DLC 2 Registro de Expediciones | ⬜ |
 
 ## Personajes (arte provisional D30 en `game/assets/characters`)

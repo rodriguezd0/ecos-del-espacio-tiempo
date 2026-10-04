@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Meseta del Impulso (docs/CAMPANA.md §1.4: 50×50, tileset 1 + 4, O Ruta 5, Embestida; BGM viento; fondo
 // Acantilado). Altiplano con el Parque Eólico ocupado por el Consorcio/Genesis y la peña del Anillo de los Vientos.
 // Construcción en ./meseta_impulso_build.js, coordenadas en ./layout.js, eventos en content/events/b06_meseta.js.
@@ -35,5 +36,5 @@ export default {
     if (ctx.flag(F.gaelScreens) && !ctx.flag(F.gaelLeft)) ctx.setFlag(F.gaelLeft);
   },
 
-  events: mesetaEvents(),
+  events: withB22bEvents('meseta_impulso', mesetaEvents()),
 };

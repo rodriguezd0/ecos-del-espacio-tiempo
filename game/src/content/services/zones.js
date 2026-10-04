@@ -16,7 +16,8 @@ const G = (place, name, bgm, battleback, maps, prefixes = []) => ({ place, name,
 export const MAP_GROUPS = Object.freeze([
   // ── Poblaciones (§1.3) ──────────────────────────────────────────────────────────────────────
   G('villa_alba', 'Villa Alba', 'town_start', 'Bosque',
-    ['villa_alba', 'casa_prota_1f', 'casa_prota_2f', 'casa_gael', 'casa_vecinos_n', 'casa_vecinos_se', 'laboratorio_alerce'], ['alba_']),
+    ['villa_alba', 'casa_prota_1f', 'casa_prota_2f', 'casa_gael', 'casa_vecinos_n', 'casa_vecinos_se', 'laboratorio_alerce',
+      ['alerce_cuarto_fondo', { name: 'Archivo del laboratorio' }]], ['alba_']),
   G('villa_zaguan', 'Villa Zaguán', 'PrismaVilla2', 'Pradera', ['villa_zaguan', 'zaguan_centro', 'casa_dintel'], ['zaguan_']),
   G('ciudad_caudal', 'Ciudad Caudal', 'CiudadCeleste', 'water_rio', ['ciudad_caudal', 'molino_diezmo'], ['caudal_']),
   G('villa_brontia', 'Villa Brontia', 'PuebloMarengo', null, ['villa_brontia'], ['brontia_']),
@@ -58,7 +59,8 @@ export const MAP_GROUPS = Object.freeze([
   G('ruta_12_senda_lazo', 'Ruta 12', 'Transicion', 'CimaNevada', ['ruta_12_senda_lazo']),
   G('ruta_13', 'Ruta 13', 'Ruta 2', 'snow', ['ruta_13']),
   G('lagos_alma', 'Lagos del Alma', 'VinculoSupremo', 'Agua', ['lagos_alma'], ['lagos_']),
-  G('gruta_escarcha', 'Gruta Escarcha', 'Cueva', 'CuevaHielo', ['gruta_escarcha'], ['gruta_escarcha_']),
+  G('gruta_escarcha', 'Gruta Escarcha', 'Cueva', 'CuevaHielo', ['gruta_escarcha',
+    ['escarcha_lago_interior', { name: 'Lago interior de Escarcha' }]], ['gruta_escarcha_']),
   G('mar_boreal', 'Mar Boreal', 'Azul Tema', 'water', ['mar_boreal']),
   G('mar_boreal', 'Fondo del Mar Boreal', 'Emociones', 'Sub', ['mar_boreal_fondo']), // B15: fondo bajo el remolino
   G('ruta_15', 'Ruta 15', 'Azul Tema', 'Playa', ['ruta_15']),
@@ -84,11 +86,14 @@ export const MAP_GROUPS = Object.freeze([
   G('meseta_impulso', 'Pilar del Impulso', null, 'Acantilado', ['anillo_vientos', 'galerias_soplo'], ['anillo_vientos_', 'galerias_soplo_']),
   G('cerro_plomo', 'Pilar de la Masa', null, 'Cueva', ['cerro_plomo', 'camara_contrapesos'], ['camara_contrapesos_']),
   G('ciudad_estrato', 'Mina Galena', null, 'CuevaOscura', ['mina_galena'], ['mina_galena_']),
-  G('archivo_hondo', 'Pilar de la Memoria', null, 'Templo', ['archivo_hondo'], ['archivo_hondo_']),
+  G('archivo_hondo', 'Pilar de la Memoria', null, 'Templo', ['archivo_hondo',
+    ['archivo_coloso', { name: 'Archivo del Coloso' }]], ['archivo_hondo_']),
   G('aljibe_portal', 'Pilar Invertido', 'distortion', 'MundoDistorsion', ['aljibe_portal'], ['pilar_invertido']),
+  G('aljibe_portal', 'Hondura de la Distorsión', 'distortion', 'MundoDistorsion',
+    ['distorsion_honda', ['distorsion_corazon', { name: 'Corazón de la Distorsión' }]]),
   G('arrecife_eco', 'Pilar de los Ecos', null, 'Templo', ['fosa_eco'], ['antea_']),
   G('lagos_alma', 'Pilar del Alma', null, 'Templo', ['santuario_alma'], ['santuario_alma_']),
-  G('sima_eje', 'Pilar de la Convergencia', null, 'Espacio', ['puente_convergencia', 'camara_cruce']),
+  G('sima_eje', 'Pilar de la Convergencia', null, 'Espacio', ['puente_convergencia', 'camara_cruce'], ['camara_cruce_']),
   G('sima_eje', 'Pilar del Origen', null, 'Cielo', ['puerta_quince', 'senda_origen', 'cielo_interior', 'terraza_ultimo_sello', 'nucleo_origen'], ['senda_origen_']), // B20: tramos senda_origen_1…9 (+ capas)
 ]);
 

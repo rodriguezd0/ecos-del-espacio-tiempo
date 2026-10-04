@@ -6,6 +6,7 @@ import { TOWN_DOORS } from './villa_alba_layout.js';
 import { LAB, labNpcEvents, labChoiceEvents } from '../../events/b01_town_lab.js';
 import { labReturnEvents } from '../../events/b01_town_return.js';
 import { b11LabEvents } from '../../events/b11_home.js'; // B11: Gael se enfrenta a Alerce
+import { withAlerceBackRoom } from '../../events/b22e_rooms.js';
 
 const DOOR_X = LAB.entry.x;
 const MAT_Y = LAB.entry.y;
@@ -56,7 +57,7 @@ export default {
 
   events: [
     ...exitArrows(LAB.exitMat.map((p) => p.x), MAT_Y + 1),
-    ...labNpcEvents(),
+    ...withAlerceBackRoom(labNpcEvents()),
     ...labChoiceEvents(),
     ...labReturnEvents(),
     ...b11LabEvents(),

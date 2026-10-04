@@ -17,8 +17,9 @@ const ITEM_TARGETS = ['OnPokemon', 'OnMove'];
 
 export class SceneBattleUI {
   /** @param {import('./battleScene.js').BattleScene} scene */
-  constructor(scene) {
+  constructor(scene, { state = engine.state } = {}) {
     this.scene = scene;
+    this.state = state;
     this.battle = null;
     this.victoryPlayed = false;
     this.auto = scene.meta?.auto ? new Autopilot(scene.meta.auto) : null;
@@ -117,7 +118,7 @@ export class SceneBattleUI {
   /** Mochila de ui/ en modo combate (sincronizada con la del motor) + objetivo del objeto. */
   async chooseItem(battler, ctx) {
     if (this.auto) return this.auto.item(battler, ctx);
-    const state = engine.state;
+    const state = this.state;
     if (!state) return this.chooseItemFallback(battler, ctx);
     if (this.battle?.bag) syncBag(state, this.battle.bag);
     // Captura bloqueada (reglas del combate, p. ej. las fases de Arceus): Poké Balls en gris con el motivo (aditivo B21).

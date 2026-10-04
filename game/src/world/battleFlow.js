@@ -65,7 +65,8 @@ export async function runBattle(scene, config = {}) {
     bgm: config.bgm || battleBGM({ ...config, type: isTrainer ? 'trainer' : config.type }) || (isTrainer ? 'Entrenador' : 'Salvaje'),
     ...config,
     type: isTrainer ? 'trainer' : (config.type || 'wild'),
-    player: { name: state.player.name, gender: state.player.gender, id: state.player.id, party: state.party, bag: state.data.bag },
+    player: { name: state.player.name, gender: state.player.gender, id: state.player.id,
+      party: state.party, bag: state.data.bag, ...(config.exhibition ? config.player : {}) },
     opponent,
     rules: { canRun: !isTrainer, canCatch: !isTrainer, expGain: true, ...(config.rules || {}) },
   };
@@ -87,7 +88,7 @@ export async function runBattle(scene, config = {}) {
   }
   scene.inBattle = false;
   // Sin escena (o con una implementación instalada que no toca la partida) se aplica aquí.
-  if (!result.stored) {
+  if (!result.stored && !config.exhibition) {
     applyBattleResult(state, result);
     for (const p of caughtList(result)) storeCaught(state, p);
   }

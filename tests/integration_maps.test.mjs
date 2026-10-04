@@ -68,7 +68,7 @@ for (const id of Object.keys(MAPS)) {
     assert.equal(new Set(ids).size, ids.length, `ids de evento repetidos: ${ids}`);
     for (const ev of events) {
       for (const page of ev.def.pages) {
-        if (page.script !== undefined) assert.equal(typeof page.script, 'function', `script de ${ev.id}`);
+        if (page.script != null) assert.equal(typeof page.script, 'function', `script de ${ev.id}`);
       }
     }
     if (def.onEnter !== undefined) assert.equal(typeof def.onEnter, 'function', 'onEnter');

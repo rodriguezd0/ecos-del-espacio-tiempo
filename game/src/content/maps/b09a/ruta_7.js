@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Ruta 7 (docs/CAMPANA.md §1.4 y B09 parte A): valle ferroviario al sur de la Sima. Tileset 5 (Exterior3), 90×30.
 // E Ciudad Estrato (B08) · O Ciudad Lúmina · N Mirador de la Calzada (B19). El Paso del Derrumbe se despeja con
 // p4_restored (puerta G6, §2.5). Coordenadas: ruta_7_layout.js · construcción: ruta_7_build.js · eventos:
@@ -29,5 +30,5 @@ export default {
     ...[linkIfReady('ruta_7', 'ciudad_estrato'), linkIfReady('ruta_7', 'calzada_rey')].filter(Boolean),
   ],
 
-  events: ruta7Events(OPEN),
+  events: withB22bEvents('ruta_7', ruta7Events(OPEN)),
 };

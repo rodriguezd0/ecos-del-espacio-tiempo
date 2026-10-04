@@ -5,6 +5,7 @@ import { bedroomEvents } from '../../events/b01_town_home.js';
 import { F, when } from '../../events/b01_town_common.js';
 import { b21CuartoEvents } from '../../events/b21_epilogo.js'; // B21: despertar tras los créditos
 import { b22aCuartoEvents } from '../../events/b22a_home.js';
+import { homeBedEvents } from '../../events/b22d_suenos.js';
 
 /** Punto de inicio de partida nueva (junto a la cama, mirando abajo). */
 export const START = Object.freeze({ x: 8, y: 6, dir: 2 });
@@ -71,7 +72,7 @@ export default {
     ...examineRect('comoda', 8, 4, 1, 1, 'Ropa doblada. La mochila está preparada al lado.'),
     ...examineRect('tele', 4, 5, 2, 2, 'Un programa sobre Pokémon del bosque. Nada que no sepas ya.'),
     ...examineRect('consola', 4, 7, 2, 1, 'Una consola de videojuegos. Ahora no es momento.'),
-    ...examineRect('cama', 9, 6, 3, 3, 'Tu cama. Sigue deshecha.'),
+    ...homeBedEvents(),
     ...b21CuartoEvents(),
     ...b22aCuartoEvents(),
   ],

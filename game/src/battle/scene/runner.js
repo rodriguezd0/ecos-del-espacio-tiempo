@@ -63,9 +63,11 @@ async function runEvolutions(result) {
  * (o un banco de pruebas). Devuelve el resultado del motor + { party, caught, stored, canLose }.
  */
 export async function runSceneBattle(request = {}, { state = engine.state, db = engine.data } = {}) {
+  // El Bastión usa copias normalizadas del equipo; el resultado solo modifica su racha.
+  if (request.exhibition) state = null;
   const { config, meta } = buildBattleConfig(request, { db, state, getTrainer });
   const scene = new BattleScene(meta);
-  const sceneUI = new SceneBattleUI(scene);
+  const sceneUI = new SceneBattleUI(scene, { state });
   const battle = new Battle(config, sceneUI); // valida la configuración antes de mostrar nada
   // Combate online (net/linkSession.js): decisiones del otro jugador por la red. Se pasa state = null: no toca la partida.
   if (request.link) installLink(battle, request.link);
@@ -104,7 +106,7 @@ export async function runSceneBattle(request = {}, { state = engine.state, db = 
   try {
     scene.message.clear();
     await scene.fadeTo(1, 20);
-    if (!error && result) await runEvolutions(result);
+    if (state && !error && result) await runEvolutions(result);
   } finally {
     engine.scenes.pop(undefined, scene);
     await closed;

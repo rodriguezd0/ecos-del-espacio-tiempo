@@ -13,7 +13,7 @@ import { atlasRect } from '../gfx/actors.js';
 import { SCREEN_W, SCREEN_H } from '../layout.js';
 import {
   findMoveAnimation, expandCel, animFrameAt, cellRect, placeCel, lineTransform, celOrder, emptyLayer, applyTimings,
-  CELL, TICKS_PER_FRAME,
+  CELL, TICKS_PER_FRAME, animationSheetFile,
 } from './anilAnimCore.js';
 
 const INDEX_URL = 'data/anims/index.json';
@@ -45,10 +45,11 @@ async function loadAnim(n) {
 
 /** Hoja de Graphics/Animations (con el tono de la animación) → textura, o null. */
 function loadSheet(file, hue = 0, repeat = false) {
+  file = animationSheetFile(file);
   const key = `${file}|${hue}|${repeat ? 'r' : ''}`;
   if (!sheetCache.has(key)) {
     sheetCache.set(key, (async () => {
-      const name = /\.[a-z]+$/i.test(file) ? file : `${file}.png`;
+      const name = file;
       const img = await engine.assets.tryImage(engine.assets.anil(`Graphics/Animations/${name}`));
       if (!img) {
         console.warn(`[combate] Hoja de animación no encontrada: ${name}`);

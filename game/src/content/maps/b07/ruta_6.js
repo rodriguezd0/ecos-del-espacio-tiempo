@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Ruta 6 (docs/CAMPANA.md §1.4 y «B07»: cañón escalonado con la Cantería Solano, 30×70, tileset 5 + piezas de
 // minería; N Villa Brontia · S Ciudad Estrato; BGM PrismaRuta2; fondo ZonaEscarpada). Los vendavales los corta
 // Villa Brontia hasta p3_restored (maps/b05/links.js). El derrumbe del Consorcio corta el camino de Estrato hasta
@@ -36,5 +37,5 @@ export default {
     ...(ESTRATO ? [ESTRATO] : []),
   ],
 
-  events: ruta6Events({ estratoOpen: mapRegistered('ciudad_estrato') }),
+  events: withB22bEvents('ruta_6', ruta6Events({ estratoOpen: mapRegistered('ciudad_estrato') })),
 };

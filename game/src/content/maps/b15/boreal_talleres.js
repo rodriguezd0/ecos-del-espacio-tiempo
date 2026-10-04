@@ -4,6 +4,9 @@
 import { exitWarps, exitArrowEvents, examineEvent } from '../../services/index.js';
 import { BOREAL, TALLERES } from './layout_boreal.js';
 import { talleresEvents } from '../../events/b15_t13.js';
+import { b22dTalleresEvents, rosendoAway } from '../../events/b22d_regice.js';
+import { withB22bHints } from '../../events/b22b_hints.js';
+import { postgame } from '../../events/b22d_common.js';
 
 const T = TALLERES;
 const E = T.entry;
@@ -37,9 +40,13 @@ export default {
 
   warps: exitWarps(E.x, E.y, { map: 'villa_boreal', x: OUT.x, y: OUT.y + 1, dir: 2 }),
 
-  events: [
+  events: withB22bHints([
     ...exitArrowEvents(E.x, E.y + 1),
-    ...talleresEvents(),
+    ...talleresEvents().map((e) => e.id !== 'rosendo' ? e : { ...e, pages: [...e.pages,
+      { ...e.pages.at(-1), when: (s) => postgame(s) && !rosendoAway(s) },
+      { when: rosendoAway, through: true },
+    ] }),
+    ...b22dTalleresEvents(),
     { ...examineEvent('herramientas', 6, 4, 'Sierras de hielo, garfios, gubias y un mazo de madera gastado por sesenta inviernos.'), solid: true },
-  ],
+  ]),
 };

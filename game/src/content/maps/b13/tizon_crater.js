@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Cráter del Tizón (docs/CAMPANA.md §1.4: Volcán Tizón, tercer mapa; TABLILLAS T12; §8 postgame: cráter frío de Moltres
 // y cráter activo de Heatran, aquí solo decorado). Caldera abierta al cielo (tileset 13 con día y noche): lago de magma,
 // la sonda de Genesis y su jefa, la vieja fragua de piedra con columnas rotas (la Tabla Llama) y la costra de basalto
@@ -5,6 +6,7 @@
 import { CRATER as C, craterEvents } from '../../events/b13_tizon_crater.js';
 import { TIZON_CUEVA } from '../../encounters/b13.js';
 import { EXITS } from './tizon_cueva_layout.js';
+import { withHeatranCrater } from '../../events/b22d_heatran.js';
 
 const BACK = EXITS.r3North;
 
@@ -44,5 +46,5 @@ export default {
     ]) b.stamp(s, x, y);
   },
   warps: [{ x: C.exit.x, y: C.exit.y, to: 'tizon_cueva', tx: BACK.door.x, ty: BACK.door.y + 2, dir: 2 }],
-  events: craterEvents(),
+  events: withB22bEvents('tizon_crater', withHeatranCrater(craterEvents())),
 };

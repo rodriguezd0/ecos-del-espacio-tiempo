@@ -1,6 +1,8 @@
 // Casa de la familia Galena (CAMPANA §1.3 «casa de Fermín»): Sol espera noticias de su padre mientras él está en el
 // Cerro; tras el P4, Fermín en casa. El casco del abuelo cuelga junto a la puerta: la «carga familiar».
 import { estratoInterior } from './interior_kit.js';
+import { withB22bHints } from '../../events/b22b_hints.js';
+import { b22dGalenaEvents, ferminAway } from '../../events/b22d_regirock.js';
 import { F, SPEAKER, SPRITE, examine } from '../../events/b08_common.js';
 
 export default estratoInterior({
@@ -16,7 +18,8 @@ export default estratoInterior({
     b.stamp('cuadro', 8, 2);
     b.stamp('planta', 10, 8);
   },
-  events: [
+  events: withB22bHints([
+    ...b22dGalenaEvents(),
     {
       id: 'sol_casa', x: 8, y: 6, name: SPEAKER.sol, sprite: SPRITE.sol, dir: 4, move: 'look',
       when: (s) => Boolean(s) && s.flag(F.ferminCerro) && !s.flag(F.restored),
@@ -27,7 +30,7 @@ export default estratoInterior({
     },
     {
       id: 'fermin_casa', x: 8, y: 6, name: SPEAKER.fermin, sprite: SPRITE.fermin, dir: 4, move: 'look',
-      when: (s) => Boolean(s?.flag(F.coop)),
+      when: (s) => Boolean(s) && (s.flag(F.coop) || s.flag('game_cleared')) && !ferminAway(s),
       script: async (ctx) => {
         await ctx.say('Cooperativa. Llevo todo el día diciendo la palabra para acostumbrarme.', { speaker: SPEAKER.fermin });
         await ctx.say('Pesa menos de lo que pensaba. Repartido, casi nada pesa tanto.', { speaker: SPEAKER.fermin });
@@ -39,5 +42,5 @@ export default estratoInterior({
     ], { solid: true }),
     examine('foto_galena', 8, 3, 'Una foto antigua: tres generaciones de Galena delante de la boca de la mina. Todos con la misma cara de cansancio.'),
     examine('estanteria_galena', 9, 5, 'Planos de la mina, dibujados a mano. Las galerías más viejas llevan la nota «hacia el Cerro».', { solid: true }),
-  ],
+  ]),
 });

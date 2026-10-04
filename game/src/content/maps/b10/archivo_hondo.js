@@ -10,6 +10,7 @@ import { ARCHIVO_ROOM } from './archivo_layout.js';
 import { hondoEvents, hondoOnEnter } from '../../events/b10_hondo.js';
 import { ARCHIVO_HONDO } from '../../encounters/b10.js';
 import { pilarTone } from '../../stamps/pilar.js';
+import { b22dHondoEvents } from '../../events/b22d_regigigas.js';
 
 export default {
   id: 'archivo_hondo',
@@ -33,5 +34,5 @@ export default {
   })),
 
   onEnter: hondoOnEnter,
-  events: hondoEvents(),
+  events: [...hondoEvents(), ...b22dHondoEvents()],
 };

@@ -8,6 +8,7 @@ import { buildMirador } from './mirador_build.js';
 import { mapRegistered } from './links.js';
 import { SIMA_PANORAMA } from '../../events/b17_common.js';
 import { miradorEvents } from '../../events/b17_mirador.js';
+import { miradorGrietaEvents } from '../../events/b22e_grieta.js';
 import { descentWarps } from '../b19/links.js'; // B19: warp al final de la bajada hacia la Sima del Eje
 
 export default {
@@ -34,5 +35,5 @@ export default {
     ...(mapRegistered('puente_convergencia') ? [{ dir: 'north', to: 'puente_convergencia', offset: DECK.north.offset }] : []),
   ],
 
-  events: miradorEvents(),
+  events: [...miradorEvents(), ...miradorGrietaEvents()],
 };

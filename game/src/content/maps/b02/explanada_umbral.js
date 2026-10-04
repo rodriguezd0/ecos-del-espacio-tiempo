@@ -7,6 +7,7 @@ import { BASE } from './ruinas_dintel_floors.js';
 import { paintPillarExterior } from '../../stamps/pilarVertical.js';
 import { EXPLANADA_ENCOUNTERS } from '../../encounters/b02.js';
 import { explanadaEvents } from '../../events/b02_explanada.js';
+import { umbralShadowEvents } from '../../events/b22d_marshadow.js';
 
 function cells(x, y, w, h) {
   const out = [];
@@ -101,5 +102,5 @@ export default {
 
   connections: [{ dir: 'east', to: 'villa_zaguan', offset: -ZAGUAN_OFFSET }],
 
-  events: explanadaEvents(),
+  events: [...explanadaEvents(), ...umbralShadowEvents()],
 };

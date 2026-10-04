@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Pozo del Albo (docs/CAMPANA.md §1.4: «Pozo del Albo: Buceo»; §2.3 C085 «Fondo del pozo», etapa G): fondo de la
 // Poza del Albo bajo la gran cascada, con la burbuja de Zygarde (Buceo, 50 %). Tileset 15 (Cueva Azul), mapa
 // submarino (world/zygarde/dive.js). Entrada: remolino de la Poza (garganta_albo). Encuentros de Buceo 45–50.
@@ -40,7 +41,7 @@ export default {
     b.stamp('pilar_zocalo_gastado', 21, 6);
     b.stamp('pilar_zocalo_gastado', 6, 15);
   },
-  events: [
+  events: withB22bEvents('pozo_albo', [
     { id: 'superficie', type: 'diveSpot', surface: true, x: POZO_ARRIVAL.x, y: POZO_ARRIVAL.y, to: 'garganta_albo', tx: WHIRLPOOL.x, ty: WHIRLPOOL.y, dir: 2 },
     { id: 'respiradero', type: 'diveVent', x: 15, y: 13 },
     { id: 'cell_garganta_5', type: 'zygardeCell', x: 21, y: 8, cell: 'cell_garganta_5' },
@@ -49,5 +50,5 @@ export default {
       id: 'losa_pozo', x: 21, y: 6, solid: true, trigger: 'action',
       script: async (ctx) => { await ctx.say('Un zócalo hexagonal gastado, cubierto de algas.'); },
     },
-  ],
+  ]),
 };

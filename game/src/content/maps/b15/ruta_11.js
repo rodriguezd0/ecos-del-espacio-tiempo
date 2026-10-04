@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Ruta 11 (docs/CAMPANA.md §1.4: «Vertiente nevada», 30×70, tileset 1, S Villa Brontia · N Paso del Norte, BGM
 // PrismaRuta2, fondo snow; hielo-eco hasta P7, que cierra Villa Brontia en su borde norte). Primera entrada: los restos
 // del hielo-eco y la desvinculación del norte (content/events/b15_ruta11.js). Construcción en ./ruta_11_build.js.
@@ -31,5 +32,5 @@ export default {
     ...internal('north', 'paso_del_norte', R.north.offset),
   ],
 
-  events: ruta11Events(),
+  events: withB22bEvents('ruta_11', ruta11Events()),
 };

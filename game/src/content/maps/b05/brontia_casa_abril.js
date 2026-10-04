@@ -2,6 +2,7 @@
 // de día, antes del P3, vigila el Anillo (B06) y, tras el P3, está en la plaza (abrilTalk en
 // content/events/b05_brontia.js). Tileset 4 (Interior1).
 import { exitWarps, exitArrowEvents } from '../../services/interior.js';
+import { withB22bHints } from '../../events/b22b_hints.js';
 import { BUILDINGS, INTERIOR_ENTRIES } from './villa_brontia_layout.js';
 import { F, SPEAKER, SPRITE, isNight, examine } from '../../events/b05_common.js';
 import { abrilTalk } from '../../events/b05_brontia.js';
@@ -37,7 +38,7 @@ export default {
 
   warps: exitWarps(E.x, E.y, { map: 'villa_brontia', x: OUT.x, y: OUT.y + 1, dir: 2 }),
 
-  events: [
+  events: withB22bHints([
     ...exitArrowEvents(E.x, E.y + 1),
     {
       id: 'abril_casa', x: 7, y: 7, name: SPEAKER.abril, sprite: SPRITE.abril, dir: 4, move: 'look',
@@ -53,5 +54,5 @@ export default {
       return s.flag(F.light) ? 'La tele está apagada. Con la luz a medias, en Brontia nadie se arriesga a encenderla.' : 'La tele está apagada: no hay corriente.';
     }),
     examine('estanteria', 8, 5, 'Revistas de carreras de Cyclizar, muy manoseadas.', { solid: true }),
-  ],
+  ]),
 };

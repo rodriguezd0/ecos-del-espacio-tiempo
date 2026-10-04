@@ -4,6 +4,7 @@
 import { GALLERY, HALL } from './museo_layout.js';
 import { exitArrowEvents } from '../../services/interior.js';
 import { museumGalleryEvents } from '../../events/b09a_museo.js';
+import { b22dGaleriaEvents, rosaliaAway } from '../../events/b22d_registeel.js';
 
 const G = GALLERY;
 
@@ -55,6 +56,10 @@ export default {
   events: [
     ...exitArrowEvents(G.antea.door.x, G.antea.door.y + 1).slice(1),
     ...exitArrowEvents(G.cronicas.door.x, G.cronicas.door.y + 1).slice(1),
-    ...museumGalleryEvents(),
+    ...museumGalleryEvents().map((e) => e.id !== 'rosalia_cronicas' ? e : { ...e,
+      when: (s, ev) => !rosaliaAway(s) && (!e.when || e.when(s, ev)),
+      pages: e.pages?.map((p) => ({ ...p, when: (s, ev) => !rosaliaAway(s) && (!(p.when || e.when) || (p.when || e.when)(s, ev)) })),
+    }),
+    ...b22dGaleriaEvents(),
   ],
 };

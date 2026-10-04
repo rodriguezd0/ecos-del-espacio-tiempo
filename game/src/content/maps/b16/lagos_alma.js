@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Lagos del Alma (docs/CAMPANA.md B16 y §1.4: «Tres lagos glaciares con santuario central», 60×60, tileset 1 con
 // piezas de nieve, BGM VinculoSupremo, acceso con Nadar; §1.8: fondo Agua). Al islote del santuario solo se llega
 // nadando hasta que Zygarde reconstruye el puente de hielo (hito de la Forma Completa, b16_hito.js). Coordenadas en
@@ -46,5 +47,5 @@ export default {
 
   /** El agua hierve solo durante el hito a medias (también tras cargar la partida allí). */
   onEnter: (ctx) => { syncLakesBoiling(ctx); },
-  events: [...lagosEvents(), ...hitoEvents()],
+  events: withB22bEvents('lagos_alma', [...lagosEvents(), ...hitoEvents()]),
 };

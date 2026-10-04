@@ -8,6 +8,7 @@ import { W, H, LINKS, START } from './mar_layout.js';
 import { buildMar } from './mar_build.js';
 import { MAR_DEL_SUR } from '../../encounters/b13.js';
 import { marEvents } from '../../events/b13_mar.js';
+import { bastionSeaEvents } from '../../events/b22e_bastion.js';
 
 const registered = (id) => Object.hasOwn(MAPS, id);
 const link = (dir) => (l) => (registered(l.to) ? { dir, to: l.to, offset: l.offset } : null);
@@ -25,5 +26,5 @@ export default {
   ...(registered('fondo_mar_sur') ? { dive: { map: 'fondo_mar_sur', dx: 0, dy: 0 } } : {}),
   build: buildMar,
   connections: [...LINKS.north.map(link('north')), ...LINKS.south.map(link('south')), ...LINKS.east.map(link('east'))].filter(Boolean),
-  events: marEvents(),
+  events: [...marEvents(), ...bastionSeaEvents()],
 };

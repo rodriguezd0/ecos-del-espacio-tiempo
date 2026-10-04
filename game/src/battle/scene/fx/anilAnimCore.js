@@ -12,6 +12,12 @@ export const TICKS_PER_FRAME = 3;
 export const CELL = 192;
 export const CELLS_PER_ROW = 5;
 
+/** Premonición de Añil conserva un nombre de fondo antiguo que no está en sus gráficos. */
+export function animationSheetFile(file) {
+  const name = /\.[a-z]+$/i.test(file) ? file : `${file}.png`;
+  return name === 'PRAS- Darkness BG.png' ? 'PRAS- Dark Void BG.png' : name;
+}
+
 // Movimiento por defecto por tipo y clase (pbFindMoveAnimation): [físico 1 objetivo, especial 1 objetivo, estado
 // propio, físico varios, especial varios, estado a otros].
 export const TYPE_DEFAULT_ANIM = Object.freeze({

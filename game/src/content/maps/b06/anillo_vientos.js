@@ -1,3 +1,4 @@
+import { withB22bEvents } from '../../events/b22b_maps.js';
 // Segundo piso del Pilar del Impulso: la Sala de las Campanas completa el puzzle de las Galerías del Soplo.
 // El ASCII y las posiciones del viento/célula se conservan; la antigua cámara central ahora contiene la subida.
 import { CAMPANAS, walkCells, marksInMap } from '../../events/b06_wind_rooms.js';
@@ -33,5 +34,5 @@ export default {
       await ctx.warp('anillo_vientos_base', P3_VERTICAL.entry.x, P3_VERTICAL.entry.y, 8);
     }
   },
-  events: anilloEvents(),
+  events: withB22bEvents('anillo_vientos', anilloEvents()),
 };

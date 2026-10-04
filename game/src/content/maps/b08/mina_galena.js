@@ -7,6 +7,8 @@ import { OBJ } from '../../events/b08_common.js';
 import { MINA_GALENA } from '../../encounters/b08.js';
 import { caveKit, cells } from './cave_kit.js';
 import { MINA, ESTRATO } from './layout.js';
+import { b22dMinaEvents } from '../../events/b22d_regirock.js';
+import { withB22bHints } from '../../events/b22b_hints.js';
 
 const kit = caveKit('');
 const R = MINA.rooms;
@@ -67,5 +69,5 @@ export default {
   build,
   warps: [{ x: MINA.exit.warp.x, y: MINA.exit.warp.y, to: 'ciudad_estrato', tx: ESTRATO.mine.front.x, ty: ESTRATO.mine.front.y, dir: 2 }],
   onEnter: minaOnEnter,
-  events: [...minaEvents(), ...railEvents()],
+  events: withB22bHints([...minaEvents(), ...railEvents(), ...b22dMinaEvents()]),
 };

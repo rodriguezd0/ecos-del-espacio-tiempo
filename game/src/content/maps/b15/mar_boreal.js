@@ -9,6 +9,7 @@ import { internal } from './links.js';
 import { rect, union } from './paint.js';
 import { MAR_BOREAL } from '../../encounters/b15.js';
 import { marEvents } from '../../events/b15_mar.js';
+import { marCierzoEvents, withCierzoGate } from '../../events/b22d_cierzo.js';
 
 const M = MAR;
 
@@ -55,5 +56,5 @@ export default {
   ...NORTH_PIECES,
   build,
   connections: [...internal('east', 'villa_boreal', M.east.offset)],
-  events: marEvents(),
+  events: [...withCierzoGate(marEvents()), ...marCierzoEvents()],
 };

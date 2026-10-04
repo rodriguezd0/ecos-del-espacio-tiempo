@@ -445,7 +445,9 @@ export default class MapScene extends Scene {
     this.clockFrames += 1;
     if (this.clockFrames >= CLOCK_FRAMES_PER_MINUTE) {
       this.clockFrames = 0;
+      const hour = this.state.hour;
       this.state.advanceMinutes(1);
+      if (this.state.hour !== hour) this.world.requestRefresh();
     }
   }
 
