@@ -25,6 +25,7 @@ export async function caleta(d) {
 }
 
 async function arrecife(d) {
+ if((await d.snap()).map==='arrecife_eco') {
   await d.walkTo(22, 29);
   await d.milestone('arrecife', (s) => need(s.dive && s.map === 'arrecife_eco', 'sin burbuja de buceo'));
   await d.faceEvent('buceador_casimiro');
@@ -39,12 +40,13 @@ async function arrecife(d) {
   await d.until((s) => s.map === 'arrecife_campana' && s.ready, { timeout: 15000, what: 'entrar en la campana' });
   await d.settle();
   await d.milestone('campana');
+ }
   await d.faceEvent('tecnico_rufino');
   await d.interact();
   await d.faceEvent('tecnica_eulalia');
   await d.interact();
   await d.walkTo(8, 4, { face: 'up' });
-  // El piloto automático no usa objetos: se cura al equipo antes de la jefa (el jugador usaría pociones).
+  // bossBattle cura y deja reintentar aquí tras una derrota real.
 
   await d.interact({ watch: [{ re: /Soy Adela/, name: 'adela', delay: 200 }, { scene: 'BattleScene', name: 'adela_combate', delay: 3000 }] });
   await d.expectSaid(/planos de la corona del rey de Antea/, 'los planos de la corona');
@@ -82,8 +84,9 @@ export async function completeArrecife(d,{run=arrecife,enter=caleta}={}) {
   try {await run(d);return;}
   catch(error) {
    const after=await d.snap();
-   if(after.battles.length<=battleCount||after.battles.at(-1)?.outcome!=='lose'||!d.whiteout(before,after))throw error;
-   console.log('DERROTA REAL en el arrecife: cura en Caleta y regreso por su remolino.');
+   const battle=after.battles.at(-1),safeRetry=battle?.id==='b14_jefa_adela'&&battle.canLose===true&&after.map==='arrecife_campana';
+   if(after.battles.length<=battleCount||battle?.outcome!=='lose'||(!d.whiteout(before,after)&&!safeRetry))throw error;
+   console.log(safeRetry?'DERROTA REAL contra Adela: el guion cura y permite reintentar en la campana.':'DERROTA REAL en el arrecife: cura en Caleta y regreso por su remolino.');
   }
  }
  throw Error('Tres derrotas reales en el arrecife; hace falta preparar el equipo.');

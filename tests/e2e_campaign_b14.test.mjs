@@ -87,3 +87,13 @@ test('campaign B14: moving the draga requires recorded wins, not merely attempts
  s.battles[1].outcome='lose';assert.match(campaign.reefVictoryError(s)||'',/eulalia/);
  s.battles[1].outcome='win';s.flags.b14_draga_apartada=false;assert.ok(campaign.reefVictoryError(s));
 });
+
+test('campaign B14: the safe Adela loss retries in the same bell with the canonical healed team',async()=>{
+ const {state,calls,d,enter}=reefRecovery();let attempts=0;
+ await campaign.completeArrecife(d,{enter,run:async()=>{
+  calls.push(['reef',state.map]);
+  if(++attempts===1){state.map='arrecife_campana';state.battles.push({id:'b14_jefa_adela',outcome:'lose',canLose:true});throw Error('no victory dialogue');}
+ }});
+ assert.equal(attempts,2);assert.deepEqual(calls,[['reef','arrecife_eco'],['reef','arrecife_campana']]);
+ assert.deepEqual(state.flags,{b14_caleta_intro:true});
+});
