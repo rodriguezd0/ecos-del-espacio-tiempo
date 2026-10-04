@@ -64,7 +64,8 @@ export const TRAINERS = Object.freeze([
   { id: 'tecnico_control', trainer: 'b13_tecnico_control', name: 'Técnico Óscar', female: false, x: GATE.guard.x, y: GATE.guard.y, dir: GATE.guard.dir, sight: 1 },
   { id: 'tecnica_cubierta', trainer: 'b13_tecnica_cubierta', name: 'Técnica Leire', female: true, x: 11, y: 32, dir: 4, sight: 4 },
   { id: 'tecnico_torre', trainer: 'b13_tecnico_torre', name: 'Técnico Rodrigo', female: false, x: 28, y: 34, dir: 4, sight: 4 },
-  { id: 'tecnica_laboratorio', trainer: 'b13_tecnica_laboratorio', name: 'Técnica Nerea', female: true, x: 32, y: 24, dir: 4, sight: 3 },
+  // Desde el extremo este, su acercamiento queda a la derecha de C059 y deja libre la puerta del laboratorio.
+  { id: 'tecnica_laboratorio', trainer: 'b13_tecnica_laboratorio', name: 'Técnica Nerea', female: true, x: 33, y: 24, dir: 4, sight: 3 },
 ]);
 
 /** Células C059–C060 (cubiertas; C059 en el camino obligatorio: ante la puerta del laboratorio). */
