@@ -6,7 +6,7 @@ import { engine } from '../../../core/engine.js';
 import { rawTexture } from '../../../render/textures.js';
 import { spriteMaterial, setSpriteBlend, GEOM } from './materials.js';
 import {
-  battlerPosition, spriteScale, speciesMetrics, spriteOffset, shadowPlacement, spriteFrameTicks, SHADOW_OPACITY,
+  battlerRenderLayout, spriteOpaqueBounds, speciesMetrics, spriteFrameTicks, SHADOW_OPACITY,
   stripFrames, spriteFileCandidates,
 } from '../layout.js';
 
@@ -58,6 +58,13 @@ function spriteCandidates(view, back) {
   return spriteFileCandidates(req, back ? 'Back' : 'Front').map((p) => engine.assets.anil(p));
 }
 
+function opaqueBounds(img, atlas) {
+  const c = document.createElement('canvas'); c.width = atlas.fw; c.height = atlas.fh;
+  const g = c.getContext('2d', { willReadFrequently: true });
+  for (let i = 0; i < atlas.frames; i++) g.drawImage(img, i * atlas.fw, 0, atlas.fw, atlas.fh, 0, 0, atlas.fw, atlas.fh);
+  return spriteOpaqueBounds(g.getImageData(0, 0, c.width, c.height).data, c.width, c.height);
+}
+
 /** Primera imagen existente del sprite (espalda → frente como último recurso). */
 export async function loadPokemonImage(view, back) {
   const lists = back ? [spriteCandidates(view, true), spriteCandidates(view, false)] : [spriteCandidates(view, false)];
@@ -81,6 +88,7 @@ export class BattlerSprite {
     this.shadow.material.uniforms.uSilhouette.value = 1;
     for (const m of [this.mesh, this.shadow]) { m.frustumCulled = false; m.visible = false; group.add(m); }
     this.atlas = null;
+    this.bounds = null;
     this.view = null;
     this.visible = false;
     this.opacity = 1;
@@ -105,7 +113,8 @@ export class BattlerSprite {
 
   get side() { return this.index & 1; }
   get back() { return this.side === 0; }
-  get scale() { return spriteScale(this.index, this.metrics); }
+  get renderLayout() { return battlerRenderLayout(this.index, this.sideSize, this.metrics, this.atlas?.fw || 96, this.atlas?.fh || 96, this.bounds); }
+  get scale() { return this.renderLayout.scale; }
   get width() { return this.atlas ? this.atlas.fw * this.scale : 96; }
   get height() { return this.atlas ? this.atlas.fh * this.scale : 96; }
   /** Alto del bitmap de trabajo de DBK (cuadrado del ancho del frame): lo usa la sombra. */
@@ -113,9 +122,8 @@ export class BattlerSprite {
 
   /** Posición base (centro inferior con métricas). */
   get anchor() {
-    const p = battlerPosition(this.index, this.sideSize);
-    const off = spriteOffset(this.metrics, this.index);
-    return { x: p.x + off.dx, y: p.y + off.dy };
+    const p = this.renderLayout;
+    return { x: p.x, y: p.y };
   }
 
   /** Centro visual actual (para efectos). */
@@ -135,11 +143,13 @@ export class BattlerSprite {
     if (!img) {
       console.warn(`[combate] Sin sprite para ${view.species}`);
       this.atlas = null;
+      this.bounds = null;
       return;
     }
     const atlas = stripAtlas(img);
     this.ownedTextures.push(atlas.tex);
     this.atlas = atlas;
+    this.bounds = opaqueBounds(img, atlas);
     this.frame = 0;
     this.tick = 0;
     for (const m of [this.mesh, this.shadow]) m.material.uniforms.map.value = atlas.tex;
@@ -191,15 +201,14 @@ export class BattlerSprite {
     u.uGray.value = 0;
     if (cel) this.placeForAnimation(cel);
     // Sombra: silueta aplastada (no sigue el bamboleo ni los saltos verticales)
-    const sh = shadowPlacement(this.metrics, this.index, this.squareHeight);
+    const sh = this.renderLayout.shadow;
     this.shadow.visible = shadowShow && sh.visible;
     if (this.shadow.visible) {
-      const base = battlerPosition(this.index, this.sideSize);
       const su = this.shadow.material.uniforms;
       su.uRect.value.set(...rect);
       su.uOpacity.value = SHADOW_OPACITY * this.opacity * Math.min(1, this.scaleX);
       su.uClipV.value = 1.01;
-      this.shadow.position.set(Math.round(base.x + sh.dx + this.offX), Math.round(base.y + sh.dy), 0);
+      this.shadow.position.set(Math.round(a.x + sh.dx + this.offX), Math.round(a.y + sh.dy), 0);
       this.shadow.scale.set(this.width * sh.zoomX * this.scaleX, this.height * sh.zoomY * this.scaleY, 1);
     }
     this.mesh.renderOrder = this.back ? 60 + this.index : 30 + (3 - this.index);

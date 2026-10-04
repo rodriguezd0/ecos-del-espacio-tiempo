@@ -162,7 +162,7 @@ test('applyBattleResult aplica equipo, dinero, mochila y vistos; storeCaught va 
 test('posiciones de combatientes, entrenadores y cajas como en Añil', () => {
   assert.deepEqual(battlerPosition(0, 1), { x: 128, y: 304 });
   assert.deepEqual(battlerPosition(1, 1), { x: 384, y: 176 });
-  assert.deepEqual(battlerPosition(2, 2), { x: 160, y: 320 });
+  assert.deepEqual(battlerPosition(2, 2), { x: 196, y: 270 });
   assert.deepEqual(battlerPosition(3, 2), { x: 352, y: 160 });
   assert.deepEqual(trainerPosition(0), { x: 128, y: 388 });
   assert.deepEqual(trainerPosition(1), { x: 384, y: 164 });

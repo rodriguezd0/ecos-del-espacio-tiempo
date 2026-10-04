@@ -30,13 +30,39 @@ export function spriteScale(index, metrics = null) {
 export function battlerPosition(index, sideSize = 1) {
   const ret = (index & 1) === 0 ? [PLAYER_BASE.x, PLAYER_BASE.y - 100] : [FOE_BASE.x, FOE_BASE.y + 18];
   if (sideSize === 2) {
-    ret[0] += [-48, 48, 32, -32][index] ?? 0;
-    ret[1] += [0, 0, 16, -16][index] ?? 0;
+    ret[0] += [-56, 48, 68, -32][index] ?? 0;
+    ret[1] += [-18, 0, -34, -16][index] ?? 0;
   } else if (sideSize === 3) {
     ret[0] += [-80, 80, 0, 0, 80, -80][index] ?? 0;
     ret[1] += [0, 0, 8, -8, 16, -16][index] ?? 0;
   }
   return { x: ret[0], y: ret[1] };
+}
+
+/** Contorno opaco común a los frames: el margen transparente no debe decidir el tamaño en dobles. */
+export function spriteOpaqueBounds(data, width, height, frameWidth = width) {
+  let left = frameWidth, right = 0, top = height, bottom = 0;
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) {
+    if (data[(y * width + x) * 4 + 3] <= 8) continue;
+    left = Math.min(left, x % frameWidth); right = Math.max(right, x % frameWidth + 1);
+    top = Math.min(top, y); bottom = Math.max(bottom, y + 1);
+  }
+  return right > left && bottom > top ? { left, top, right, bottom } : { left: 0, top: 0, right: frameWidth, bottom: height };
+}
+
+/** Pose y sombra coherentes. Dos espaldas caben a la izquierda de las cajas de PS y sobre los mensajes. */
+export function battlerRenderLayout(index, sideSize, metrics, fw, fh, bounds = null) {
+  const base = battlerPosition(index, sideSize), off = spriteOffset(metrics, index);
+  const normalScale = spriteScale(index, metrics), sh = shadowPlacement(metrics, index, fw * normalScale);
+  let scale = normalScale, x = base.x + off.dx, y = base.y + off.dy;
+  if (sideSize === 2 && (index & 1) === 0) {
+    const b = bounds || { left: 0, top: 0, right: fw, bottom: fh };
+    scale = Math.min(normalScale, 112 / Math.max(1, b.right - b.left), 144 / Math.max(1, b.bottom - b.top));
+    x = base.x - ((b.left + b.right) / 2 - fw / 2) * scale;
+    y = base.y + (fh - b.bottom) * scale;
+  }
+  const ratio = scale / normalScale;
+  return { x, y, scale, shadow: { ...sh, dx: (sh.dx - off.dx) * ratio, dy: (sh.dy - off.dy) * ratio } };
 }
 
 /** Centro inferior del sprite de un entrenador (pbTrainerPosition). */
