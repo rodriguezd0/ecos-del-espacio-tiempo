@@ -12,7 +12,28 @@ import {collectDiveCells,collectWaterCells} from './e2e_campaign_cells.mjs?shore
 import {installB13Observer} from './e2e_campaign_b13_page.mjs?shore=5';
 import {Driver as SeaDriver} from './e2e_b13_driver.mjs';
 const RETRY=false;
+const has = (s, f) => Boolean(s.flags[f]);
 const need = (ok, msg) => (ok ? null : msg);
+const AVOID_SENDA = wrongTops().map((w) => `${w.x},${w.y}`);
+
+// El Driver común no acepta avoid; conserva aquí la ruta segura del E2E original.
+export async function walkSenda(d, x, y, { onto = true, face = null, maxSteps = 600, stopWhen = null, watch = [], avoid = AVOID_SENDA } = {}) {
+  const startMap = (await d.snapState()).map;
+  for (let n = 0; n < maxSteps; n++) {
+    let s = await d.snapState();
+    if (s.busy || s.top !== 'MapScene') s = await d.settle({ watch });
+    if (stopWhen?.(s) || s.map !== startMap) return s;
+    const done = onto ? s.x === x && s.y === y : Math.abs(s.x - x) + Math.abs(s.y - y) === 1;
+    if (done) {
+      if (face) await d.turn(face);
+      return s;
+    }
+    const route = await d.eval(([tx, ty, a, o]) => window.__b15.routeAvoid(tx, ty, a, { onto: o }), [x, y, avoid, onto]);
+    if (!route?.length) throw new Error(`Sin ruta a (${x},${y}) en ${s.map} desde (${s.x},${s.y})`);
+    await d.step(route[0]);
+  }
+  throw new Error(`walkSenda(${x},${y}): demasiados pasos`);
+}
 
 // ───────────────────────────── Tramos ─────────────────────────────
 
@@ -63,7 +84,7 @@ async function senda(d) {
   await d.expectSaid(/La Senda del Lazo sube por la ladera/, 'la llegada a la Senda');
   // Una escalera falsa de la primera cara: al coronarla, el lazo devuelve al principio.
   const x = stairColumn(0, 'O');
-  await d.walkTo(x, footRow(0), { avoid: AVOID_SENDA });
+  await walkSenda(d, x, footRow(0));
   const L = SENDA.loopStart;
   for (let i = 0; i < 8; i++) {
     const s = await d.snapState();
@@ -75,18 +96,18 @@ async function senda(d) {
   await d.milestone('senda_vuelta', (s) => need(Number(s.vars.b15_senda_vueltas) >= 1 && s.x === L.x && s.y === L.y, `vueltas ${s.vars.b15_senda_vueltas} en (${s.x},${s.y})`));
   // La pauta de los Larvitar: ninguna escalera falsa hasta el mirador.
   const M = SENDA.mirador;
-  await d.walkTo(M.stone.x, M.stone.y + 1, { face: 'up', avoid: AVOID_SENDA });
+  await walkSenda(d, M.stone.x, M.stone.y + 1, { face: 'up' });
   await d.expectSaid(/Desde el mirador, la columna de luz/, 'el mirador');
   await d.interact();
   const tyr = await d.eval(() => window.__b15.items('TYRANITARITE'));
   await d.milestone('senda_mirador', (s) => need(has(s, 'b15_senda_mirador') && tyr === 1, `mirador ${has(s, 'b15_senda_mirador')}, Tyranitarita ${tyr}`));
   // El tramo alto: un bucle que aún no se rompe.
-  await d.walkTo(SENDA.high.back.x, SENDA.high.y + 1, { avoid: AVOID_SENDA });
+  await walkSenda(d, SENDA.high.back.x, SENDA.high.y + 1);
   await d.step(8);
   await d.settle({ watch: [{ re: /el camino se pierde entre las nubes/, name: 'senda_alto', delay: 150 }] });
   await d.expectSaid(/como si no hubieras dado un paso/, 'la vuelta del tramo alto');
   await d.milestone('senda_alto', (s) => need(has(s, 'b15_senda_alto'), 'sin el tramo alto'));
-  await d.walkTo(SENDA.east.x, 41, { avoid: AVOID_SENDA });
+  await walkSenda(d, SENDA.east.x, 41);
   await d.crossEdge('right', 'paso_del_norte');
   await d.walkTo(14, 0);
   await d.crossEdge('up', 'ruta_13');
