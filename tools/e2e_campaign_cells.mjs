@@ -50,8 +50,14 @@ export async function collectWaterCells(d, keys) {
     if (!shore) throw Error(`No hay orilla hacia ${cell.id}`);
     if (!(await d.snap()).surfing) {
       await d.walkTo(shore.x, shore.y, { face: shore.face });
-      await d.interact();
-      await d.until(s => s.surfing && !s.playerBusy, { timeout: 8000, what: 'Nadar por el control normal' });
+      if (!(await d.snap()).cells.includes(key)) {
+        await d.interact();
+        await d.until(s => !s.playerBusy && (s.surfing || s.cells.includes(key)), { timeout: 8000, what: 'Nadar o recoger desde la orilla' });
+      }
+      if (!(await d.snap()).surfing) {
+        await d.milestone(`celula_${cell.id}`, s => s.cells.includes(key) ? null : `${cell.id} sin recoger`);
+        continue;
+      }
     }
     await swimWalk(event.x,event.y);
     await d.settle();

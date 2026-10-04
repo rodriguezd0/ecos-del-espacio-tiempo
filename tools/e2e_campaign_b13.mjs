@@ -6,7 +6,7 @@ import {buceo,lumbre,tizon} from './e2e_b13_islands.mjs';
 import * as MAR from '../game/src/content/maps/b13/mar_layout.js';
 import * as TAL from '../game/src/content/maps/b13/talasa_layout.js';
 import * as CL from '../game/src/content/maps/b09b/caleta_layout.js';
-import {collectWaterCells} from './e2e_campaign_cells.mjs';
+import {collectWaterCells} from './e2e_campaign_cells.mjs?shore=2';
 import {collectEasternSea,returnToCaleta} from './e2e_campaign_sea.mjs';
 export async function runB13(d){
  await refreshDriver(d); await installB13Observer(d.page);
