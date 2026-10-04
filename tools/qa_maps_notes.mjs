@@ -20,7 +20,7 @@ export const REVIEWED = Object.freeze({
   islote_lumbre: { under: { n: 40, why: `cerezos del prado sobre el césped claro y el borde de la playa: ${GROUND}` } },
   ruta_11: { under: { n: 5, why: `pinos del borde de la pradera sobre la franja de nieve: ${GROUND} (nieve)` } },
   lagos_alma: { under: { n: 81, why: `pinar nevado sobre la nieve (capa 1): ${GROUND}` } },
-  santuario_alma: {
+  santuario_alma_sentir: {
     solid: {
       n: 13,
       why: 'salas del espejo: obstáculos de una casilla con pieza alta (columnas, bustos, aristas) en casillas vecinas; la '
@@ -33,6 +33,12 @@ export const REVIEWED = Object.freeze({
 /** Constancia del progreso de las revisiones (líneas de Markdown; se copian tal cual en docs/QA_MAPAS.md). */
 export const PROGRESS = Object.freeze([
   '## Progreso de la revisión',
+  '',
+  '- **Pilares verticales y postgame, 04-10-2026**: columnas del Santuario sin cristales encima; fachada P9 sin columna',
+  '  provisional oculta; núcleo del Cruce sin doble pintado de columnas; fachada P10 sin el antiguo dintel. El Puente',
+  '  tiene escalones de Exterior1 y un marco completo, sin columnas superpuestas. Grieta del Porvenir y Cueva Sellada',
+  '  también corregidas. Los 13 solapes del ala del Sentir siguen siendo los obstáculos altos de los espejos, revisados.',
+  '  Pruebas: `tests/pillar_art_qa.test.mjs` y recorridos de B16/B18/B19/B20.',
   '',
   '- **B04–B21 (sin la Ruta 3), 26-09-2026**: 0 árboles cortados, 0 stamps sobre árboles, 0 eventos en árbol y 0 rocas',
   '  de agua en tierra (antes: 316 casillas, 73, 9 y 2); sólidos pisándose 13 (antes 80: quedan los del Santuario del',

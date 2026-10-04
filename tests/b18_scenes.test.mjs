@@ -105,7 +105,7 @@ test('Vértice: la frase antes del combate; sobrecarga, irrupción, Gael, huida,
   for (const id of ['gael_escena', 'olmedo_escena', 'agente_escena_1', 'agente_escena_2', 'irrupcion_dialga', 'irrupcion_palkia']) {
     assert.ok(!t.w.events.some((e) => e.id === id), `${id} se queda en el mapa`);
   }
-  assert.ok(saidLine(ctx, 'Lo que haya dicho Vértice… puede esperar. Antes de bajar, tu equipo.', SPEAKER.alerce));
+  assert.ok(saidLine(ctx, 'Lo que haya dicho Vértice… puede esperar. Antes de subir, tu equipo.', SPEAKER.alerce));
 });
 
 test('Escena interrumpida: se retoma donde quedó (sin repetir la irrupción) y respeta el género del jugador', async () => {

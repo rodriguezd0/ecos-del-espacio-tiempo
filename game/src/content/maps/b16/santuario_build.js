@@ -69,7 +69,7 @@ function paintPatio(b, floor) {
   for (const [x, y] of P.statues) b.stamp('estatua_busto', x, y - 2);
   for (const x of [35, 45]) b.stamp('pilar_columna', x, floorTop(P.room) - 2);
   for (const [x, y] of [[36, 57], [44, 57], [30, 50], [50, 52], [34, 53], [46, 53]]) b.stamp(x % 2 ? 'pilar_glifo' : 'pilar_glifo_2', x, y);
-  b.stamp('pilar_arista', 51, 55);
+  // La columna del rellano ocupa (51,54–56); una arista aquí cortaría su base.
   b.stamp('pilar_arista_grande', 47, 56);
   b.stamp('pilar_monolito', 34, 55);
   b.stamp('pilar_columna_quebrada', 29, 57);

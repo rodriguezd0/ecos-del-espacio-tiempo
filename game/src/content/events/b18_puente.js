@@ -99,7 +99,7 @@ export const ALERCE_LINES = Object.freeze({
     'Si te hace falta, déjame ver a tu equipo.',
   ],
   edge: 'Aquí me quedo, en el borde. No te pares por mí.',
-  mouth: 'Baja. Aquí arriba me quedo yo con Olmedo.',
+  mouth: 'Sube. Aquí me quedo yo con Olmedo.',
   after: 'Mi reloj y el de Olmedo marcan lo mismo. Por primera vez en semanas.',
 });
 
@@ -250,7 +250,7 @@ async function farewellScene(ctx) {
   if (alerce) ctx.turnToPlayer(alerce);
   ctx.se('GUI trainer card flip', { volume: 50 });
   await lines(ctx, SPEAKER.alerce, [
-    'Lo he notado desde aquí arriba. Las losas han dejado de crujir.',
+    'Lo he notado desde el puente. Las losas han dejado de crujir.',
     ALERCE_LINES.after,
   ]);
   if (olmedo) ctx.turnToPlayer(olmedo);

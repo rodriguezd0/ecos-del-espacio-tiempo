@@ -25,7 +25,7 @@ const ORB_FRAME = Object.freeze({ ADAMANTORB: 4, LUSTROUSORB: 6 }); // fila de b
 export const NUCLEO_TEXT = Object.freeze({
   arrive: 'Una sala blanca partida en dos: una mitad azul y quieta, otra lila y temblorosa. En el cruce, un hexágono tallado late con luz plata.',
   standoff: 'Dialga y Palkia se miran desde cada lado del núcleo. Cada vez que uno ruge, la sala entera se inclina hacia él.',
-  shortcut: 'Muy arriba, en el vestíbulo, una puerta de piedra se abre con un chasquido.',
+  shortcut: 'Abajo, en el vestíbulo, una puerta de piedra se abre con un chasquido.',
   core: 'El núcleo del Pilar. Sus hexágonos tiemblan como una cuerda tensada desde dos lados.',
   coreAfter: 'El núcleo late en calma. Las dos mitades de la sala se han quedado quietas.',
   choose: '¿A quién atarás con la Cadena Roja?',

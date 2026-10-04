@@ -117,7 +117,7 @@ export function buildCruce(b) {
 }
 
 export function buildCruceNucleo(b) {
-  buildPilarHall(b, { floor: { x: NUCLEO.room.x, y: NUCLEO.floorTop, w: NUCLEO.room.w, h: NUCLEO.floorBottom - NUCLEO.floorTop + 1 } });
+  buildPilarHall(b, { floor: { x: NUCLEO.room.x, y: NUCLEO.floorTop, w: NUCLEO.room.w, h: NUCLEO.floorBottom - NUCLEO.floorTop + 1 }, columns: false });
   // El núcleo conserva su decoración y sus pasillos: no añadir bases en casillas de guardados antiguos.
   for (let y = NUCLEO.room.y; y < NUCLEO.room.y + NUCLEO.room.h; y++) {
     for (let x = NUCLEO.room.x; x < NUCLEO.room.x + NUCLEO.room.w; x++) b.set(2, x, y, 0);

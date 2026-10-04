@@ -343,7 +343,7 @@ async function finishStep(ctx) {
   await pause(ctx, 8);
   await ctx.fade('in', 14);
   ctx.bgm(MUSIC.sima, { fadeOutPrevious: 30 });
-  await alerceOffers(ctx, F.heal3, 'Lo que haya dicho Vértice… puede esperar. Antes de bajar, tu equipo.');
+  await alerceOffers(ctx, F.heal3, 'Lo que haya dicho Vértice… puede esperar. Antes de subir, tu equipo.');
 }
 
 // ─────────────────────────────── Eventos ───────────────────────────────
@@ -391,7 +391,7 @@ function castEvents() {
       pages: [{
         when: when({ all: [F.scene], none: [F.t15Tablet] }), sprite: SPRITE.olmedo, dir: CAST.olmedoAfter.dir, move: 'still',
         script: async (ctx) => {
-          if (ctx.flag(F.restored)) { await ctx.say('Los relojes van a la par. Eso lo has hecho tú ahí abajo, ¿verdad? No me lo expliques.', { speaker: SPEAKER.olmedo }); return; }
+          if (ctx.flag(F.restored)) { await ctx.say('Los relojes van a la par. Eso lo has hecho tú ahí dentro, ¿verdad? No me lo expliques.', { speaker: SPEAKER.olmedo }); return; }
           await ctx.say('Mis agentes se llevan a esos dos a Caudal. Yo me quedo con este cacharro hasta que alguien me diga qué es.', { speaker: SPEAKER.olmedo });
         },
       }],

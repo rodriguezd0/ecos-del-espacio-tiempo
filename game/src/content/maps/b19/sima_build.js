@@ -94,7 +94,7 @@ function paintUmbral(b) {
   b.paint('acantilado', rect(UMBRAL.rock.x0, UMBRAL.rock.y0, UMBRAL.rock.x1, UMBRAL.rock.y1));
   const d = UMBRAL.dintel;
   for (let y = d.y + 1; y <= d.y + 3; y++) for (let x = d.x + 1; x <= d.x + 3; x++) b.set(1, x, y, DARK[y === d.y + 1 ? 0 : 1]);
-  b.stamp('pilar_dintel', d.x, d.y);
+  // La fachada vertical del P10 se pinta al terminar; conservar solo el hueco de roca debajo.
   for (const [s, x, y] of [
     ['pilar_columna', 13, 38], ['pilar_columna', 23, 38], ['pilar_columna_quebrada', 11, 44], ['pilar_glifo', 15, 41],
     ['pilar_glifo_2', 21, 41], ['pilar_glifo', 18, 44], ['pilar_losa_eco', 17, 40],

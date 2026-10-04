@@ -13,8 +13,8 @@ export function buildP9Exterior(b) {
   }
   b.paint('losas_centro', cells);
   // La parte alta del sprite permite dibujar detrás; la piedra que sostiene la columna sigue siendo sólida.
-  b.stamp('pilar_columna', EXTERIOR.centerX, EXTERIOR.doorY - 9);
-  const stone = b.get(2, EXTERIOR.centerX, EXTERIOR.doorY - 7);
+  const column = b.stampGrids(b.findStamp('pilar_columna'), 'pilar_columna');
+  const stone = column.layers[2][column.w * column.h - 1];
   for (let y = EXTERIOR.doorY - 9; y <= EXTERIOR.doorY; y++) {
     for (let x = EXTERIOR.centerX - 3; x <= EXTERIOR.centerX + 3; x++) {
       if (x !== EXTERIOR.centerX || y !== EXTERIOR.doorY) b.set(1, x, y, stone);

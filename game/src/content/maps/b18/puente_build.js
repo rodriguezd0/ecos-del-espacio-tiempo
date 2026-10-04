@@ -74,12 +74,13 @@ function paintPlatform(b) {
   }
   b.stamp('pilar_losa_eco', 19, y0 + 15);
   b.stamp('pilar_losa_eco', 22, y0 + 16);
-  for (const [x, y] of [[18, y0 + 7], [22, y0 + 8], [14, y0 + 15], [27, y0 + 4]]) b.stamp('pilar_arista', x, y - 1);
+  for (const [x, y] of [[14, y0 + 15], [27, y0 + 4]]) b.stamp('pilar_arista', x, y - 1);
   // La boca de la Cámara del Cruce (se entra desde el sur)
   // Escalinata ascendente entre las plantas 1 y 2. El marco conserva un acceso único por el sello central.
-  b.stamp('pilar_escalinata', MOUTH.warp.x - 1, MOUTH.warp.y - 1);
-  for (const x of [MOUTH.warp.x - 1, MOUTH.warp.x + 1]) b.stamp('pilar_columna', x, MOUTH.warp.y - 2);
-  for (const x of [MOUTH.warp.x - 1, MOUTH.warp.x, MOUTH.warp.x + 1]) b.stamp('pilar_columna', x, MOUTH.warp.y - 3);
+  // El kit exterior no incluye pilar_escalinata: usar los escalones completos de Exterior1,
+  // bajo un dintel de cinco casillas que deja abiertas las tres del centro.
+  b.stamp('pilar_dintel', MOUTH.warp.x - 2, MOUTH.warp.y - 4);
+  b.stamp('escalera_terraza', MOUTH.warp.x - 1, MOUTH.warp.y - 1);
   // Material de Genesis alrededor del Resonador
   b.stamp('sonda_genesis', 23, y0 + 12);
   b.stamp('perforadora_genesis', 14, y0 + 17);

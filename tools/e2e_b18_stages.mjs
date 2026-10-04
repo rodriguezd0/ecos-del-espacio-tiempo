@@ -129,10 +129,15 @@ async function genesis(d) {
 
 async function cruce(d) {
   await d.walkTo(MOUTH.front.x, MOUTH.front.y);
-  await d.pushUntil('up', (s) => s.map === 'camara_cruce', 'bajar a la Cámara del Cruce');
+  await d.pushUntil('up', (s) => s.map === 'camara_cruce', 'subir a la Cámara del Cruce');
   await d.settle();
   await d.expectSaid(/Una sala de mármol plateado suspendida sobre el abismo/, 'la llegada a la Cámara');
   await d.milestone('camara', (s) => need(has(s, F.chamberIn) && s.x === ENTRY.x && s.y === ENTRY.y, 'sin llegada a la Cámara'));
+  await d.pushUntil('down', (s) => s.map === 'puente_convergencia', 'bajar de la segunda a la primera planta');
+  await d.milestone('camara_regreso_puente', (s) => need(s.x === MOUTH.arrive.x && s.y === MOUTH.arrive.y, 'la escalera devuelve sobre el warp'));
+  await d.pushUntil('up', (s) => s.map === 'camara_cruce', 'volver a subir a la segunda planta');
+  await d.settle();
+  await d.milestone('camara_reentrada', (s) => need(s.x === ENTRY.x && s.y === ENTRY.y, 'la reentrada no llega al rellano'));
   let mode = await d.axis();
   const roomFlags = [null, F.room1, F.room2, F.room3];
   for (const [i, place] of ROOM_PLACES.entries()) {
@@ -229,7 +234,7 @@ async function reaparece(d) {
   const rests = await d.eval(() => window.__b18.restCount());
   await d.milestone('descanso', () => need(rests >= 1, `sin descanso (${rests})`));
   await d.walkTo(MOUTH.front.x, MOUTH.front.y);
-  await d.pushUntil('up', (s) => s.map === 'camara_cruce', 'bajar a la Cámara');
+  await d.pushUntil('up', (s) => s.map === 'camara_cruce', 'subir a la Cámara');
   await shortcut(d);
   const alive = await d.eval(() => window.__b16.eventAlive('elegido_reaparece'));
   if (!alive) throw new Error('Dialga no ha vuelto al núcleo tras descansar');

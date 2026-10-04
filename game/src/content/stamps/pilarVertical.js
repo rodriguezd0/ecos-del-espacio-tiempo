@@ -8,7 +8,7 @@ export function paintPillarExterior(b, { centerX, doorY }) {
   return b.stamp('pilar_torre', centerX - 3, doorY - 9);
 }
 
-export function buildPilarHall(b, { floor, up = null, down = null, pedestal = null }) {
+export function buildPilarHall(b, { floor, up = null, down = null, pedestal = null, columns = true }) {
   b.fill(0, 'vacio');
   const r = floor || { x: 3, y: 4, w: b.width - 6, h: b.height - 6 };
   const cells = rectCells(r.x, r.y, r.w, r.h).filter(([x, y]) => {
@@ -17,7 +17,7 @@ export function buildPilarHall(b, { floor, up = null, down = null, pedestal = nu
     return dx + dy >= 2;
   });
   b.paint('pilar_enlosado', cells);
-  for (const x of [r.x + 1, r.x + r.w - 2]) {
+  if (columns) for (const x of [r.x + 1, r.x + r.w - 2]) {
     for (const y of [r.y + 1, r.y + r.h - 5]) b.stamp('pilar_columna', x, y);
   }
   for (const s of [up, down].filter(Boolean)) {

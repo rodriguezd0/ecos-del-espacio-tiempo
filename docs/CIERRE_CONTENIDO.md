@@ -38,6 +38,9 @@ Correcciones verificadas:
   destino está ocupado.
 - La Grieta del Porvenir conserva árboles completos y decoración separada; la Cueva Sellada evita una roca sobre
   un cristal. Los dos mapas pasan QA sin avisos y sus recorridos de pasabilidad siguen pasando.
+- Los rellanos de P8 conservan las columnas completas; las fachadas de P9/P10 y el núcleo del Cruce evitan piezas
+  ocultas superpuestas. La escalera del Puente usa piezas disponibles en su tileset y sus diálogos indican subir.
+  Chrome recorre subida, regreso, reentrada, cuatro puzzles y regreso del núcleo: nueve hitos; 62 pruebas enfocadas.
 
 No quedan hallazgos críticos o altos de esta revisión. Arte D30 y decisiones del autor abiertas conservan su
 etiqueta provisional.
@@ -46,8 +49,8 @@ etiqueta provisional.
 
 La suite completa del checkpoint pasa **2142/2142**, sin fallos, saltos ni cancelaciones. El validador construyó
 272 mapas y no dio errores. Las 45 conexiones actuales pasan la revisión de costuras. La auditoría de progresión
-no encuentra fugas ni errores en B01–B21. Los avisos de decoración de pilares se revisan por separado; no se
-presentan como errores de progresión.
+no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
+suelo y los 13 obstáculos altos de los espejos. No hay árboles cortados, objetos sobre árboles ni costuras defectuosas.
 
 Cobertura de módulos nuevos: B22c 99,46 % líneas / 93,88 % ramas / 91,89 % funciones; B23 95,73 / 91,30 / 81,82;
 B24 97,12 / 82,47 / 85,03. Las hojas propias tienen generador reproducible y comprobación de dimensiones.

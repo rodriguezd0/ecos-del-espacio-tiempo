@@ -11,12 +11,18 @@
 - **Costuras**: `tools/check_seams.mjs` (PNG en `tools/cache/seams/<A>__<dir>__<B>.png`: rojo = árbol partido,
   naranja = suelo que cambia de golpe, magenta = objeto cortado por el borde).
 
-Total: 218 mapas, 13 con avisos — 0 casillas de árbol cortado, 0
+Total: 272 mapas, 13 con avisos — 0 casillas de árbol cortado, 0
 stamps sobre árboles, 13 stamps sólidos pisando otro, 0 eventos dentro de árboles,
-322 casillas de copa sobre capa 1, 0 rocas de agua en tierra; 0/47 costuras con problemas.
+322 casillas de copa sobre capa 1, 0 rocas de agua en tierra; 0/45 costuras con problemas.
 De los mapas con avisos, 13 solo tienen falsos positivos ya revisados (`tools/qa_maps_notes.mjs`; «(rev.)» en la tabla).
 
 ## Progreso de la revisión
+
+- **Pilares verticales y postgame, 04-10-2026**: columnas del Santuario sin cristales encima; fachada P9 sin columna
+  provisional oculta; núcleo del Cruce sin doble pintado de columnas; fachada P10 sin el antiguo dintel. El Puente
+  tiene escalones de Exterior1 y un marco completo, sin columnas superpuestas. Grieta del Porvenir y Cueva Sellada
+  también corregidas. Los 13 solapes del ala del Sentir siguen siendo los obstáculos altos de los espejos, revisados.
+  Pruebas: `tests/pillar_art_qa.test.mjs` y recorridos de B16/B18/B19/B20.
 
 - **B04–B21 (sin la Ruta 3), 26-09-2026**: 0 árboles cortados, 0 stamps sobre árboles, 0 eventos en árbol y 0 rocas
   de agua en tierra (antes: 316 casillas, 73, 9 y 2); sólidos pisándose 13 (antes 80: quedan los del Santuario del
@@ -43,7 +49,7 @@ De los mapas con avisos, 13 solo tienen falsos positivos ya revisados (`tools/qa
 | islote_lumbre |  |  |  |  | 40 (rev.) |  |
 | ruta_11 |  |  |  |  | 5 (rev.) |  |
 | lagos_alma |  |  |  |  | 81 (rev.) |  |
-| santuario_alma |  |  | 13 (rev.) |  |  |  |
+| santuario_alma_sentir |  |  | 13 (rev.) |  |  |  |
 | calzada_rey |  |  |  |  | 4 (rev.) |  |
 
 ## Costuras entre mapas conectados
@@ -92,8 +98,6 @@ De los mapas con avisos, 13 solo tienen falsos positivos ya revisados (`tools/qa
 - paso_del_norte —west→ ruta_12_senda_lazo: bien
 - ruta_13 —north→ villa_boreal: bien
 - villa_boreal —north→ lagos_alma: bien
-- mirador_sur —north→ puente_convergencia: bien
-- senda_mirador —south→ puente_convergencia: bien
 - dev_test_este —west→ dev_test: bien
 
 ## Detalle por mapa
@@ -175,9 +179,9 @@ De los mapas con avisos, 13 solo tienen falsos positivos ya revisados (`tools/qa
 - **Copa de árbol sobre camino/hierba/pieza de la capa 1** (26): x 9–10, y 8 (2); x 52–53, y 8 (2); x 56–57, y 8–9 (3); x 3, y 9 (1); x 1–2, y 12–13 (3); x 58, y 12–13 (2); x 1, y 16–17 (2); x 58, y 16–17 (2); x 1, y 20–21 (2); x 58, y 20–21 (2); x 1, y 24–25 (2); x 57, y 24–25 (2); x 1–3, y 28–29 (4); x 57, y 28–29 (2); x 1, y 32–33 (2); x 58, y 32–33 (2); x 1–2, y 36–37 (3); x 57–58, y 36–37 (3); x 2–5, y 39–41 (7); x 52–53, y 39 (2); x 1, y 44–45 (2); x 1, y 48–49 (2); x 2–3, y 52–53 (3); x 4–9, y 54 (6); x 18–26, y 54 (9); x 43–51, y 54 (9)
   - *Revisado, falso positivo*: pinar nevado sobre la nieve (capa 1): el árbol está plantado sobre suelo pintado en la capa 1 (no es camino ni hierba alta).
 
-### santuario_alma
+### santuario_alma_sentir
 
-`game/src/content/maps/b16/santuario_alma.js`
+`game/src/content/maps/b16/santuario_alma_sentir.js`
 
 - **Stamps sólidos pisando otro** (13): `pilar_columna_quebrada` (35,9) sobre `pilar_arista`; `estatua_busto` (30,6) sobre `pilar_columna`; `estatua_busto` (26,4) sobre `pilar_columna`; `estatua_busto` (29,4) sobre `pilar_columna`; `pilar_dintel` (27,0) sobre `pilar_columna`; `pilar_columna` (32,22) sobre `pilar_columna`; `estatua_busto` (32,21) sobre `pilar_columna`; `pilar_columna` (29,20) sobre `pilar_columna`; `pilar_columna` (28,18) sobre `pilar_columna`; `pilar_columna` (27,16) sobre `estatua_busto`; `pilar_dintel` (27,14) sobre `pilar_columna`; `estatua_busto` (28,30) sobre `pilar_columna`; `pilar_dintel` (27,28) sobre `pilar_columna`
   - *Revisado, falso positivo*: salas del espejo: obstáculos de una casilla con pieza alta (columnas, bustos, aristas) en casillas vecinas; la parte alta de cada pieza se dibuja sobre la de encima a propósito y las bases se reescriben al final (santuario_build.js#obstacles), así cada casilla bloquea donde se ve su base.

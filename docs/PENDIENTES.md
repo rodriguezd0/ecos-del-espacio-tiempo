@@ -28,7 +28,8 @@
 > 3. Arte humano integrado y revisado: trece poses de NPC, dos lanzamientos y 15 capturas en Chrome. Pendiente la aprobación artística del autor (D30).
 > 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
 > 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
-> 6. Partida continua desde «Nueva partida»: B01–B04 recorridos y guardados por UI; B05 en marcha, con el mismo equipo, dinero y objetos obtenidos en juego.
+> 6. Partida continua desde «Nueva partida»: B01–B05 recorridos y guardados por UI; B06 en marcha, con el mismo equipo, dinero y objetos obtenidos en juego.
+> 7. QA final de P8–P10: escalera visible del Puente, columnas y fachadas sin solapes accidentales. Las 45 conexiones siguen limpias; subida y regreso de P9 recorridos en Chrome.
 >
 > Pendientes menores:
 > - Solape en dobles corregido (3c0bafe): posiciones, sombras y efectos revisados en combate cooperativo real.

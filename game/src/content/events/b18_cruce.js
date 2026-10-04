@@ -77,7 +77,7 @@ const gateWarp = (place, arrive) => ({ x: place.gate.warp.x, y: place.gate.warp.
 
 export function cruceWarps() {
   return [
-    // Vestíbulo: la escalinata sube al Puente (a la boca, mirando al sur)
+    // Vestíbulo: la escalinata baja al Puente (a la boca, mirando al sur)
     ...stairWarps(VESTIBULO, { to: 'puente_convergencia', tx: MOUTH.arrive.x, ty: MOUTH.arrive.y, dir: 2 }),
     gateWarp(VESTIBULO, CAIDA.stairs.arrive),
     ...stairWarps(CAIDA, toFront(VESTIBULO)),
