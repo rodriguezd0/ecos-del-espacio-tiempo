@@ -156,8 +156,9 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
   ambos rivales y recarga con comparación del GameState completo/UID/PC/pistas/viajes/posición de cura.
   El reloj admite avance normal y rechaza reinicios. Las 72 regresiones pasan; falta ejecutar las recargas
   del checkpoint B13 y del final en la partida continua.
-- Última suite completa de integración: 2314/2314 sin fallos, omisiones ni cancelaciones, incluido el arte aprobado
-  y su UI (`suite_final_approval.log`); foco de arte: 48/48. Validador: 272 mapas, sin errores.
+- Última suite completa de integración: 2334/2334 sin fallos, omisiones ni cancelaciones, incluidos el arte
+  aprobado, su UI, C065 y conductores de recarga (`suite_campaign_reload_integrated.log`); foco de arte: 48/48.
+  Validador: 272 mapas, sin errores.
 - Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
 ## 6. Menores

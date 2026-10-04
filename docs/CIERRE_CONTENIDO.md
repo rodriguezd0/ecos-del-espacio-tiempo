@@ -105,8 +105,8 @@ La aprobación anterior de frontales y tamaños tuvo revisión independiente sin
 
 ## Comprobaciones de integración
 
-La última suite completa de integración pasó **2314/2314**, sin fallos, saltos ni cancelaciones, incluido el arte
-aprobado y su UI (`suite_final_approval.log`, 40,2 s). El validador construyó
+La última suite completa de integración pasó **2334/2334**, sin fallos, saltos ni cancelaciones, incluidos el arte
+aprobado, su UI, C065 y los conductores de recarga (`suite_campaign_reload_integrated.log`, 32,2 s). El validador construyó
 272 mapas y no dio errores. Las 45 conexiones actuales pasan la revisión de costuras. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
 suelo y los 13 obstáculos altos de los espejos. No hay árboles cortados, objetos sobre árboles ni costuras defectuosas.
@@ -126,7 +126,7 @@ Evidencia: `door_animation_report.md`, `door_final_coverage.log`, `door_inventor
 `door_chrome_phases_`. Los seis perfiles temporales anteriores permanecen en caché porque su borrado fue
 rechazado por la revisión automática («blocked by policy»); sus navegadores están cerrados.
 
-Evidencia local en `tools/cache/`: `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
+Evidencia local en `tools/cache/`: `suite_campaign_reload_integrated.log`, `suite_final_approval.log`, `suite_closure_integrated.log`, `suite_closure_green.log`, `validate_closure.json`,
 `audit_progression_final.json`, `b22c_resultado.md`, `b23_final_coverage.log`, `b24_entrega.md` y las capturas y
 checkpoints de `screens/`, `pokedex_audit_entrega.md`, `audit_changed_coverage.json`, `b14_follower_review.json`
 y `netcoop_evolution_day.json` / `netcoop_evolution_night.json`, `progression_inventory_report.md` y sus trazas.
