@@ -130,9 +130,9 @@ La aprobación anterior de frontales y tamaños tuvo revisión independiente sin
 
 ## Comprobaciones de integración
 
-La última suite completa de integración pasó **2457/2457**, sin fallos, saltos ni cancelaciones, incluidos el arte
+La última suite completa de integración pasó **2463/2463**, sin fallos, saltos ni cancelaciones, incluidos el arte
 aprobado, su UI, C059/C065, recargas, retornos B14/B15, PC y separación global de seguidores
-y reanudaciones B17–B19/montura B20 (`suite_b19_b20_integrated.log`, 30,48 s). El último
+y reanudaciones B17–B20 (`suite_b20_return_integrated.log`, 32,17 s). El último
 validador posterior a ambos arreglos construyó 272 mapas sin errores: 31 avisos enumerados, ninguno de Mar/Talasa.
 Las 45 conexiones actuales pasan la revisión de costuras, incluidas las seis de esos dos mapas. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
@@ -212,6 +212,14 @@ Salamencita, Alerce, Salamence Alfa, último tramo y Umbral completos. La audito
 B18 (`campaign/campaign_b19_checkpoint_audit.json`). Doce regresiones pasan, con cobertura del helper de
 reintentos de Casandra del 100 % en líneas/ramas/funciones (`37d92f4`); esa medida no cubre todo el módulo B19.
 La bajada exige el warp registrado y la entrada real a la Puerta. La montura de B20 usa el control normal antes
-de subir la grava y cuenta con dos regresiones (`66a3e5a`). El recorrido continúa en B20/P10.
+de subir la grava y cuenta con dos regresiones (`66a3e5a`).
+Se guardó B20 por UI en Núcleo del Origen (10,22), con 100 células únicas, cinco Núcleos, diez Fragmentos y
+quince Tablillas. Nueve tramos resueltos, retornos antes del Trío/Gael y descenso de las tres plantas tras
+restaurar recorridos. Tornadus68/Thundurus68/Landorus70 fueron vencidos en 1/5/5 turnos, dinero intacto y
+captura sellada; respuesta real «zygarde». Gael B6 fue vencido en 18 turnos. F10/Flauta y regreso al núcleo
+completos, conservando las colecciones de B19 (`campaign/campaign_b20_checkpoint_audit.json`). El regreso
+usa las entradas por evento en vez del grafo incompleto; exige cinco hitos reales y evita repetir la entrega.
+Seis regresiones pasan, con cobertura del helper del 100 % en líneas/ramas/funciones (`6a0d07b`).
+El recorrido continúa en B21: Salto y llegada a la Columna, con resolución, créditos y recarga final pendientes.
 P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.

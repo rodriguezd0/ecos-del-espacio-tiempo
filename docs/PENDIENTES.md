@@ -28,7 +28,7 @@
 > 3. Arte humano y atlas aprobados por el autor el 04-10: trece poses de NPC, kit M/F completo, 29 personajes de campo e ilustración regional. Aprobación registrada por archivo, sin cambiar los PNG mostrados.
 > 4. Postgame B22 completo: a–e recorridos en Chrome, incluidos los siete encuentros de B22c.
 > 5. Almenara terminada: 13 hitos y 9 combates reales en Chrome. Expediciones terminadas: 30/30 Hallazgos, 47 combates y ambas islas marcadas en el atlas real.
-> 6. Partida continua desde «Nueva partida»: B01–B19 recorridos y guardados por UI; B20 en marcha con los recursos obtenidos jugando. Último guardado: Puerta de las Quince (16,31), 100 células únicas, quince Tablillas, cinco Núcleos y nueve Fragmentos. Las recargas reales de B13 y B15 conservaron todos los campos persistentes y el reloj exacto del archivo. Al preparar B16, se retiró Bramaluna Alfa 58 del PC y se depositó Rampardos sin cambiar ni perder registros. P6, sus caídas sin daño y sus regresos están comprobados; Nadar y Buceo se habilitaron jugando y Togepi eclosionó caminando. P8/Telar está restaurado; Completo, Volar y Reconstruir se habilitaron jugando. B17 incluye Mesa/T14, ambas torres, Vigilia y Círculo del Jardín. B18 completó el Puente, Cámara, elección de Dialga, restauración de P9 y regreso entre plantas. B19 ganó a Casandra y Salamence Alfa, recibió Tabla Draco/T15 y cruzó la Sima hasta la Puerta.
+> 6. Partida continua desde «Nueva partida»: B01–B20 recorridos y guardados por UI; B21 en marcha con los recursos obtenidos jugando. Último guardado: Núcleo del Origen (10,22), 100 células únicas, quince Tablillas, cinco Núcleos y diez Fragmentos. Las recargas reales de B13 y B15 conservaron todos los campos persistentes y el reloj del archivo. Los diez Pilares están restaurados, incluidos el Trío, Gael B6, F10/Flauta Azur y los regresos por las tres plantas de P10. El Salto ya llevó la partida a la Columna. Quedan la resolución, créditos, despertar y comparación completa del guardado final.
 > 7. QA final de P8–P10: escalera visible del Puente, columnas y fachadas sin solapes accidentales. Las 45 conexiones siguen limpias; subida y regreso de P9 recorridos en Chrome.
 >
 > Detalles revisados:
@@ -160,9 +160,9 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
   El reloj se compara con el payload que escribió la UI, admitiendo avance normal y rechazando reinicios.
   Las 80 regresiones del recorrido pasan. La recarga real de B13 ya pasó con el reloj 1219→1219 y todos los campos completos
   iguales; falta la recarga del final (`campaign_b13_reload_audit.json`).
-- Última suite completa de integración: 2457/2457 sin fallos, omisiones ni cancelaciones, incluidos el arte
+- Última suite completa de integración: 2463/2463 sin fallos, omisiones ni cancelaciones, incluidos el arte
   aprobado, su UI, C059/C065, recargas, retornos B14/B15, PC y separación global de seguidores
-  y reanudaciones B17–B19/montura B20 (`suite_b19_b20_integrated.log`, 30,48 s); foco de arte: 48/48.
+  y reanudaciones B17–B20 (`suite_b20_return_integrated.log`, 32,17 s); foco de arte: 48/48.
   Validador posterior a C059/C065: 272 mapas sin errores; 45/45 costuras limpias y cero incidencias de arte sin
   revisión. Las dos regresiones posteriores del tramo de entrada de B14 pasan en el foco de 80 pruebas.
 - Reintentos reales de B14 verificados: vuelta por Buceo tras perder con Eulalia y reintento local de Adela
@@ -193,7 +193,12 @@ regla de tamaño de los Pokémon en el mapa. Se conserva la lista original como 
   real sin pérdida de dinero y cura del guion, Tabla Draco/T15, Salamencita, Alerce y Salamence Alfa completos;
   último tramo y Umbral cruzados. Conserva las colecciones de B18 (`campaign_b19_checkpoint_audit.json`).
   Doce regresiones de reanudación/Casandra pasan (`37d92f4`); la montura por control normal antes de la grava
-  de B20 tiene dos regresiones (`66a3e5a`). B20 está en el ascenso de P10.
+  de B20 tiene dos regresiones (`66a3e5a`).
+- B20 guardado por UI en Núcleo del Origen (10,22): nueve tramos, Trío (68/68/70), Gael B6, F10/Flauta,
+  retornos anteriores a los encuentros y descenso completo tras restaurar; regreso físico al núcleo comprobado.
+  Conserva las colecciones de B19, con diez Fragmentos (`campaign_b20_checkpoint_audit.json`). Seis regresiones
+  del regreso pasan y el helper tiene cobertura del 100 % en líneas/ramas/funciones (`6a0d07b`).
+  B21 comenzó el Salto y llegó a la Columna; quedan resolución, créditos, despertar y recarga final.
   Falta la recarga completa del final.
 - Pendiente: terminar la partida continua y la pasada de balance (`e2e_campaign.mjs`), sin preajustes ni saltos de progresión, y recargar el guardado tras los créditos.
 
