@@ -4,6 +4,7 @@ import {Driver as EchoDriver} from './e2e_b14_driver.mjs';
 import {FONDO} from '../game/src/content/maps/b14/layout.js';
 import {reloadCheckpoint} from './e2e_campaign_checkpoint_reload.mjs?slot=1';
 import {completeRealMoon} from './e2e_campaign_b14_capture.mjs';
+import {fondoCollected,returnFromFondo} from './e2e_campaign_b14_return.mjs';
 const RETRY=false;
 const need = (cond, msg) => (cond ? null : msg);
 const has = (s, key) => Boolean(s.flags?.[key]);
@@ -296,6 +297,11 @@ async function regreso(d) {
 }
 
 async function fondo(d) {
+  if (fondoCollected(await d.snap())) {
+    await d.milestone('fondo_celulas', s => need(fondoCollected(s), 'faltan células del Fondo'));
+    await returnFromFondo(d);
+    return;
+  }
   // Regreso al arrecife después de comprobar el ferri en la superficie.
   if ((await d.snap()).map === 'caleta_sonda') {
     await d.swimTo(4,28);
@@ -308,6 +314,7 @@ async function fondo(d) {
   const C = FONDO.cells;
   const cells = ['fondo_sur_3', 'fondo_sur_4', 'fondo_sur_1', 'fondo_sur_2', 'fondo_sur_5'].map((k) => [`cell_${k}`, C[k].x, C[k].y]);
   for (const [key, x, y] of cells) {
+    if ((await d.snap()).cells.includes(key)) continue;
     await d.walkTo(x, y, { maxSteps: 1500 });
     await d.settle();
     const s = await d.snapState();
@@ -315,11 +322,7 @@ async function fondo(d) {
     console.log(`  · ${key}`);
   }
   await d.milestone('fondo_celulas', (s) => need(cells.every(([key])=>s.cells.includes(key)), 'faltan células del Fondo'));
-  await d.travel('arrecife_eco');
-  await d.walkTo(24,19);
-  await d.interact();
-  await d.until(s=>s.map==='caleta_sonda'&&s.ready,{timeout:20000,what:'emerger después del Fondo'});
-  await d.toLand();
+  await returnFromFondo(d);
 }
 
 const STAGES = { caleta, arrecife, sala1, sala2, sala3, sala4, fosa, regreso, fondo };
