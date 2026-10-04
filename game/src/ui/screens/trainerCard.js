@@ -1,4 +1,4 @@
-// Tarjeta de entrenador (como 013_UI_TrainerCard.rb de Añil). Foto: charset provisional del protagonista (D30).
+// Tarjeta de entrenador (como 013_UI_TrainerCard.rb de Añil). Foto: charset actual del protagonista.
 import { engine, SCREEN_W, SCREEN_H } from '../../core/engine.js';
 import { ScreenScene, openScene } from '../core/uiScene.js';
 import { UI, blit, img, preload } from '../core/images.js';
@@ -42,7 +42,7 @@ class TrainerCardScene extends ScreenScene {
     this.drawPhoto(g, 330, 104, 144, 144);
   }
 
-  /** Foto: frame frontal del charset del protagonista a ×2 (arte provisional D30). */
+  /** Foto: frame frontal del charset del protagonista a ×2; el registro indica su aprobación. */
   drawPhoto(g, x, y, w, h) {
     const ch = this.character;
     const im = ch ? img(ch.file) : null;
@@ -51,7 +51,7 @@ class TrainerCardScene extends ScreenScene {
       const scale = 2;
       g.drawImage(im, r.x, r.y, r.w, r.h, Math.round(x + (w - r.w * scale) / 2), Math.round(y + h - r.h * scale), r.w * scale, r.h * scale);
     }
-    drawText(g, '[PROVISIONAL D30]', x + w / 2, y + h - 14, { color: '#f8f8f8', shadow: '#305080', align: 'center', font: 'tiny' });
+    if (ch?.provisional) drawText(g, '[PROVISIONAL D30]', x + w / 2, y + h - 14, { color: '#f8f8f8', shadow: '#305080', align: 'center', font: 'tiny' });
   }
 }
 

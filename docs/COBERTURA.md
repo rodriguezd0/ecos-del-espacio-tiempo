@@ -25,7 +25,7 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | Equipo, datos, mochila, Pokédex, opciones, guardar/cargar (3 ranuras + archivo) | ✅ | |
 | Centro Pokémon, tienda por etapas, posada, tutor y recordador | ✅ | `content/services` |
 | Pesca (Caña Vieja/Buena/Supercaña) | ✅ | |
-| Mapa de Axis y Vuelo | ✅ | Atlas de CAMPANA §1; ilustración provisional |
+| Mapa de Axis y Vuelo | ✅ | Atlas de CAMPANA §1; ilustración aprobada por el autor el 04-10-2026 |
 | Tren regional y ferris | ✅ | Sistema; estaciones con cada bloque |
 | Combate: motor (daño, tipos, estados, efectos, habilidades, objetos, IA) | ✅ | 463/463 códigos de función, 327/328 habilidades |
 | Combate: escena estilo BW2 | ✅ | Animaciones de Añil; respaldo genérico por tipo/categoría |
@@ -74,18 +74,18 @@ detalle en `docs/CAMPANA.md`). Lo marcado «provisional» es arte o balance revi
 | B23 | DLC 1 «Almenara» (Gael, Hoopa, Mega Zygarde) | ✅ 13 hitos, 9 combates reales; derrota/reintento, sellado, captura opcional y final abierto |
 | B24 | DLC 2 Registro de Expediciones | ✅ 30/30 Hallazgos, 47 combates reales, siete Ultrazonas, Naganadel/Necrozma y ambas hipótesis insulares |
 
-## Personajes (arte provisional D30 en `game/assets/characters`)
+## Personajes (arte humano D30 aprobado el 04-10-2026)
 
 | Personaje | Estado | Notas |
 |---|---|---|
-| Protagonista M (castaño cobrizo, sin gorra, chaqueta teal, #B9FF66, mochila) | ✅ provisional | Caminar, correr, monturas, buceo, trepar, pesca, combate |
-| Protagonista F (pelo azul marino, mochila) | ✅ provisional | Ídem |
-| Gael | ✅ provisional | Paleta histórica |
-| Prof. Alerce | ✅ provisional | |
-| Agente Olmedo, Mamá, Lía, vecinos, niños | ✅ provisional | |
-| Guardianes: Casilda, Leandro, Abril, Fermín, Olvido | ✅ provisional | Charset + frontal |
-| Genesis: Vértice, Casia, Garrido, técnicos/investigadores | ✅ provisional | Sin verde Zygarde |
-| Curador/personal del museo, NPC del DLC 2 | ✅ provisional | Personal integrado; Sabela usa el charset científico de Añil, pendiente de aprobación D30 |
+| Protagonista M (castaño cobrizo, sin gorra, chaqueta teal, #B9FF66, mochila) | ✅ aprobado | Ocho acciones de campo y lanzamiento; nueve hojas |
+| Protagonista F (pelo azul marino, mochila) | ✅ aprobado | Ídem |
+| Gael | ✅ aprobado | Campo y nueva pose de combate |
+| Prof. Alerce | ✅ aprobado | Campo y nueva pose de combate |
+| Agente Olmedo, Mamá, Lía, vecinos, niños | ✅ aprobado | Incluidos en los 29 charsets presentados |
+| Guardianes: Casilda, Leandro, Abril, Fermín, Olvido | ✅ aprobado | Charset + frontal |
+| Genesis: Vértice, Casia, Garrido, técnicos/investigadores | ✅ aprobado | Incluye Vértice líder; sin verde Zygarde |
+| Curador/personal del museo, NPC del DLC 2 | ✅ | Personal propio aprobado; Sabela y otros secundarios conservan referencias de Añil |
 | Zygarde Core + 4 núcleos | ✅ | Core propio; núcleos por guion |
 
 ## Legendarios con función narrativa

@@ -118,8 +118,10 @@ en `tools/cache/b24_entrega.md`, trazas `e2e_b24_*.log` y checkpoints de `screen
 | Puertas normales cerradas: apertura/cierre sobre el panel original | 56 accesos/36 variantes resueltos, máscaras y raster; ocho transiciones Chrome, curación/recarga y 24 fases visibles | Verificado, incluidos guiones y stamps locales |
 | Seguidor B14, aro negro de Gael y Diario | Profundidad en tres capas/ambas formas; datos de B15/B20; pestañas y pruebas | Verificado |
 | F9 espera al jugador/guion; recuperación del final tras televisión | Once regresiones y once comprobaciones Chrome | Verificado en be63ae7 |
-| Protagonistas M/F: acciones, mochila, monturas y espaldas/lanzamientos | 51 pruebas/18 capturas; torso y dos lanzamientos revisados | Integrado; D30 provisional |
+| Protagonistas M/F: acciones, mochila, monturas y espaldas/lanzamientos | 51 pruebas/18 capturas; lámina del kit completo y aprobación fechada en 18 hojas | Aprobado por el autor el 04-10-2026 |
 | Trece poses de combate de NPC | 36 pruebas, 15 capturas y lámina; registro y alias con aprobación fechada | Aprobado por el autor el 04-10-2026 |
+| Elenco propio de campo, incluido Vértice líder | Lámina de 29 charsets; hashes originales y aprobación registrada por archivo/alias | Aprobado por el autor el 04-10-2026 |
+| Ilustración del atlas de Axis | Imagen mostrada y aprobada; JSON/generador con fecha, PNG idénticos y 56 lugares conservados | Aprobado por el autor el 04-10-2026 |
 | Escala de Pokémon del mapa, incluidos Onix/Yanma | Módulo y cuatro pruebas; el autor elige mantener la regla actual | Confirmado por el autor el 04-10-2026 (X37) |
 | Suite completa sobre el resultado integrado | 2287/2287, sin fallos, omisiones ni cancelaciones; `suite_closure_integrated.log` | Verificado sobre puertas, escuela y conductores actuales |
 | Validador, costuras y QA sobre el resultado final | Último validador: 272 mapas/187 entrenadores/sin errores; Estrato 0/3 costuras defectuosas | Repetir al cierre si cambian mapas |

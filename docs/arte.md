@@ -1,9 +1,12 @@
 # Arte de personajes — estado y decisiones (D30)
 
-El autor aprobó el 04-10-2026 las **trece poses frontales nuevas de combate** tras ver la lámina comparativa
-del apartado 10. Esas entradas de `game/src/content/characters.js` llevan `provisional: false`,
-`approvedOn: '2026-10-04'` y `approvedBy: 'autor'`. Las demás hojas conservan `provisional: true` y su revisión
-D30 pendiente. Cada entrada mantiene `decision: 'D30'` para identificar su procedencia.
+El autor aprobó el 04-10-2026 las **trece poses frontales nuevas de combate**, el **kit M/F completo**
+(18 hojas: ocho acciones de campo y lanzamiento por protagonista), los **29 personajes de campo**, incluido
+Vértice líder, y la **ilustración del atlas de Axis**. Queda cerrada la revisión D30 de esas láminas.
+Las 60 entradas correspondientes de `game/src/content/characters.js`, sus alias y `region_map.json` llevan
+`provisional: false`, `approvedOn: '2026-10-04'` y `approvedBy: 'autor'`; mantienen su decisión de procedencia.
+La aprobación conserva exactamente los PNG mostrados. Core y célula siguen las referencias originales del
+creador (§3); la partícula técnica `zygarde_hex` no formaba parte de las láminas nuevas.
 
 Visor: `http://localhost:8080/?scene=sprites` (←/→ personaje · Z modo: caminar, correr y, en los protagonistas,
 montura 10%, nado 50%, buceo, trepar, pesca y Vuelo · X zoom · C combate · E alterna con las clases genéricas de
@@ -88,14 +91,15 @@ con banda de brillo ancha y **dos mechones barridos hacia atrás y a su izquierd
 más una punta que sale hacia ese lado (silueta con dirección, distinta de las puntas verticales de Gael); flequillo
 en tres mechones con punta que deja ver la frente, patillas y orejas visibles; de perfil, volumen detrás con
 puntas hacia atrás y nariz de 1 px; de espaldas, mechones hacia su izquierda y nuca en tres puntas. Ojos 2×3
-(párpado oscuro, brillo blanco exterior, pupila con **iris castaño cálido #7A4A2C**, propuesta). Brazos con manos
+(párpado oscuro, brillo blanco exterior, pupila con **iris castaño cálido #7A4A2C**). Brazos con manos
 de 2×2 y balanceo al andar; piernas de 4 filas con zapatos de suela clara. La espalda de combate usa el mismo pelo
 barrido con brillos en banda.
-Propuestas no canónicas: color de ojos (castaño), tono de piel claro, forma exacta de los mechones.
+Color de ojos, tono de piel y mechones incluidos en el kit aprobado el 04-10-2026.
 
-### Protagonista femenina — `protagonista_f` (+ `_run`, `_back`) · PROPUESTA D30 (X32 recuperada del WIP)
+### Protagonista femenina — `protagonista_f` (+ `_run`, `_back`) · D30/X32 aprobado
 Canon usado: **azul marino profundo casi nocturno con lectura azul** (#5A6CB4 luces, #34427E base, #222C58,
-#141A38) y el mismo lenguaje BW y acento verde. El resto procede de la propuesta de desarrollo **X32** de la rama de pausa y sigue **provisional D30**.
+#141A38) y el mismo lenguaje BW y acento verde. El diseño **X32** recuperado de la rama de pausa está
+aprobado por el autor desde el 04-10-2026.
 **Kit recuperado y revisado (03-10-2026, referencias de estilo BW del autor)**, con el kit de protagonistas (§9):
 - **Proporciones**: las del masculino (figura de 29 filas, cabeza de 18 filas ocupadas, cara, ojos y barbilla en las mismas
   filas y columnas); la melena sobresale 2 px por lado (cabeza de 22 px), así que su silueta es más ancha abajo.
@@ -104,7 +108,7 @@ Canon usado: **azul marino profundo casi nocturno con lectura azul** (#5A6CB4 lu
   se **abren hacia fuera** a la altura de los hombros (de frente a su derecha, de perfil en la nuca, de espaldas a
   su derecha). Por su izquierda el pelo va recogido en una **trenza fina** que cae por delante del hombro con una
   **goma verde #B9FF66**: es su acento (visible de frente, de perfil y de espaldas) y la chaqueta no lleva verde.
-- **Cara**: párpado y ojos en las filas 14–16, alineados con los del masculino con **iris azul #3E64B0** (propuesta) y barbilla más suave.
+- **Cara**: párpado y ojos en las filas 14–16, alineados con los del masculino con **iris azul #3E64B0** y barbilla más suave.
 - **Ropa**: **chaqueta corta crema** cerrada con cuello azul noche (contraste claro/oscuro con él), **pantalón corto
   marino** con 1 px de vuelo por lado en el muslo (de frente y de espaldas), **mallas oscuras** y **botines teja**.
 - **Mochila (D06)** teja (#EA8A6C / #C45C42 / #8E3C2C / #5A221A), a juego con los botines; la misma forma que la de él.
@@ -113,20 +117,21 @@ Canon usado: **azul marino profundo casi nocturno con lectura azul** (#5A6CB4 lu
 No copia a Dawn, Hilda/Touko, May, Rosa ni a las chicas de las referencias (sin gorra, coletas, falda ni vestido;
 de las referencias se tomó el estilo: cabeza grande, contorno casi negro, 3 tonos por material, brillo en anillo).
 Se distingue de la ayudante del laboratorio (pelo negro liso, bata larga) por el azul, la silueta de la melena, la
-trenza y el conjunto corto. Propuestas no canónicas: nombre (abierto), peinado, prendas, colores de ropa, ojos.
+trenza y el conjunto corto. Peinado, prendas, colores y ojos incluidos en el kit aprobado; el nombre lo elige
+el jugador (D01).
 
 ### Gael — `gael` (+ `gael_front`)
-Antecedente del autor **a ratificar** (§13.3), aplicado tal cual: pelo #E0C870 / #A08840 / #F8F8C8 / #604820,
+Diseño aprobado por el autor (§13.3, D30): pelo #E0C870 / #A08840 / #F8F8C8 / #604820,
 chaqueta bordó #782030 / #481018 / #A03848, ropa inferior #404040 / #606060, botas #203050 / #406090,
 ojos claros (#58A0D8 en el sprite frontal). Diseño nuevo, no basado en Silver: puntas rubias hacia arriba y
 atrás, frente despejada, chaqueta abierta en V con camiseta gris oscuro y cremallera metálica (sin verde, para
-no compartir el acento del Core). Expresión **seria sin cejas fruncidas**; pose de combate con la mano en la
-cadera.
+no compartir el acento del Core). Expresión **seria sin cejas fruncidas**; nueva pose de combate con Poké Ball
+del apartado 10.
 
-### Profesor — `profesor` (+ `profesor_front`) · D03 abierto
-Propuesta neutral: adulto, pelo castaño oscuro corto con raya, **abrigo largo claro de campo** (no bata de
+### Profesor Alerce — `profesor` (+ `profesor_front`) · D03/D30 aprobados
+Adulto, pelo castaño oscuro corto con raya, **abrigo largo claro de campo** (no bata de
 laboratorio ni uniforme), jersey pizarra, pantalón y zapatos marrones. **Sin emblemas, sin gafas, sin nada que
-insinúe Genesis.** Edad, pelo, ojos, bata/camiseta y accesorios siguen abiertos (D03).
+insinúe Genesis.** D03 fija unos 45 años, geología y ecología de anomalías; el aspecto mostrado está aprobado.
 
 ### Policía — `policia` (§13.8, genérico)
 Uniforme azul marino, camisa celeste, gorra de plato con placa dorada. Sin nombre, rango ni rasgo propio.
@@ -141,7 +146,7 @@ de perfil y de espaldas), ojos suaves y sonrisa pequeña; **jersey de punto colo
 peto y lazo a la espalda, pantalón pardo y zapatillas de casa rojizas. Nada canónico más allá de D01 (vive con
 el protagonista, cura al equipo en casa).
 
-### Ayudante del laboratorio — `ayudante` · PROPUESTA
+### Ayudante del laboratorio — `ayudante` · D30 aprobado
 NPC genérico del laboratorio de Alerce, sin nombre. Propuesta: **mujer joven**, melena corta negra azulada a la
 altura de la mandíbula con flequillo recto y **horquilla amarilla**, **bata clara azulada** (abrigo largo, la
 misma pieza que el profesor pero en blanco frío) sobre jersey coral. Si los diálogos la tratan en masculino,
@@ -207,23 +212,20 @@ luz verde que late, como dice su texto: no es el sprite del Core.
 
 Regenerar ambos: `node tools/pixel_build.mjs zygarde_core zygarde_celula --preview`. Tests: `tests/art_zygarde.test.mjs`.
 
-## 4. Preguntas para el autor (D30 y relacionadas)
+## 4. Aprobaciones del autor (04-10-2026)
 
-1. **Masculino**: ¿se aprueba esta silueta de pelo y la chaqueta azul petróleo cerrada como base, o se
-   retoma la candidata C de V07?
-2. **Femenina** (X32): ¿se aprueba la media melena con trenza y goma verde, la chaqueta crema y el pantalón corto
-   con mallas y botines? ¿Nombre?
-3. **Gael**: ¿se ratifica el rubio y la paleta histórica bordó/gris/azul? ¿Ojos #58A0D8?
-4. **Profesor (D03)**: edad, pelo, gafas sí/no, abrigo de campo o bata.
-5. **Core**: rehecho con la referencia del autor (cabeza verde con un ojo y cuerpo oliva en punta). ¿Se
-   aprueba el cerco verde del ojo y la mancha rojiza de la espalda? (D06 resuelto: los protagonistas llevan
-   mochila y el Core los sigue en el mapa.)
-6. ¿Hacen falta retratos de diálogo? (Montura, nado, buceo, trepar, pesca y Vuelo ya están, §8.)
-7. **Ayudante** (Lía, X07): ¿mujer (propuesta actual) u hombre? **Casilda**: ¿encaja el moño alto?
-8. **Elenco de la campaña (§7)**: aprobar o corregir los diseños propuestos de Leandro, Abril, Fermín, Olvido, Sol,
-   Vértice, Casia, Garrido, técnicos/investigadores de Genesis, enfermera, dependiente, molinero, buzo y archivista.
-9. **Personajes secundarios con alias de Añil** (Ramón, Remedios, Rosalía, Rosendo, Evaristo, Quino, Bea, Darío):
-   ¿arte propio o se quedan con charsets de Añil?
+| Lámina presentada | Respuesta | Alcance registrado |
+|---|---|---|
+| Comparativa de combate | Aprobar las nuevas poses | Trece frontales de NPC (§10) |
+| Kit M/F actual | Aprobar el kit actual | Diseños de ambos protagonistas, ocho acciones y lanzamiento; 18 hojas |
+| Elenco de campo actual | Aprobar el elenco actual | 29 charsets propios, incluido Vértice líder |
+| Atlas actual de Axis | Aprobar el atlas actual | Ilustración `region_map.png` y su generador/JSON |
+
+Las dos láminas actuales y sus hashes de origen están en `tools/cache/arte-final/`:
+`kit_protagonistas_actual.png`, `charsets_basicos_actuales.png` y `revision_d30_manifest.json`.
+Los 47 PNG de esas dos láminas conservan los hashes mostrados; el atlas también conserva sus píxeles.
+El registro aprueba archivos concretos, por lo que una hoja futura requiere su propia revisión. Los secundarios
+que ya usan referencias de Añil conservan esos recursos; no se han pedido retratos de diálogo nuevos.
 
 ## 5. Limitaciones conocidas
 
@@ -231,7 +233,7 @@ Regenerar ambos: `node tools/pixel_build.mjs zygarde_core zygarde_celula --previ
   pero no hay cuerpos excepcionales (corpulentos, muy altos).
 - Los niños no balancean los brazos al andar de frente (solo de perfil).
 - Los sprites de combate grandes se generan con formas y sombreado automático: correctos y coherentes, pero
-  menos pulidos que un trabajo a mano; son los primeros candidatos a sustituir cuando haya arte aprobado.
+  el autor aprobó las poses actuales tras verlas comparadas con las referencias.
 - Sin retratos ni sombra propia (la sombra la pone el motor). Las hojas de montura, nado, buceo, trepar, pesca
   y Vuelo existen desde la 3.ª pasada (§8); no hay bici (Axis no la usa: la montura es Zygarde 10%).
 - Las monturas usan como base los seguidores de Añil (ZYGARDE_1 y ZYGARDE) muestreados a resolución nativa: si se
@@ -239,7 +241,7 @@ Regenerar ambos: `node tools/pixel_build.mjs zygarde_core zygarde_celula --previ
 - La vista de perfil se obtiene por espejo (como en BW): el flequillo, el tirador y la trenza de la femenina
   cambian de lado al mirar a la derecha (la trenza está a su izquierda; el perfil izquierdo es el fiel).
 
-## 6. Mapa regional de Axis (ilustración PROVISIONAL, D30 · X02) — para el agente *services*
+## 6. Mapa regional de Axis (ilustración aprobada, D30 · X02)
 
 Generador: `node tools/pixel_map.mjs [--preview]` (geografía en `tools/pixel_map_data.mjs`, que sigue el esquema
 ASCII y la lógica de CAMPANA §1.1–1.2). Se pinta a 240×160 nativos y se amplía ×2.
@@ -270,14 +272,14 @@ ASCII y la lógica de CAMPANA §1.1–1.2). Se pinta a 240×160 nativos y se amp
 - Tests: `tests/art_region_map.test.mjs` (tamaño, ×2 exacto, JSON al día con el generador, casillas únicas, pueblos
   en tierra y mares en agua, los diez Pilares presentes).
 
-## 7. Elenco de la campaña (PROVISIONAL, D30) — CAMPANA §3, §5, §6
+## 7. Elenco de la campaña (aprobado, D30) — CAMPANA §3, §5, §6
 
 Mismo método que §1 (32×32 nativos ×2, frontales 80×80 ×2). Descripciones de CAMPANA/X06/X08/D14; lo que el
-canon no fija (colores, peinados, poses) es propuesta. **Genesis nunca usa el verde de Zygarde** (lo comprueba
+canon no fijaba (colores, peinados, poses) quedó aprobado en las láminas actuales. **Genesis nunca usa el verde de Zygarde** (lo comprueba
 `tests/art_campaign.test.mjs`): petróleo #1F4E5A, blanco clínico #F2F4F5, carbón #2B2D31 y magenta #B03A8C; emblema de
 dos tubos de ensayo cruzados sobre un círculo (en gorras, petos, batas y la tableta de Casia).
 
-| Id (charset) | Frontal | Quién | Diseño propuesto |
+| Id (charset) | Frontal | Quién | Diseño aprobado |
 |---|---|---|---|
 | `leandro` | `leandro_front` | Leandro Alcántara (38, orgullo), Maestre de Esclusas | Levita azul río con botones de latón, camisa blanca, botas de agua, tupé y barba de días. Frontal: mano en la cadera y la gran llave de esclusa al hombro |
 | `abril` | `abril_front` | Abril Céspedes (19, tedio) | Rubio ceniza revuelto por el viento, cortavientos mostaza con capucha gris, auriculares cian, pantalón corto y mallas. Frontal: manos en los bolsillos, párpados a media asta |
@@ -299,7 +301,7 @@ dos tubos de ensayo cruzados sobre un círculo (en gorras, petos, batas y la tab
 **Alias** (`content/characters_campaign.js` → `CHARACTER_ALIASES`; `getCharacter`/`getBattleSprite` los resuelven y
 devuelven la entrada del destino con `alias` y `aliasOf`): `casilda` → `guardiana` (+ `casilda_front`), `alerce` →
 `profesor` (+ `alerce_front`), `olmedo` → `policia`, `lia` → `ayudante`, `anselmo` → `molinero`, `fausto` → `buzo`,
-`nilo` → `genesis_tecnico`, `iker` → `nino`, `sixto` → `anciano`; con charsets de Añil (provisionales, sin combate):
+`nilo` → `genesis_tecnico`, `iker` → `nino`, `sixto` → `anciano`; con charsets de Añil (referencias, sin combate):
 `ramon` → `anil:capitan` (farero), `remedios` → `anil:anciana1` (curandera), `rosalia` → `anil:empresariaa` (curadora),
 `rosendo` → `anil:anciano2` (tallista), `evaristo` → `anil:anciano1` (Correos), `quino` → `anil:operario`,
 `bea` → `anil:minera`, `dario` → `anil:empresario`.
@@ -314,7 +316,7 @@ es el id del frontal o de su alias). Alerce y Gael no tienen variantes: CAMPANA 
 Si el combate doble con aliado (Gael en B06, Alerce en Talasa) llega a mostrar al compañero, harán falta
 `gael_back`/`profesor_back` (pendiente).
 
-## 8. Monturas y acciones de Zygarde (PROVISIONAL, D30) — para el agente *zygarde*
+## 8. Monturas y acciones de Zygarde (kit M/F aprobado, D30)
 
 Hojas por protagonista (`protagonista_m_*` y `protagonista_f_*`), registradas como variantes:
 `getCharacter('protagonista_f').variants` → `{ run, ride10, ride50, dive, climb, fish, vuelo }` y
@@ -415,8 +417,8 @@ del visor real, sin errores de carga ni ejecución. `node tools/e2e_battle_art.m
 
 El autor aprobó las trece poses frontales el 04-10-2026: Gael, Alerce, Casilda, Leandro, Abril, Fermín, Olvido,
 Sol, Vértice, Casia, Garrido y los dos técnicos de Genesis. La aprobación está registrada también en los alias
-de Alerce y Casilda. Las hojas de campo, protagonistas, lanzamientos y atlas conservan su estado de revisión
-propio; esta respuesta se refería a las poses frontales mostradas.
+de Alerce y Casilda. En respuestas posteriores del mismo día aprobó también el kit M/F, los 29 personajes de
+campo y el atlas (§4).
 
 
 ### Revisión del kit, 03-10-2026
@@ -429,5 +431,5 @@ de caminar, correr, montura, nado, buceo, trepar, pesca, Vuelo y lanzamiento se 
 La revisión en Chrome recorre los ocho modos de ambos protagonistas y el lanzamiento, sin errores de carga ni
 de ejecución: 18 capturas y el resultado en `tools/cache/art/browser/`. Las hojas completas comparadas entre
 opciones M/F están en `tools/cache/art/modes/`; las comparativas con NPC, en `tools/cache/art/`.
-La aprobación del autor D30 sigue pendiente. El pase del 04-10 del apartado anterior renueva la composición de
+El autor aprobó el kit completo el 04-10-2026. El pase del apartado anterior renueva la composición de
 las espaldas de combate; el corte inferior permanece intencional, como en BW.

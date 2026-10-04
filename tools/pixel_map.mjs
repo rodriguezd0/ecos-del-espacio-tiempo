@@ -1,4 +1,4 @@
-// Ilustración PROVISIONAL (D30) del mapa regional de Axis al estilo de los mapas de Añil/BW.
+// Ilustración del mapa regional de Axis aprobada por el autor (D30, 04-10-2026), al estilo de Añil/BW.
 // Uso: node tools/pixel_map.mjs [--preview]
 //   → game/assets/ui/region_map.png          (solo relieve, 480×320: la pantalla dibuja encima sus marcadores)
 //   → game/assets/ui/region_map_marcado.png  (relieve + caminos + marcadores, referencia y uso sin marcadores)
@@ -509,7 +509,10 @@ export function buildRegionJson() {
     places[id] = { name, kind, xy, cell: [cx, cy], ...extra };
   }
   return {
-    provisional: 'D30 · X02',
+    provisional: false,
+    decision: 'D30 · X02',
+    approvedOn: '2026-10-04',
+    approvedBy: 'autor',
     note: 'Coordenadas en píxeles del PNG de 480×320 (centro de casilla de 16 px). Generado por tools/pixel_map.mjs.',
     image: 'assets/ui/region_map.png', // solo relieve
     marked: 'assets/ui/region_map_marcado.png', // con caminos y marcadores

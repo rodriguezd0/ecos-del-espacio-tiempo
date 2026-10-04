@@ -29,7 +29,7 @@ concedida por el autor; revisable) · PENDIENTE · TÉCNICO (decisión de implem
 | D01 | Nombre y vida cotidiana de ambos protagonistas | DECIDIDO 24-09-2026 | Nombre libre elegido por el jugador (sin nombre canónico). Vive con su **madre** (cura al equipo en casa). |
 | D02 | Razón concreta de la elección del Core | DECIDIDO 24-09-2026 | El protagonista es **el elegido de una profecía** ligada a los Pokémon del tiempo y del espacio: alguien que salvará el espacio-tiempo. **Cambia** la ambigüedad de la biblia §2/§6.1 ("no certificar el elegido"). Se mantiene descartado el sueño/voz explicativa de la beta; la profecía se presenta según la respuesta a D02b. |
 | D02b | Revelación de la profecía | DECIDIDO 24-09-2026 | Se conoce **poco a poco** durante el juego: el Core la insinúa, las inscripciones de los Pilares del equilibrio (también en escritura **Unown**) la van revelando y se confirma en el tramo final. Sin sueño/voz explicativa al inicio. |
-| D03 | Nombre, especialidad, edad y diseño del profesor | DECIDIDO 24-09-2026 | **Profesor Alerce**, unos 45 años, geología y ecología de anomalías; sobrio y cauto. Diseño visual provisional (D30). Pasado ex-Genesis solo por subtexto tardío (VIGENTE). |
+| D03 | Nombre, especialidad, edad y diseño del profesor | DECIDIDO 24-09-2026 | **Profesor Alerce**, unos 45 años, geología y ecología de anomalías; sobrio y cauto. Diseño visual aprobado el 04-10-2026 (D30). Pasado ex-Genesis solo por subtexto tardío (VIGENTE). |
 | D04 | Motivo inicial de la restricción policial | DECIDIDO 24-09-2026 | El área norte es **propiedad privada: un laberinto privado**. Adaptación del desarrollo (el autor pidió "la mejor manera"): laberinto de piedra y seto levantado hace generaciones por una familia local sobre vestigios antiguos; los dueños no viven en el pueblo y, tras los temblores recientes, piden a la policía que nadie entre. [Nombre del laberinto/familia: X03] |
 | D05 | Secuencia exacta de iniciales, señal, regreso y primer duelo | DECIDIDO (parcial) 24-09-2026 | Gael elige **después del jugador** el inicial con **ventaja de tipo** (Turtwig→Litten, Litten→Sobble, Sobble→Turtwig). Duelo con Gael tras regresar con el Core (VIGENTE). Entrega de Pokédex/Poké Balls: ver D05b. |
 | D05b | Entrega de Pokédex y Poké Balls | DECIDIDO 24-09-2026 | El Prof. Alerce las entrega a ambos **tras el duelo con Gael**, para registrar Pokémon y anomalías camino del Umbral. |
@@ -57,14 +57,14 @@ concedida por el autor; revisable) · PENDIENTE · TÉCNICO (decisión de implem
 | D27 | NPC del DLC 2 y sistema de misiones activas | DECIDIDO-DEV (ver sección de diseño) | |
 | D28 | Distribución de 412 especies y nuevas necesidades | DECIDIDO-DEV (ver sección de diseño) | |
 | D29 | Tasas Alpha/shiny y condiciones de captura | DECIDIDO-DEV (ver sección de diseño) | |
-| D30 | Arte final de protagonistas y resto del elenco | DECIDIDO parcial 04-10-2026 | El autor aprueba las trece poses frontales nuevas de combate; el resto del arte conserva su revisión pendiente |
+| D30 | Arte final de protagonistas y resto del elenco | DECIDIDO 04-10-2026 | El autor aprueba las trece poses nuevas de combate, el kit M/F completo, los 29 personajes de campo y el atlas actual; alcance y fecha registrados |
 
 ## Otras decisiones abiertas detectadas al implementar
 
 | ID | Decisión | Estado | Nota |
 |----|----------|--------|------|
 | X01 | Nombre del pueblo inicial | DECIDIDO 24-09-2026 | **Villa Alba** |
-| X02 | Atlas de Axis: nombres de rutas y ciudades | DECIDIDO-DEV (ver sección de diseño) | Biblia §17: nombres antiguos no aceptados. Se propondrá un atlas al autor. |
+| X02 | Atlas de Axis: nombres de rutas y ciudades | DECIDIDO-DEV (ver sección de diseño) | Nombres y coordenadas según CAMPANA §1. La ilustración actual del atlas está aprobada por el autor el 04-10-2026 (D30). |
 | X03 | Nombre del área restringida | DECIDIDO 24-09-2026 | **Laberinto de la Profundidad** ("porque Zygarde es Z de profundidad"). Laberinto privado (D04). |
 | X05 | Carrera humana | TÉCNICO | El jugador puede correr (RUN) desde el inicio; la carrera de Zygarde 10% es más rápida y funciona como montura (biblia §8 distingue ambas). |
 | X04 | Música del pueblo (dirección: nostálgica) | TÉCNICO provisional | Elegida de la biblioteca de Añil, reemplazable |
@@ -99,7 +99,7 @@ Gael, postgame y DLC), `docs/TABLILLAS.md` (T01–T15, museo, Crónica, Libreta)
 | D27 | NPC y sistema del DLC 2 | Sabela Ferreiro, cronista y cartógrafa (Aduana Vieja de Nexo). Registro de Expediciones: 3 activas, Rumor → Indicio → Hallazgo, marcado en el mapa sin penalización | Biblia §12, §13.9: no es Galletano ni la curadora del museo |
 | D28 | Distribución y reconciliación | Pokédex de 425 (+Bramaluna, Ditto, Sableye, Latias, Latios, 8 especies de Buceo). Tablas por zona verificadas por script (0 especies sin método). Megapiedras solo de la lista del autor | Biblia §16: reconciliaciones pendientes; 100% en solitario |
 | D29 | Tasas y condiciones de captura | Alfa 1/64; variocolor 1/4096 (1/1365 con Amuleto Iris). Captura legendaria explicada en pantalla, intentos bloqueados gratuitos, reaparición al descansar | Biblia §15: rareza sin frustración |
-| D30 | Arte final del elenco | Trece frontales de combate aprobados por el autor el 04-10-2026 tras ver la comparativa. El registro conserva fecha y autor de esa aprobación; las demás hojas siguen provisionales | Biblia §13, §14, §20: aprobación por alcance |
+| D30 | Arte final del elenco | Trece frontales de combate, 18 hojas del kit M/F, 29 charsets de campo y atlas aprobados por el autor el 04-10-2026. Registro y JSON conservan fecha y autor; PNG idénticos a las láminas presentadas | Biblia §13, §14, §20: aprobación por alcance |
 | X02 | Atlas de Axis | Atlas completo (CAMPANA.md §1): 12 poblaciones, Rutas 1–15, mar del sur en un solo mapa por capas | Biblia §17–18: topónimos propios; nombres antiguos solo si encajan |
 | X06 | Guardianes de P1–P5 | Casilda Roquer (64, escepticismo, Roca/Tierra), Leandro Alcántara (38, orgullo), Abril Céspedes (19, tedio), Fermín Galena (51, carga familiar), Olvido Arrieta (78, fascinación) | Biblia §6, §13.7; D07 |
 | X07 | Elenco secundario | Agente Olmedo, familia Arenzana, ayudante Lía, Rosalía Quintana, Nilo, Remedios, Ramón, Maestra Brasa, Rosendo, Don Evaristo, Peregrinos del Rey | D04, X03, biblia §13.8 |
@@ -128,10 +128,11 @@ Gael, postgame y DLC), `docs/TABLILLAS.md` (T01–T15, museo, Crónica, Libreta)
 | X30 | Tamaño del Monte del Portal (DECIDIDO-DEV, B12) | `montana_portal` queda en **50×50** (el atlas de CAMPANA §1.4 decía 50×70): el mapa del prólogo se amplía 6 columnas al este (macizo con la repisa de la cascada y su gruta, poza mayor) sin mover coordenadas; crecer 20 filas obligaría a desplazar el prólogo o la llegada (17,48) desde el campamento del B11. La subida se completa con la Ruta 10 alta y el campamento (B11) | Biblia §4 (el lugar del prólogo, reconocible); CAMPANA §1.8 (producción) |
 | X31 | Calzada del Rey y Sima del Eje (DECIDIDO-DEV, B19) | Los Peregrinos cruzan «por su Calzada, a pie, o no se llega» (por eso nunca volaron a la Peña); Casandra rompe la regla y cruza con su Noivern al ver alzarse el último tramo, y su Noivern trajo años atrás la Salamencita del nido de la cima. Tramos de T15: piedras forzadas que aguantan un paso (hay que pisarlas todas y acabar junto a la aguja; reiniciables). `sima_eje`: sendero del oeste entre las bajadas de B17 (Metagrossita) y, al este, la Calzada que baja de la Peña hasta el Umbral; su último tramo solo se alza con la Tabla Draco. El Mirador de la Calzada se visita desde el P4 (Peregrinos esperando, sin piedras) | TABLILLAS T15 («estabilizar los tramos… en tres puntos», «la Libreta tiene el camino completo al fondo»); CAMPANA B19 y §1.4 |
 
-**X32 — Diseño de protagonistas** (TÉCNICO provisional D30; kit integrado el 03-10-2026): masculino de pelo
+**X32 — Diseño de protagonistas** (APROBADO D30 el 04-10-2026; kit integrado el 03-10-2026): masculino de pelo
 castaño cobrizo, chaqueta teal y mochila; femenina de melena azul marino, trenza con goma verde, chaqueta clara y
 mochila roja. Ambos tienen las nueve hojas de acciones y combate, con proporciones de campo y píxeles completos
-verificados. El arte conserva su estado provisional hasta la aprobación del autor; detalles en `docs/arte.md` §9–10.
+verificados. El autor aprobó los dos diseños, las ocho acciones de campo y sus lanzamientos actuales;
+detalles en `docs/arte.md` §4 y §9–10.
 
 **X33 — Multijugador online** (DECIDIDO-DEV y pedido del usuario, 25-09; función del juego, no de la historia):
 

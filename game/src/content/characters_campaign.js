@@ -1,5 +1,5 @@
-// Entradas del registro de personajes para la campaña (CAMPANA §2.7–2.8, §3, §5, §6). PROVISIONALES
-// (D30): se generan con `node tools/pixel_build.mjs` (fuentes en tools/pixel_chars/). Ver docs/arte.md §7–8.
+// Entradas del registro de personajes para la campaña (CAMPANA §2.7–2.8, §3, §5, §6).
+// El alcance aprobado de D30 se aplica en characters.js. Fuentes en tools/pixel_chars/; ver docs/arte.md §7–8.
 // characters.js las incorpora a CHARACTERS; este módulo solo describe las hojas.
 
 /**

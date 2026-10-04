@@ -1,6 +1,6 @@
 // Visor de sprites de personajes (?scene=sprites): charsets animados en 4 direcciones sobre césped de
-// Añil, desfile de todo el elenco a escala de juego y sprites de combate. Todo el arte propio es
-// PROVISIONAL (D30). Con E (R) se alterna con las clases genéricas de entrenador de Añil
+// Añil, desfile de todo el elenco a escala de juego y sprites de combate. El registro distingue
+// arte propio aprobado y provisional (D30). Con E (R) se alterna con las clases genéricas de entrenador de Añil
 // (content/anilClasses.js): charset + sprite de combate de cada alias 'anil:<clase>'.
 // Controles: ←/→ personaje · Z (A) modo (caminar, correr y, en los protagonistas, montura 10%, nado 50%,
 // buceo, trepar, pesca y Vuelo) · X (B) zoom ×1/×2 · C (START) combate · E Axis/Añil.
@@ -150,7 +150,9 @@ export default class SpriteViewerScene extends Scene {
     g.fillRect(0, 0, SCREEN_W, 42);
     const title = this.anil ? `anil:${this.selectedId} — ${ch.trainerClass} (${ch.name})` : ch.name;
     this.text(g, ellipsis(g, `${this.index + 1}/${this.ids.length}  ${title}`, SCREEN_W - 150, 18), 8, 18, { color: '#FFFFFF' });
-    const tag = ch.provisional ? `PROVISIONAL ${ch.decision || ''}`.trim() : 'AÑIL (REFERENCIA)';
+    const tag = ch.provisional ? `PROVISIONAL ${ch.decision || ''}`.trim()
+      : this.anil ? 'AÑIL (REFERENCIA)'
+      : ch.approvedBy === 'autor' && ch.approvedOn ? 'AXIS (APROBADO)' : 'AXIS';
     this.text(g, tag, SCREEN_W - 8, 18, { color: ch.provisional ? '#FFB060' : '#B9FF66', align: 'right' });
     this.text(g, ellipsis(g, ch.note || '', SCREEN_W - 16), 8, 36, { color: '#C8D8D0', font: FONT_SMALL, size: 14 });
   }

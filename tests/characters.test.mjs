@@ -26,16 +26,24 @@ test('cada hoja registrada existe y mide cols×frameW por rows×frameH', () => {
   }
 });
 
-test('D30 aprueba las trece poses frontales y conserva provisional el resto del arte propio', () => {
+test('D30 registra las poses, el kit M/F y los 29 personajes de campo aprobados por el autor', () => {
   const approved = new Set(['gael_front', 'profesor_front', 'guardiana_front', 'leandro_front', 'abril_front',
     'fermin_front', 'olvido_front', 'sol_front', 'vertice_front', 'casia_front', 'garrido_front',
-    'genesis_tecnico_front', 'genesis_tecnica_front']);
+    'genesis_tecnico_front', 'genesis_tecnica_front',
+    'gael', 'profesor', 'policia', 'vecino', 'vecina', 'anciano', 'madre', 'ayudante', 'guardiana', 'nino', 'nina',
+    'leandro', 'abril', 'fermin', 'olvido', 'sol', 'vertice', 'casia', 'garrido', 'genesis_tecnico', 'genesis_tecnica',
+    'genesis_investigador', 'genesis_investigadora', 'enfermera', 'dependiente', 'molinero', 'buzo', 'archivista',
+    'vertice_lider',
+    'protagonista_m', 'protagonista_m_run', 'protagonista_m_ride10', 'protagonista_m_ride50',
+    'protagonista_m_dive', 'protagonista_m_climb', 'protagonista_m_fish_offset', 'protagonista_m_vuelo', 'protagonista_m_back',
+    'protagonista_f', 'protagonista_f_run', 'protagonista_f_ride10', 'protagonista_f_ride50',
+    'protagonista_f_dive', 'protagonista_f_climb', 'protagonista_f_fish_offset', 'protagonista_f_vuelo', 'protagonista_f_back']);
+  assert.equal(approved.size, 60);
   for (const [id, ch] of Object.entries(CHARACTERS)) {
     assert.equal(ch.provisional, !approved.has(id), `${id}: alcance de la aprobación del autor`);
     assert.equal(ch.decision, 'D30');
     assert.ok(ch.name && ch.note, `${id} necesita name y note`);
     if (approved.has(id)) {
-      assert.equal(ch.kind, 'battle_front');
       assert.equal(ch.approvedOn, '2026-10-04');
       assert.equal(ch.approvedBy, 'autor');
     } else {
@@ -44,6 +52,11 @@ test('D30 aprueba las trece poses frontales y conserva provisional el resto del 
   }
   assert.equal(getBattleSprite('casilda_front').provisional, false);
   assert.equal(getBattleSprite('alerce_front').approvedOn, '2026-10-04');
+  assert.equal(getCharacter('alerce').provisional, false);
+  assert.equal(getCharacter('casilda').approvedOn, '2026-10-04');
+  assert.equal(getCharacter('protagonista_f').provisional, false);
+  assert.equal(getBattleSprite('protagonista_m_back').provisional, false);
+  assert.equal(getCharacter('anil:chaval1').approvedOn, undefined, 'el arte de Añil conserva su procedencia');
 });
 
 test('las referencias a variantes y sprites de combate apuntan a entradas existentes', () => {

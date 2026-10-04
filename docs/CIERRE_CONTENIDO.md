@@ -2,7 +2,7 @@
 
 Objetivo activo: terminar el juego completo. Este documento registra el cierre del postgame, DLC y auditorías de
 obtención; sigue en marcha la partida continua desde Nueva partida y la revisión final de integración. El pase de
-arte humano está integrado.
+arte humano y el atlas están integrados y aprobados por el autor.
 
 ## Requisitos y evidencia
 
@@ -78,12 +78,18 @@ Correcciones verificadas:
   transiciones. Se revisaron las imágenes de Alba, Caudal y Mnemos; el jugador queda sobre el panel y no
   persisten recursos temporales.
 
-No quedan hallazgos críticos o altos de esta revisión. El autor aprobó las trece poses frontales nuevas y confirmó
-la regla de tamaños del mapa el 04-10-2026. Las demás hojas de arte D30 conservan su revisión provisional.
-La aprobación cambia solo los metadatos de esas trece entradas y sus alias: imágenes, dimensiones, variantes y
-escala conservan su contenido. Revisión independiente sin hallazgos; 34 pruebas enfocadas pasan y el registro
-de personajes alcanza 100 % líneas / 95,52 % ramas / 100 % funciones (`art_approval_red.log` y
-`art_approval_green.log`).
+No quedan hallazgos críticos o altos de esta revisión. El autor aprobó las trece poses frontales nuevas, el kit
+M/F completo, los 29 personajes de campo y el atlas, y confirmó la regla de tamaños el 04-10-2026. D30 queda
+cerrado para el arte presentado. Registro y alias identifican las 60 hojas humanas aprobadas; el atlas registra
+fecha y autor en su JSON reproducible. Los 47 PNG de las dos últimas láminas conservan sus hashes de origen;
+los dos PNG regionales también permanecen idénticos. Las dos regresiones de aprobación fallaron antes del cambio
+y las 21 pruebas enfocadas de registro/atlas pasan después; todas las líneas de metadatos modificadas se ejecutan.
+El foco integrado de arte, atlas, tamaños y UI pasa 48/48: el visor reconoce Axis aprobado y la ficha M/F deja
+de mostrar el aviso provisional, manteniendo foto y escala. Las cuatro líneas ejecutables de UI añadidas quedan
+cubiertas al 100 %. La revisión independiente confirma el alcance exacto, los 19 alias y la geometría intacta
+(`art_approval_ui_report.md`, `art_approval_ui_changed_coverage.json`, `arte-final/aprobacion_d30_final.json`).
+La aprobación anterior de frontales y tamaños tuvo revisión independiente sin hallazgos y 34 pruebas enfocadas
+(`art_approval_red.log`, `art_approval_green.log`).
 
 ## Comprobaciones de integración
 

@@ -1,5 +1,8 @@
 {
- "provisional": "D30 · X02",
+ "provisional": false,
+ "decision": "D30 · X02",
+ "approvedOn": "2026-10-04",
+ "approvedBy": "autor",
  "note": "Coordenadas en píxeles del PNG de 480×320 (centro de casilla de 16 px). Generado por tools/pixel_map.mjs.",
  "image": "assets/ui/region_map.png",
  "marked": "assets/ui/region_map_marcado.png",

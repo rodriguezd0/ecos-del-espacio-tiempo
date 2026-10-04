@@ -1,5 +1,5 @@
 // Registro de sprites de personajes de Axis.
-// Las trece poses frontales tienen aprobación del autor (D30, 04-10-2026); el resto sigue provisional.
+// El autor aprobó el kit M/F, los 29 personajes de campo y las trece poses frontales (D30, 04-10-2026).
 // Ver docs/arte.md para el alcance de cada revisión.
 // Los PNG se generan con `node tools/pixel_build.mjs` (fuentes en tools/pixel_chars/).
 //
@@ -34,13 +34,25 @@ export const DIR_ROW = Object.freeze({ 2: 0, 4: 1, 6: 2, 8: 3 });
 const ASSET_DIR = 'assets/characters/';
 const FRAME = 64;
 const BATTLE_FRAME = 160;
-const APPROVED_FRONTS = new Set(['gael_front.png', 'profesor_front.png', 'guardiana_front.png', 'leandro_front.png',
+// Alcance exacto de las láminas aprobadas; las futuras hojas requieren su propia revisión.
+const APPROVED_SHEETS = new Set(['gael_front.png', 'profesor_front.png', 'guardiana_front.png', 'leandro_front.png',
   'abril_front.png', 'fermin_front.png', 'olvido_front.png', 'sol_front.png', 'vertice_front.png', 'casia_front.png',
-  'garrido_front.png', 'genesis_tecnico_front.png', 'genesis_tecnica_front.png']);
+  'garrido_front.png', 'genesis_tecnico_front.png', 'genesis_tecnica_front.png',
+  'gael.png', 'profesor.png', 'policia.png', 'vecino.png', 'vecina.png', 'anciano.png', 'madre.png', 'ayudante.png',
+  'guardiana.png', 'nino.png', 'nina.png', 'leandro.png', 'abril.png', 'fermin.png', 'olvido.png', 'sol.png',
+  'vertice.png', 'casia.png', 'garrido.png', 'genesis_tecnico.png', 'genesis_tecnica.png',
+  'genesis_investigador.png', 'genesis_investigadora.png', 'enfermera.png', 'dependiente.png', 'molinero.png',
+  'buzo.png', 'archivista.png', 'vertice_lider.png',
+  'protagonista_m.png', 'protagonista_m_run.png', 'protagonista_m_ride10.png', 'protagonista_m_ride50.png',
+  'protagonista_m_dive.png', 'protagonista_m_climb.png', 'protagonista_m_fish_offset.png', 'protagonista_m_vuelo.png',
+  'protagonista_m_back.png',
+  'protagonista_f.png', 'protagonista_f_run.png', 'protagonista_f_ride10.png', 'protagonista_f_ride50.png',
+  'protagonista_f_dive.png', 'protagonista_f_climb.png', 'protagonista_f_fish_offset.png', 'protagonista_f_vuelo.png',
+  'protagonista_f_back.png']);
 
 const base = (kind, file, extra) => Object.freeze({
   kind, file: ASSET_DIR + file, provisional: true, decision: 'D30', ...extra,
-  ...(APPROVED_FRONTS.has(file) ? { provisional: false, approvedOn: '2026-10-04', approvedBy: 'autor' } : {}),
+  ...(APPROVED_SHEETS.has(file) ? { provisional: false, approvedOn: '2026-10-04', approvedBy: 'autor' } : {}),
 });
 const charset = (file, extra) => base('charset', file, { frameW: FRAME, frameH: FRAME, cols: 4, rows: 4, ...extra });
 const battleBack = (file, extra) => base('battle_back', file, { frameW: BATTLE_FRAME, frameH: BATTLE_FRAME, cols: 5, rows: 1, ...extra });
@@ -60,7 +72,7 @@ export const CHARACTERS = Object.freeze({
   }),
   protagonista_f: charset('protagonista_f.png', {
     name: 'Protagonista (femenina)',
-    note: 'Azul marino casi nocturno (biblia §13.2): media melena con las puntas hacia fuera y trenza con goma verde #B9FF66, chaqueta crema, pantalón corto marino, mallas y botines teja; mochila teja (D06). Propuesta X32 recuperada del WIP, provisional (D30).',
+    note: 'Azul marino casi nocturno (biblia §13.2): media melena con las puntas hacia fuera y trenza con goma verde #B9FF66, chaqueta crema, pantalón corto marino, mallas y botines teja; mochila teja (D06). Diseño X32 aprobado por el autor (D30).',
     variants: { run: 'protagonista_f_run', ...fieldVariants('protagonista_f') },
     battle: { back: 'protagonista_f_back' },
   }),
@@ -70,12 +82,12 @@ export const CHARACTERS = Object.freeze({
   }),
   gael: charset('gael.png', {
     name: 'Gael (rival)',
-    note: 'Antecedente del autor a ratificar: rubio, chaqueta bordó, ropa inferior gris, botas azul oscuro, ojos claros; serio sin cejas furiosas (§13.3).',
+    note: 'Rubio, chaqueta bordó, ropa inferior gris, botas azul oscuro, ojos claros; serio sin cejas furiosas (§13.3). Diseño aprobado por el autor (D30).',
     battle: { front: 'gael_front' },
   }),
   profesor: charset('profesor.png', {
-    name: 'Profesor (diseño abierto, D03)',
-    note: 'Propuesta neutral: investigador local con abrigo claro de campo, sin emblemas ni rasgos que revelen su pasado (§13.4).',
+    name: 'Profesor Alerce',
+    note: 'Investigador local con abrigo claro de campo, sin emblemas ni rasgos que revelen su pasado (§13.4, D03). Diseño aprobado por el autor (D30).',
     battle: { front: 'profesor_front' },
   }),
   policia: charset('policia.png', {
@@ -91,7 +103,7 @@ export const CHARACTERS = Object.freeze({
   }),
   ayudante: charset('ayudante.png', {
     name: 'Ayudante del laboratorio',
-    note: 'NPC genérico (PROPUESTA): joven con melena corta negra y horquilla, bata clara sobre jersey coral.',
+    note: 'Joven con melena corta negra y horquilla, bata clara sobre jersey coral. Diseño aprobado por el autor (D30).',
   }),
   guardiana: charset('guardiana.png', {
     name: 'Casilda Roquer, Guardiana del Umbral',
@@ -120,11 +132,11 @@ export const CHARACTERS = Object.freeze({
   }),
   gael_front: battleFront('gael_front.png', {
     name: 'Gael — combate, frontal',
-    note: 'Pose seria (mano en la cadera), sin cejas fruncidas; paleta histórica a ratificar.',
+    note: 'Pose seria con Poké Ball, sin cejas fruncidas; paleta y pose aprobadas por el autor (D30).',
   }),
   profesor_front: battleFront('profesor_front.png', {
-    name: 'Profesor — combate, frontal',
-    note: 'Propuesta neutral: abrigo claro abierto, jersey pizarra; nada que revele su pasado (D03).',
+    name: 'Profesor Alerce — combate, frontal',
+    note: 'Abrigo claro abierto, jersey pizarra; nada que revele su pasado (D03). Pose aprobada por el autor (D30).',
   }),
   guardiana_front: battleFront('guardiana_front.png', {
     name: 'Casilda Roquer — combate, frontal',

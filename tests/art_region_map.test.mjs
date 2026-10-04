@@ -1,4 +1,4 @@
-// Ilustración provisional del mapa regional de Axis (tools/pixel_map.mjs) y su JSON de coordenadas.
+// Ilustración aprobada del mapa regional de Axis (tools/pixel_map.mjs) y su JSON de coordenadas.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -24,6 +24,10 @@ test('mapa regional: imágenes de 480×320 ampliadas ×2 exacto y JSON al día c
   }
   assert.deepEqual(json, JSON.parse(JSON.stringify(buildRegionJson())), 'ejecuta node tools/pixel_map.mjs');
   assert.equal(json.cell, 16);
+  assert.equal(json.provisional, false);
+  assert.equal(json.decision, 'D30 · X02');
+  assert.equal(json.approvedOn, '2026-10-04');
+  assert.equal(json.approvedBy, 'autor');
 });
 
 test('mapa regional: cada lugar está en el centro de su casilla y no hay casillas repetidas', () => {
