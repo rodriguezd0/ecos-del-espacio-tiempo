@@ -13,16 +13,18 @@ async function withIslet({ followers = [], bridge = false, events=[] } = {}, che
   const original = globalThis.window;
   const map = {
     width: 3, height: 3, def: {}, valid: (x, y) => x >= 0 && y >= 0 && x < 3 && y < 3,
-    terrainTagAt: (x, y) => x === 1 && y === 1 ? bridge ? TERRAIN_BY_ID.Bridge : TERRAIN_NONE : TERRAIN_BY_ID.StillWater,
+    terrainTagAt: (x, y, level=0, countBridge=false) => x === 1 && y === 1
+      ? bridge ? level>0||countBridge ? TERRAIN_BY_ID.Bridge : TERRAIN_BY_ID.StillWater : TERRAIN_NONE
+      : TERRAIN_BY_ID.StillWater,
     playerPassable: (x, y) => x === 1 && y === 1,counter:()=>false,
   };
-  const player = { x: 1, y: 1, direction: 8, surfing: false,
+  const player = { x: 1, y: 1, map, direction: 8, surfing: false,
     passable(x, y, dir) {
       const [dx, dy] = { 2: [0, 1], 4: [-1, 0], 6: [1, 0], 8: [0, -1] }[dir];
       return map.valid(x + dx, y + dy) && (this.surfing || map.playerPassable(x + dx, y + dy));
     },
   };
-  const world = { map, player, followers, events, bridge: 0, eventsInFront:World.prototype.eventsInFront,
+  const world = { map, player, followers, events, bridge: 0, eventsInFront:World.prototype.eventsInFront,terrainAt:World.prototype.terrainAt,
     env() { return { surfing: this.player.surfing, bridge: this.bridge }; } };
   globalThis.window = { __map: { world }, __campaign: { engine: {}, canSurfFreely, canOfferSwim, battles: [] } };
   try {
