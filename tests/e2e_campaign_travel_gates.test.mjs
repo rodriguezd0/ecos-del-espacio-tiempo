@@ -9,6 +9,7 @@ import {GameState} from '../game/src/core/state.js';
 import {buildMapNode} from '../tools/lib/map_node.mjs';
 import {World} from '../game/src/world/world.js';
 import {CampaignDriver} from '../tools/e2e_campaign_driver.mjs';
+import {BOREAL} from '../game/src/content/maps/b15/layout_boreal.js';
 
 test('campaign travel: the B15 return from Mirador to the Garganta uses the open south connection',async()=>{
  const staticPath=await routes.findTravelPath('mirador_sur','garganta_albo');
@@ -70,6 +71,25 @@ test('campaign travel: the actual driver supplies the observed flags and execute
  assert.deepEqual(moves[0],[2,'ciudad_lumina']);assert.equal(state.map,'garganta_albo');
  assert.ok(!moves.some(([,map])=>['sima_eje','puente_convergencia','calzada_rey'].includes(map)));
  assert.deepEqual(state.flags,{p7_restored:true});
+});
+
+test('campaign travel: the real Escarcha cave opens from the west, while the assumed south approach is rock',async()=>{
+ const {entry}=await buildMapNode('villa_boreal'),state=GameState.create({name:'QA-cave-door'}),world=new World({state});
+ state.setFlag('p7_restored');world.setCurrent({...entry,events:null});
+ const warp=entry.def.warps.find(w=>w.to==='gruta_escarcha');
+ assert.deepEqual([warp.x,warp.y],[BOREAL.cave.door.x,BOREAL.cave.door.y]);
+ assert.equal(world.map.passable(warp.x,warp.y+1,8,world.player,world.env()),false);
+ assert.deepEqual(routes.scriptEntrance('villa_boreal','gruta_escarcha'),
+  {to:'gruta_escarcha',x:BOREAL.cave.arrival.x,y:BOREAL.cave.arrival.y,dir:6});
+});
+
+test('campaign travel: the continuous driver reenters Escarcha by pressing right at its actual arrival',async()=>{
+ const state={map:'villa_boreal',flags:{p7_restored:true}},actions=[],d=new CampaignDriver({},[],{outDir:'.',root:'.'});
+ d.snap=async()=>structuredClone(state);d.walkTo=async(x,y)=>actions.push(['walk',x,y]);
+ d.pushUntil=async(dir,predicate)=>{actions.push(['push',dir]);state.map='gruta_escarcha';assert.ok(predicate(state));};
+ d.eval=async()=>null;d.exitTo=async()=>assert.fail('The south-door fallback must not run for this lateral cave.');
+ await d.travel('gruta_escarcha');
+ assert.deepEqual(actions,[['walk',41,17],['push',6]]);assert.equal(state.map,'gruta_escarcha');
 });
 
 function reachable(world,map,start,goal) {

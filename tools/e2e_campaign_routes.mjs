@@ -4,10 +4,12 @@ import { CERRO, ESTRATO, DUNAS } from '../game/src/content/maps/b08/layout.js';
 import {DESCENT_GAP} from '../game/src/content/maps/b17/mirador_layout.js';
 import {F as B17} from '../game/src/content/events/b17_common.js';
 import {F as B19} from '../game/src/content/events/b19_common.js';
+import {BOREAL} from '../game/src/content/maps/b15/layout_boreal.js';
 
-// Puertas de campaña que son eventos de contacto, sin warp en la definición.
+// Accesos de contacto o laterales que requieren empujar desde su casilla real.
 const SCRIPT_DOORS = {
   cerro_plomo: [{ to: 'camara_contrapesos_base', x: CERRO.door.x, y: CERRO.door.y + 1, dir: 8 }],
+  villa_boreal: [{to:'gruta_escarcha',x:BOREAL.cave.arrival.x,y:BOREAL.cave.arrival.y,dir:6}],
 };
 export const scriptEntrance = (from, to) => SCRIPT_DOORS[from]?.find(e => e.to === to) || null;
 export function connectionApproach(from, to) {

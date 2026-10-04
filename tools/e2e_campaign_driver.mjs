@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Driver, KEY, DIR } from './e2e_b16_driver.mjs';
-import {findTravelPath,scriptEntrance,connectionApproach} from './e2e_campaign_routes.mjs?doors=5';
+import {findTravelPath,scriptEntrance,connectionApproach} from './e2e_campaign_routes.mjs?doors=6';
 
 export class CampaignDriver extends Driver {
   constructor(page, errors, options) { super(page, errors, options); this.choiceRules = [{ re: /mote/i, index: 1 }]; }
