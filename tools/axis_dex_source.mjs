@@ -1,5 +1,6 @@
 // Inventario de 412 nombres transcrito de la Biblia narrativa v2.0, capítulo 16, en su orden y grafías originales.
-// NO es un roster final (D28 pendiente). Las normalizaciones de ID se registran en ID_NORMALIZATIONS.
+// Base histórica de la Pokédex. Las 13 reconciliaciones D28 (POKEDEX_DISTRIBUCION §7.8) se añaden al final para
+// conservar la numeración anterior. Las normalizaciones de ID se registran en ID_NORMALIZATIONS.
 
 export const GENERAL_336 = `Turtwig; Grotle; Torterra; Litten; Torracat; Incineroar; Sobble; Drizzile; Inteleon; Starly; Staravia;
 Staraptor; Bidoof; Bibarel; Kricketot; Kricketune; Shinx; Luxio; Luxray; Abra; Kadabra; Alakazam;
@@ -67,4 +68,38 @@ export const ID_NORMALIZATIONS = {
 
 export function splitNames(block) {
   return block.split(/[;\n]/).map((s) => s.trim()).filter(Boolean);
+}
+
+export const RECONCILIATIONS = Object.freeze([
+  ['DITTO', 'Ditto', 'general'], ['SABLEYE', 'Sableye', 'general'],
+  ['CHINCHOU', 'Chinchou', 'general'], ['LANTURN', 'Lanturn', 'general'],
+  ['RELICANTH', 'Relicanth', 'general'], ['CLAMPERL', 'Clamperl', 'general'],
+  ['HUNTAIL', 'Huntail', 'general'], ['GOREBYSS', 'Gorebyss', 'general'],
+  ['SKRELP', 'Skrelp', 'general'], ['DRAGALGE', 'Dragalge', 'general'],
+  ['ROARINGMOON', 'Bramaluna', 'paradox'],
+  ['LATIAS', 'Latias', 'legendary'], ['LATIOS', 'Latios', 'legendary'],
+].map(([id, sourceName, group]) => Object.freeze({ id, sourceName, group })));
+
+/** Catálogo regional completo, compartido por el conversor y la auditoría de datos. */
+export function buildAxisDex(species) {
+  const byName = new Map(Object.values(species).map((sp) => [sp.name.toLowerCase(), sp.id]));
+  const groups = [['general', GENERAL_336], ['paradox', PARADOX_7], ['ultra', ULTRA_11], ['legendary', LEGENDARY_58]];
+  const entries = [], problems = [];
+  for (const [group, block] of groups) for (const sourceName of splitNames(block)) {
+    let id = ID_NORMALIZATIONS[sourceName] || byName.get(sourceName.toLowerCase());
+    if (!id) {
+      const guess = sourceName.toUpperCase().replace(/[^A-Z0-9]/g, '');
+      if (species[guess]) id = guess;
+    }
+    if (!id || !species[id]) problems.push(sourceName);
+    entries.push({ n: entries.length + 1, sourceName, id: id || null, group,
+      ...(ID_NORMALIZATIONS[sourceName] ? { note: 'Grafía normalizada al verificar ID (biblia §16)' } : {}) });
+  }
+  for (const entry of RECONCILIATIONS) {
+    if (!species[entry.id]) problems.push(entry.sourceName);
+    entries.push({ n: entries.length + 1, ...entry, note: 'Reconciliación D28 (POKEDEX_DISTRIBUCION §7.8)' });
+  }
+  const counts = Object.fromEntries(groups.map(([group]) => [group, entries.filter((e) => e.group === group).length]));
+  return { note: 'Pokédex de Axis: 425 entradas, reconciliación D28 (POKEDEX_DISTRIBUCION §7.8).', counts,
+    pendingReconciliation: [], entries, problems };
 }

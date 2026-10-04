@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { parsePBS, list, int, num, tuples } from './lib/pbs.mjs';
 import { loadMarshal } from './lib/marshal.mjs';
 import { applyCompiledMetrics } from './lib/speciesMetrics.mjs';
-import { GENERAL_336, PARADOX_7, ULTRA_11, LEGENDARY_58, ID_NORMALIZATIONS, splitNames } from './axis_dex_source.mjs';
+import { buildAxisDex } from './axis_dex_source.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PBS = path.join(ROOT, 'Pokemon Anil V4.13', 'PBS');
@@ -182,29 +182,6 @@ function extractTrainerTypes() {
   return out;
 }
 
-function buildAxisDex(species) {
-  const byName = new Map();
-  for (const sp of Object.values(species)) byName.set(sp.name.toLowerCase(), sp.id);
-  const groups = [
-    ['general', GENERAL_336], ['paradox', PARADOX_7], ['ultra', ULTRA_11], ['legendary', LEGENDARY_58],
-  ];
-  const entries = [];
-  const problems = [];
-  for (const [group, block] of groups) {
-    for (const sourceName of splitNames(block)) {
-      let id = ID_NORMALIZATIONS[sourceName] || byName.get(sourceName.toLowerCase());
-      const normalized = Boolean(ID_NORMALIZATIONS[sourceName]);
-      if (!id) {
-        const guess = sourceName.toUpperCase().replace(/[^A-Z0-9]/g, '');
-        if (species[guess]) id = guess;
-      }
-      if (!id) problems.push(sourceName);
-      entries.push({ n: entries.length + 1, sourceName, id: id || null, group, ...(normalized ? { note: 'Grafía normalizada al verificar ID (biblia §16)' } : {}) });
-    }
-  }
-  return { entries, problems };
-}
-
 const species = extractSpecies();
 const moves = extractMoves();
 const abilities = extractAbilities();
@@ -223,11 +200,7 @@ write('abilities.json', abilities);
 write('items.json', items);
 write('types.json', types);
 write('trainer_types.json', trainerTypes);
-write('dex_axis.json', {
-  note: 'Inventario candidato de 412 nombres (biblia §16). No es roster final: D28 pendiente.',
-  counts: { general: 336, paradox: 7, ultra: 11, legendary: 58 },
-  pendingReconciliation: ['ROARINGMOON (Bramaluna Alpha, P7) fuera del inventario', 'DITTO (Phione) ausente', 'SABLEYE (Diancie) ausente', 'LATIAS/LATIOS (Megas) ausentes', 'Fauna submarina candidata'],
-  entries: dex.entries,
-});
+const { problems, ...dexDocument } = dex;
+write('dex_axis.json', dexDocument);
 console.log(`Especies: ${Object.keys(species).length}, movimientos: ${Object.keys(moves).length}, habilidades: ${Object.keys(abilities).length}, objetos: ${Object.keys(items).length}`);
 console.log(`Dex Axis: ${dex.entries.length} entradas; sin resolver: ${dex.problems.length ? dex.problems.join(', ') : 'ninguna'}`);

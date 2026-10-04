@@ -1,6 +1,5 @@
-// Pokédex (portada de 004/005_UI_Pokedex de Añil): lista del inventario de Axis (dex_axis.json, D28
-// pendiente → provisional) con vistos/capturados y ficha con sprite animado, categoría, altura/peso,
-// descripción, tipos y área (atlas pendiente X02).
+// Pokédex (portada de 004/005_UI_Pokedex de Añil): catálogo de Axis de 425 entradas (dex_axis.json, D28), con
+// vistos/capturados y ficha con sprite animado, categoría, altura/peso, descripción, tipos y área.
 import { engine } from '../../core/engine.js';
 import { ScreenScene, openScene } from '../core/uiScene.js';
 import { UI, anil, blit, preload } from '../core/images.js';
