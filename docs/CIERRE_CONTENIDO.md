@@ -130,9 +130,9 @@ La aprobación anterior de frontales y tamaños tuvo revisión independiente sin
 
 ## Comprobaciones de integración
 
-La última suite completa de integración pasó **2435/2435**, sin fallos, saltos ni cancelaciones, incluidos el arte
+La última suite completa de integración pasó **2457/2457**, sin fallos, saltos ni cancelaciones, incluidos el arte
 aprobado, su UI, C059/C065, recargas, retornos B14/B15, PC y separación global de seguidores
-y salida B17 (`suite_b17_exit_integrated.log`, 30,8 s). El último
+y reanudaciones B17–B19/montura B20 (`suite_b19_b20_integrated.log`, 30,48 s). El último
 validador posterior a ambos arreglos construyó 272 mapas sin errores: 31 avisos enumerados, ninguno de Mar/Talasa.
 Las 45 conexiones actuales pasan la revisión de costuras, incluidas las seis de esos dos mapas. La auditoría de progresión
 no encuentra fugas ni errores en B01–B21. La QA actual solo conserva avisos revisados en 13 mapas: copas sobre
@@ -197,5 +197,21 @@ reconstrucción de la Senda completos. La revisión conserva todas las coleccion
 (`campaign/campaign_b17_checkpoint_audit.json`). La reanudación usa la llegada exacta del warp vertical de P9,
 sin repetir controles ya completados; dos fallos RED, siete regresiones GREEN, 28 pruebas de revisión y
 cobertura del helper 100 % líneas / 96,77 % ramas / 100 % funciones (`ea276ad`).
-El recorrido continúa en B18/P9. P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
+Se guardó B18 por UI en Senda del Mirador (20,49): 100 células únicas, cinco Núcleos, nueve Fragmentos y
+catorce Tablillas. Se ganaron Casia/Garrido/Vértice, se resolvieron Vestíbulo/Caída/Río/Cruce y se comprobó
+el regreso entre plantas antes de restaurar. La elección real fue Dialga: victoria en seis turnos al nivel 65,
+P9/F09 restaurado, dinero conservado y Lustresfera del eje no elegido recogida. La salida sur y retorno al norte
+se recorrieron. La auditoría conserva todas las colecciones de B17 (`campaign/campaign_b18_checkpoint_audit.json`);
+no sustituye la comparación completa del payload final. La reanudación del Río usa la casilla y eje observados,
+mantiene la comprobación estricta de cada acción y no modifica esperas ni colisión. Ocho regresiones pasan,
+incluidos cinco movimientos sobre World/mapa real; cobertura del helper 100 % líneas / 96,83 % ramas /
+81,82 % funciones (`e3f578c`). El fallo previo de una pulsación no se reprodujo y su causa queda sin determinar.
+Se guardó B19 por UI en Puerta de las Quince (16,31), con 100 células únicas, cinco Núcleos, nueve Fragmentos
+y quince Tablillas. Calzada reconstruida, Casandra vencida tras derrota protegida/cura real, Tabla Draco/T15,
+Salamencita, Alerce, Salamence Alfa, último tramo y Umbral completos. La auditoría conserva las colecciones de
+B18 (`campaign/campaign_b19_checkpoint_audit.json`). Doce regresiones pasan, con cobertura del helper de
+reintentos de Casandra del 100 % en líneas/ramas/funciones (`37d92f4`); esa medida no cubre todo el módulo B19.
+La bajada exige el warp registrado y la entrada real a la Puerta. La montura de B20 usa el control normal antes
+de subir la grava y cuenta con dos regresiones (`66a3e5a`). El recorrido continúa en B20/P10.
+P6 conserva solo puzzles y Togepi eclosionó durante los desplazamientos reales.
 El estado de trabajo restante se mantiene en `docs/PENDIENTES.md`.
