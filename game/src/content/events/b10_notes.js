@@ -5,6 +5,7 @@
 // Textos DECIDIDO-DEV (los nombres de los vecinos son de este bloque; ver README).
 import { F, NOTES, SPEAKER, noteFor, notesDelivered, byGender, lines } from './b10_common.js';
 import { SINISTEA_GIFT } from '../encounters/b10.js';
+import { PARTY_MAX } from '../../core/state.js';
 
 /** Texto de cada nota (lo que escribió Olvido) y lo que dice el vecino al leerla. */
 export const NOTE_TEXT = Object.freeze({
@@ -41,6 +42,10 @@ async function handNote(ctx, key, speaker, reaction) {
 export async function sabinaTalk(ctx) {
   const s = ctx.state;
   const sp = SPEAKER.sabina;
+  if (s.flag(noteFor('sabina').flag) && !s.flag(F.sinistea)) {
+    await sinisteaGift(ctx);
+    return;
+  }
   if (s.flag(F.restored)) {
     await lines(ctx, sp, ['Esta mañana me he acordado de todo. Hasta de lo que no quería. Así es la memoria: viene entera o no viene.', '¿Un té? Invita la casa.']);
     return;
@@ -52,7 +57,6 @@ export async function sabinaTalk(ctx) {
     return;
   }
   if (s.flag(noteFor('sabina').flag)) {
-    if (!s.flag(F.sinistea)) { await sinisteaGift(ctx); return; }
     await lines(ctx, sp, ['Sabina, Sabina. Lo repito cada vez que sirvo un té, por si acaso.']);
     return;
   }
@@ -71,6 +75,10 @@ async function sinisteaGift(ctx) {
   ]);
   if (!(await ctx.confirm('¿Aceptas el Sinistea de Sabina?'))) {
     await lines(ctx, sp, ['Como quieras. Seguirá en su tetera, por si cambias de idea.']);
+    return;
+  }
+  if (ctx.state.party.length >= PARTY_MAX && !ctx.state.boxes.some((box) => box.includes(null))) {
+    await lines(ctx, sp, ['No tienes sitio en el equipo ni en el PC. Hazle un hueco; seguirá aquí, en su tetera.']);
     return;
   }
   await ctx.givePokemon({ ...SINISTEA_GIFT });
