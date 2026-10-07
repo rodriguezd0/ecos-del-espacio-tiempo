@@ -14,3 +14,5 @@ for (const f of ['three.module.js', 'three.core.js']) {
     console.log(`vendor/${f}`);
   }
 }
+fs.copyFileSync(path.join(SRC, '..', 'LICENSE'), path.join(DST, 'LICENSE.three.txt'));
+console.log('vendor/LICENSE.three.txt');
